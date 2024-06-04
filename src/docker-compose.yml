@@ -1,0 +1,57 @@
+services:
+
+  ft_transcendence:
+    container_name: ft_transcendence
+    env_file: ./requirements/django/ft_transcendence/.env
+ 
+    build:
+      context: ./requirements/django
+      dockerfile: Dockerfile
+      # args:
+      #   - SECRET_KEY
+      #   - DB_NAME
+      #   - DB_USER
+      #   - DB_PASSWORD
+      #   - DB_HOST
+      #   - DB_PORT
+    command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgresdb
+    networks:
+      - transcendence-network
+
+  postgresdb:
+    container_name: postgresdb
+    image: postgres
+    restart: always
+    env_file: ./requirements/django/ft_transcendence/.env
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    # or set shared memory limit when deploy via swarm stack
+    #volumes:
+    #  - type: tmpfs
+    #    target: /dev/shm
+    #    tmpfs:
+    #      size: 134217728 # 128*2^20 bytes = 128Mb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  pgdata:
+
+networks:
+  transcendence-network:
+    name: transcendence-network
+    driver: bridge
