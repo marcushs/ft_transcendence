@@ -7,7 +7,7 @@ ENV = --env-file ./src/requirements/django/ft_transcendence/.env
 all: up	
 
 up: #${VOLUME}
-	${DOCKER_COMPOSE} ${ENV} up --build --detach
+	${DOCKER_COMPOSE} ${ENV} up --build --detach --quiet-pull
 
 down:
 	${DOCKER_COMPOSE} down --volumes
