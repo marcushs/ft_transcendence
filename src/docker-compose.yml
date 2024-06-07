@@ -1,14 +1,26 @@
 services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./requirements/frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./requirements/frontend/static:/var/www/static
+      - ./requirements/frontend/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "3000:80"
+    networks:
+      - transcendence-network
 
   ft_transcendence:
-    container_name: ft_transcendence
+    container_name: transcendence
     env_file: ./requirements/django/ft_transcendence/.env
     build:
       context: ./requirements/django
       dockerfile: Dockerfile
     command: ["sh", "-c", "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"]
     volumes:
-      - .:/app
+      - ./requirements/django/ft_transcendence:/ft_transcendence
     ports:
       - "8000:8000"
     depends_on:
