@@ -14,6 +14,6 @@ export default () => /*html*/`
 
 			<button class="btn" type="button">Login</button>
 
-			<p class="text">Don't have an account? <a href="#">Register</a></p>
+			<p class="text">Don't have an account? <a href="/signup">Register</a></p>
 		</form>
 	</div>`;

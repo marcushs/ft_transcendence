@@ -1,15 +1,3 @@
-// const labels = document.querySelectorAll('.form-control label')
-// const btn = document.querySelector('.btn')
-
-// labels.forEach(label => {
-//     label.innerHTML = label.innerText 
-//         .split('')
-//         .map((letter, idx) => `<span style="transition-delay: ${idx * 50}ms;">${letter}</span>`)
-//         .join('')
-// })
-
-// btn.addEventListener('click', getData)
-
 // async function getData() {
 //     // try {
 //     //     const res = await fetch('http://localhost:8000/account/login');
@@ -33,11 +21,13 @@
 // }
 
 import login from "./views/login.js";
-import index from "./views/index.js"
+import index from "./views/index.js";
+import signup from "./views/signup.js";
 
 const routes = {
     "/": { title: "Index", render: index },
     "/login": { title: "Login", render: login },
+    "/signup": { title: "Signup", render: signup },
 };
 
 function router() {
