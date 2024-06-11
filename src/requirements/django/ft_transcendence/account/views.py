@@ -11,4 +11,9 @@ def login(request):
     data = "Send from login"
     return JsonResponse({"message": data})
 
+def signup(request):
+    print(request.method)
+    data = "Send from signup"
+    return JsonResponse({"message": data})
+
 # Create your views here.
