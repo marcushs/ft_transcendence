@@ -12,7 +12,7 @@ function router() {
     let view = routes[location.pathname];
 
     if (view) {
-        console.log(view);
+        // console.log(view);
         document.title = view.title;
         app.innerHTML = view.render();
     } else {

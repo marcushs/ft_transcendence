@@ -1,4 +1,7 @@
-export default () => /*html*/`
+import formWave from "../anim/formWave.js";
+
+export default () => {
+	const html = `
 	<div class="container">
 		<h1>Please Login</h1>
 		<form>
@@ -17,3 +20,10 @@ export default () => /*html*/`
 			<p class="text">Don't have an account? <a href="/signup">Register</a></p>
 		</form>
 	</div>`;
+
+	setTimeout(() => {
+		formWave();
+	}, 0);
+
+	return html;
+}

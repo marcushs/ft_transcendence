@@ -1,3 +1,5 @@
 export default () => /*html*/`
-    <h1>Index</h1>
+    <div class="container">
+        <h1>Index</h1>
+    </div>
 `;

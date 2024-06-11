@@ -24,6 +24,10 @@ body {
     min-width: 10vw;  
 }
 
+#nav a:visited {
+    color: inherit;
+}
+
 .container {
     background-color: rgba(0, 0, 0, 0.4);
     padding: 20px 40px;
