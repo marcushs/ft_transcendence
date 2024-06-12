@@ -1,6 +1,14 @@
 import "../components/NavBar.js"
+import typeAndReplaceWords from "../anim/typeAndReplaceWords.js";
 
-export default () => /*html*/`
-    <nav-bar></nav-bar>
-    <h1>Index</h1>
-`;
+export default () => {
+	const homePage = `
+	    <nav-bar></nav-bar>
+	`;
+
+	setTimeout(() =>{
+		typeAndReplaceWords();
+	}, 0);
+
+	return homePage;
+}

@@ -11,8 +11,8 @@ class SearchBar extends HTMLDivElement {
                 <form action="#">
                     <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
                     <div class="search-bar-input-container">
-                        <input type="text" placeholder="Search..."/>
-                    </div>             
+                        <input type="text" placeholder="Search" id="searchBarInput"/>
+                    </div>
                 </form>
              </div>
         `;
