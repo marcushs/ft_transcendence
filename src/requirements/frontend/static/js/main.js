@@ -1,9 +1,9 @@
 import login from "./views/login.js";
-import home from "./views/home.js";
+import index from "./views/index.js";
 import signup from "./views/signup.js";
 
 const routes = {
-    "/": { title: "Home", render: home },
+    "/": { title: "Index", render: index },
     "/login": { title: "Login", render: login },
     "/signup": { title: "Signup", render: signup },
 };

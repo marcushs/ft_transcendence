@@ -1,4 +1,5 @@
 import formWave from "../anim/formWave.js";
+import "../components/SignupBtn.js";
 
 export default () => {
 	const html = `
