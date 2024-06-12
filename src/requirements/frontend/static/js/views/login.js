@@ -1,4 +1,5 @@
 import formWave from "../anim/formWave.js";
+import "../components/CustomBtn.js"
 
 export default () => {
 	const html = `
@@ -15,7 +16,7 @@ export default () => {
 				<label>Password</label>
 			</div>
 
-			<button class="btn" type="button">Login</button>
+			<button is="custom-btn" text="Login"></button>
 
 			<p class="text">Don't have an account? <a href="/signup">Register</a></p>
 		</form>

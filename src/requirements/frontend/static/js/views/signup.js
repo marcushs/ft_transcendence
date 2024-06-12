@@ -21,7 +21,7 @@ export default () => {
 					<label>Confirm password</label>
 				</div>
 		
-				<signup-btn></signup-btn>
+				<button is="custom-btn" text="Signup"></button>
 		
 			</form>	
 		</div>
