@@ -1,30 +1,35 @@
 @import url('../_variables.css');
 
-.nav-bar {
+nav-bar-component {
+    height: 8vh;
+}
+
+nav {
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 8vh;
+    /*height: 100%;*/
     border-bottom-width: 1px;
     border-bottom-style: solid;
     border-image: var(--neon-radiant) 30;
     padding: 0 8rem;
 }
 
-.nav-bar .nav-bar-link {
+nav .nav-bar-link {
     font-size: 2.4rem;
 }
 
-.nav-bar .nav-bar-section {
+nav .nav-bar-section {
     display: flex;
     align-items: center;
 }
 
-.nav-bar .nav-bar-section > * {
+nav .nav-bar-section > * {
     margin: 0 20px;
 }
 
-.nav-bar .nav-bar-left-section .logo {
+nav .nav-bar-left-section .logo {
     background-image: url("../../assets/logo.svg");
     background-size: cover;
     background-position: center;
@@ -33,11 +38,11 @@
     width: 7rem;
 }
 
-.nav-bar .nav-bar-right-section p {
+nav .nav-bar-right-section p {
     font-size: 20px;
 }
 
-.nav-bar .nav-bar-right-section .profile-picture {
+nav .nav-bar-right-section .profile-picture {
     background-image: url("../../assets/acarlott.jpg");
     background-size: cover;
     background-position: center;

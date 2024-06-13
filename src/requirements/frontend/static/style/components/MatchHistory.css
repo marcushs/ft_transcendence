@@ -1,0 +1,16 @@
+@import "../_variables.css";
+
+match-history-component {
+    height: 60rem;
+    width: 60rem;
+    background: var(--neon-radiant);
+    padding: 2px;
+    border-radius: 10px;
+}
+
+.match-history-container {
+    height: 100%;
+    width: 100%;
+    background: var(--component-background-color);
+    border-radius: 10px;
+}

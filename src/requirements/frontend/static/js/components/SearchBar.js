@@ -1,4 +1,4 @@
-class SearchBar extends HTMLDivElement {
+class SearchBarComponent extends HTMLDivElement {
     static get observedAttributes() {
         return ['value'];
     }
@@ -16,7 +16,9 @@ class SearchBar extends HTMLDivElement {
                 </form>
              </div>
         `;
+
+        this.classList.add('component');
     }
 }
 
-customElements.define("search-bar", SearchBar, { extends: "div" });
+customElements.define("search-bar-component", SearchBarComponent, { extends: "div" });

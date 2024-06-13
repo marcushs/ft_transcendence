@@ -1,15 +1,15 @@
 import "./SearchBar.js"
 
-class NavBar extends HTMLElement {
+class NavBarComponent extends HTMLElement {
     constructor() {
         super();
 
         this.innerHTML = `
-            <nav class="nav-bar">
+            <nav>
                 <div class="nav-bar-section nav-bar-left-section">
                     <div class="logo"></div>
                     <a class="nav-bar-link">Home</a>
-                    <div is="search-bar"></div>
+                    <div is="search-bar-component"></div>
                 </div>
                 <div class="nav-bar-section nav-bar-right-section">
                     <img src="../../assets/bell.svg" alt="notifs-bell">
@@ -19,8 +19,8 @@ class NavBar extends HTMLElement {
             </nav>
         `;
 
-        // this.classList.add('nav-bar');
+        this.classList.add('component');
     }
 }
 
-customElements.define("nav-bar", NavBar);
+customElements.define("nav-bar-component", NavBarComponent);

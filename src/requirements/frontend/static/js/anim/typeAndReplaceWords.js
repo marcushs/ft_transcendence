@@ -2,7 +2,6 @@ async function typeAndReplaceWords() {
 	const words = [' users', ' tournaments'];
 	const searchBarInput = document.querySelector('#searchBarInput');
 
-	// await sleep(200);
 	while (true) {
 		for (const word of words) {
 			await typeLetters(word, searchBarInput);
