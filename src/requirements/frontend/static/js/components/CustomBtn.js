@@ -34,7 +34,6 @@ class CustomBtn extends HTMLButtonElement {
 
         // Get the closest form element of the button
         const form = this.closest('form');
-
         if (form) {
             // Construct a FormData object, a set of key/value pairs
             const formData = new FormData(form);
@@ -43,15 +42,19 @@ class CustomBtn extends HTMLButtonElement {
             // Object.fromEntries() transforms a list of key-value pairs into an object
 
             const formValues = Object.fromEntries(formData.entries());
-
+            // checkFormValues(formValues);
             const json = JSON.stringify(formValues);
             console.log(json)
+            if (json['password'] !== json['confirm_password']) {
+                console.log("passwords do not match");
+                return ;
+            }
             const config = {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    // 'X-CSRFToken': getCookie('csrftoken')
+                    // 'X-CSRFToken': getCookie('csrftoken')    
                 },
                 body: JSON.stringify(formValues), // Send form values as JSON
             };
