@@ -8,7 +8,7 @@ class SearchBar extends HTMLDivElement {
 
         this.innerHTML = `
             <div class="search-bar">
-                <form action="#">
+                <form action="#" autocomplete="off">
                     <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
                     <div class="search-bar-input-container">
                         <input type="text" placeholder="Search" id="searchBarInput"/>

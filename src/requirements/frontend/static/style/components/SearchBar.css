@@ -1,0 +1,36 @@
+@import url('../_variables.css');
+
+.search-bar {
+    position: relative;
+    margin-left: 5rem;
+}
+
+.search-bar form {
+    height: 3.5rem;
+    width: 40rem;
+}
+
+.search-bar form .search-bar-icon {
+    position: absolute;
+    left: 15px;
+    top: 25%;
+    height: 1.5rem;
+}
+
+.search-bar form .search-bar-input-container {
+    height: 100%;
+    width: 100%;
+    background: var(--neon-radiant);
+    padding: 1px;
+    border-radius: 10px;
+}
+
+.search-bar form .search-bar-input-container input {
+    color: white;
+    font-size: 1.2rem;
+    padding-left: 50px;
+    height: 100%;
+    width: 100%;
+    background: var(--background-color);
+    border-radius: 10px;
+}
