@@ -84,8 +84,12 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_HEADER = [
-	'Accept',
-	'content-type',
+	"accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
 ]
 
 CORS_ALLOW_METHODS = [
@@ -101,6 +105,11 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
 	'http://frontend'
 ]
+
+# CSRF_TRUSTED_ORIGINS = [ 
+# 	'http://localhost:3000',
+# 	'http://frontend'
+# ]
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
