@@ -9,7 +9,7 @@ async function rotatingGradient(elementShouldRotate) {
         }
         element.style["background"] = `linear-gradient(${rotateAngle}deg, #FF16C6, #00D0FF)`
         rotateAngle++;
-        await sleep(15);
+        await sleep(25);
     }
 }
 

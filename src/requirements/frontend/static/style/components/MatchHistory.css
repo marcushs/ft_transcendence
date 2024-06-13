@@ -3,7 +3,7 @@
 match-history-component {
     height: 60rem;
     width: 60rem;
-    background: var(--neon-radiant);
+    background: var(--neon-gradiant);
     padding: 2px;
     border-radius: 10px;
 }

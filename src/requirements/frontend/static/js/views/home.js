@@ -18,7 +18,7 @@ export default () => {
 	setTimeout(() =>{
 		typeAndReplaceWords();
 		rotatingGradient('game-component');
-		rotatingGradient('.game-gradient');
+		rotatingGradient('.game-background');
 	}, 0);
 
 	return homePage;

@@ -1,0 +1,14 @@
+@import "../../../_variables.css";
+
+.matchmaking-choice {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.matchmaking-choice p {
+	font-size: 3rem;
+	color: var();
+	padding: 2rem 0;
+}

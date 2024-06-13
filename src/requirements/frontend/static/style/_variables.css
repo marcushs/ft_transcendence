@@ -1,7 +1,7 @@
 :root {
     --neon-pink: #FF16C6;
     --neon-blue: #00D0FF;
-    --neon-radiant: linear-gradient(90deg, #FF16C6, #00D0FF);
+    --neon-gradiant: linear-gradient(90deg, #FF16C6, #00D0FF);
     --text-primary-color: #EDEDF1;
     --background-color: #121216;
     --component-background-color: #1E202B;

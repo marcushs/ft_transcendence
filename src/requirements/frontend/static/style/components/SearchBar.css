@@ -1,4 +1,4 @@
-@import url('../_variables.css');
+@import '../_variables.css';
 
 .search-bar {
     position: relative;
@@ -20,7 +20,7 @@
 .search-bar form .search-bar-input-container {
     height: 100%;
     width: 100%;
-    background: var(--neon-radiant);
+    background: var(--neon-gradiant);
     padding: 1px;
     border-radius: 10px;
 }
