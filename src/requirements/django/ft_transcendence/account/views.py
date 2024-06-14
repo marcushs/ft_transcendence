@@ -16,25 +16,25 @@ def login(request):
 
 @csrf_exempt
 def signup(request):
-   if request.method == 'POST':
+    if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
+        print('username: ', data['user_name'])  
+        if not data['user_name']:
+            return JsonResponse({'error': 'no username provided'}, status=400)
+        if not data['email']:
+            return JsonResponse({'error': 'no email provided'}, status=400)
         if data['password'] == data['confirm_password']:
-            print(data)
-            response_data = {
-                'message': 'Signup successful!',
-            }
-            username = data['username']
+            username = data['user_name']
             email = data['email']
             password = data['password']
             if not User.objects.filter(username=username).exists():
-            user = User.objects.create_user(username=username, email=email, password=password)
-            return JsonResponse({'message': 'User created successfully'}, status=201)
+                User.objects.create_user(username=username, email=email, password=password)
+                return JsonResponse({'message': 'User created successfully'}, status=201)
+            else:
+                return JsonResponse({'error': 'Username already exists'}, status=400)
         else:
-            return JsonResponse({'error': 'Username already exists'}, status=400)
-            return JsonResponse(response_data)
-        else:
-            return JsonResponse({'message': 'Passwords do not match'})
-   return JsonResponse({'message': 'Invalid request method'}, status=405)
+            return JsonResponse({'error': 'password did not match'}, status=400)
+    return JsonResponse({'message': 'Invalid request method'}, status=405)
  
 # Create your views here.
   

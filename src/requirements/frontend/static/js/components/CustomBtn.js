@@ -57,8 +57,11 @@ class CustomBtn extends HTMLButtonElement {
             };
 
             try {
-                const res = await fetch(`http://localhost:8000/account/${this.text.toLowerCase()}/`, config);
+                const res = await fetch(`http://localhost:8000/account/${this.text.toLowerCase()}/`, config);  
                 const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(`${res.status} - ${data.error}`);
+                }
                 console.log(data.message);
             } catch (error) {
                 console.error('Network error:', error);
