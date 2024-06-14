@@ -17,7 +17,7 @@ nav {
 }
 
 nav .nav-bar-link {
-    font-size: 2.4rem;
+    font-size: 3rem;
 }
 
 nav .nav-bar-section {
@@ -39,7 +39,7 @@ nav .nav-bar-left-section .logo {
 }
 
 nav .nav-bar-right-section p {
-    font-size: 20px;
+    font-size: 2rem;
 }
 
 nav .nav-bar-right-section .profile-picture {

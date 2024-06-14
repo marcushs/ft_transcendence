@@ -1,11 +1,19 @@
-const matchmakingChoiceClass = "matchmaking-choice";
+class matchmakingChoice {
 
-function matchmakingChoice() {
-	return `
-		<p>Tournament</p>
-		<p>Online</p>
-		<p>Local</p>
-	`
+	constructor() {
+		this.redirectState = "matchmaking-choice";
+		this.class = "matchmaking-choice";
+		this.context = "/";
+	}
+
+	render() {
+		return `
+			<p state-redirect tournament-home>Tournament</p>
+			<p state-redirect online-home>Online</p>
+			<p state-redirect local-home>Local</p>
+		`
+	}
 }
 
-export { matchmakingChoiceClass, matchmakingChoice };
+
+export default matchmakingChoice;

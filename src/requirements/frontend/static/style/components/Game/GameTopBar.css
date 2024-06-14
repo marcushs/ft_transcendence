@@ -1,0 +1,27 @@
+game-top-bar {
+	position: absolute;
+	display: flex;
+	/*justify-content: center;*/
+	padding-top: 2rem;
+	align-items: flex-start;
+	height: 8%;
+	width: calc(100% - 6px);
+	right: 3px;
+	top: 3px;
+	background: linear-gradient(180deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4), transparent);
+	border-radius: 7px 7px 0 0;
+	z-index: 1;
+}
+
+game-top-bar .back-button {
+	display: none;
+	margin: 0 2.5rem;
+	flex-direction: row;
+	align-items: center;
+	cursor: pointer;
+}
+
+game-top-bar .back-button p {
+	font-size: 1.5rem;
+	margin-left: 0.5rem;
+}

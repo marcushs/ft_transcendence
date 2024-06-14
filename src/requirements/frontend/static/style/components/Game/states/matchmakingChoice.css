@@ -10,5 +10,6 @@
 .matchmaking-choice p {
 	font-size: 3rem;
 	color: var();
-	padding: 2rem 0;
+	margin: 2rem 0;
+	cursor: pointer;
 }
