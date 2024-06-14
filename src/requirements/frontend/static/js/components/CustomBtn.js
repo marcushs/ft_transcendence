@@ -33,19 +33,18 @@ class CustomBtn extends HTMLButtonElement {
         event.preventDefault();
 
         // Get the closest form element of the button
-        const form = this.closest('form');
-
+        const form = event.target.form;
         if (form) {
             // Construct a FormData object, a set of key/value pairs
             const formData = new FormData(form);
-
+            
             // formData.entries() return an iterator that traverse all the key/value pairs
             // Object.fromEntries() transforms a list of key-value pairs into an object
-
-            const formValues = Object.fromEntries(formData.entries());
+            
+            const formValues = Object.fromEntries(formData.entries()); 
 
             const json = JSON.stringify(formValues);
-            console.log(json)
+            console.log('(CustomBtn)-> json: ', json)
             const config = {
                 method: 'POST',
                 headers: {
@@ -64,7 +63,9 @@ class CustomBtn extends HTMLButtonElement {
                 }
                 console.log(data.message);
             } catch (error) {
-                console.error('Network error:', error);
+                // index = error.message.indexOf('-')
+                alert(`Error: ${error.message}`)
+                console.error('Network error:', error)
                 // Handle the error, such as displaying an error message to the user
             }
         } else {

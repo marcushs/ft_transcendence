@@ -130,20 +130,37 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
+    # check similarity with email and username
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', 
     },
+    # setup min length password
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
     },
+    # check low password strength
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
+    # check password contains only numeric char
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'account.validators.NumericValidator',
+    },
+    # check password contains uppercase char
+    {
+        'NAME': 'account.validators.UppercaseValidator',
+    },
+    # check password contains lowercase char
+    {
+        'NAME': 'account.validators.LowercaseValidator',
+    },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

@@ -7,12 +7,12 @@ export default () => {
 		<h1>Please Login</h1>
 		<form>
 			<div class="form-control">
-				<input type="text" required>
-				<label>Email</label>
+				<input type="text" name="username" required>
+				<label>Username</label>
 			</div>
 
 			<div class="form-control">
-				<input type="password" required>
+				<input type="password" name="password" required>
 				<label>Password</label>
 			</div>
 

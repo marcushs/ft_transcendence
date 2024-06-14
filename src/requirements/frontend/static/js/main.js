@@ -1,11 +1,13 @@
 import login from "./views/login.js";
 import index from "./views/index.js";
 import signup from "./views/signup.js";
+import logout from "./views/logout.js";
 
 const routes = {
     "/": { title: "Index", render: index },
     "/login": { title: "Login", render: login },
     "/signup": { title: "Signup", render: signup },
+    "/logout": { title: "Logout", render: logout },
 };
 
 function router() {
