@@ -1,7 +1,7 @@
 game-top-bar {
 	position: absolute;
 	display: flex;
-	/*justify-content: center;*/
+	justify-content: space-between;
 	padding-top: 2rem;
 	align-items: flex-start;
 	height: 8%;
@@ -10,18 +10,63 @@ game-top-bar {
 	top: 3px;
 	background: linear-gradient(180deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4), transparent);
 	border-radius: 7px 7px 0 0;
-	z-index: 1;
+	z-index: 2;
+}
+
+game-top-bar .top-bar-options {
+	height: 3rem;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+game-top-bar img {
+	height: 2.5rem;
 }
 
 game-top-bar .back-button {
-	display: none;
-	margin: 0 2.5rem;
+	height: 100%;
+	display: flex;
+	visibility: visible;
+	margin-left: 2.5rem;
 	flex-direction: row;
 	align-items: center;
-	cursor: pointer;
+	justify-content: center;
 }
 
 game-top-bar .back-button p {
-	font-size: 1.5rem;
+	font-size: 1.8rem;
 	margin-left: 0.5rem;
+}
+
+game-top-bar .back-button:hover {
+	cursor: pointer;
+}
+
+game-top-bar .back-button:hover img {
+	height: 2.8rem;
+}
+
+game-top-bar .back-button:hover p {
+	font-size: 1.9rem;
+}
+
+game-top-bar .game-settings {
+	margin-right: 2.5rem;
+}
+
+game-top-bar .game-settings .reduce-game-button {
+	height: 3rem;
+	display: none;
+}
+
+game-top-bar .game-settings .reduce-game-button:hover {
+	cursor: pointer;
+	height: 3.2rem;
+}
+
+game-top-bar .game-settings .extend-game-button:hover {
+	cursor: pointer;
+	height: 2.7rem;
 }

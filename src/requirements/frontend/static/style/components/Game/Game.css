@@ -8,7 +8,7 @@ game-component {
     align-items: center;
     position: relative;
     width: 140rem;
-    height: 90rem;
+    height: calc((140rem * 63) / 100);
     padding: 3px;
     border-radius: 10px;
 }
@@ -19,7 +19,6 @@ game-component {
     height: 100%;
     border-radius: 10px;
     filter: blur(15px);
-    z-index: -1;
 }
 
 .states-container {
@@ -28,6 +27,7 @@ game-component {
     border-radius: 7px;
     background: var(--component-background-color);
     padding: 3px;
+    z-index: 1;
 }
 
 .left-player-paddle, .right-player-paddle {
@@ -36,6 +36,7 @@ game-component {
     height: 13rem;
     width: 1rem;
     border-radius: 10px;
+    z-index: 1;
 }
 
 .left-player-paddle {
@@ -55,4 +56,5 @@ game-component {
     height: calc(100% - 6px);
     width: 0.2rem;
     background: linear-gradient(180deg, var(--neon-pink), var(--neon-blue));
+    z-index: 1;
 }

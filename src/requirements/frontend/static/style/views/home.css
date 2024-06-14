@@ -22,3 +22,11 @@ input {
     align-items: center;
     justify-content: space-around;
 }
+
+.game-fullscreen-background {
+    display: none;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background: var(--background-color);
+}

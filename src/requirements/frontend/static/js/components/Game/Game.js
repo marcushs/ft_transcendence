@@ -1,5 +1,7 @@
 import './states/matchmakingChoice.js'
 import './GameTopBar.js'
+import reduceGameComponent from "../../anim/reduceGameComponent.js";
+import extendGameComponent from "../../anim/extendGameComponent.js";
 import matchmakingChoice from "./states/matchmakingChoice.js";
 import tournamentHome from "./states/tournamentHome.js";
 import onlineHome from "./states/onlineHome.js";
@@ -52,10 +54,12 @@ class GameComponent extends HTMLElement {
     }
 
     manageBackButtonDisplay() {
-        if (this.currentContext === '/' && this.backButton.style.display === 'flex') {
-            this.backButton.style.display = '';
-        } else if (this.currentContext !== '/' && this.backButton.style.display === '') {
-            this.backButton.style.display = 'flex';
+        const computedVisibility = getComputedStyle(this.backButton).visibility;
+
+        if (this.currentContext === '/' && computedVisibility === 'visible') {
+            this.backButton.style.visibility = 'hidden';
+        } else if (this.currentContext !== '/' && computedVisibility === 'hidden') {
+            this.backButton.style.visibility = 'visible';
         }
     }
 
@@ -66,9 +70,11 @@ class GameComponent extends HTMLElement {
             }
         });
 
-        this.addEventListener('navigate-back', (event) => {
-            this.handleBackRedirection(event);
-        });
+        this.addEventListener('navigate-back', (event) => this.handleBackRedirection(event));
+
+        this.addEventListener('extend-game', () => extendGameComponent(this));
+
+        this.addEventListener('reduce-game', () => reduceGameComponent(this));
 
     }
 
