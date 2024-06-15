@@ -1,5 +1,3 @@
-@import "../../../_variables.css";
-
 .matchmaking-choice {
 	display: flex;
 	flex-direction: column;

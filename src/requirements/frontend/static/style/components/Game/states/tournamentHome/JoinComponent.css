@@ -1,0 +1,94 @@
+join-component {
+	height: 33rem;
+	width: 45rem;
+	background: var(--neon-gradiant);
+	border-radius: 5px;
+	padding: 1px;
+}
+
+.join-component-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 100%;
+	width: 100%;
+	background: var(--component-background-color);
+	border-radius: 5px;
+	padding: 3rem 2rem;
+}
+
+.join-component-content p {
+	font-size: 1.8rem;
+}
+
+.join-component-content .tournaments-list {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.tournaments-list::-webkit-scrollbar {
+	position: absolute;
+}
+
+::-webkit-scrollbar {
+	width: 4px;
+}
+
+::-webkit-scrollbar-track {
+	background: grey;
+	border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--neon-blue);
+	border-radius: 5px;
+}
+
+.join-component-content .tournaments-list .joinable-tournament {
+	width: 95%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: 1rem 0;
+}
+
+.join-component-content .tournaments-list .joinable-tournament .tournament-left-infos {
+	width: 65%;
+	display: inline;
+}
+
+.join-component-content .tournaments-list .joinable-tournament .tournament-left-infos .tournament-name {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.join-component-content .tournaments-list .joinable-tournament .tournament-left-infos .tournament-name-tooltip {
+	position: absolute;
+	display: none;
+	padding: 0.5rem;
+	color: var(--background-color);
+	background: var(--text-primary-color);
+	border-radius: 5px;
+	box-shadow: 0.5px 0.5px 10px black;
+	top: 100%;
+}
+
+.join-component-content .tournaments-list .joinable-tournament .tournament-left-infos:hover .tournament-name-tooltip {
+	display: block;
+	z-index: 1;
+}
+
+.join-component-content .tournaments-list .joinable-tournament .tournament-right-infos {
+	display: flex;
+	width: auto;
+	align-items: center;
+}
+
+.join-component-content .tournaments-list .joinable-tournament .tournament-right-infos button-component {
+	margin-left: 1rem;
+}

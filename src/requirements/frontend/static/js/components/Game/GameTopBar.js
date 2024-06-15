@@ -16,12 +16,12 @@ class GameTopBarComponent extends HTMLElement {
 		`;
 
 		this.backButton = this.querySelector('.back-button');
-		this.extendeGameButton = this.querySelector('.extend-game-button');
+		this.extendGameButton = this.querySelector('.extend-game-button');
 		this.reduceGameButton = this.querySelector('.reduce-game-button');
-		this.attachEventListener();
+		this.throwEvents();
 	}
 
-	attachEventListener() {
+	throwEvents() {
 		this.backButton.addEventListener('click', () => {
 			const event = new CustomEvent('navigate-back', {
 				bubbles: true // To navigate throughout DOM
@@ -30,7 +30,7 @@ class GameTopBarComponent extends HTMLElement {
 			this.dispatchEvent(event);
 		});
 
-		this.extendeGameButton.addEventListener('click', async () => {
+		this.extendGameButton.addEventListener('click', async () => {
 			const event = new CustomEvent('extend-game', {
 				bubbles: true
 			});

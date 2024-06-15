@@ -1,7 +1,7 @@
-@import '../_variables.css';
 @import '../components/NavBar.css';
 @import '../components/SearchBar.css';
 @import '../components/MatchHistory.css';
+@import '../components/ButtonComponent.css';
 @import '../components/Game/Game.css';
 
 input {

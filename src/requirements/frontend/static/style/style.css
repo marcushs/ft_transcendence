@@ -4,7 +4,6 @@
 @import './_variables.css';
 
 :root {
-    font-family: 'Poppins', sans-serif;
     font-size: 50%;
 }
 
@@ -12,6 +11,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
 body {

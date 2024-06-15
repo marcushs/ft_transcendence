@@ -3,7 +3,7 @@ import './GameTopBar.js'
 import reduceGameComponent from "../../anim/reduceGameComponent.js";
 import extendGameComponent from "../../anim/extendGameComponent.js";
 import matchmakingChoice from "./states/matchmakingChoice.js";
-import tournamentHome from "./states/tournamentHome.js";
+import tournamentHome from "./states/tournamentHome/tournamentHome.js";
 import onlineHome from "./states/onlineHome.js";
 import localHome from "./states/localHome.js";
 
@@ -29,26 +29,27 @@ class GameComponent extends HTMLElement {
 
         this.statesContainer = this.querySelector('.states-container');
         this.backButton = this.querySelector('.back-button');
-        this.currentContext = this.states["matchmakingChoice"].context;
+        this.currentContext = this.states["tournamentHome"].context;
+        this.currentState = "tournamentHome";
 
-        this.pushState(this.states["matchmakingChoice"].state);
+        this.pushNewState(this.states[this.currentState].state);
 
         this.attachEventListener();
     }
 
-    pushState(state) {
+    pushNewState(state) {
         this.statesContainer.innerHTML = state.render();
         this.statesContainer.classList.add(state.class);
     }
 
-    removeState(state) {
+    removeCurrentState() {
         this.statesContainer.innerHTML = '';
-        this.statesContainer.classList.remove(state.className);
+        this.statesContainer.classList.remove(this.states[this.currentState].state.class);
     }
 
     changeState(state, context) {
-        this.removeState(state);
-        this.pushState(state);
+        this.removeCurrentState();
+        this.pushNewState(state);
         this.currentContext = context;
         this.manageBackButtonDisplay();
     }
@@ -79,11 +80,12 @@ class GameComponent extends HTMLElement {
     }
 
     handleStateRedirection(event) {
-        const statesArray = Object.values(this.states);
+        const statesArray = Object.entries(this.states);
 
         for (const stateItem of statesArray) {
-            if (event.target.hasAttribute(stateItem.state.redirectState)) {
-                this.changeState(stateItem.state, stateItem.context);
+            if (event.target.hasAttribute(stateItem[1].state.redirectState)) {
+                this.changeState(stateItem[1].state, stateItem[1].context);
+                this.currentState = stateItem[0];
                 break ;
             }
         }
@@ -91,14 +93,15 @@ class GameComponent extends HTMLElement {
 
     handleBackRedirection(event) {
         const lastSlashIndex = this.currentContext.lastIndexOf('/');
-        const statesArray = Object.values(this.states);
+        const statesArray = Object.entries(this.states);
         let newContext;
 
         (lastSlashIndex > 0) ? newContext = this.currentContext.slice(0, lastSlashIndex) : newContext = "/";
 
         for (const stateItem of statesArray) {
-            if (newContext === stateItem.context) {
-                this.changeState(stateItem.state, newContext);
+            if (newContext === stateItem[1].context) {
+                this.changeState(stateItem[1].state, newContext);
+                this.currentState = stateItem[0];
                 break ;
             }
         }

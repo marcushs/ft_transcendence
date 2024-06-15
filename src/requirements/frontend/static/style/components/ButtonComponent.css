@@ -1,0 +1,13 @@
+button-component button {
+	background: none;
+	color: var(--text-primary-color);
+	cursor: pointer;
+}
+
+button-component .join-btn {
+	border: 1px solid var(--neon-blue);
+	color: var(--neon-blue);
+	border-radius: 5px;
+	font-size: 2rem;
+	padding: 0 1.5rem;
+}

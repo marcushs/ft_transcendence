@@ -1,6 +1,6 @@
-@import '../../_variables.css';
-@import './states/matchmakingChoice.css';
 @import './GameTopBar.css';
+@import './states/matchmakingChoice.css';
+@import './states/tournamentHome/tournamentHome.css';
 
 game-component {
     display: flex;

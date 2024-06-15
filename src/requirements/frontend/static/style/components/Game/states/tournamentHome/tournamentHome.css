@@ -1,0 +1,27 @@
+@import "./JoinComponent.css";
+
+.tournament-home-container {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.tournament-home-container h3 {
+	font-size: 3rem;
+	font-weight: 400;
+}
+
+.tournament-home-container h4 {
+	font-size: 2.5rem;
+	font-weight: 400;
+	margin-bottom: 1rem;
+}
+
+.tournament-home-container .tournament-boxes-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
