@@ -1,20 +1,19 @@
 import login from "./views/login.js";
 import index from "./views/index.js";
 import signup from "./views/signup.js";
-import logout from "./views/logout.js";
+import LogoutFormHandler from "./views/logout.js";
 
 const routes = {
     "/": { title: "Index", render: index },
     "/login": { title: "Login", render: login },
     "/signup": { title: "Signup", render: signup },
-    "/logout": { title: "Logout", render: logout },
 };
 
 function router() {
     let view = routes[location.pathname];
 
     if (view) {
-        // console.log(view);
+        console.log(view);
         document.title = view.title;
         app.innerHTML = view.render();
     } else {
@@ -29,6 +28,11 @@ window.addEventListener("click", e => {
         e.preventDefault();
         history.pushState("", "", e.target.href);
         router();
+    }
+    if (e.target.matches("[Logout]")) {
+        e.preventDefault();
+        history.pushState("", "", e.target.href);
+        new LogoutFormHandler('app');
     }
 });
 

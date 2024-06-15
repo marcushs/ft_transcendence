@@ -1,3 +1,5 @@
+import index from "../views/index.js";
+
 class CustomBtn extends HTMLButtonElement {
     static get observedAttributes() {
         return ["text"];
@@ -50,8 +52,9 @@ class CustomBtn extends HTMLButtonElement {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    // 'X-CSRFToken': getCookie('csrftoken')
+                    'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
                 },
+                credentials: 'include', // Needed for send cookie
                 body: JSON.stringify(formValues), // Send form values as JSON
             };
 
@@ -61,11 +64,14 @@ class CustomBtn extends HTMLButtonElement {
                 if (!res.ok) {
                     throw new Error(`${res.status} - ${data.error}`);
                 }
-                console.log(data.message);
+                history.replaceState("", "", "/");
+                document.title = "Index";
+                app.innerHTML = index();
+                alert(data.message)
             } catch (error) {
                 // index = error.message.indexOf('-')
                 alert(`Error: ${error.message}`)
-                console.error('Network error:', error)
+                // console.error('Network error:', error)
                 // Handle the error, such as displaying an error message to the user
             }
         } else {
@@ -78,7 +84,7 @@ class CustomBtn extends HTMLButtonElement {
 customElements.define("custom-btn", CustomBtn, { extends: "button" });
 
 // for csrf token header
-function getCookie(name) {
+export function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
