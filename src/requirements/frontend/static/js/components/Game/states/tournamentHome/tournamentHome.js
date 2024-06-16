@@ -13,7 +13,7 @@ class tournamentHome {
 		return `
 			<div class="tournament-home-container">
 				<h3>Tournament</h3>
-				<div class="tournament-boxes-container">
+				<div class="tournament-components-container">
 					<create-component></create-component>
 					<join-component></join-component>
 				</div>

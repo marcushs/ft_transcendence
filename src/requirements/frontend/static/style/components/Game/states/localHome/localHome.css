@@ -1,7 +1,6 @@
-@import "./JoinComponent.css";
-@import "./CreateComponent.css";
+@import './LocalComponent.css';
 
-.tournament-home-container {
+.local-home-container {
 	height: 100%;
 	width: 100%;
 	display: flex;
@@ -10,24 +9,24 @@
 	align-items: center;
 }
 
-.tournament-home-container h3 {
+.local-home-container h3 {
 	font-size: 3rem;
 	font-weight: 400;
 }
 
-.tournament-home-container h4 {
+.local-home-container h4 {
 	font-size: 2.5rem;
 	font-weight: 400;
 	margin-bottom: 1rem;
 }
 
-.tournament-home-container .tournament-components-container {
+.local-home-container .local-components-container {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	height: 60%;
 }
 
-.tournament-home-container .tournament-components-container > * {
+.local-home-container .local-components-container > * {
 	margin: 10rem 6rem;
 }

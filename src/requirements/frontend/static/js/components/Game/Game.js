@@ -4,8 +4,8 @@ import reduceGameComponent from "../../anim/reduceGameComponent.js";
 import extendGameComponent from "../../anim/extendGameComponent.js";
 import matchmakingChoice from "./states/matchmakingChoice.js";
 import tournamentHome from "./states/tournamentHome/tournamentHome.js";
-import onlineHome from "./states/onlineHome.js";
-import localHome from "./states/localHome.js";
+import onlineHome from "./states/onlineHome/onlineHome.js";
+import localHome from "./states/localHome/localHome.js";
 
 class GameComponent extends HTMLElement {
     constructor() {
@@ -29,8 +29,8 @@ class GameComponent extends HTMLElement {
 
         this.statesContainer = this.querySelector('.states-container');
         this.backButton = this.querySelector('.back-button');
-        this.currentContext = this.states["tournamentHome"].context;
-        this.currentState = "tournamentHome";
+        this.currentContext = this.states["matchmakingChoice"].context;
+        this.currentState = "matchmakingChoice";
 
         this.pushNewState(this.states[this.currentState].state);
 

@@ -28,11 +28,11 @@ button-component .generic-btn {
 button-component .player-number-active {
 	width: 100%;
 	height: 100%;
-	font-size: 2rem;
 	border: none;
 	color: var(--text-primary-color);
 	background: var(--component-background-color);
 	border-radius: 4px;
+	font-size: 2rem;
 }
 
 button-component .player-number-inactive {
@@ -44,4 +44,34 @@ button-component .player-number-inactive {
 	font-size: 2rem;
 }
 
+/* Score to win */
 
+.score-to-win-active .button-background {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 4rem;
+	padding: 1px;
+	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
+	/*background: var(--neon-gradiant);*/
+	border-radius: 5px;
+}
+
+button-component .score-to-win-active {
+	width: 100%;
+	height: 100%;
+	border: none;
+	color: var(--text-primary-color);
+	background: var(--component-background-color);
+	border-radius: 4px;
+	font-size: 1.5rem;
+}
+
+button-component .score-to-win-inactive {
+	justify-content: center;
+	width: 4rem;
+	border: 1px solid var(--light-grey);
+	color: var(--light-grey);
+	border-radius: 5px;
+	font-size: 1.5rem;
+}

@@ -1,0 +1,65 @@
+local-component {
+	height: 25rem;
+	width: 45rem;
+	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
+	border-radius: 5px;
+	padding: 1px;
+}
+
+.local-component-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	width: 100%;
+	border-radius: 5px;
+	background: var(--component-background-color);
+	padding: 0 3rem;
+}
+
+.settings-container {
+	width: 100%;
+}
+
+.settings-container > * {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: 2rem 0;
+}
+
+.settings-container > * > .setting-name {
+	font-size: 2rem;
+}
+
+.settings-container > * > .setting-values-container {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 50%;
+}
+
+.settings-container > * > .setting-values-container > .setting-speed-value {
+	font-size: 1.4rem;
+	padding-right: 1.5rem;
+}
+
+.settings-container > * > .setting-values-container > input {
+	-webkit-appearance: none;
+	height: 1px;
+	background: var(--neon-gradiant);
+}
+
+.settings-container > * > .setting-values-container > input::-webkit-slider-thumb {
+	height: 1.5rem;
+	width: 1.5rem;
+	border-radius: 50%;
+	-webkit-appearance: none;
+	background: var(--text-primary-color);
+}
+
+.settings-container > * > .setting-values-container > input::-webkit-slider-thumb:hover {
+	background: var(--light-grey);
+	cursor: pointer;
+}
