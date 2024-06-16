@@ -7,7 +7,7 @@
 
 .matchmaking-choice p {
 	font-size: 3rem;
-	color: var();
+	color: var(--text-primary-color);
 	margin: 2rem 0;
 	text-shadow: 0 2px 10px black;
 }

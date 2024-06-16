@@ -1,0 +1,20 @@
+unranked-component {
+	display: block;
+	height: 18rem;
+	width: 45rem;
+	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
+	border-radius: 5px;
+	padding: 1px;
+}
+
+.unranked-component-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	height: 100%;
+	width: 100%;
+	background: var(--component-background-color);
+	border-radius: 5px;
+	padding: 3rem 2rem;
+}

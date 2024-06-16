@@ -54,7 +54,6 @@ class CreateComponent extends HTMLElement {
 
 	handleCreateButtonClick() {
 		this.tournamentName = this.querySelector('input').value;
-		console.log(this.tournamentName);
 
 		if (this.tournamentName === '' && !this.querySelector('.create-tournament-error')) {
 			const errorElement = document.createElement('p');

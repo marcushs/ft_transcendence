@@ -1,0 +1,53 @@
+private-match-component {
+	display: block;
+	height: 22rem;
+	width: 45rem;
+	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
+	border-radius: 5px;
+	padding: 1px;
+}
+
+.private-match-component-content {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	height: 100%;
+	width: 100%;
+	background: var(--component-background-color);
+	padding: 3rem 2rem;
+	border-radius: 5px;
+}
+
+.private-match-component-content input {
+	width: 50%;
+	border-bottom: 2px solid var(--light-grey);
+	line-height: 3rem;
+	color: var(--text-primary-color);
+	padding-left: 5px;
+}
+
+.invite-player-field-error {
+	color: var(--error-color);
+	position: absolute;
+	top: 12.5rem;
+	font-size: 1.5rem;
+}
+
+.private-match-component-content img {
+	width: 2rem;
+	position: absolute;
+	top: 10.5rem;
+	left: 33.5rem;
+	animation: loading-wheel 2s linear infinite;
+}
+
+@keyframes loading-wheel {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}

@@ -28,12 +28,12 @@ create-component {
 
 .tournament-name-container .create-tournament-error {
 	position: absolute;
-	color: red;
+	color: var(--error-color);
 	font-size: 1.5rem;
 }
 
 .tournament-name-container input {
-	border-bottom: 1px solid var(--light-grey);
+	border-bottom: 2px solid var(--light-grey);
 	color: var(--text-primary-color);
 	line-height: 3rem;
 }
