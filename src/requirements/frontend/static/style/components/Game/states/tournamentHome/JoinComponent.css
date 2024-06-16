@@ -1,7 +1,7 @@
 join-component {
 	height: 33rem;
 	width: 45rem;
-	background: var(--neon-gradiant);
+	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
 	border-radius: 5px;
 	padding: 1px;
 }

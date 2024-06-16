@@ -21,11 +21,11 @@ class JoinComponent extends HTMLElement {
 			</div>
 		`;
 
-		this.attachEventsListener();
 	}
 
 	connectedCallback() {
 		this.createTournamentsNameTooltip();
+		this.attachEventsListener();
 	}
 
 	attachEventsListener() {
@@ -54,7 +54,7 @@ class JoinComponent extends HTMLElement {
 					</div>
 					<div class="tournament-right-infos">
 						<p>${tournamentInfo.score}</p>
-						<button-component label="Join" class="join-btn" disabled></button-component>
+						<button-component label="Join" class="generic-btn"></button-component>
 					</div>
 				</div>
 			`;

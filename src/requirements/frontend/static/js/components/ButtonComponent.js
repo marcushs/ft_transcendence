@@ -7,7 +7,9 @@ class ButtonComponent extends HTMLElement {
 		super();
 
 		this.innerHTML = `
-			<button>${this.getAttribute('label')}</button>
+			<div class="button-background">
+				<button>${this.getAttribute('label')}</button>
+			</div>
 		`;
 		this.button = this.querySelector('button');
 	}

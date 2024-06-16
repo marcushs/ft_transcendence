@@ -1,0 +1,60 @@
+create-component {
+	height: 33rem;
+	width: 45rem;
+	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
+	border-radius: 5px;
+	padding: 1px;
+}
+
+.create-component-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 100%;
+	width: 100%;
+	background: var(--component-background-color);
+	border-radius: 5px;
+	padding: 3rem 2rem;
+}
+
+.create-component-infos-container {
+	height: 50%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	margin-top: 1rem;
+	margin-bottom: 3rem;
+}
+
+.tournament-name-container .create-tournament-error {
+	position: absolute;
+	color: red;
+	font-size: 1.5rem;
+}
+
+.tournament-name-container input {
+	border-bottom: 1px solid var(--light-grey);
+	color: var(--text-primary-color);
+	line-height: 3rem;
+}
+
+.tournament-name-container input::placeholder {
+	font-size: 2rem;
+}
+
+.number-of-players-container {
+	display: flex;
+	align-items: center;
+}
+
+.number-of-players-container p {
+	font-size: 2rem;
+}
+
+.number-of-players-container .buttons-container {
+	display: flex;
+}
+
+.number-of-players-container .buttons-container div {
+	margin: 0 1rem;
+}

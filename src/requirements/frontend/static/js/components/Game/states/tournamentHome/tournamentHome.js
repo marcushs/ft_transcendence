@@ -1,5 +1,6 @@
 import '../../../ButtonComponent.js';
 import './JoinComponent.js';
+import './CreateComponent.js'
 
 class tournamentHome {
 
@@ -13,7 +14,7 @@ class tournamentHome {
 			<div class="tournament-home-container">
 				<h3>Tournament</h3>
 				<div class="tournament-boxes-container">
-					<div class="create-tournament"></div>
+					<create-component></create-component>
 					<join-component></join-component>
 				</div>
 			</div>

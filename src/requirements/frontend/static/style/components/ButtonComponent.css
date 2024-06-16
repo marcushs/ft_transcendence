@@ -4,10 +4,44 @@ button-component button {
 	cursor: pointer;
 }
 
-button-component .join-btn {
+button-component .generic-btn {
 	border: 1px solid var(--neon-blue);
 	color: var(--neon-blue);
 	border-radius: 5px;
 	font-size: 2rem;
 	padding: 0 1.5rem;
 }
+
+/* Player number */
+
+.player-number-active .button-background {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 5rem;
+	padding: 1px;
+	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
+	/*background: var(--neon-gradiant);*/
+	border-radius: 5px;
+}
+
+button-component .player-number-active {
+	width: 100%;
+	height: 100%;
+	font-size: 2rem;
+	border: none;
+	color: var(--text-primary-color);
+	background: var(--component-background-color);
+	border-radius: 4px;
+}
+
+button-component .player-number-inactive {
+	justify-content: center;
+	width: 5rem;
+	border: 1px solid var(--light-grey);
+	color: var(--light-grey);
+	border-radius: 5px;
+	font-size: 2rem;
+}
+
+

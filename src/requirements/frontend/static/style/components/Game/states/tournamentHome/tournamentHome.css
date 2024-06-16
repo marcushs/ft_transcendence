@@ -1,4 +1,5 @@
 @import "./JoinComponent.css";
+@import "./CreateComponent.css";
 
 .tournament-home-container {
 	height: 100%;
@@ -24,4 +25,8 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.tournament-home-container .tournament-boxes-container > * {
+	margin: 10rem 6rem;
 }
