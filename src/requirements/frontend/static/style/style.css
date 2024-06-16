@@ -8,12 +8,12 @@ body {
     background-color: steelblue;
     color: white;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     flex-direction: column;
     align-items: center;
     height: 100vh;
-    overflow: hidden;
     font-family: 'Muli', sans-serif;
+    overflow: visible;
     margin: 0;
 }
 
@@ -70,6 +70,15 @@ body {
     transform: scale(0.98);
 }
 
+.btn:disabled {
+    cursor: not-allowed;
+    background-color: gray;
+}
+
+.btn:disabled:active {
+    transform: none;
+}
+
 .form-control {
     position: relative;
     margin: 20px 0 40px;
@@ -113,4 +122,11 @@ body {
 .form-control input:valid + label span {
     color: lightblue;
     transform: translateY(-30px);
+}
+
+.form-control i {
+    position: absolute;
+    right: 10px;
+    top: 20px;
+    cursor: pointer;
 }

@@ -18,7 +18,9 @@ class CustomBtn extends HTMLButtonElement {
         // Bind the getData method to this instance
         this.addEventListener('click', this.getData.bind(this));
 
-        this.type = 'button';
+        this.type = 'submit';
+
+        this.disabled = true;
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
