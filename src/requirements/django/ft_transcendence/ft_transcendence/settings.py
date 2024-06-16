@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import environ
 import os
+import datetime
 
 # Read from .env file
 env = environ.Env()
@@ -28,6 +29,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
+
+JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
+JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
+JWP_EXP_DELTA_SECONDS = 3600 # one hour
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -49,11 +54,11 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-	"corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+	"corsheaders.middleware.CorsMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -106,10 +111,10 @@ CORS_ALLOWED_ORIGINS = [
 	'http://frontend'
 ]
 
-# CSRF_TRUSTED_ORIGINS = [ 
-# 	'http://localhost:3000',
-# 	'http://frontend'
-# ]
+CSRF_TRUSTED_ORIGINS = [ 
+	'http://localhost:3000',
+	'http://frontend'
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

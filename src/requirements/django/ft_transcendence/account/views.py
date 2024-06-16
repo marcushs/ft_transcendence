@@ -1,16 +1,22 @@
+# --- SRC --- #
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
-from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.conf import settings
+# --- AUTH --- #
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from .constants import REGEX_EMAIL_CHECK, REGEX_USERNAME_CHECK
+from django.contrib.auth.password_validation import validate_password
+# --- JWT --- #
+from .jwt_auth import createJwtToken
+# from .serializers import UserSerializer
+# --- UTILS --- #
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
-
 import json
-import re
+import re #regular expression
 
 def index(request):
     print(request.method)
@@ -18,18 +24,20 @@ def index(request):
     return JsonResponse({"message": data})
 
 @require_POST
-@csrf_exempt
+@csrf_protect
 def logout(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
             auth_logout(request)
-            messages.success(request, ("Succesfully log out !"))
-            return JsonResponse({'message': 'Logout successfully'}, status=201)
+            response = JsonResponse({'message': 'Logout successfully'}, status=201)
+            response.delete_cookie('jwt')
+            # messages.success(request, ("Succesfully log out !"))
+            return response
         else:
             return JsonResponse({'error': 'You are not logged'}, status=401)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-@csrf_exempt
+@csrf_protect
 def login(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
@@ -42,12 +50,15 @@ def login(request):
         user = authenticate(request, username=data['username'], password=data['password'])
         if user is not None:
             auth_login(request, user)
-            return JsonResponse({'message': 'Login successfully'}, status=201)
+            token = createJwtToken(user)
+            response = JsonResponse({'message': 'Login successfully'}, status=201)
+            response.set_cookie('jwt', token, httponly=True, max_age=settings.JWP_EXP_DELTA_SECONDS)
+            return response
         else:
             return JsonResponse({'error': 'Invalid username or password, please try again'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-@csrf_exempt
+@csrf_protect
 def signup(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))

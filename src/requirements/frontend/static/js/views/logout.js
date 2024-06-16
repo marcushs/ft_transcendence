@@ -1,4 +1,4 @@
-import { getCookie } from "../components/CustomBtn.js"
+import { getCookie } from "../utils/cookie.js";
 import index from "./index.js";
 
 
@@ -39,7 +39,9 @@ export default class LogoutFormHandler {
                     credentials: 'include' // Needed for send cookie
                 };
                 try {
-                    const res = await fetch(`http://localhost:8000/account/logout/`, config);  
+                    const res = await fetch(`http://localhost:8000/account/logout/`, config);
+                    if (res.status == 403)
+                        throw new Error('Access Denied')
                     const data = await res.json();
                     if (!res.ok) {
                         throw new Error(`${res.status} - ${data.error}`);

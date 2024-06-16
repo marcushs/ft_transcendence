@@ -1,4 +1,5 @@
 import index from "../views/index.js";
+import { getCookie } from "../utils/cookie.js";
 
 class CustomBtn extends HTMLButtonElement {
     static get observedAttributes() {
@@ -59,20 +60,18 @@ class CustomBtn extends HTMLButtonElement {
             };
 
             try {
-                const res = await fetch(`http://localhost:8000/account/${this.text.toLowerCase()}/`, config);  
+                const res = await fetch(`http://localhost:8000/account/${this.text.toLowerCase()}/`, config);
+                if (res.status == 403)
+                    throw new Error('Access Denied')
                 const data = await res.json();
-                if (!res.ok) {
+                if (!res.ok)
                     throw new Error(`${res.status} - ${data.error}`);
-                }
                 history.replaceState("", "", "/");
                 document.title = "Index";
                 app.innerHTML = index();
-                alert(data.message)
+                alert(data.message);
             } catch (error) {
-                // index = error.message.indexOf('-')
                 alert(`Error: ${error.message}`)
-                // console.error('Network error:', error)
-                // Handle the error, such as displaying an error message to the user
             }
         } else {
             console.error('No form found!');
@@ -82,20 +81,3 @@ class CustomBtn extends HTMLButtonElement {
 
 // Define the custom button element, specifying that it extends HTMLButtonElement
 customElements.define("custom-btn", CustomBtn, { extends: "button" });
-
-// for csrf token header
-export function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
