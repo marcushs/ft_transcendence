@@ -1,7 +1,7 @@
-from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 import json
 
 def index(request):
@@ -9,21 +9,34 @@ def index(request):
     data = "asdfaddfadfasdfasdfasdfasdfasdfsdfsfsfasfasdfsd"
     return JsonResponse({"message": data})
 
-def login(request):
-    print(request.method)
-    data = "Send from login"
+@csrf_exempt
+def login_view(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        username = data['username']
+        password = data['password']
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return JsonResponse({'message': 'Login successful', 'redirect_url': 'index'}, status=200)
+        else:
+            return JsonResponse({'message': 'Invalid credentials', 
+                                 'redirect_url': 'login', 
+                                 'username': username, 
+                                 'password': password}, status=400)
     return JsonResponse({"message": data})
 
 @csrf_exempt
 def signup(request):
    if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
-        username = data['user_name']
+        username = data['username']
         email = data['email']
         password = data['password']
         if not User.objects.filter(username=username).exists():
             user = User.objects.create_user(username=username, email=email, password=password)
-            return JsonResponse({'message': 'User created successfully'}, status=201)
+            return JsonResponse({'message': 'User created successfully', 'redirect_url': 'login'}, status=201)
         return JsonResponse({'message': 'Username already exists'}, status=400)
    return JsonResponse({'message': 'Invalid request method'}, status=405)
  

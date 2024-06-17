@@ -1,4 +1,4 @@
-export function validateInputs() {
+export function validateSignupInputs() {
 	let isValid = { user: false, email: false, password: false, pwMatch: false };
 	const btn = document.querySelector('button');
 	const userInput = document.getElementById('uname');
@@ -24,11 +24,15 @@ export function validateInputs() {
 
 export function seePasswordToggle() {
 	const pwEyeIcon = document.getElementById('password-eye');
-	const confPwEyeIcon = document.getElementById('confPassword-eye');
 	const pwInput = document.getElementById('password');
-	const confPwInput = document.getElementById('confirm_password');
 
 	pwEyeIcon.addEventListener('click', () => togglePasswordVisibility(pwEyeIcon, pwInput));
+}
+
+export function seeConfirmPasswordToggle() {
+	const confPwEyeIcon = document.getElementById('confPassword-eye');
+	const confPwInput = document.getElementById('confirm_password');
+
 	confPwEyeIcon.addEventListener('click', () => togglePasswordVisibility(confPwEyeIcon, confPwInput));
 }
 
@@ -42,19 +46,11 @@ function validateEmailInput(isValid, checkValidity) {
 
 		feedbackElement.style.marginTop = '5px';
 		feedbackElement.style.fontSize = '0.8rem';
-		if (emailValue === '') {
-			feedbackElement.textContent = '';
-			isValid.email = false;
-		}
-		else if (emailRegex.test(emailValue)) {
-			feedbackElement.textContent = "Email is valid ✓"; // Email is valid
-			feedbackElement.style.color = '#32CD32';
+		if (emailRegex.test(emailValue) )
 			isValid.email = true;
-		} else {
-			feedbackElement.textContent = "Please enter a valid email address.";
-			feedbackElement.style.color = 'red';
+		else 
 			isValid.email = false;
-		}
+		updateEmailFeedback();
 		checkValidity();
 	});
 }
@@ -121,5 +117,23 @@ function updateConfirmPasswordMatchFeedback(isValid) {
 		feedbackElement.textContent = "Password does not match.";
 		feedbackElement.style.color = 'red';
 		isValid.pwMatch = false;
+	}
+}
+
+export function updateEmailFeedback() {
+	const feedbackElement = document.getElementById('emailFeedback');
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	const emailValue = document.getElementById('email').value;
+
+	feedbackElement.style.marginTop = '5px';
+	feedbackElement.style.fontSize = '0.8rem';
+	if (emailValue === '')
+		feedbackElement.textContent = '';
+	else if (emailRegex.test(emailValue)) {
+		feedbackElement.textContent = "Email is valid ✓"; // Email is valid
+		feedbackElement.style.color = '#32CD32';
+	} else {
+		feedbackElement.textContent = "Please enter a valid email address.";
+		feedbackElement.style.color = 'red';
 	}
 }

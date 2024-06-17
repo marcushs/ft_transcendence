@@ -6,11 +6,11 @@ class CustomBtn extends HTMLButtonElement {
     constructor() {
         super();
         
-        // Set default text
-        this.text = 'text';
-
         // Add a class to the button
         this.classList.add('btn');
+
+        // Set default text
+        this.text = 'text';
 
         // Set the initial text content
         this.textContent = this.text;
@@ -44,13 +44,8 @@ class CustomBtn extends HTMLButtonElement {
             // Object.fromEntries() transforms a list of key-value pairs into an object
 
             const formValues = Object.fromEntries(formData.entries());
-            // checkFormValues(formValues);
             const json = JSON.stringify(formValues);
             console.log(json)
-            if (json['password'] !== json['confirm_password']) {
-                console.log("passwords do not match");
-                return ;
-            }
             const config = {
                 method: 'POST',
                 headers: {
@@ -64,7 +59,8 @@ class CustomBtn extends HTMLButtonElement {
             try {
                 const res = await fetch(`http://localhost:8000/account/${this.text.toLowerCase()}/`, config);
                 const data = await res.json();
-                console.log(data.message);
+                console.log(data);
+                window.location.replace(data.redirect_url);
             } catch (error) {
                 console.error('Network error:', error);
                 // Handle the error, such as displaying an error message to the user
@@ -77,20 +73,3 @@ class CustomBtn extends HTMLButtonElement {
 
 // Define the custom button element, specifying that it extends HTMLButtonElement
 customElements.define("custom-btn", CustomBtn, { extends: "button" });
-
-// for csrf token header
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}

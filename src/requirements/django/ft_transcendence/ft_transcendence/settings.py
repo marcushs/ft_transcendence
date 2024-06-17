@@ -106,10 +106,10 @@ CORS_ALLOWED_ORIGINS = [
 	'http://frontend'
 ]
 
-# CSRF_TRUSTED_ORIGINS = [ 
-# 	'http://localhost:3000',
-# 	'http://frontend'
-# ]
+CSRF_TRUSTED_ORIGINS = [ 
+	'http://localhost:3000',
+	'http://frontend'
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
