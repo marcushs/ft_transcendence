@@ -1,7 +1,7 @@
 private-match-component {
 	display: block;
 	height: 22rem;
-	width: 45rem;
+	width: 40rem;
 	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
 	border-radius: 5px;
 	padding: 1px;
@@ -39,8 +39,8 @@ private-match-component {
 	width: 2rem;
 	position: absolute;
 	top: 10.5rem;
-	left: 33.5rem;
-	animation: loading-wheel 2s linear infinite;
+	left: 29rem;
+	animation: loading-wheel 1.5s infinite;
 }
 
 @keyframes loading-wheel {

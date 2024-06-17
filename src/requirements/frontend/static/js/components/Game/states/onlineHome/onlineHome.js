@@ -1,3 +1,4 @@
+import './RankedComponent.js'
 import './UnrankedComponent.js'
 import './PrivateMatchComponent.js'
 
@@ -13,9 +14,9 @@ class onlineHome {
 			<div class="online-home-container">
 				<h3>Online</h3>
 				<div class="online-components-container">
-<!--					<div class="left-section">				-->
-<!--					<ranked-component></ranked-component>-->
-<!--					</div>-->
+					<div class="left-section">				
+						<ranked-component></ranked-component>
+					</div>
 					<div class="right-section">
 						<unranked-component></unranked-component>
 						<private-match-component></private-match-component>

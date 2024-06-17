@@ -1,7 +1,7 @@
 unranked-component {
 	display: block;
 	height: 18rem;
-	width: 45rem;
+	width: 40rem;
 	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
 	border-radius: 5px;
 	padding: 1px;
