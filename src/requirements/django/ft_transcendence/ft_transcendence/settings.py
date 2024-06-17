@@ -32,7 +32,7 @@ SECRET_KEY = env("SECRET_KEY")
 
 JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
 JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
-JWP_EXP_DELTA_SECONDS = 3600 # one hour
+JWP_EXP_DELTA_SECONDS = 30
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -58,8 +58,10 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-	"corsheaders.middleware.CorsMiddleware",
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'corsheaders.middleware.CorsMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware', # Base auth system, we keep it cause django administration need it
+    'account.middleware.JWTAuthenticationMiddleware', # Custom auth middleware for supporting jwt authentication
+    'account.middleware.MixedAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

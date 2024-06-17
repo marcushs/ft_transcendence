@@ -15,6 +15,7 @@ from .jwt_auth import createJwtToken
 # --- UTILS --- #
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
+from .jwt_auth import check_jwt
 import json
 import re #regular expression
 
@@ -90,7 +91,3 @@ def signup(request):
         else:
             return JsonResponse({'error': 'Password did not match'}, status=401)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
- 
-# Create your views here.
-  
- 
