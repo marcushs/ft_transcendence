@@ -60,6 +60,10 @@ class CustomBtn extends HTMLButtonElement {
                 const res = await fetch(`http://localhost:8000/account/${this.text.toLowerCase()}/`, config);
                 const data = await res.json();
                 console.log(data);
+                if (data.message === 'Invalid credentials')
+                    alert('Invalid login credentials');
+                if (data.message === 'Username already exists')
+                    alert('Username already exists');
                 window.location.replace(data.redirect_url);
             } catch (error) {
                 console.error('Network error:', error);
