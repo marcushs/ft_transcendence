@@ -1,5 +1,6 @@
 from django.views.decorators.csrf import csrf_protect
 from django.core.exceptions import ObjectDoesNotExist
+from django.middleware.csrf import get_token
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.conf import settings
@@ -8,21 +9,24 @@ from typing import Any
 import datetime
 import jwt
 
+def generate_csrf_token(request):
+    csrf_token = get_token(request)  # generate new token CSRF
+    return csrf_token
 
 def createJwtToken(user, type: str) -> None:
     if not isinstance(type, str) or (type != 'access' and type != 'refresh'):
         raise TypeError("Inrecognized type for jwt token")
-    if type is 'access':
+    if type == 'access':
         payload = {
             'user_id': user.id,
-            'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.JWP_EXP_DELTA_SECONDS)
+            'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
         }
         token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
         return token
     else:
         payload = {
             'user_id': user.id,
-            'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.JWP_REFRESH_EXP_DELTA_SECONDS)
+            'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
         }
         refresh_token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
         return refresh_token
@@ -38,8 +42,9 @@ def decodeJwtToken(token):
 
 def RefreshJwtToken(refresh_token):
     user_id = decodeJwtToken(refresh_token)
+    print('prout: ', user_id)
     if user_id:
-        return createJwtToken(user_id, 'access')    
+        return createJwtToken(getUserFromJwtToken(refresh_token), 'access')    
     return None
 
 def getUserFromJwtToken(token):
@@ -65,7 +70,7 @@ def check_jwt(view_func):
                 return JsonResponse({'error': 'Invalid jwt token'}, status=401)
         return JsonResponse({'error': 'Authorization token not provided'}, status=401)
     return _wrapped_view
-    
+
 # test view for jwt token
 # @check_jwt
 @csrf_protect

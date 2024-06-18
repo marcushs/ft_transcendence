@@ -3,6 +3,7 @@ import index from "./views/index.js";
 import signup from "./views/signup.js";
 import LogoutFormHandler from "./views/logout.js";
 import { getCookie } from "./utils/cookie.js";
+import { HomeInit } from "./views/index.js";
 
 const routes = {
     "/": { title: "Index", render: index },
@@ -43,6 +44,8 @@ function router() {
         console.log(view);
         document.title = view.title;
         app.innerHTML = view.render();
+        if (document.title === 'Index')
+            HomeInit();
     } else {
         history.replaceState("", "", "/");
         router();

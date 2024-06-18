@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from .constants import REGEX_EMAIL_CHECK, REGEX_USERNAME_CHECK
 from django.contrib.auth.password_validation import validate_password
 # --- JWT --- #
+from .jwt_auth import generate_csrf_token
 from .jwt_auth import createJwtToken
 # from .serializers import UserSerializer
 # --- UTILS --- #
@@ -20,9 +21,15 @@ import json
 import re #regular expression
 
 def index(request):
-    print(request.method)
-    data = "asdfaddfadfasdfasdfasdfasdfasdfsdfsfsfasfasdfsd"
-    return JsonResponse({"message": data})
+    csrf_token = request.COOKIES.get('csrftoken')
+    if not csrf_token:
+        csrf_token = generate_csrf_token(request)
+        response = JsonResponse({"message": 'new csrf token generated'})
+        response.set_cookie('csrftoken', csrf_token, httponly=False, max_age=3600)
+    else:
+        response = JsonResponse({"message": 'csrf token already generated'})
+    # print(request.method)
+    return response
 
 @require_POST
 @csrf_protect
@@ -32,6 +39,7 @@ def logout(request):
             auth_logout(request)
             response = JsonResponse({'message': 'Logout successfully'}, status=201)
             response.delete_cookie('jwt')
+            response.delete_cookie('jwt_refresh')
             # messages.success(request, ("Succesfully log out !"))
             return response
         else:
@@ -54,8 +62,8 @@ def login(request):
             token = createJwtToken(user, 'access')
             refresh_token = createJwtToken(user, 'refresh')
             response = JsonResponse({'message': 'Login successfully'}, status=201)
-            response.set_cookie('jwt', token, httponly=True, max_age=settings.JWP_EXP_DELTA_SECONDS)
-            response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWP_EXP_DELTA_SECONDS)
+            response.set_cookie('jwt', token, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
+            response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
             return response
         else:
             return JsonResponse({'error': 'Invalid username or password, please try again'}, status=400)
