@@ -15,7 +15,7 @@ async function getProfile() {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken,
         },
         credentials: 'include'  // Include cookies with the request
     }
@@ -23,11 +23,12 @@ async function getProfile() {
     const data = await res.json();
     console.log(data);
     if (data.is_logged_in) {
-        const container = document.getElementById('container');
-        const welcome = document.createElement('h1');
+        // const container = document.getElementById('container');
+        // const welcome = document.createElement('h1');
 
-        welcome.textContent = `Welcome, ${data.username}`;
-        container.appendChild(welcome);
+        // welcome.textContent = `Welcome, ${data.username}`;
+        // container.appendChild(welcome);
+        console.log(document.cookie);
     }
     else {
         alert("You are not logged in");

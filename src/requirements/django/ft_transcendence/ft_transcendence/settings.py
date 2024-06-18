@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import environ
 import os
+import jwt
+import datetime
 
 # Read from .env file
 env = environ.Env()
@@ -28,6 +30,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
+
+# JWT settings
+JWT_SECRET = SECRET_KEY
+
+JWT_ALGORITHM = 'HS256'
+JWT_EXP_DELTA_SECONDS = 3600  # Token expiration time (e.g., 1 hour)
+JWP_REFRESH_EXP_DELTA_SECONDS = 86400 # 1day
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -57,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'account.jwt_auth_middleware.JWTAuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'ft_transcendence.urls'
