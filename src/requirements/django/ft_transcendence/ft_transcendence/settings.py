@@ -32,7 +32,8 @@ SECRET_KEY = env("SECRET_KEY")
 
 JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
 JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
-JWP_EXP_DELTA_SECONDS = 30
+JWP_EXP_DELTA_SECONDS = 900 # 15 minutes
+JWP_REFRESH_EXP_DELTA_SECONDS = 86400 # 1day
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

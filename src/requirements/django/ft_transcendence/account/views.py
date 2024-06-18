@@ -51,9 +51,11 @@ def login(request):
         user = authenticate(request, username=data['username'], password=data['password'])
         if user is not None:
             auth_login(request, user)
-            token = createJwtToken(user)
+            token = createJwtToken(user, 'access')
+            refresh_token = createJwtToken(user, 'refresh')
             response = JsonResponse({'message': 'Login successfully'}, status=201)
             response.set_cookie('jwt', token, httponly=True, max_age=settings.JWP_EXP_DELTA_SECONDS)
+            response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWP_EXP_DELTA_SECONDS)
             return response
         else:
             return JsonResponse({'error': 'Invalid username or password, please try again'}, status=400)

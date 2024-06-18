@@ -9,13 +9,23 @@ import datetime
 import jwt
 
 
-def createJwtToken(user):
-    payload = {
-        'user_id': user.id,
-        'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.JWP_EXP_DELTA_SECONDS)
-    }
-    token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
-    return token
+def createJwtToken(user, type: str) -> None:
+    if not isinstance(type, str) or (type != 'access' and type != 'refresh'):
+        raise TypeError("Inrecognized type for jwt token")
+    if type is 'access':
+        payload = {
+            'user_id': user.id,
+            'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.JWP_EXP_DELTA_SECONDS)
+        }
+        token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
+        return token
+    else:
+        payload = {
+            'user_id': user.id,
+            'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.JWP_REFRESH_EXP_DELTA_SECONDS)
+        }
+        refresh_token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
+        return refresh_token
 
 def decodeJwtToken(token):
     try:
@@ -25,6 +35,12 @@ def decodeJwtToken(token):
         return None
     except jwt.InvalidTokenError:
         return None
+
+def RefreshJwtToken(refresh_token):
+    user_id = decodeJwtToken(refresh_token)
+    if user_id:
+        return createJwtToken(user_id, 'access')    
+    return None
 
 def getUserFromJwtToken(token):
     user_id = decodeJwtToken(token)
@@ -54,7 +70,7 @@ def check_jwt(view_func):
 # @check_jwt
 @csrf_protect
 def protectedView(request):
-    if request.user is not None:
+    if request.user.is_authenticated:
         # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         return JsonResponse({'message': 'protected view ok', 'user': request.user.username}, status=201)
     else:
