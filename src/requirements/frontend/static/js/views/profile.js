@@ -11,11 +11,13 @@ export default () => {
 
 async function getProfile() {
     const csrfToken = getCookie('csrftoken');
+    const jwt = getCookie('jwt');  
     const config = {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken,
+            'Authorization': 'Bearer' + jwt,
         },
         credentials: 'include'  // Include cookies with the request
     }

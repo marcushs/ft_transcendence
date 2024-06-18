@@ -46,12 +46,14 @@ class CustomBtn extends HTMLButtonElement {
             const formValues = Object.fromEntries(formData.entries());
             const json = JSON.stringify(formValues);
             console.log(json)
+            const csrfToken = getCookie('csrftoken');
+            console.log(csrfToken);
             const config = {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    // 'X-CSRFToken': getCookie('csrftoken')    
+                    'X-CSRFToken': csrfToken,  
                 },
                 body: JSON.stringify(formValues), // Send form values as JSON
             };
@@ -64,6 +66,7 @@ class CustomBtn extends HTMLButtonElement {
                     alert('Invalid login credentials');
                 if (data.message === 'Username already exists')
                     alert('Username already exists');
+                console.log(document.cookie);
                 window.location.replace(data.redirect_url);
             } catch (error) {
                 console.error('Network error:', error);
@@ -77,3 +80,19 @@ class CustomBtn extends HTMLButtonElement {
 
 // Define the custom button element, specifying that it extends HTMLButtonElement
 customElements.define("custom-btn", CustomBtn, { extends: "button" });
+
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

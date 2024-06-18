@@ -32,7 +32,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env("SECRET_KEY")
 
 # JWT settings
-JWT_SECRET = SECRET_KEY
+JWT_SECRET_KEY = SECRET_KEY
 
 JWT_ALGORITHM = 'HS256'
 JWT_EXP_DELTA_SECONDS = 3600  # Token expiration time (e.g., 1 hour)

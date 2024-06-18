@@ -1,24 +1,29 @@
 from django.conf import settings
 from django.http import JsonResponse
 from .jwt_utils import decode_jwt_token
+from django.contrib.auth.models import User
+import jwt
 
 class JWTAuthenticationMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        auth_header = request.headers.get('Authorization')
-        if auth_header:
+        token = request.COOKIES.get('jwt')
+        if token:
             try:
-                token = auth_header.split(' ')[1]
-                user_id = decode_jwt_token(token)
-                if user_id:
-                    request.user_id = user_id
-                else:
-                    return JsonResponse({'error': 'Invalid token'}, status=401)
-            except IndexError:
-                return JsonResponse({'error': 'Token format invalid'}, status=401)
+                payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+                user_id = payload.get('user_id')
+                try:
+                    request.user = User.objects.get(id=user_id)
+                except User.DoesNotExist:
+                    return JsonResponse({'error': 'User not found'}, status=401)
+            except jwt.ExpiredSignatureError:
+                return JsonResponse({'error': 'Token expired'}, status=401)
+            except jwt.InvalidTokenError:
+                return JsonResponse({'error': 'Invalid token'}, status=401)
         else:
-            request.user_id = None
+            request.user = None
+
         response = self.get_response(request)
         return response
