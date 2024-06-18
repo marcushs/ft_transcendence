@@ -4,6 +4,8 @@ create-component {
 	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
 	border-radius: 5px;
 	padding: 1px;
+	animation: component-apparition 1s 0.3s forwards;
+	opacity: 0;
 }
 
 .create-component-content {
@@ -34,6 +36,7 @@ create-component {
 
 .tournament-name-container input {
 	border-bottom: 2px solid var(--light-grey);
+	width: 80%;
 	color: var(--text-primary-color);
 	line-height: 3rem;
 }

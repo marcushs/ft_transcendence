@@ -5,6 +5,8 @@ unranked-component {
 	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
 	border-radius: 5px;
 	padding: 1px;
+	opacity: 0;
+	animation: component-apparition 1s 0.6s forwards;
 }
 
 .unranked-component-content {

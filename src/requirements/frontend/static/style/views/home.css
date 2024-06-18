@@ -30,3 +30,12 @@ input {
     height: 100vh;
     background: var(--background-color);
 }
+
+@keyframes component-apparition {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

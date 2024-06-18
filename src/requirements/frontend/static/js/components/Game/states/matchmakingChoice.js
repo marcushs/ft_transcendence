@@ -11,7 +11,7 @@ class matchmakingChoice {
 			<p state-redirect tournament-home>Tournament</p>
 			<p state-redirect online-home>Online</p>
 			<p state-redirect local-home>Local</p>
-		`
+		`;
 	}
 }
 

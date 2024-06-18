@@ -1,5 +1,6 @@
 @import "./JoinComponent.css";
 @import "./CreateComponent.css";
+@import "./bracket/bracket.css";
 
 .tournament-home-container {
 	height: 100%;
@@ -13,12 +14,14 @@
 .tournament-home-container h3 {
 	font-size: 3rem;
 	font-weight: 400;
+	animation: component-apparition 0.75s forwards;
 }
 
 .tournament-home-container h4 {
 	font-size: 2.5rem;
 	font-weight: 400;
 	margin-bottom: 1rem;
+	z-index: 1000;
 }
 
 .tournament-home-container .tournament-components-container {

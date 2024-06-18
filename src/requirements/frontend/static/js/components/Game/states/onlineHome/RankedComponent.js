@@ -16,7 +16,7 @@ class RankedComponent extends HTMLElement {
 			<div class="rank-container rank-container-${rank}">
 				<div class="rank-container-content">					
 					<div class="rank-logo rank-${rank}-logo"></div>
-					<p class="rank-name rank-name-${rank}">Master</p>
+					<p class="rank-name rank-name-${rank}">${rank.at(0).toUpperCase() + rank.slice(1, rank.length)}</p>
 					<div class="rank-elo-container">
 						<img src="../../../../../assets/rp-logo.svg" alt="rp logo">
 						<p class="elo">10255</p>

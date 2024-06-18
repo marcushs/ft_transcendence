@@ -4,6 +4,8 @@ local-component {
 	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
 	border-radius: 5px;
 	padding: 1px;
+	opacity: 0;
+	animation: component-apparition 1s 0.3s forwards;
 }
 
 .local-component-content {
@@ -47,6 +49,7 @@ local-component {
 
 .settings-container > * > .setting-values-container > input {
 	-webkit-appearance: none;
+	width: 80%;
 	height: 1px;
 	background: var(--neon-gradiant);
 }

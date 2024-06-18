@@ -1,0 +1,57 @@
+player-in-bracket {
+    width: 12rem;
+    height: 2.5rem;
+    display: flex;
+    padding: 1px;
+}
+
+player-in-bracket .player-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    background: var(--component-background-color);
+    font-size: 1.5rem;
+}
+
+player-in-bracket .score {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20%;
+}
+
+player-in-bracket .score p {
+    font-size: 1.8rem;
+    text-shadow: 1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black, 0 1px 5px black;
+}
+
+/* Game win style */
+
+.player-in-bracket-game-win {
+    background: linear-gradient(0deg, var(--neon-pink), var(--neon-blue));
+}
+
+.player-in-bracket-game-win .score-game-win {
+    background: linear-gradient(0deg, var(--neon-pink), var(--neon-blue));
+}
+
+/* Tournament win style */
+
+.player-in-bracket-tournament-win {
+    background: #FFD700;
+}
+
+.player-in-bracket-tournament-win .score-tournament-win {
+    background: #FFD700;
+}
+
+/* Basic style */
+
+.player-in-bracket-basic {
+    background: #636F94;
+}
+
+.player-in-bracket-basic .score-basic {
+    background: #636F94;
+}

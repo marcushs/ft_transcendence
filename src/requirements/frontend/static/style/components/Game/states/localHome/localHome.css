@@ -12,6 +12,8 @@
 .local-home-container h3 {
 	font-size: 3rem;
 	font-weight: 400;
+	opacity: 0;
+	animation: component-apparition 0.75s forwards;
 }
 
 .local-home-container h4 {

@@ -6,6 +6,7 @@ import matchmakingChoice from "./states/matchmakingChoice.js";
 import tournamentHome from "./states/tournamentHome/tournamentHome.js";
 import onlineHome from "./states/onlineHome/onlineHome.js";
 import localHome from "./states/localHome/localHome.js";
+import bracket from "./states/tournamentHome/bracket/bracket.js";
 
 class GameComponent extends HTMLElement {
     constructor() {
@@ -15,16 +16,15 @@ class GameComponent extends HTMLElement {
             "matchmakingChoice": { context: "/", state: new matchmakingChoice() },
             "tournamentHome": { context: "/tournamentHome", state: new tournamentHome() },
             "onlineHome": { context: "/onlineHome", state: new onlineHome() },
-            "localHome": { context: "/localHome", state: new localHome() }
+            "localHome": { context: "/localHome", state: new localHome() },
+            "bracket": {context: "/tournamentHome/bracket", state: new bracket()}
         }
 
         this.innerHTML = `
             <div class="game-background"></div>
-            <div class="states-container"></div>
+            <div class="states-container">
+            </div>
             <game-top-bar></game-top-bar>
-            <div class="left-player-paddle"></div>
-            <div class="right-player-paddle"></div>
-            <div class="middle-line"></div>
         `;
 
         this.statesContainer = this.querySelector('.states-container');
@@ -38,7 +38,11 @@ class GameComponent extends HTMLElement {
     }
 
     pushNewState(state) {
-        this.statesContainer.innerHTML = state.render();
+        this.statesContainer.innerHTML = `<div class="left-player-paddle"></div>
+                <div class="right-player-paddle"></div>
+                <div class="middle-line"></div>`
+                + state.render();
+
         this.statesContainer.classList.add(state.class);
     }
 

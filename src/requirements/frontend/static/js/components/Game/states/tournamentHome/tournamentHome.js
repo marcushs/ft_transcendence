@@ -12,7 +12,7 @@ class tournamentHome {
 	render() {
 		return `
 			<div class="tournament-home-container">
-				<h3>Tournament</h3>
+				<h3 state-redirect bracket>Tournament</h3>
 				<div class="tournament-components-container">
 					<create-component></create-component>
 					<join-component></join-component>
