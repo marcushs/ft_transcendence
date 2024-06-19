@@ -15,6 +15,7 @@ services:
   ft_transcendence:
     container_name: transcendence
     env_file: ./requirements/django/ft_transcendence/.env
+    restart: always
     build:
       context: ./requirements/django
       dockerfile: Dockerfile
