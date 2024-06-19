@@ -6,6 +6,10 @@ player-in-bracket {
     padding: 1px;
 }
 
+.right-players {
+    flex-direction: row-reverse;
+}
+
 /*player-in-bracket::before {*/
 /*    content: "";*/
 /*    position: absolute;*/
@@ -24,6 +28,16 @@ player-in-bracket .player-name {
     font-size: 1.5rem;
 }
 
+player-in-bracket .player-name p {
+    white-space: nowrap;
+}
+
+player-in-bracket .player-name .overflow-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 0.5px;
+}
+
 player-in-bracket .score {
     display: flex;
     justify-content: center;
@@ -36,14 +50,24 @@ player-in-bracket .score p {
     text-shadow: 1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black, 0 1px 5px black;
 }
 
-/* Game win style */
+/* Player himself */
 
-.player-in-bracket-game-win {
+.player-in-bracket-himself {
     background: linear-gradient(0deg, var(--neon-pink), var(--neon-blue));
 }
 
-.player-in-bracket-game-win .score-game-win {
+.player-in-bracket-himself {
     background: linear-gradient(0deg, var(--neon-pink), var(--neon-blue));
+}
+
+/* Game win style */
+
+.player-in-bracket-game-win {
+    background: var(--neon-blue);
+}
+
+.player-in-bracket-game-win .score-game-win {
+    background: var(--neon-blue);
 }
 
 /* Tournament win style */
@@ -59,9 +83,13 @@ player-in-bracket .score p {
 /* Basic style */
 
 .player-in-bracket-basic {
-    background: #636F94;
+    /*background: var(--light-grey);*/
+    opacity: 0.5;
+    background: var(--light-grey);
 }
 
 .player-in-bracket-basic .score-basic {
-    background: #636F94;
+    /*background: var(--light-grey);*/
+    /*background: #636F94;*/
+    background: var(--light-grey);
 }
