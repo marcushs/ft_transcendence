@@ -33,6 +33,12 @@ if (location.pathname === '/protected') {
         console.log('jwt user: ', data.user)
         alert(data.message)
     } catch (error) {
+        console.log('Catch error :', error);
+        if (error.status && error.status === 'jwt_failed') {
+            history.replaceState("", "", "/");
+            document.title = "Index";
+            app.innerHTML = index();
+        }
         alert(`Error: ${error.message}`);
     }
 }

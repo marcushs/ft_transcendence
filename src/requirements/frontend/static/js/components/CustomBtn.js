@@ -71,6 +71,12 @@ class CustomBtn extends HTMLButtonElement {
                 app.innerHTML = index();
                 alert(data.message);
             } catch (error) {
+                console.log('Catch error :', error);
+                if (error.status && error.status === 'jwt_failed') {
+                    history.replaceState("", "", "/");
+                    document.title = "Index";
+                    app.innerHTML = index();
+                }
                 alert(`Error: ${error.message}`)
             }
         } else {

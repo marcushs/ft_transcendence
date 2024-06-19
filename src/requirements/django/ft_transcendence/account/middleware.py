@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AnonymousUser
 from django.utils.deprecation import MiddlewareMixin # assure the retro-compability for recent django middleware
 from .jwt_auth import getUserFromJwtToken, RefreshJwtToken
+from django.contrib.auth import logout as auth_logout
+from django.http import JsonResponse
 from django.conf import settings
 
 # Middleware for jwt authentication
@@ -15,7 +17,6 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
                 request.jwt_user = AnonymousUser()                
         else:
             refresh_token = request.COOKIES.get('jwt_refresh')
-            print('refresh token: ', refresh_token)
             if refresh_token:
                 user = getUserFromJwtToken(refresh_token)
                 if user:
@@ -24,9 +25,9 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
                     request.jwt_user = user
                 else:
                     request.jwt_user = AnonymousUser()
-                    print('le flop - 1')
             else:
-                request.jwt_user = AnonymousUser()
+                    request.jwt_failed = True
+                    request.jwt_user = AnonymousUser()
         response = self.get_response(request)
         return response
 
@@ -38,5 +39,8 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
 # define jwt authentication as default user auth by overriding request.user
 class MixedAuthenticationMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        if request.jwt_user:
+        if hasattr(request, 'jwt_failed') and request.COOKIES.get('sessionid'):
+            auth_logout(request)
+            return JsonResponse({'error': 'token expire, please login again', 'status': 'jwt_failed'}, status=401)
+        if hasattr(request, 'jwt_user'):
             request.user = request.jwt_user
