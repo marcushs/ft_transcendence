@@ -1,0 +1,67 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="396 280 858 840" width="2200" height="1400">
+  <title>New Project</title>
+  <defs>
+    <image width="55" height="2" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img2" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img3" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img4" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img5" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img6" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img7" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img8" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img9" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img10" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img11" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img12" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img13" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="2" height="243" id="img14" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAADzAQMAAACWtlXbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA9JREFUeJxjZGAchcMeAgDpggD0nPDDjAAAAABJRU5ErkJggg==" />
+    <image width="2" height="484" id="img15" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAHkAQMAAAAuEmxMAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAABJJREFUeJxjZGAchaNwFA5xCACY6QHlYhpNDgAAAABJRU5ErkJggg==" />
+    <image width="55" height="2" id="img16" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="2" height="243" id="img17" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAADzAQMAAACWtlXbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA9JREFUeJxjZGAchcMeAgDpggD0nPDDjAAAAABJRU5ErkJggg==" />
+    <image width="55" height="2" id="img18" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img19" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="55" height="2" id="img20" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="2" height="84" id="img21" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAABUAQMAAACSr3SNAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA1JREFUeJxjZGAcEhAAHIwAVbfu/7kAAAAASUVORK5CYII=" />
+    <image width="2" height="84" id="img22" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAABUAQMAAACSr3SNAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA1JREFUeJxjZGAcEhAAHIwAVbfu/7kAAAAASUVORK5CYII=" />
+    <image width="2" height="84" id="img23" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAABUAQMAAACSr3SNAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA1JREFUeJxjZGAcEhAAHIwAVbfu/7kAAAAASUVORK5CYII=" />
+    <image width="2" height="84" id="img24" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAABUAQMAAACSr3SNAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA1JREFUeJxjZGAcEhAAHIwAVbfu/7kAAAAASUVORK5CYII=" />
+    <image width="54" height="2" id="img25" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAACAQMAAAApYL0lAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="54" height="2" id="img26" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAACAQMAAAApYL0lAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="54" height="2" id="img27" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAACAQMAAAApYL0lAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+    <image width="54" height="2" id="img28" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAACAQMAAAApYL0lAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC" />
+  </defs>
+  <style>
+  </style>
+  <g id="Folder 1">
+    <g id="Left">
+      <use id="Layer 1" href="#img1" x="419" y="299" />
+      <use id="Layer 1 copy" href="#img2" x="419" y="385" />
+      <use id="Layer 1 copy 7" href="#img3" x="419" y="1022" />
+      <use id="Layer 1 copy 8" href="#img4" x="419" y="1108" />
+      <use id="Layer 1 copy 3" href="#img5" x="419" y="781" />
+      <use id="Layer 1 copy 6" href="#img6" x="419" y="867" />
+      <use id="Layer 1 copy 4" href="#img7" x="419" y="540" />
+      <use id="Layer 1 copy 5" href="#img8" x="419" y="626" />
+      <use id="Layer 1 copy 9" href="#img9" x="774" y="342" />
+      <use id="Layer 1 copy 14" href="#img10" x="1132" y="463" />
+      <use id="Layer 1 copy 15" href="#img11" x="1132" y="945" />
+      <use id="Layer 1 copy 11" href="#img12" x="774" y="583" />
+      <use id="Layer 1 copy 12" href="#img13" x="774" y="1065" />
+      <use id="Layer 2" href="#img14" x="829" y="342" />
+      <use id="Layer 2 copy 2" href="#img15" x="1187" y="463" />
+      <use id="Layer 3" href="#img16" x="831" y="463" />
+      <use id="Layer 2 copy" href="#img17" x="829" y="824" />
+      <use id="Layer 3 copy 2" href="#img18" x="1189" y="704" />
+      <use id="Layer 3 copy" href="#img19" x="831" y="945" />
+      <use id="Layer 1 copy 13" href="#img20" x="774" y="824" />
+      <use id="vertical bar" href="#img21" x="472" y="301" />
+      <use id="vertical bar copy" href="#img22" x="472" y="542" />
+      <use id="vertical bar copy 2" href="#img23" x="472" y="783" />
+      <use id="vertical bar copy 3" href="#img24" x="472" y="1024" />
+      <use id="Horizontal bar" href="#img25" x="474" y="824" />
+      <use id="Horizontal bar copy 3" href="#img26" x="474" y="1065" />
+      <use id="Horizontal bar copy" href="#img27" x="474" y="583" />
+      <use id="Horizontal bar copy 2" href="#img28" x="474" y="342" />
+    </g>
+  </g>
+</svg>

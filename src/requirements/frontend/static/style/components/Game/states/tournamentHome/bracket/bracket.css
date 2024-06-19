@@ -4,6 +4,193 @@
     width: 100%;
     height: 100%;
     display: flex;
-    justify-content: space-around;
     align-items: center;
+    justify-content: center;
+}
+
+.left-matches {
+    height: 100%;
+    width: 40%;
+    background-image: url("../../../../../../assets/bracket_model.svg");
+    background-size: 120%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-clip: revert;
+    background-position-y: 54%;
+    background-position-x: 46.5%;
+}
+
+.right-matches {
+    height: 100%;
+    width: 40%;
+    background-image: url("../../../../../../assets/bracket_model.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 120%;
+    transform: rotate(180deg);
+    background-clip: revert;
+    background-position-y: 54%;
+    background-position-x: 46.5%;
+}
+
+#left-height-player1 {
+    top: 27.4%;
+    left: -8.59%;
+}
+
+#left-height-player2 {
+    top: 29.384%;
+    left: -8.59%;
+}
+
+#left-height-player3 {
+    top: 35.36%;
+    left: -8.59%;
+}
+
+#left-height-player4 {
+    top: 37.344%;
+    left: -8.59%;
+}
+
+#left-height-player5 {
+    top: 43.32%;
+    left: -8.59%;
+}
+
+#left-height-player6 {
+    top: 45.3%;
+    left: -8.59%;
+}
+
+#left-height-player7 {
+    top: 51.276%;
+    left: -8.59%;
+}
+
+#left-height-player8 {
+    top: 53.26%;
+    left: -8.59%;
+}
+
+#left-four-player1 {
+    top: 5.89%;
+    left: 23.7%;
+}
+
+#left-four-player2 {
+    top: 16.85%;
+    left: 23.7%;
+}
+
+#left-four-player3 {
+    top: 27.77%;
+    left: 23.7%;
+}
+
+#left-four-player4 {
+    top: 38.76%;
+    left: 23.7%;
+}
+
+#left-two-player1 {
+    top: 0.902%;
+    left: 56.25%;
+}
+
+#left-two-player2 {
+    top: 25.81%;
+    left: 56.25%;
+}
+
+.final-matches {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 40%;
+    left: auto;
+    height: 100%;
+}
+
+#final-player1 {
+    margin-bottom: 2.6%;
+    left: 0;
+}
+
+/* --------------------------------- */
+
+.right-matches > * {
+    transform: rotate(180deg);
+}
+
+#right-height-player1 {
+    top: 27.4%;
+    left: -8.59%;
+}
+
+#right-height-player2 {
+    top: 29.384%;
+    left: -8.59%;
+}
+
+#right-height-player3 {
+    top: 35.36%;
+    left: -8.59%;
+}
+
+#right-height-player4 {
+    top: 37.344%;
+    left: -8.59%;
+}
+
+#right-height-player5 {
+    top: 43.32%;
+    left: -8.59%;
+}
+
+#right-height-player6 {
+    top: 45.3%;
+    left: -8.59%;
+}
+
+#right-height-player7 {
+    top: 51.276%;
+    left: -8.59%;
+}
+
+#right-height-player8 {
+    top: 53.26%;
+    left: -8.59%;
+}
+
+#right-four-player1 {
+    top: 5.89%;
+    left: 23.7%;
+}
+
+#right-four-player2 {
+    top: 16.85%;
+    left: 23.7%;
+}
+
+#right-four-player3 {
+    top: 27.77%;
+    left: 23.7%;
+}
+
+#right-four-player4 {
+    top: 38.76%;
+    left: 23.7%;
+}
+
+#right-two-player1 {
+    top: 0.902%;
+    left: 56.25%;
+}
+
+#right-two-player2 {
+    top: 25.81%;
+    left: 56.25%;
 }

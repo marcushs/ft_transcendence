@@ -13,6 +13,7 @@ game-component {
     height: calc((140rem * 63) / 100);
     padding: 3px;
     border-radius: 10px;
+    flex-shrink: 0;
 }
 
 .states-container * {

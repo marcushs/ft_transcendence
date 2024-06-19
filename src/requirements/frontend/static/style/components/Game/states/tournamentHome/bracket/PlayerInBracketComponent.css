@@ -1,9 +1,19 @@
 player-in-bracket {
-    width: 12rem;
-    height: 2.5rem;
+    position: relative;
+    width: 22.4%;
+    height: 3%;
     display: flex;
     padding: 1px;
 }
+
+/*player-in-bracket::before {*/
+/*    content: "";*/
+/*    position: absolute;*/
+/*    top: calc(50% - 1px);*/
+/*    width: 100%;*/
+/*    height: 2px;*/
+/*    background: var(--light-grey);*/
+/*}*/
 
 player-in-bracket .player-name {
     display: flex;
