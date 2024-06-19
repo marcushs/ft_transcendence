@@ -32,8 +32,8 @@ SECRET_KEY = env("SECRET_KEY")
 
 JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
 JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
-JWT_EXP_DELTA_SECONDS = 900 # 15 minutes
-JWT_REFRESH_EXP_DELTA_SECONDS = 3600 # 1day
+JWT_EXP_DELTA_SECONDS = 3000 # 15 minutes
+JWT_REFRESH_EXP_DELTA_SECONDS = 6000 # 1day
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -113,7 +113,8 @@ CORS_ALLOWED_ORIGINS = [
 	'http://frontend'
 ]
 
-CSRF_TRUSTED_ORIGINS = [ 
+CSRF_TRUSTED_ORIGINS = [
+    # 'http://localhost:8000'
 	'http://localhost:3000',
 	'http://frontend'
 ]

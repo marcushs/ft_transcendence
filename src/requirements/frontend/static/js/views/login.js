@@ -1,4 +1,7 @@
 import formWave from "../anim/formWave.js";
+import "../components/CustomBtn.js"
+import { seePasswordToggle } from "../utils/formValidation.js";
+import { checkFieldsCompleted } from "../utils/loginFormValidation.js";
 
 export default () => {
 	const html = `
@@ -6,16 +9,17 @@ export default () => {
 		<h1>Please Login</h1>
 		<form>
 			<div class="form-control">
-				<input type="text" name="username" required>
+				<input type="text" id="username" name="username" required>
 				<label>Username</label>
 			</div>
 
 			<div class="form-control">
-				<input type="password" name="password" required>
+				<input type="password" id="password" name="password" required>
 				<label>Password</label>
+				<i class="fa-solid fa-eye" id="password-eye"></i>
 			</div>
 
-			<button class="btn" type="button">Login</button>
+			<button is="custom-btn" text="Login"></button>
 
 			<p class="text">Don't have an account? <a href="/signup">Register</a></p>
 		</form>
@@ -23,6 +27,8 @@ export default () => {
 
 	setTimeout(() => {
 		formWave();
+		checkFieldsCompleted();
+		seePasswordToggle();
 	}, 0);
 
 	return html;

@@ -42,7 +42,6 @@ def decodeJwtToken(token):
 
 def RefreshJwtToken(refresh_token, type: str):
     user_id = decodeJwtToken(refresh_token)
-    print('prout: ', user_id)
     if user_id:
         return createJwtToken(getUserFromJwtToken(refresh_token), type)    
     return None
@@ -73,10 +72,8 @@ def check_jwt(view_func):
 
 # test view for jwt token
 # @check_jwt
-@csrf_protect
 def protectedView(request):
     if request.user.is_authenticated:
-        # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         return JsonResponse({'message': 'protected view ok', 'user': request.user.username}, status=201)
     else:
         return JsonResponse({'error': 'User not found'}, status=404)

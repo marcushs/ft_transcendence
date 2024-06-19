@@ -9,11 +9,11 @@ class CustomBtn extends HTMLButtonElement {
     constructor() {
         super();
         
-        // Set default text
-        this.text = 'text';
-
         // Add a class to the button
         this.classList.add('btn');
+
+        // Set default text
+        this.text = 'text';
 
         // Set the initial text content
         this.textContent = this.text;
@@ -21,7 +21,9 @@ class CustomBtn extends HTMLButtonElement {
         // Bind the getData method to this instance
         this.addEventListener('click', this.getData.bind(this));
 
-        this.type = 'button';
+        this.type = 'submit';
+
+        this.disabled = true;
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -36,18 +38,16 @@ class CustomBtn extends HTMLButtonElement {
         event.preventDefault();
 
         // Get the closest form element of the button
-        const form = event.target.form;
+        const form = this.closest('form');
         if (form) {
             // Construct a FormData object, a set of key/value pairs
             const formData = new FormData(form);
             
             // formData.entries() return an iterator that traverse all the key/value pairs
             // Object.fromEntries() transforms a list of key-value pairs into an object
-            
-            const formValues = Object.fromEntries(formData.entries()); 
 
+            const formValues = Object.fromEntries(formData.entries());
             const json = JSON.stringify(formValues);
-            console.log('(CustomBtn)-> json: ', json)
             const config = {
                 method: 'POST',
                 headers: {
@@ -64,12 +64,11 @@ class CustomBtn extends HTMLButtonElement {
                 if (res.status == 403)
                     throw new Error('Access Denied')
                 const data = await res.json();
-                if (!res.ok)
-                    throw new Error(`${res.status} - ${data.error}`);
-                history.replaceState("", "", "/");
-                document.title = "Index";
-                app.innerHTML = index();
-                alert(data.message);
+                console.log(data);
+                if (data.error)
+                    alert(data.error)
+                else
+                    window.location.replace(data.redirect_url);
             } catch (error) {
                 if (error.data && error.data.status === 'jwt_failed') {
                     history.replaceState("", "", "/");

@@ -14,7 +14,7 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
             if user:
                 request.jwt_user = user # Associates user with the request
             else:
-                request.jwt_user = AnonymousUser()                
+                request.jwt_user = AnonymousUser()
         else:
             refresh_token = request.COOKIES.get('jwt_refresh')
             if refresh_token:

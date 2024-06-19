@@ -1,7 +1,5 @@
 # --- SRC --- #
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
-from django.contrib import messages
+from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.conf import settings
@@ -43,7 +41,7 @@ def logout(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
             # auth_logout(request)
-            response = JsonResponse({'message': 'Logout successfully'}, status=201)
+            response = JsonResponse({'message': 'Logout successfully', 'redirect_url': 'login'}, status=201)
             response.delete_cookie('authentificated')
             response.delete_cookie('jwt')
             response.delete_cookie('jwt_refresh')
@@ -64,11 +62,10 @@ def login(request):
             return JsonResponse({'error': 'You are already logged in'}, status=401)
         user = authenticate(request, username=data['username'], password=data['password'])
         if user is not None:
-            # auth_login(request, user)
             token = createJwtToken(user, 'access')
             refresh_token = createJwtToken(user, 'refresh')
-            response = JsonResponse({'message': 'Login successfully'}, status=201)
-            response.set_cookie('authentificated', True, httponly=True)
+            response = JsonResponse({'message': 'Login successfully', 'redirect_url': 'profile'}, status=201)
+            response.set_cookie('authentificated', True, httponly=False)
             response.set_cookie('jwt', token, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
             response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
             return response
@@ -79,9 +76,9 @@ def login(request):
 def signup(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
-        if not data['user_name']:
+        if not data['username']:
             return JsonResponse({'error': 'No username provided'}, status=401)
-        elif not re.match(REGEX_USERNAME_CHECK, data['user_name']):
+        elif not re.match(REGEX_USERNAME_CHECK, data['username']):
             return JsonResponse({'error': 'Invalid characters in username'}, status=401)
         elif not data['email']:
             return JsonResponse({'error': 'No email provided'}, status=401)
@@ -96,12 +93,12 @@ def signup(request):
         except ValidationError as error:
             return JsonResponse({'error': str(error.messages[0])}, status=401)
         if data['password'] == data['confirm_password']:
-            username = data['user_name']
+            username = data['username']
             email = data['email']
             password = data['password']
             if not User.objects.filter(username=username).exists():
                 User.objects.create_user(username=username, email=email, password=password)
-                return JsonResponse({'message': 'User created successfully'}, status=201)
+                return JsonResponse({'message': 'User created successfully', 'redirect_url': 'login'}, status=201)
             else:
                 return JsonResponse({'error': 'Username already exists'}, status=401)
         else:
