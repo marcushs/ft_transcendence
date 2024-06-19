@@ -32,8 +32,8 @@ SECRET_KEY = env("SECRET_KEY")
 
 JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
 JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
-JWT_EXP_DELTA_SECONDS = 30 # 15 minutes
-JWT_REFRESH_EXP_DELTA_SECONDS = 60 # 1day
+JWT_EXP_DELTA_SECONDS = 900 # 15 minutes
+JWT_REFRESH_EXP_DELTA_SECONDS = 3600 # 1day
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 	'account',
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

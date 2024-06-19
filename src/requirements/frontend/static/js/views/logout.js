@@ -51,6 +51,11 @@ export default class LogoutFormHandler {
                     document.title = "Index";
                     app.innerHTML = index();
                 } catch (error) {
+                    if (error.data && error.data.status === 'jwt_failed') {
+                        history.replaceState("", "", "/");
+                        document.title = "Index";
+                        app.innerHTML = index();
+                    }
                     alert(`Error: ${error.message}`);
                     // console.error('Network error:', error);
                 }

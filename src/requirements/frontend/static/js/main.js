@@ -2,14 +2,16 @@ import login from "./views/login.js";
 import index from "./views/index.js";
 import signup from "./views/signup.js";
 import LogoutFormHandler from "./views/logout.js";
-import { getCookie } from "./utils/cookie.js";
-import { HomeInit } from "./views/index.js";
+import { getCookie, generateCsrfToken } from "./utils/cookie.js";
 
 const routes = {
     "/": { title: "Index", render: index },
     "/login": { title: "Login", render: login },
     "/signup": { title: "Signup", render: signup },
 };
+
+// create the csrf token if it does not already exist
+generateCsrfToken();
 
 // test for jwt token security
 if (location.pathname === '/protected') {
@@ -33,11 +35,11 @@ if (location.pathname === '/protected') {
         console.log('jwt user: ', data.user)
         alert(data.message)
     } catch (error) {
-        console.log('Catch error :', error);
-        if (error.status && error.status === 'jwt_failed') {
+        console.log('Catch error :', error.data);
+        if (error.message.indexOf("token expired")) {
             history.replaceState("", "", "/");
-            document.title = "Index";
-            app.innerHTML = index();
+            document.title = "Login";
+            app.innerHTML = login();
         }
         alert(`Error: ${error.message}`);
     }
@@ -50,8 +52,6 @@ function router() {
         console.log(view);
         document.title = view.title;
         app.innerHTML = view.render();
-        if (document.title === 'Index')
-            HomeInit();
     } else {
         history.replaceState("", "", "/");
         router();

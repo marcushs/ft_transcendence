@@ -40,11 +40,11 @@ def decodeJwtToken(token):
     except jwt.InvalidTokenError:
         return None
 
-def RefreshJwtToken(refresh_token):
+def RefreshJwtToken(refresh_token, type: str):
     user_id = decodeJwtToken(refresh_token)
     print('prout: ', user_id)
     if user_id:
-        return createJwtToken(getUserFromJwtToken(refresh_token), 'access')    
+        return createJwtToken(getUserFromJwtToken(refresh_token), type)    
     return None
 
 def getUserFromJwtToken(token):

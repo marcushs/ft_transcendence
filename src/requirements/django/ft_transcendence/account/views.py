@@ -20,6 +20,13 @@ from .jwt_auth import check_jwt
 import json
 import re #regular expression
 
+@csrf_exempt
+def generateCsrfToken(request):
+        csrf_token = generate_csrf_token(request)
+        response = JsonResponse({'message': 'new csrfToken generated'}, status=201)
+        response.set_cookie('csrftoken', csrf_token, httponly=False, max_age=3600)
+        return response
+
 def index(request):
     csrf_token = request.COOKIES.get('csrftoken')
     if not csrf_token:
@@ -32,12 +39,12 @@ def index(request):
     return response
 
 @require_POST
-@csrf_protect
 def logout(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
-            auth_logout(request)
+            # auth_logout(request)
             response = JsonResponse({'message': 'Logout successfully'}, status=201)
+            response.delete_cookie('authentificated')
             response.delete_cookie('jwt')
             response.delete_cookie('jwt_refresh')
             # messages.success(request, ("Succesfully log out !"))
@@ -46,7 +53,6 @@ def logout(request):
             return JsonResponse({'error': 'You are not logged'}, status=401)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-@csrf_protect
 def login(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
@@ -58,10 +64,11 @@ def login(request):
             return JsonResponse({'error': 'You are already logged in'}, status=401)
         user = authenticate(request, username=data['username'], password=data['password'])
         if user is not None:
-            auth_login(request, user)
+            # auth_login(request, user)
             token = createJwtToken(user, 'access')
             refresh_token = createJwtToken(user, 'refresh')
             response = JsonResponse({'message': 'Login successfully'}, status=201)
+            response.set_cookie('authentificated', True, httponly=True)
             response.set_cookie('jwt', token, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
             response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
             return response
@@ -69,7 +76,6 @@ def login(request):
             return JsonResponse({'error': 'Invalid username or password, please try again'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-@csrf_protect
 def signup(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
