@@ -8,7 +8,7 @@ WORKDIR /ft_transcendence
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install django-otp django-two-factor-auth[phonenumbers]
+RUN pip install django-two-factor-auth[phonenumbers]
 RUN pip install PyJWT
 
 COPY ./ft_transcendence .

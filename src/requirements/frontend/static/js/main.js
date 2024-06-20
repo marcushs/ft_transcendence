@@ -2,7 +2,7 @@ import login from "./views/login.js";
 import index from "./views/index.js";
 import signup from "./views/signup.js";
 import LogoutFormHandler from "./views/logout.js";
-import { generateCsrfToken } from "./utils/cookie.js";
+import { getCookie ,generateCsrfToken } from "./utils/cookie.js";
 import profile from "./views/profile.js";
 
 const routes = {
@@ -14,6 +14,45 @@ const routes = {
 
 // create the csrf token if it does not already exist
 generateCsrfToken();
+
+// if (location.pathname === "/admin") {
+//     const config = {
+//         method: 'POST',
+//         headers: {
+//             'Accept': 'application/json',
+//             'Content-Type': 'application/json',
+//             'X-CSRFToken': getCookie('csrftoken'), // Protect from csrf attack
+//         },
+//         credentials: 'include' // Needed for send cookie
+//     };
+//     try {
+//         const res = await fetch('http://localhost:8000/admin/', config);
+//         const data = await res.json();
+//     } catch (error) {
+//         console.log('Catch error :', error);
+//         // alert(`Error: ${error.message}`)
+//     }
+// }
+
+if (location.pathname === "/2fa") {
+    console.log('test')
+    const config = {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'), // Protect from csrf attack
+        },
+        credentials: 'include' // Needed for send cookie
+    };
+    try {
+        const res = await fetch('http://localhost:8000/2fa/', config);
+        const data = await res.json();
+    } catch (error) {
+        console.log('Catch error :', error);
+        // alert(`Error: ${error.message}`)
+    }
+}
 
 function router() {
     let view = routes[location.pathname];

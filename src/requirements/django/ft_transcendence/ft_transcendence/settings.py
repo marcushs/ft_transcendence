@@ -40,6 +40,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1']
 
+LOGIN_URL = 'two_factor:login'
 
 # Application definition
 
@@ -52,6 +53,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'account',
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
+    'django_otp.plugins.otp_email',  # <- for email capability.
+    'two_factor',
+    'two_factor.plugins.phonenumber',  # <- for phone number capability.
+    'two_factor.plugins.email',  # <- for email capability.
+    # 'two_factor.plugins.yubikey',  # <- for yubikey capability.
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -59,8 +68,9 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware', # Base auth system, we keep it cause django administration need it
     'account.auth.middleware.JWTAuthenticationMiddleware', # Custom auth middleware for supporting jwt authentication
+    'django.contrib.auth.middleware.AuthenticationMiddleware', # Base auth system, we keep it cause django administration need it
+    'django_otp.middleware.OTPMiddleware',
     'account.auth.middleware.MixedAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
