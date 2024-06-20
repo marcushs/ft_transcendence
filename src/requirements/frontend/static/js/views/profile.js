@@ -1,5 +1,9 @@
+import { getCookie } from "../utils/cookie.js";
+import "../components/NavBar.js";
+
 export default () => {
     const html = `
+        <nav-bar auth="true"></nav-bar>
         <h1></h1>
         <div id="container"></div>
     `
@@ -7,6 +11,8 @@ export default () => {
     setTimeout(() => {
 		getProfile();
 	}, 0);
+
+    return html;
 }
 
 async function getProfile() { 
@@ -17,20 +23,16 @@ async function getProfile() {
             'Content-Type': 'application/json',
             'X-CSRFToken': getCookie('csrftoken'), // Protect from csrf attack
         },
-        // mode: 'no-cors',
         credentials: 'include' // Needed for send cookie
     };
     try {
         const res = await fetch('http://localhost:8000/account/protected/', config);
         const data = await res.json();
         if (getCookie('authentificated')) {
-            // const container = document.getElementById('container');
-            // const welcome = document.createElement('h1');
+            const container = document.getElementById('container');
+            const welcome = document.querySelector('h1');
     
-            // welcome.textContent = `Welcome, ${data.username}`;
-            // container.appendChild(welcome);
-            alert("You are logged in");
-            console.log(document.cookie);
+            welcome.textContent = `Welcome, ${data.user}`;
         }
         else {
             alert("You are not logged in");
@@ -40,19 +42,4 @@ async function getProfile() {
         console.log('Catch error :', error);
         alert(`Error: ${error.message}`)
     }
-}
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
 }

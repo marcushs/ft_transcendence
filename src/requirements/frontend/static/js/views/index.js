@@ -1,4 +1,7 @@
+import "../components/NavBar.js";
+
 export default () => /*html*/`
+    <nav-bar auth="false"></nav-bar>
     <div class="container">
         <h1>Index</h1>
     </div>

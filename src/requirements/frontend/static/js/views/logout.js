@@ -1,65 +1,58 @@
 import { getCookie } from "../utils/cookie.js";
-import index from "./index.js";
+import "../components/NavBar.js";
 
+export default () => {
+    const html = `
+        <nav-bar auth="true"></nav-bar>
+        <div class="container">
+            <p>Are you sure you want to logout?</p>
+            <button type="button" id="yesBtn">Yes</button>
+            <button type="button" id="cancelBtn">Cancel</button>
+        </div>
+    `
 
-export default class LogoutFormHandler {
-    constructor(app) {
-        this.app = app;
-        this.renderForm();
-        this.attachEvent();
-    }
+    setTimeout(() => {
+		attachEvent();   
+	}, 0);
 
-    renderForm() {
-        const container = document.getElementById(this.app);
-        if (container) {
-            container.innerHTML = /*html*/`
-                <div class="container">
-                    <form id="logoutForm" method="POST">
-                        <p>Are you sure you want to logout?</p>
-                        <button type="submit">Yes</button>
-                    </form>
-                </div>
-            `;
+    return html;
+}
+
+function attachEvent() {
+    const yesBtn = document.getElementById('yesBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+
+    cancelBtn.addEventListener('click', () => {
+       window.location.replace('profile'); 
+    });
+
+    yesBtn.addEventListener('click', async () => {
+        const config = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
+            },
+            credentials: 'include' // Needed for send cookie
+        };
+        try {
+            const res = await fetch(`http://localhost:8000/account/logout/`, config);
+            if (res.status == 403)
+                throw new Error('Access Denied')
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(`${res.status} - ${data.error}`);
+            }
+            alert(data.message)
+            window.location.replace('login');
+        } catch (error) {
+            if (error.data && error.data.status === 'jwt_failed') {
+                history.replaceState("", "", "/");
+                document.title = "Index";
+            }
+            alert(`Error: ${error.message}`);
+            // console.error('Network error:', error);
         }
-    }
-
-    attachEvent() {
-        const logoutForm = document.querySelector('#logoutForm');
-
-        if (logoutForm) {
-            logoutForm.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                const config = {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
-                    },
-                    credentials: 'include' // Needed for send cookie
-                };
-                try {
-                    const res = await fetch(`http://localhost:8000/account/logout/`, config);
-                    if (res.status == 403)
-                        throw new Error('Access Denied')
-                    const data = await res.json();
-                    if (!res.ok) {
-                        throw new Error(`${res.status} - ${data.error}`);
-                    }
-                    alert(data.message)
-                    history.replaceState("", "", "/");
-                    document.title = "Index";
-                    app.innerHTML = index();
-                } catch (error) {
-                    if (error.data && error.data.status === 'jwt_failed') {
-                        history.replaceState("", "", "/");
-                        document.title = "Index";
-                        app.innerHTML = index();
-                    }
-                    alert(`Error: ${error.message}`);
-                    // console.error('Network error:', error);
-                }
-            });
-        }
-    }
+    });
 }

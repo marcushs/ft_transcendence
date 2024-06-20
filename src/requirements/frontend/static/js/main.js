@@ -4,12 +4,14 @@ import signup from "./views/signup.js";
 import LogoutFormHandler from "./views/logout.js";
 import { getCookie, generateCsrfToken } from "./utils/cookie.js";
 import profile from "./views/profile.js";
+import logout from "./views/logout.js"
 
 const routes = {
     "/": { title: "Index", render: index },
     "/login": { title: "Login", render: login },
     "/signup": { title: "Signup", render: signup },
     "/profile": { title: "Profile", render: profile },
+    "/logout": { title: "Logout", render: logout },
 };
 
 // create the csrf token if it does not already exist
@@ -66,11 +68,6 @@ window.addEventListener("click", e => {
         e.preventDefault();
         history.pushState("", "", e.target.href);
         router();
-    }
-    if (e.target.matches("[Logout]")) {
-        e.preventDefault();
-        history.pushState("", "", e.target.href);
-        new LogoutFormHandler('app');
     }
 });
 
