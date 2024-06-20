@@ -1,13 +1,12 @@
-from django.urls import include, path
+from .auth import csrf_utils, login, logout, signup
+from django.urls import path
 from . import views
-from . import jwt_auth
 
 urlpatterns = [
-    path('csrf/', views.generateCsrfToken, name='csrf'),
+    path('csrf/', csrf_utils.generate_csrf_token, name='csrf'),
 	path('', views.index, name='index'),
-	path('login/', views.login, name='login'),
-	path('signup/', views.signup, name='signup'),
- 	path('logout/', views.logout, name="logout"),
-  	path('protected/', jwt_auth.protectedView, name='protected'), # view for jwt test
+	path('login/', login.loginView.as_view(), name='login'),
+	path('signup/', signup.signupView.as_view(), name='signup'),
+ 	path('logout/', logout.logoutView.as_view(), name="logout"),
+  	path('protected/', views.protectedView, name='protected'), # view for jwt test
 ]
-	

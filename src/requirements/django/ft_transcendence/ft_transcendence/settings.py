@@ -60,8 +60,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware', # Base auth system, we keep it cause django administration need it
-    'account.middleware.JWTAuthenticationMiddleware', # Custom auth middleware for supporting jwt authentication
-    'account.middleware.MixedAuthenticationMiddleware',
+    'account.auth.middleware.JWTAuthenticationMiddleware', # Custom auth middleware for supporting jwt authentication
+    'account.auth.middleware.MixedAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -114,7 +114,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    # 'http://localhost:8000'
 	'http://localhost:3000',
 	'http://frontend'
 ]
@@ -158,15 +157,15 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
     {
-        'NAME': 'account.validators.NumericValidator',
+        'NAME': 'account.auth.signup.NumericValidator',
     },
     # check password contains uppercase char
     {
-        'NAME': 'account.validators.UppercaseValidator',
+        'NAME': 'account.auth.signup.UppercaseValidator',
     },
     # check password contains lowercase char
     {
-        'NAME': 'account.validators.LowercaseValidator',
+        'NAME': 'account.auth.signup.LowercaseValidator',
     },
 ]
 
