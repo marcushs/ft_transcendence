@@ -68,3 +68,23 @@ game-component {
     background: linear-gradient(180deg, var(--neon-pink), var(--neon-blue));
     z-index: 1;
 }
+
+.extended-game {
+    position: absolute;
+    width: calc((95vh * 100) / 63);
+    height: 95vh;
+    transition: height 0.2s linear, width 0.2s linear;
+    animation: test 0.2s linear forwards;
+}
+
+@keyframes test {
+    0% {
+        top: 25rem;
+        left: 10rem;
+    }
+    100% {
+        top: 2.5vh;
+        left: calc(calc(100% - (95vh * 100) / 63) / 2);
+    }
+
+}

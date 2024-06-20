@@ -4,20 +4,12 @@ player-in-bracket {
     height: 3%;
     display: flex;
     padding: 1px;
+    font-size: 1em;
 }
 
 .right-players {
     flex-direction: row-reverse;
 }
-
-/*player-in-bracket::before {*/
-/*    content: "";*/
-/*    position: absolute;*/
-/*    top: calc(50% - 1px);*/
-/*    width: 100%;*/
-/*    height: 2px;*/
-/*    background: var(--light-grey);*/
-/*}*/
 
 player-in-bracket .player-name {
     display: flex;
@@ -25,17 +17,17 @@ player-in-bracket .player-name {
     align-items: center;
     width: 80%;
     background: var(--component-background-color);
-    font-size: 1.5rem;
 }
 
 player-in-bracket .player-name p {
+    font-size: 1.5rem;
     white-space: nowrap;
 }
 
 player-in-bracket .player-name .overflow-name {
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-left: 0.5px;
+    padding-left: 5px;
 }
 
 player-in-bracket .score {
@@ -83,13 +75,10 @@ player-in-bracket .score p {
 /* Basic style */
 
 .player-in-bracket-basic {
-    /*background: var(--light-grey);*/
     opacity: 0.5;
     background: var(--light-grey);
 }
 
 .player-in-bracket-basic .score-basic {
-    /*background: var(--light-grey);*/
-    /*background: #636F94;*/
     background: var(--light-grey);
 }

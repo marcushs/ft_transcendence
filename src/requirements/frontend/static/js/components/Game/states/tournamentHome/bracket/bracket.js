@@ -32,7 +32,7 @@ class bracket {
                 <player-in-bracket name="Sowoo" score="9" id="final-player2" class="player-in-bracket-basic"></player-in-bracket>
             </div>
             <div class="right-matches">
-<player-in-bracket name="Sowoo" score="11" id="right-height-player1" class="player-in-bracket-game-win right-players"></player-in-bracket>
+                <player-in-bracket name="Sowoo" score="11" id="right-height-player1" class="player-in-bracket-game-win right-players"></player-in-bracket>
                 <player-in-bracket name="Hleung" score="1" id="right-height-player2" class="player-in-bracket-basic right-players"></player-in-bracket>
                 <player-in-bracket name="Acarlott" score="7" id="right-height-player3" class="player-in-bracket-basic right-players"></player-in-bracket>
                 <player-in-bracket name="Pgouasmi" score="11" id="right-height-player4" class="player-in-bracket-game-win right-players"></player-in-bracket>
@@ -47,7 +47,7 @@ class bracket {
                 <player-in-bracket name="Sowoo" score="11" id="right-four-player4" class="player-in-bracket-game-win right-players"></player-in-bracket>
                 
                 <player-in-bracket name="Sowoo" score="11" id="right-two-player1" class="player-in-bracket-game-win right-players"></player-in-bracket>
-                <player-in-bracket name="Ceci est un tes" score="8" id="right-two-player2" class="player-in-bracket-basic right-players"></player-in-bracket>
+                <player-in-bracket name="Ceci est un test3" score="8" id="right-two-player2" class="player-in-bracket-basic right-players"></player-in-bracket>
             </div>
 		`;
     }
