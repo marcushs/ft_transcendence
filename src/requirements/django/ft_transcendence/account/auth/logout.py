@@ -9,7 +9,6 @@ class logoutView(View):
     def post(self, request):
         if request.user.is_authenticated:
             response = JsonResponse({'message': 'Logout successfully', 'redirect_url': 'login'}, status=201)
-            response.delete_cookie('authentificated')
             response.delete_cookie('jwt')
             response.delete_cookie('jwt_refresh')
             return response

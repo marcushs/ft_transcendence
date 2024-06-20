@@ -1,10 +1,6 @@
-# --- SRC --- #
 from django.http import JsonResponse
-# --- JWT --- #
 from .auth.csrf_utils import generate_csrf_token
-# --- UTILS --- #
 from django.views.decorators.csrf import csrf_exempt
-
 
 @csrf_exempt
 def generateCsrfToken(request):

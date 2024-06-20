@@ -23,16 +23,17 @@ async function getProfile() {
     try {
         const res = await fetch('http://localhost:8000/account/protected/', config);
         const data = await res.json();
-        if (getCookie('authentificated')) {
+        if (data.user) {
             // const container = document.getElementById('container');
             // const welcome = document.createElement('h1');
     
             // welcome.textContent = `Welcome, ${data.username}`;
             // container.appendChild(welcome);
-            alert("You are logged in");
+            alert(`Welcome ${data.user}, you are now logged in`);
             console.log(document.cookie);
         }
         else {
+            console.log(data.error)
             alert("You are not logged in");
             window.location.replace('login');
         }
