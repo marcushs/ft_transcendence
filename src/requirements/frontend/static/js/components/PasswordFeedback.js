@@ -35,7 +35,6 @@ class PasswordFeedback extends HTMLElement {
 				</li>
 			</ul>
 		`;
-		this.container.style.display = 'none'; // without this line, we can see the password feedback for a split second on pageload, probably due to the css file has not been loaded yet
 
 		const cssLink = document.createElement('link');
 		cssLink.setAttribute('rel', 'stylesheet');

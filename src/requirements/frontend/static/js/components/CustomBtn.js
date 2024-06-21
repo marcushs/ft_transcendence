@@ -18,8 +18,8 @@ class CustomBtn extends HTMLButtonElement {
         // Set the initial text content
         this.textContent = this.text;
 
-        // Bind the getData method to this instance
-        this.addEventListener('click', this.getData.bind(this));
+        // Bind the postData method to this instance
+        this.addEventListener('click', this.postData.bind(this));
 
         this.type = 'submit';
 
@@ -33,7 +33,7 @@ class CustomBtn extends HTMLButtonElement {
         }
     }
 
-    async getData(event) {
+    async postData(event) {
         // Prevent form submission
         event.preventDefault();
 
@@ -56,7 +56,7 @@ class CustomBtn extends HTMLButtonElement {
                     'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
                 },
                 credentials: 'include', // Needed for send cookie
-                body: JSON.stringify(formValues), // Send form values as JSON
+                body: json, // Send form values as JSON
             };
 
             try {
