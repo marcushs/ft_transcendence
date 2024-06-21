@@ -1,8 +1,7 @@
 class PlayerInBracketComponent extends HTMLElement {
-    static get observedAttributes() {
-        return ['name', 'score', 'class', 'left', 'right'];
-    }
-
+    // static get observedAttributes() {
+    //     return ['name', 'score', 'class', 'left', 'right'];
+    // }
     constructor() {
         super();
 
@@ -16,40 +15,54 @@ class PlayerInBracketComponent extends HTMLElement {
         `;
 
         this.className =  this.getAttribute('class');
+        this.attachEventsListener();
     }
 
     connectedCallback() {
         const name = this.querySelector('.player-name > p');
         const nameContainer = getComputedStyle(this.querySelector('.player-name'));
 
-        while (parseFloat(getComputedStyle(name).width) > parseFloat(nameContainer.width) - 4 && this.convertFontSizePixelToRem(name) >= 1) {
-            name.style.fontSize = `${parseFloat(getComputedStyle(name).fontSize) - 1}px`;
-        }
+        this.reduceFontSize(name, nameContainer);
+    }
 
+    attachEventsListener() {
+        const name = this.querySelector('.player-name > p');
+        const nameContainer = getComputedStyle(this.querySelector('.player-name'));
+
+        document.addEventListener('animationstart', event => {
+            if (event.animationName === 'move-game-to-center') {
+                this.handleExtendGameAndResizeFont(event, name, nameContainer);
+            }
+        });
+
+        document.querySelector('.reduce-game-button').addEventListener('click', event => {
+            this.handleReduceGameAndResizeFont(event, name, nameContainer)
+        });
+
+    }
+
+    reduceFontSize(name, nameContainer) {
+        while (parseFloat(getComputedStyle(name).width) > parseFloat(nameContainer.width) - 4 && this.convertFontSizePixelToRem(name) >= 1) {
+            name.style.fontSize = `${parseFloat(getComputedStyle(name).fontSize) - 0.1}px`;
+        }
         if (parseFloat(getComputedStyle(name).width) > parseFloat(nameContainer.width) - 4) {
             name.className = 'overflow-name';
         }
+    }
 
-        document.addEventListener('game-extended', () => {
-                while (parseFloat(getComputedStyle(name).width) < parseFloat(nameContainer.width) - 4 && this.convertFontSizePixelToRem(name) < 1.8) {
-                    console.log('test');
-                    name.style.fontSize = `${parseFloat(getComputedStyle(name).fontSize) + 0.1}px`;
-                }
-                console.log(parseFloat(getComputedStyle(name).width), parseFloat(nameContainer.width) - 4, getComputedStyle(name).fontSize);
-        });
+    async handleExtendGameAndResizeFont(event, name, nameContainer) {
+        if (name.className === 'overflow-name') {
+            name.className = '';
+        }
+        await sleep(120);
+        while (parseFloat(getComputedStyle(name).width) < parseFloat(nameContainer.width) - 4 && this.convertFontSizePixelToRem(name) < 1.8) {
+            name.style.fontSize = `${parseFloat(getComputedStyle(name).fontSize) + 0.1}px`;
+        }
+    }
 
-        document.addEventListener('game-reduced', () => {
-            if (parseFloat(getComputedStyle(name).width) > parseFloat(nameContainer.width) - 4) {
-                while (parseFloat(getComputedStyle(name).width) > parseFloat(nameContainer.width) - 4 && this.convertFontSizePixelToRem(name) >= 1) {
-                    name.fontSize = `${parseFloat(getComputedStyle(name).fontSize) - 1}px`;
-                }
-            }
-            else {
-                while (this.convertFontSizePixelToRem(name) >= 1.5) {
-                    name.fontSize = `${parseFloat(getComputedStyle(name).fontSize) - 1}px`;
-                }
-            }
-        });
+    handleReduceGameAndResizeFont(event, name, nameContainer) {
+        name.style.fontSize = '1.5rem';
+        this.reduceFontSize(name, nameContainer);
     }
 
     convertFontSizePixelToRem(element) {
@@ -58,6 +71,10 @@ class PlayerInBracketComponent extends HTMLElement {
         return parseFloat(getComputedStyle(element).fontSize) / rootSizeInPx;
     }
 
+}
+
+function sleep(sleepDuration) {
+    return new Promise(resolve => setTimeout(resolve, sleepDuration));
 }
 
 customElements.define('player-in-bracket', PlayerInBracketComponent);

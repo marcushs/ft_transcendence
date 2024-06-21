@@ -41,7 +41,7 @@ class bracket {
                 <player-in-bracket name="Natterie" score="11" id="right-height-player7" class="player-in-bracket-game-win right-players"></player-in-bracket>
                 <player-in-bracket name="Tduprez" score="9" id="right-height-player8" class="player-in-bracket-basic right-players"></player-in-bracket>
                 
-                <player-in-bracket name="XX_test_duXX" score="11" id="right-four-player1" class="player-in-bracket-game-win right-players"></player-in-bracket>
+                <player-in-bracket name="Test" score="11" id="right-four-player1" class="player-in-bracket-game-win right-players"></player-in-bracket>
                 <player-in-bracket name="WWWWWWWWWWWW" score="7" id="right-four-player2" class="player-in-bracket-basic right-players"></player-in-bracket>
                 <player-in-bracket name="Sowoo" score="8" id="right-four-player3" class="player-in-bracket-basic right-players"></player-in-bracket>
                 <player-in-bracket name="Sowoo" score="11" id="right-four-player4" class="player-in-bracket-game-win right-players"></player-in-bracket>

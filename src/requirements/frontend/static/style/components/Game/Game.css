@@ -74,10 +74,10 @@ game-component {
     width: calc((95vh * 100) / 63);
     height: 95vh;
     transition: height 0.2s linear, width 0.2s linear;
-    animation: test 0.2s linear forwards;
+    animation: move-game-to-center 0.2s linear forwards;
 }
 
-@keyframes test {
+@keyframes move-game-to-center {
     0% {
         top: 25rem;
         left: 10rem;

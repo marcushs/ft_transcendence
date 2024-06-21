@@ -29,8 +29,8 @@ class GameComponent extends HTMLElement {
 
         this.statesContainer = this.querySelector('.states-container');
         this.backButton = this.querySelector('.back-button');
-        this.currentContext = this.states["matchmakingChoice"].context;
-        this.currentState = "matchmakingChoice";
+        this.currentContext = this.states["bracket"].context;
+        this.currentState = "bracket";
 
         this.pushNewState(this.states[this.currentState].state);
 
