@@ -1,6 +1,7 @@
 # --- SRC --- #
 from django.http import JsonResponse
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from .models import User
 from django.core.exceptions import ValidationError
 from django.conf import settings
 # --- AUTH --- #
