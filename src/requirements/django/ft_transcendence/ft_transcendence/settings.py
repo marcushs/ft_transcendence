@@ -71,8 +71,8 @@ MIDDLEWARE = [
 	'corsheaders.middleware.CorsMiddleware',
     'account.auth.middleware.JWTAuthenticationMiddleware', # Custom auth middleware for supporting jwt authentication
     'django.contrib.auth.middleware.AuthenticationMiddleware', # Base auth system, we keep it cause django administration need it
-    'account.auth.middleware.MixedAuthenticationMiddleware',
     'django_otp.middleware.OTPMiddleware',
+    'account.auth.middleware.MixedAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

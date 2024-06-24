@@ -1,12 +1,69 @@
+import enable2faHandler from "./two_factor/enable2fa.js"
+
 export default () => {
     const html = `
-        <h1></h1>
+        <h1>Profile:</h1>
         <div id="container"></div>
     `
 
     setTimeout(() => {
 		getProfile();
 	}, 0);
+    return html
+}
+
+// function displayJSON(user) {
+//     const container = document.getElementById('container');
+//     const userInformation = document.createElement('p');
+
+//     userInformation.textContent = JSON.stringify(user);
+
+//     container.appendChild(userInformation);
+// }
+
+function displayUserInformation (data) {
+    const container = document.getElementById('container');
+    const username = document.createElement('p');
+    const email = document.createElement('p');
+    const two_factor_setup = document.createElement('a')
+
+    username.textContent = `Username: ${data.username}`;
+    email.textContent = `Email: ${data.email}`;
+
+    container.appendChild(username);
+    container.appendChild(email);
+    
+    if (data.is_verified) {
+        const two_factor_backup = document.createElement('a')
+        two_factor_setup.id = 'backup'
+        two_factor_setup.href = '2fa/backup'
+        two_factor_setup.textContent = 'backup two-factor authentification'
+        two_factor_setup.id = 'disable'
+        two_factor_setup.href = '2fa/disabled'
+        two_factor_setup.textContent = 'disabled two-factor authentification'
+        container.appendChild(two_factor_setup);
+        container.appendChild(two_factor_backup);
+
+    } else {
+        two_factor_setup.id = 'enable'
+        two_factor_setup.href = '2fa/enable'
+        two_factor_setup.textContent = 'enable two-factor authentification'
+        container.appendChild(two_factor_setup);
+    }
+
+    two_factor_setup.addEventListener('click', async function(event) {
+        event.preventDefault();
+        if (event.target.id === 'disable') {
+            console.log('Disable two-factor authentication logic');
+        } else if (event.target.id === 'enable') {
+            new enable2faHandler();
+            history.pushState("", "", event.target.href);
+            console.log('Enable two-factor authentication logic');
+        } else {
+            backup2fa();
+            console.log('Backup two-factor authentication logic');
+        }
+    });
 }
 
 async function getProfile() { 
@@ -24,12 +81,8 @@ async function getProfile() {
         const res = await fetch('http://localhost:8000/account/protected/', config);
         const data = await res.json();
         if (data.user) {
-            // const container = document.getElementById('container');
-            // const welcome = document.createElement('h1');
-    
-            // welcome.textContent = `Welcome, ${data.username}`;
-            // container.appendChild(welcome);
-            alert(`Welcome ${data.user}, you are now logged in`);
+            displayUserInformation(data.user)
+            // displayJSON(data.user)
             console.log(document.cookie);
         }
         else {

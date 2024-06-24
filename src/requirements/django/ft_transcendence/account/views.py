@@ -24,6 +24,8 @@ def index(request):
 # @check_jwt
 def protectedView(request):
     if request.user.is_authenticated:
-        return JsonResponse({'message': 'protected view ok', 'user': request.user.username}, status=201)
+        # user_data = request.user.to_dict()
+        # user_data['is_verified'] = request.user.is_verified()
+        return JsonResponse({'message': 'protected view ok', 'user': request.user.to_dict()}, status=201)
     else:
         return JsonResponse({'error': 'User not found'}, status=404)
