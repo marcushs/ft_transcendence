@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import User
+from ..models import CustomUser
 from django.conf import settings
 import datetime
 import jwt
@@ -41,7 +41,7 @@ def getUserFromJwtToken(token):
     user_id = decodeJwtToken(token)
     if user_id:
         try:
-            return User.objects.get(id=user_id)
+            return CustomUser.objects.get(id=user_id)
         except ObjectDoesNotExist:
             return None
     return None

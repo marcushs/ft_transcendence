@@ -1,7 +1,7 @@
 # --- SRC --- #
 from django.views import View
 from django.http import JsonResponse
-from django.contrib.auth.models import User
+from ..models import CustomUser
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 # --- UTILS --- #
@@ -20,7 +20,7 @@ class signupView(View):
         response = self._check_data(request, data)
         if response is not None:
             return response
-        User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
+        CustomUser.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
         return JsonResponse({'message': 'User created successfully', 'redirect_url': 'login'}, status=201)
     
     
@@ -46,7 +46,7 @@ class signupView(View):
         if data['password'] != data['confirm_password']:
             return JsonResponse({'error': 'Password did not match'}, status=401)
         username = data['username']
-        if User.objects.filter(username=username).exists():
+        if CustomUser.objects.filter(username=username).exists():
             return JsonResponse({'error': 'Username already exists'}, status=401)
         return None
     

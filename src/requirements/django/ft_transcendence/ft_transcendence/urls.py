@@ -21,5 +21,5 @@ from two_factor.urls import urlpatterns as tf_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('account/', include('account.urls')),
-    path('2fa/', include(tf_urls)),
+    path('', include(tf_urls)),
 ]

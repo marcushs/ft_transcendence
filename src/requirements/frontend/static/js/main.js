@@ -34,25 +34,25 @@ generateCsrfToken();
 //     }
 // }
 
-if (location.pathname === "/2fa") {
-    console.log('test')
-    const config = {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken'), // Protect from csrf attack
-        },
-        credentials: 'include' // Needed for send cookie
-    };
-    try {
-        const res = await fetch('http://localhost:8000/2fa/', config);
-        const data = await res.json();
-    } catch (error) {
-        console.log('Catch error :', error);
-        // alert(`Error: ${error.message}`)
-    }
-}
+// if (location.pathname === "/2fa") {
+//     console.log('test')
+//     const config = {
+//         method: 'POST',
+//         headers: {
+//             'Accept': 'application/json',
+//             'Content-Type': 'application/json',
+//             'X-CSRFToken': getCookie('csrftoken'), // Protect from csrf attack
+//         },
+//         credentials: 'include' // Needed for send cookie
+//     };
+//     try {
+//         const res = await fetch('http://localhost:8000/2fa/', config);
+//         const data = await res.json();
+//     } catch (error) {
+//         console.log('Catch error :', error);
+//         // alert(`Error: ${error.message}`)
+//     }
+// }
 
 function router() {
     let view = routes[location.pathname];

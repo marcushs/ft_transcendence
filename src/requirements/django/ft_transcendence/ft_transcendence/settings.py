@@ -40,8 +40,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1']
 
-LOGIN_URL = 'two_factor:login'
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -53,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'account',
+    # 2FA
     'django_otp',
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
@@ -62,6 +61,8 @@ INSTALLED_APPS = [
     'two_factor.plugins.email',  # <- for email capability.
     # 'two_factor.plugins.yubikey',  # <- for yubikey capability.
 ]
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -70,13 +71,15 @@ MIDDLEWARE = [
 	'corsheaders.middleware.CorsMiddleware',
     'account.auth.middleware.JWTAuthenticationMiddleware', # Custom auth middleware for supporting jwt authentication
     'django.contrib.auth.middleware.AuthenticationMiddleware', # Base auth system, we keep it cause django administration need it
-    'django_otp.middleware.OTPMiddleware',
     'account.auth.middleware.MixedAuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'ft_transcendence.urls'
+
 
 TEMPLATES = [
     {
@@ -93,6 +96,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'ft_transcendence.wsgi.application'
 
@@ -142,9 +146,12 @@ DATABASES = {
     }
 }
 
+LOGIN_URL = 'two_factor:login'
+
+AUTH_USER_MODEL = 'account.CustomUser'
 
 # Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-pa   ssword-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     # check similarity with email and username

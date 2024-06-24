@@ -19,11 +19,15 @@ services:
     build:
       context: ./requirements/django
       dockerfile: Dockerfile
-    command: ["sh", "-c", "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"]
+    command: ["sh", "-c", "python3 manage.py migrate && python3 manage.py createsuperuser --noinput && python3 manage.py runserver 0.0.0.0:8000"]
     volumes:
       - ./requirements/django/ft_transcendence:/ft_transcendence
     ports:
       - "8000:8000"
+    environment:
+      - DJANGO_SUPERUSER_USERNAME=${DJANGO_ADMIN_USERNAME}
+      - DJANGO_SUPERUSER_EMAIL=${DJANGO_ADMIN_EMAIL}
+      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_ADMIN_PASSWORD}
     depends_on:
       postgresdb:
         condition: service_healthy
