@@ -14,13 +14,13 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-
+    
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=12, unique=True, default='default')
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
-    profile_image = models.URLField(blank=True, null=True)
+    profile_image = models.URLField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
     score = models.IntegerField(default=0)           
 
     USERNAME_FIELD = 'username'

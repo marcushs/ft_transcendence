@@ -28,11 +28,20 @@ async function getProfile() {
     try {
         const res = await fetch('http://localhost:8000/account/protected/', config);
         const data = await res.json();
-        if (getCookie('authentificated')) {
+        console.log(data)
+        if (getCookie('authenticated') && !data.error) {
             const container = document.getElementById('container');
             const welcome = document.querySelector('h1');
+            const profilePic = document.createElement('div');
+            const cssLink = document.createElement('link');
+
+            cssLink.setAttribute('rel', 'stylesheet');
+            cssLink.setAttribute('href', '../../style/views/profile.css');
+            profilePic.classList.add('pic');
+            profilePic.style.background = `url('${data.user.profile_image}') no-repeat center center/cover`;
+            container.appendChild(profilePic);
     
-            welcome.textContent = `Welcome, ${data.user}`;
+            welcome.textContent = `Welcome, ${data.user.username}`;
         }
         else {
             alert("You are not logged in");

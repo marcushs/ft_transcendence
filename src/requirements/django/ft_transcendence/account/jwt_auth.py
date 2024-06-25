@@ -2,12 +2,15 @@ from django.views.decorators.csrf import csrf_protect
 from django.core.exceptions import ObjectDoesNotExist
 from django.middleware.csrf import get_token
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.conf import settings
 from functools import wraps
 from typing import Any
 import datetime
 import jwt
+
+User = get_user_model()
 
 def generate_csrf_token(request):
     csrf_token = get_token(request)  # generate new token CSRF

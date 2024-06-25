@@ -45,13 +45,13 @@ ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1']
 
 INSTALLED_APPS = [
 	"corsheaders",
+	'account',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'account',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

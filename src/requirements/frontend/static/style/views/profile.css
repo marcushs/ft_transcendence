@@ -1,0 +1,17 @@
+h1 {
+	text-align: center;
+}
+
+#container {
+	width: 30vw;
+	height: 60vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.pic {
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+	border: 1px solid white;
+}

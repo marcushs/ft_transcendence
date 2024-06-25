@@ -5,7 +5,7 @@ from .models import User
 from django.core.exceptions import ValidationError
 from django.conf import settings
 # --- AUTH --- #
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, get_user_model
 from django.contrib.auth.hashers import check_password
 from .constants import REGEX_EMAIL_CHECK, REGEX_USERNAME_CHECK
 from django.contrib.auth.password_validation import validate_password
@@ -17,8 +17,12 @@ from .jwt_auth import createJwtToken
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
 from .jwt_auth import check_jwt
+from django.core import serializers
+from django.forms.models import model_to_dict
 import json
 import re #regular expression
+
+User = get_user_model()
 
 @csrf_exempt
 def generateCsrfToken(request):
@@ -114,4 +118,6 @@ def signup(request):
 # test view for jwt token
 @check_jwt
 def protectedView(request):
-        return JsonResponse({'message': 'protected view ok', 'user': request.user.username}, status=201)
+    user = model_to_dict(request.jwt_user)
+    return JsonResponse({'message': 'protected view ok', 'user': user}, status=201)
+  
