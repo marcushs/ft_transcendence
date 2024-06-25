@@ -69,11 +69,3 @@ def check_jwt(view_func):
                 return JsonResponse({'error': 'Invalid jwt token'}, status=401)
         return JsonResponse({'error': 'Authorization token not provided'}, status=401)
     return _wrapped_view
-
-# test view for jwt token
-# @check_jwt
-def protectedView(request):
-    if request.user.is_authenticated:
-        return JsonResponse({'message': 'protected view ok', 'user': request.user.username}, status=201)
-    else:
-        return JsonResponse({'error': 'User not found'}, status=404)

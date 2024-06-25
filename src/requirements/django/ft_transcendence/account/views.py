@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 # --- AUTH --- #
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.hashers import check_password
 from .constants import REGEX_EMAIL_CHECK, REGEX_USERNAME_CHECK
 from django.contrib.auth.password_validation import validate_password
 # --- JWT --- #
@@ -55,22 +56,26 @@ def logout(request):
 def login(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
-        if not data['username']:
+        username = data.get('username')
+        password = data.get('password')
+        if not username:
             return JsonResponse({'error': 'No username provided'}, status=401)
-        if not data['password']:
+        if not password:
             return JsonResponse({'error': 'No password provided'}, status=401)
-        if request.user.is_authenticated:
-            return JsonResponse({'error': 'You are already logged in'}, status=401)
-        user = authenticate(request, username=data['username'], password=data['password'])
-        if user is not None:
-            token = createJwtToken(user, 'access')
-            refresh_token = createJwtToken(user, 'refresh')
-            response = JsonResponse({'message': 'Login successfully', 'redirect_url': 'profile'}, status=201)
-            response.set_cookie('authentificated', True, httponly=False)
-            response.set_cookie('jwt', token, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
-            response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
-            return response
-        else:
+        
+        try:
+            user = User.objects.get(username=username)
+            if check_password(password, user.password):
+                token = createJwtToken(user, 'access')
+                refresh_token = createJwtToken(user, 'refresh')
+                response = JsonResponse({'message': 'Login successfully', 'redirect_url': 'profile'}, status=201)
+                response.set_cookie('authenticated', True, httponly=False)
+                response.set_cookie('jwt', token, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
+                response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
+                return response
+            else:
+                return JsonResponse({'error': 'Invalid username or password, please try again'}, status=400)
+        except User.DoesNotExist:
             return JsonResponse({'error': 'Invalid username or password, please try again'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
@@ -105,3 +110,8 @@ def signup(request):
         else:
             return JsonResponse({'error': 'Password did not match'}, status=401)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+# test view for jwt token
+@check_jwt
+def protectedView(request):
+        return JsonResponse({'message': 'protected view ok', 'user': request.user.username}, status=201)
