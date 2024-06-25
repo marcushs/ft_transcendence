@@ -75,10 +75,46 @@ player-in-bracket .score p {
 /* Basic style */
 
 .player-in-bracket-basic {
-    opacity: 0.5;
+    opacity: 1;
     background: var(--light-grey);
 }
 
 .player-in-bracket-basic .score-basic {
+    background: var(--light-grey);
+}
+
+/* TBD style */
+
+.player-in-bracket-tbd {
+    opacity: 1;
+    background: var(--light-grey);
+}
+
+.player-in-bracket-tbd .score {
+    display: none;
+}
+
+.player-in-bracket-tbd .player-name {
+    /*display: none;*/
+    width: 100%;
+}
+
+.player-in-bracket-tbd .player-name {
+    font-style: italic;
+    font-weight: 700;
+}
+
+.player-in-bracket-tbd .score-tbd {
+    background: var(--light-grey);
+}
+
+/* Loose style */
+
+.player-in-bracket-loose {
+    opacity: 0.5;
+    background: var(--light-grey);
+}
+
+.player-in-bracket-loose .score-loose {
     background: var(--light-grey);
 }

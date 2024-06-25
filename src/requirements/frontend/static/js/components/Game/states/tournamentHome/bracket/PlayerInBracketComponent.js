@@ -41,20 +41,11 @@ class PlayerInBracketComponent extends HTMLElement {
 
     }
 
-    reduceFontSize(name, nameContainer) {
-        while (parseFloat(getComputedStyle(name).width) > parseFloat(nameContainer.width) - 4 && this.convertFontSizePixelToRem(name) >= 1) {
-            name.style.fontSize = `${parseFloat(getComputedStyle(name).fontSize) - 0.1}px`;
-        }
-        if (parseFloat(getComputedStyle(name).width) > parseFloat(nameContainer.width) - 4) {
-            name.className = 'overflow-name';
-        }
-    }
-
     async handleExtendGameAndResizeFont(event, name, nameContainer) {
         if (name.className === 'overflow-name') {
             name.className = '';
         }
-        await sleep(120);
+        // await sleep(20);
         while (parseFloat(getComputedStyle(name).width) < parseFloat(nameContainer.width) - 4 && this.convertFontSizePixelToRem(name) < 1.8) {
             name.style.fontSize = `${parseFloat(getComputedStyle(name).fontSize) + 0.1}px`;
         }
@@ -63,6 +54,15 @@ class PlayerInBracketComponent extends HTMLElement {
     handleReduceGameAndResizeFont(event, name, nameContainer) {
         name.style.fontSize = '1.5rem';
         this.reduceFontSize(name, nameContainer);
+    }
+
+    reduceFontSize(name, nameContainer) {
+        while (parseFloat(getComputedStyle(name).width) > parseFloat(nameContainer.width) - 4 && this.convertFontSizePixelToRem(name) >= 1) {
+            name.style.fontSize = `${parseFloat(getComputedStyle(name).fontSize) - 0.1}px`;
+        }
+        if (parseFloat(getComputedStyle(name).width) > parseFloat(nameContainer.width) - 4) {
+            name.className = 'overflow-name';
+        }
     }
 
     convertFontSizePixelToRem(element) {

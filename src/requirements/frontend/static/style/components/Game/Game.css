@@ -73,8 +73,8 @@ game-component {
     position: absolute;
     width: calc((95vh * 100) / 63);
     height: 95vh;
-    transition: height 0.2s linear, width 0.2s linear;
-    animation: move-game-to-center 0.2s linear forwards;
+    transition: height 0.1s linear, width 0.1s linear;
+    animation: move-game-to-center 0.1s linear forwards;
 }
 
 @keyframes move-game-to-center {

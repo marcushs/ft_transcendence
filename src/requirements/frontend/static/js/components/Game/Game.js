@@ -13,6 +13,10 @@ class GameComponent extends HTMLElement {
         super();
 
         this.states = {
+            // Intro
+            // Methode de 2fa
+            //
+
             "matchmakingChoice": { context: "/", state: new matchmakingChoice() },
             "tournamentHome": { context: "/tournamentHome", state: new tournamentHome() },
             "onlineHome": { context: "/onlineHome", state: new onlineHome() },
@@ -21,6 +25,13 @@ class GameComponent extends HTMLElement {
         }
 
         this.innerHTML = `
+            <div class="box">
+               <div class="amodifier">
+                   methode.render()
+                </div>
+             <suivant></suivant>
+             precedent
+            </div>
             <div class="game-background"></div>
             <div class="states-container">
             </div>

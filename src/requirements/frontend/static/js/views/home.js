@@ -9,6 +9,7 @@ export default () => {
 		<section class="home-page">		
 			<nav-bar-component></nav-bar-component>
             <div class="game-fullscreen-background"></div>
+            <button></button>
 			<section class="home-main-section">
 				<game-component></game-component>
 				<match-history-component></match-history-component>
