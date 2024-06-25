@@ -1,3 +1,4 @@
+import { disabled2fa } from "./two_factor/disable2fa.js";
 import enable2faHandler from "./two_factor/enable2fa.js"
 
 export default () => {
@@ -20,51 +21,6 @@ export default () => {
 
 //     container.appendChild(userInformation);
 // }
-
-function displayUserInformation (data) {
-    const container = document.getElementById('container');
-    const username = document.createElement('p');
-    const email = document.createElement('p');
-    const two_factor_setup = document.createElement('a')
-
-    username.textContent = `Username: ${data.username}`;
-    email.textContent = `Email: ${data.email}`;
-
-    container.appendChild(username);
-    container.appendChild(email);
-    
-    if (data.is_verified) {
-        const two_factor_backup = document.createElement('a')
-        two_factor_setup.id = 'backup'
-        two_factor_setup.href = '2fa/backup'
-        two_factor_setup.textContent = 'backup two-factor authentification'
-        two_factor_setup.id = 'disable'
-        two_factor_setup.href = '2fa/disabled'
-        two_factor_setup.textContent = 'disabled two-factor authentification'
-        container.appendChild(two_factor_setup);
-        container.appendChild(two_factor_backup);
-
-    } else {
-        two_factor_setup.id = 'enable'
-        two_factor_setup.href = '2fa/enable'
-        two_factor_setup.textContent = 'enable two-factor authentification'
-        container.appendChild(two_factor_setup);
-    }
-
-    two_factor_setup.addEventListener('click', async function(event) {
-        event.preventDefault();
-        if (event.target.id === 'disable') {
-            console.log('Disable two-factor authentication logic');
-        } else if (event.target.id === 'enable') {
-            new enable2faHandler();
-            history.pushState("", "", event.target.href);
-            console.log('Enable two-factor authentication logic');
-        } else {
-            backup2fa();
-            console.log('Backup two-factor authentication logic');
-        }
-    });
-}
 
 async function getProfile() { 
     const config = {
@@ -94,6 +50,56 @@ async function getProfile() {
         console.log('Catch error :', error);
         alert(`Error: ${error.message}`)
     }
+}
+
+function displayUserInformation (data) {
+    const container = document.getElementById('container');
+    const username = document.createElement('p');
+    const email = document.createElement('p');
+    const two_factor_inner = document.createElement('a')
+
+    username.textContent = `Username: ${data.username}`;
+    email.textContent = `Email: ${data.email}`;
+
+    container.appendChild(username);
+    container.appendChild(email);
+    
+    if (data.is_verified) {
+        const two_factor_backup = document.createElement('a')
+        two_factor_inner.id = 'backup'
+        two_factor_inner.href = '2fa/backup'
+        two_factor_inner.textContent = 'backup two-factor authentification'
+        two_factor_inner.id = 'disable'
+        two_factor_inner.href = '2fa/disabled'
+        two_factor_inner.textContent = 'disabled two-factor authentification'
+        container.appendChild(two_factor_inner);
+        container.appendChild(two_factor_backup);
+    } else {
+        two_factor_inner.id = 'enable'
+        two_factor_inner.href = '2fa/enable'
+        two_factor_inner.textContent = 'enable two-factor authentification'
+        container.appendChild(two_factor_inner);
+    }
+    twoFactorEventListener(two_factor_inner);
+}
+
+function twoFactorEventListener (two_factor_inner) {
+    two_factor_inner.addEventListener('click', async function(event) {
+        event.preventDefault();
+        switch (event.target.id) {
+            case 'enable':
+                history.replaceState("", "", "profile/");
+                history.pushState("", "", event.target.href);
+                new enable2faHandler();
+                break;
+            case 'disable':
+                disabled2fa();
+                break;
+            case 'backup':
+                backup2fa();
+                break;
+        }
+    });
 }
 
 function getCookie(name) {
