@@ -10,6 +10,7 @@ export default () => {
 
     setTimeout(() => {
 		getProfile();
+        addStyleToView();
 	}, 0);
 
     return html;
@@ -33,15 +34,15 @@ async function getProfile() {
             const container = document.getElementById('container');
             const welcome = document.querySelector('h1');
             const profilePic = document.createElement('div');
-            const cssLink = document.createElement('link');
-
-            cssLink.setAttribute('rel', 'stylesheet');
-            cssLink.setAttribute('href', '../../style/views/profile.css');
+            const score = document.createElement('h3');
+         
             profilePic.classList.add('pic');
             profilePic.style.background = `url('${data.user.profile_image}') no-repeat center center/cover`;
-            container.appendChild(profilePic);
-    
+            
             welcome.textContent = `Welcome, ${data.user.username}`;
+            score.textContent = `Score: ${data.user.score}`;
+            container.appendChild(profilePic);
+            container.appendChild(score);
         }
         else {
             alert("You are not logged in");
@@ -51,4 +52,12 @@ async function getProfile() {
         console.log('Catch error :', error);
         alert(`Error: ${error.message}`)
     }
+}
+
+function addStyleToView() {
+    const cssLink = document.createElement('link');
+
+    cssLink.setAttribute('rel', 'stylesheet');
+    cssLink.setAttribute('href', '../../style/views/profile.css');
+    document.head.appendChild(cssLink);
 }

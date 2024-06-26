@@ -43,18 +43,16 @@ def index(request):
     return response
 
 @require_POST
+@check_jwt
 def logout(request):
     if request.method == 'POST':
-        if request.user.is_authenticated:
-            # auth_logout(request)
-            response = JsonResponse({'message': 'Logout successfully', 'redirect_url': 'login'}, status=201)
-            response.delete_cookie('authentificated')
-            response.delete_cookie('jwt')
-            response.delete_cookie('jwt_refresh')
-            # messages.success(request, ("Succesfully log out !"))
-            return response
-        else:
-            return JsonResponse({'error': 'You are not logged'}, status=401)
+        # auth_logout(request)
+        response = JsonResponse({'message': 'Logout successfully', 'redirect_url': 'login'}, status=201)
+        response.delete_cookie('authentificated')
+        response.delete_cookie('jwt')
+        response.delete_cookie('jwt_refresh')
+        # messages.success(request, ("Succesfully log out !"))
+        return response
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 def login(request):
