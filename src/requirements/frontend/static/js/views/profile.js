@@ -1,4 +1,5 @@
 import { getCookie } from "../utils/cookie.js";
+import enableTwoFactor from "./two_factor/enable2fa.js"
 import "../components/NavBar.js";
 
 export default () => {
