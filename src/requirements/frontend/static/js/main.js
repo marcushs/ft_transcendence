@@ -11,8 +11,8 @@ const routes = {
     "/login": { title: "Login", render: login },
     "/signup": { title: "Signup", render: signup },
     "/profile": { title: "Profile", render: profile },
-    "/2fa/enable": { title: "2fa", render: enable2fa },
 };
+console.log('pathname', location.pathname);
 
 // create the csrf token if it does not already exist
 generateCsrfToken();

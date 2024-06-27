@@ -1,5 +1,5 @@
 import { disabled2fa } from "./two_factor/disable2fa.js";
-import enableTwoFactor from "./two_factor/enable2fa.js"
+import enableTwoFactor from "./two_factor/enable2fa.js";
 import { getCookie } from "../utils/cookie.js";
 
 export default () => {
@@ -13,7 +13,6 @@ export default () => {
 	}, 0);
     return html
 }
-
 async function getProfile() { 
     const config = {
         method: 'GET',
@@ -57,9 +56,11 @@ function displayUserInformation (data) {
             <a href=/2fa/enable id=enable>enable two_factor authentification</a>
         `
     }
-    container.innerHTML = `<p> Username: ${data.username} </p>
-    <p> Email: ${data.email} </p>
-    ${two_factor_inner}`
+    container.innerHTML = `
+        <p> Username: ${data.username} </p>
+        <p> Email: ${data.email} </p>
+        ${two_factor_inner}
+        `
     twoFactorEventListener();
 }
 
@@ -80,4 +81,4 @@ function twoFactorEventListener () {
                 break;
         }
     });
-}
+}   

@@ -33,7 +33,7 @@ class signupView(View):
             return JsonResponse({'error': 'Invalid characters in username'}, status=401)
         elif not data['email']:
             return JsonResponse({'error': 'No email provided'}, status=401)
-        elif User.objects.filter(email=data['email']).exists():
+        elif CustomUser.objects.filter(email=data['email']).exists():
             return JsonResponse({'error': 'This email have already an account'}, status=401)
         elif not re.match(self.regexEmailCheck, data['email']):
             return JsonResponse({'error': 'Invalid email'}, status=401)

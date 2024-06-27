@@ -67,7 +67,7 @@ const steps = [
     },
 ];
 
-export async function enableTwoFactorAuthentication() {
+async function enableTwoFactorAuthentication() {
     const container = document.getElementById('container');
     
     if (currentStep < steps.length && currentStep >= 0)
