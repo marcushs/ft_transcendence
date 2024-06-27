@@ -1,12 +1,16 @@
 # --- SRC --- #
 from django.views import View
 from django.http import JsonResponse
-from ..models import CustomUser
+from ..models import User
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import get_user_model
+
 # --- UTILS --- #
 import json
 import re #regular expression
+
+User = get_user_model()
 
 class signupView(View):
     def __init__(self):
@@ -20,7 +24,7 @@ class signupView(View):
         response = self._check_data(request, data)
         if response is not None:
             return response
-        CustomUser.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
+        User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
         return JsonResponse({'message': 'User created successfully', 'redirect_url': 'login'}, status=201)
     
     
@@ -33,7 +37,7 @@ class signupView(View):
             return JsonResponse({'error': 'Invalid characters in username'}, status=401)
         elif not data['email']:
             return JsonResponse({'error': 'No email provided'}, status=401)
-        elif CustomUser.objects.filter(email=data['email']).exists():
+        elif User.objects.filter(email=data['email']).exists():
             return JsonResponse({'error': 'This email have already an account'}, status=401)
         elif not re.match(self.regexEmailCheck, data['email']):
             return JsonResponse({'error': 'Invalid email'}, status=401)
@@ -46,7 +50,7 @@ class signupView(View):
         if data['password'] != data['confirm_password']:
             return JsonResponse({'error': 'Password did not match'}, status=401)
         username = data['username']
-        if CustomUser.objects.filter(username=username).exists():
+        if User.objects.filter(username=username).exists():
             return JsonResponse({'error': 'Username already exists'}, status=401)
         return None
     

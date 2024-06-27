@@ -44,13 +44,13 @@ ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1']
 
 INSTALLED_APPS = [
 	"corsheaders",
+	'account',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'account',
     # 2FA
     'django_otp',
     'django_otp.plugins.otp_static',
@@ -147,8 +147,7 @@ DATABASES = {
 }
 
 LOGIN_URL = 'two_factor:login'
-
-AUTH_USER_MODEL = 'account.CustomUser'
+AUTH_USER_MODEL = "account.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-pa   ssword-validators
@@ -185,6 +184,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'account.auth.signup.LowercaseValidator',
     },
 ]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

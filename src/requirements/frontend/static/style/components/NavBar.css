@@ -1,0 +1,15 @@
+#nav {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-around;
+    min-width: 10vw;  
+	color: white;
+}
+
+#nav a {
+	text-decoration: none;
+}
+
+#nav a:visited {
+    color: inherit;
+}

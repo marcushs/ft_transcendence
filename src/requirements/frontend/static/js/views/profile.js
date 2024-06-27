@@ -1,17 +1,19 @@
-import { disabled2fa } from "./two_factor/disable2fa.js";
-import enableTwoFactor from "./two_factor/enable2fa.js";
 import { getCookie } from "../utils/cookie.js";
+import "../components/NavBar.js";
 
 export default () => {
     const html = `
-        <h1>Profile:</h1>
+        <nav-bar auth="true"></nav-bar>
+        <h1></h1>
         <div id="container"></div>
     `
 
     setTimeout(() => {
 		getProfile();
+        addStyleToView();
 	}, 0);
-    return html
+
+    return html;
 }
 async function getProfile() { 
     const config = {
@@ -21,15 +23,26 @@ async function getProfile() {
             'Content-Type': 'application/json',
             'X-CSRFToken': getCookie('csrftoken'), // Protect from csrf attack
         },
-        // mode: 'no-cors',
         credentials: 'include' // Needed for send cookie
     };
     try {
         const res = await fetch('http://localhost:8000/account/protected/', config);
         const data = await res.json();
-        if (data.user) {
+        console.log(data)
+        if (data.user && !data.error) {
+            const container = document.getElementById('container');
+            const welcome = document.querySelector('h1');
+            const profilePic = document.createElement('div');
+            const score = document.createElement('h3');
+            
+            profilePic.classList.add('pic');
+            profilePic.style.background = `url('${data.user.profile_image}') no-repeat center center/cover`;
+            
+            welcome.textContent = `Welcome, ${data.user.username}`;
+            score.textContent = `Score: ${data.user.score}`;
+            container.appendChild(profilePic);
+            container.appendChild(score);
             displayUserInformation(data.user)
-            console.log(document.cookie);
         }
         else {
             console.log(data.error)
@@ -56,12 +69,15 @@ function displayUserInformation (data) {
             <a href=/2fa/enable id=enable>enable two_factor authentification</a>
         `
     }
-    container.innerHTML = `
-        <p> Username: ${data.username} </p>
-        <p> Email: ${data.email} </p>
-        ${two_factor_inner}
-        `
+    container.innerHTML += `${two_factor_inner}` 
     twoFactorEventListener();
+}
+function addStyleToView() {
+    const cssLink = document.createElement('link');
+
+    cssLink.setAttribute('rel', 'stylesheet');
+    cssLink.setAttribute('href', '../../style/views/profile.css');
+    document.head.appendChild(cssLink);
 }
 
 function twoFactorEventListener () {

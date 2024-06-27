@@ -1,10 +1,12 @@
 import formWave from "../anim/formWave.js";
 import "../components/CustomBtn.js";
 import "../components/PasswordFeedback.js";
+import "../components/NavBar.js";
 import { validateSignupInputs, seePasswordToggle, seeConfirmPasswordToggle } from "../utils/formValidation.js";
 
 export default () => {
 	const html = `
+		<nav-bar auth="false"></nav-bar>
 		<div class="container">
 			<h1>Signup Page</h1>
 			<form>
