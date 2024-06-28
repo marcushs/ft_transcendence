@@ -12,6 +12,7 @@ export default () => {
 }
 
 let currentStep = 0;
+let selectedMethod = null;
 
 const steps = [
     {
@@ -27,16 +28,17 @@ const steps = [
     },
     {
         html: `
-            <h2>Enable Two-Factor Authentication</h2>
-            <p>Please choose your two-factor authentication method:</p>
-            <select id="methodSelect">
-                <option value="sms">SMS</option>
-                <option value="email">Email</option>
+        <h2>Enable Two-Factor Authentication</h2>
+        <p>Please choose your two-factor authentication method:</p>
+        <select id="methodSelect">
+        <option value="sms">SMS</option>
+        <option value="email">Email</option>
                 <option value="authenticator">Authenticator App</option>
             </select>
             <button id="backButton">Back</button>
             <button id="nextButton">Next</button>
-        `,
+            `,
+        getField: () => getSelectedField(),
         onNext: () => currentStep++,
         onBack: () => currentStep--,
     },
@@ -76,6 +78,8 @@ async function enableTwoFactorAuthentication() {
         history.replaceState("", "", "/");
         window.location.replace('profile');
     }
+    if (steps[currentStep].hasOwnProperty('getField'))
+        steps[currentStep].getField();
     const nextButton = document.getElementById('nextButton');
     if (nextButton) {
         nextButton.addEventListener('click', () => {
@@ -92,6 +96,15 @@ async function enableTwoFactorAuthentication() {
     }
 }
 
+function getSelectedField() {
+    const selectedField = document.getElementById('methodSelect');
+
+    selectedMethod = selectedField.value;
+    selectedField.addEventListener('change', () => {
+        selectedMethod = selectedField.value;
+    });
+}
+
 async function enableTwoFactorRequest() {
     const config = {
         method: 'POST',
@@ -100,7 +113,10 @@ async function enableTwoFactorRequest() {
             'Content-Type': 'application/json',
             'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
         },
-        credentials: 'include' // Needed for send cookie
+        credentials: 'include', // Needed for send cookie
+        body: JSON.stringify({
+            method: selectedMethod
+        })
     };
     try {
         const res = await fetch(`http://localhost:8000/account/2fa/enable/`, config);
@@ -108,7 +124,7 @@ async function enableTwoFactorRequest() {
             throw new Error('Access Denied')
         const data = await res.json();
         if (data.user)
-        console.log('enter in enable backend succesfully')
+            console.log('enable backend response: ', data)
     } catch (error) {
         alert(`Error: ${error.message}`);
     }
