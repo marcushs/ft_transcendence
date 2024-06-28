@@ -1,16 +1,15 @@
 from django.http import JsonResponse
 from django.views import View
+from .decorator import check_jwt
+from django.utils.decorators import method_decorator
 
 class logoutView(View):
     def __init__(self):
         super().__init__
     
-    
+    @method_decorator(check_jwt)
     def post(self, request):
-        if request.user.is_authenticated:
-            response = JsonResponse({'message': 'Logout successfully', 'redirect_url': 'login'}, status=201)
-            response.delete_cookie('jwt')
-            response.delete_cookie('jwt_refresh')
-            return response
-        else:
-            return JsonResponse({'error': 'You are not logged'}, status=401)
+        response = JsonResponse({'message': 'Logout successfully', 'redirect_url': 'login'}, status=201)
+        response.delete_cookie('jwt')
+        response.delete_cookie('jwt_refresh')
+        return response

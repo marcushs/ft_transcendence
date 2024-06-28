@@ -15,5 +15,5 @@ def check_jwt(view_func):
                 return view_func(request, *args, **kwargs) #  Call the original view with the modified query
             else:
                 return JsonResponse({'error': 'Invalid jwt token'}, status=401)
-        return JsonResponse({'error': 'Authorization token not provided'}, status=401)
+        return JsonResponse({'error': 'You are not logged in'}, status=401)
     return _wrapped_view
