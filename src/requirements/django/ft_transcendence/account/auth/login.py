@@ -3,6 +3,8 @@ from .jwt_utils import createJwtToken
 from django.http import JsonResponse
 from django.conf import settings
 from django.views import View
+from django.contrib.auth.hashers import check_password
+from ..models import User
 import json
 
 class loginView(View):
@@ -15,8 +17,8 @@ class loginView(View):
         response = self._check_data(request, data)
         if response is not None:
             return response
-        user = authenticate(request, username=data['username'], password=data['password'])
-        if user is not None:
+        user = User.objects.get(username=data['username'])
+        if user is not None and check_password(data['password'], user.password):
             response = self._create_user_session(user)
         else:
             response = JsonResponse({'error': 'Invalid username or password, please try again'}, status=400)
@@ -28,7 +30,7 @@ class loginView(View):
             return JsonResponse({'error': 'No username provided'}, status=401)
         if not data['password']:
             return JsonResponse({'error': 'No password provided'}, status=401)
-        if request.jwt_user:
+        if request.COOKIES.get('jwt'):
             return JsonResponse({'error': 'You are already logged in'}, status=401)
         return None
     
