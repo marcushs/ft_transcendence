@@ -2,23 +2,46 @@ import { getCookie } from "../utils/cookie.js";
 import "../components/NavBar.js";
 
 export default () => {
+    const status = checkStatus();
     const html = `
-        <nav-bar auth="true"></nav-bar>
-        <div class="container">
-            <p>Are you sure you want to logout?</p>
-            <button type="button" id="yesBtn">Yes</button>
-            <button type="button" id="cancelBtn">Cancel</button>
-        </div>
-    `
+            <nav-bar auth="true"></nav-bar>
+            <div class="container">
+                <p>Are you sure you want to logout?</p>
+                <button type="button" id="yesBtn">Yes</button>
+                <button type="button" id="cancelBtn">Cancel</button>
+            </div>
+        `;
 
     setTimeout(() => {
-		attachEvent();   
+		attachEvent(status);   
 	}, 0);
 
     return html;
 }
 
-function attachEvent() {
+async function checkStatus() {
+    const config = {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
+        },
+        credentials: 'include' // Needed for send cookie
+    };
+    const res = await fetch(`http://localhost:8000/account/logout/`, config);
+    const data = await res.json();
+    if (data.error) {
+        alert(data.error);
+        window.location.replace('login');
+    }
+    return res.status;
+}
+
+function attachEvent(status) {
+    if (status !== 200)
+        return ;
+
     const yesBtn = document.getElementById('yesBtn');
     const cancelBtn = document.getElementById('cancelBtn');
 
