@@ -29,8 +29,6 @@ class signupView(View):
     
     
     def _check_data(self, request, data):
-        if request.user.is_authenticated:
-            return JsonResponse({'error': 'You already have an account'}, status=401)
         if not data['username']:
             return JsonResponse({'error': 'No username provided'}, status=401)
         elif not re.match(self.regexUsernameCheck, data['username']):
@@ -38,7 +36,7 @@ class signupView(View):
         elif not data['email']:
             return JsonResponse({'error': 'No email provided'}, status=401)
         elif User.objects.filter(email=data['email']).exists():
-            return JsonResponse({'error': 'This email have already an account'}, status=401)
+            return JsonResponse({'error': 'This email has already an account'}, status=401)
         elif not re.match(self.regexEmailCheck, data['email']):
             return JsonResponse({'error': 'Invalid email'}, status=401)
         elif not data['password']:

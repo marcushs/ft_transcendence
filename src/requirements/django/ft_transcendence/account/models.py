@@ -22,7 +22,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     profile_image = models.URLField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
-    score = models.IntegerField(default=0)           
+    score = models.IntegerField(default=0)
+    otp_secret_key = models.CharField(max_length=255, blank=True, null=True)
+    is_verified = is_verified = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
