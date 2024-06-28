@@ -1,7 +1,7 @@
 from .jwt_utils import getUserFromJwtToken, RefreshJwtToken
 from django.utils.deprecation import MiddlewareMixin # assure the retro-compability for recent django middleware
 from django.contrib.auth.models import AnonymousUser
-from django.contrib.auth import logout as auth_logout, get_user_model
+from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.conf import settings
 
