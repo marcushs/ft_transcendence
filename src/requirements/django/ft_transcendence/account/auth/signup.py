@@ -29,8 +29,6 @@ class signupView(View):
     
     
     def _check_data(self, request, data):
-        if request.user.is_authenticated:
-            return JsonResponse({'error': 'You already have an account'}, status=401)
         if not data['username']:
             return JsonResponse({'error': 'No username provided'}, status=401)
         elif not re.match(self.regexUsernameCheck, data['username']):

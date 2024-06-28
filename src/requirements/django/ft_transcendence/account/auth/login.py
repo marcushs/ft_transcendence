@@ -28,7 +28,7 @@ class loginView(View):
             return JsonResponse({'error': 'No username provided'}, status=401)
         if not data['password']:
             return JsonResponse({'error': 'No password provided'}, status=401)
-        if request.user.is_authenticated:
+        if request.jwt_user:
             return JsonResponse({'error': 'You are already logged in'}, status=401)
         return None
     
