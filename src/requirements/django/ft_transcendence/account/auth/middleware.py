@@ -12,27 +12,27 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
     def process_request(self, request):
         token = request.COOKIES.get('jwt')
         if token:
-            user = getUserFromJwtToken(token)
-            if user:
-                request.jwt_user = user # Associates user with the request
+            jwt_user = getUserFromJwtToken(token)
+            if jwt_user:
+                request.user = jwt_user
             else:
                 request.jwt_failed = True
-                request.jwt_user = AnonymousUser()
+                request.user = AnonymousUser()
         else:
             refresh_token = request.COOKIES.get('jwt_refresh')
             if refresh_token:
-                user = getUserFromJwtToken(refresh_token)
-                if user:
+                jwt_user = getUserFromJwtToken(refresh_token)
+                if jwt_user:
                     token = RefreshJwtToken(refresh_token, 'access')
                     request.new_jwt = token
                     token_refresh = RefreshJwtToken(refresh_token, 'refresh')
                     request.new_jwt_refresh = token_refresh
-                    request.jwt_user = user
+                    request.user = jwt_user
                 else:
                     request.jwt_failed = True
-                    request.jwt_user = AnonymousUser()
+                    request.user = AnonymousUser()
             else:
-                    request.jwt_user = AnonymousUser()
+                    request.user = AnonymousUser()
         response = self.get_response(request)
         return response
     
@@ -47,14 +47,3 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
         if hasattr(request, 'new_jwt_refresh'):
             response.set_cookie('jwt_refresh', request.new_jwt_refresh, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
         return response
-
-# define jwt authentication as default user auth by overriding request.user
-class MixedAuthenticationMiddleware(MiddlewareMixin):
-    def process_request(self, request):
-        # isAuth = request.COOKIES.get('authentificated')
-        # if hasattr(request, 'jwt_failed') and isAuth is not None:
-        #     response = JsonResponse({'error': 'token expired, please login again', 'status': 'jwt_failed'}, status=401)
-        #     response.delete_cookie('authentificated')
-        #     return response
-        if hasattr(request, 'jwt_user'):
-            request.user = request.jwt_user

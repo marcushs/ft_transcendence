@@ -45,7 +45,6 @@ ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1']
 INSTALLED_APPS = [
 	"corsheaders",
 	'account',
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -69,10 +68,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
-    'account.auth.middleware.JWTAuthenticationMiddleware', # Custom auth middleware for supporting jwt authentication
-    'django.contrib.auth.middleware.AuthenticationMiddleware', # Base auth system, we keep it cause django administration need it
-    'django_otp.middleware.OTPMiddleware',
-    'account.auth.middleware.MixedAuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware', # Base middleware for two_factor feature
+    'account.auth.middleware.JWTAuthenticationMiddleware', # Custom middleware for jwt token feature
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

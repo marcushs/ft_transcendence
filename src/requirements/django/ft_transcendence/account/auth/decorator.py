@@ -11,7 +11,7 @@ def check_jwt(view_func):
         if token:
             user = getUserFromJwtToken(token)
             if user:
-                request.jwt_user = user # Associates user with the request
+                request.user = user # Associates user with the request
                 return view_func(request, *args, **kwargs) #  Call the original view with the modified query
             else:
                 return JsonResponse({'error': 'Invalid jwt token'}, status=401)

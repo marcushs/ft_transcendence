@@ -1,4 +1,3 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
 
@@ -22,7 +21,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     profile_image = models.URLField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
-    score = models.IntegerField(default=0)           
+    score = models.IntegerField(default=0)
+    is_verified = models.BooleanField(default=False)
+    two_factor_token = models.CharField(max_length=50, blank=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -31,4 +32,16 @@ class User(AbstractBaseUser, PermissionsMixin):
  
     def __str__(self):
       return self.username
-# Create your models here.
+  
+  
+    def to_dict(self):
+        return {
+            'username': self.username,
+            'email': self.email,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'profile_image': self.profile_image,
+            'score': self.score,
+            'is_verified': self.is_verified,
+        }
+    

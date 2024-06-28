@@ -49,7 +49,7 @@ const steps = [
         `,
         onNext: () => {
             currentStep++;
-            // enableTwoFactorRequest();
+            enableTwoFactorRequest();
         },
         onBack: () => currentStep--,
     },
