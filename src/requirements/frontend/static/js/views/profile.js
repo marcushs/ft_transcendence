@@ -1,5 +1,6 @@
 import { getCookie } from "../utils/cookie.js";
 import enableTwoFactor from "./two_factor/enable2fa.js"
+import { disableTwoFactor } from "./two_factor/disable2fa.js"
 import "../components/NavBar.js";
 
 export default () => {
@@ -91,7 +92,7 @@ function twoFactorEventListener () {
                 app.innerHTML = enableTwoFactor();
                 break;
             case 'disable':
-                disabled2fa();
+                disableTwoFactor();
                 break;
             case 'backup':
                 backup2fa();

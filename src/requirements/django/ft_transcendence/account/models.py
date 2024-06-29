@@ -24,6 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     score = models.IntegerField(default=0)
     is_verified = models.BooleanField(default=False)
     two_factor_token = models.CharField(max_length=50, blank=True)
+    phonenumber = models.CharField(max_length=20, blank=True, null=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
