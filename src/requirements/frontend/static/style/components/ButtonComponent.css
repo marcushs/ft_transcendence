@@ -12,6 +12,14 @@ button-component .generic-btn {
 	padding: 0 1.5rem;
 }
 
+button-component .generic-btn-pink {
+	border: 1px solid var(--neon-pink);
+	color: var(--neon-pink);
+	border-radius: 5px;
+	font-size: 2rem;
+	padding: 0 1.5rem;
+}
+
 /* Player number */
 
 .player-number-active .button-background {

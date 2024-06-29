@@ -1,0 +1,61 @@
+authentication-register-component {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+authentication-register-component h1 {
+	font-size: 4rem;
+	font-weight: 400;
+	letter-spacing: 1px;
+	margin-bottom: 7rem;
+}
+
+authentication-register-component form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+
+authentication-register-component .form-fields {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 4rem;
+	margin-bottom: 5rem;
+}
+
+authentication-register-component form input {
+	border-bottom: 2px solid var(--light-grey);
+	width: 100%;
+	color: var(--text-primary-color);
+	line-height: 3rem;
+	padding-left: 1rem;
+}
+
+authentication-register-component form input::placeholder {
+	color: var(--text-primary-color);
+	font-size: 1.8rem;
+	opacity: 0.8;
+}
+
+authentication-register-component form button-component {
+	margin-top: 2rem;
+}
+
+
+authentication-register-component p {
+	font-size: 1.5rem;
+	margin-top: 2rem;
+}
+
+
+authentication-register-component p span {
+	color: var(--neon-pink);
+	font-weight: 700;
+}

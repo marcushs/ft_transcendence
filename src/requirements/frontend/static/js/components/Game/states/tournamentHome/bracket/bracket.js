@@ -133,8 +133,7 @@ class bracket {
         console.log(matches)
         for (const match of matches) {
             match.forEach(player => {
-                console.log(player)
-                matchesRes += this.createPlayerElement(player,`${idPrefix}${index}`, (player.score === '11') ? `player-in-bracket-game-win` :  `player-in-bracket-basic`);
+                matchesRes += this.createPlayer(player,`${idPrefix}${index}`, (player.score === '11') ? `player-in-bracket-game-win` :  `player-in-bracket-basic`);
                 index++;
             });
         }
@@ -142,7 +141,7 @@ class bracket {
         return matchesRes;
     }
 
-    createPlayerElement(player, id, className) {
+    createPlayer(player, id, className) {
         return `
             <player-in-bracket name="${player.name}" score="${player.score}" id="${id}" class="${className}"></player-in-bracket>
         `;
