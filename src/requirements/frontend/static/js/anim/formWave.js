@@ -1,6 +1,6 @@
 const formWave = () => {
 	const labels = document.querySelectorAll('.form-control label')
-	// const btn = document.querySelector('.btn')
+
 	labels.forEach(label => {
 		label.innerHTML = label.innerText 
 			.split('')

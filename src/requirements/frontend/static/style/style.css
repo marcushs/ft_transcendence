@@ -6,7 +6,7 @@
 @import './_variables.css';
 
 :root {
-    font-size: 40%;
+    font-size: 50%;
 }
 
 * {
@@ -124,4 +124,97 @@ main {
 .form-control input:valid + label span {
     color: lightblue;
     transform: translateY(-30px);
+}
+
+
+/* HOME */
+
+main {
+    height: 100vh;
+    width: 100vw;
+}
+
+/* nav-bar */
+.nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100vw;
+    height: 8vh;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-image: linear-gradient(90deg, #FF16C6, #00D0FF) 30;
+    padding: 0 8rem;
+}
+
+.nav-bar .nav-bar-link {
+    font-size: 2.4rem;
+}
+
+.nav-bar .nav-bar-section {
+    display: flex;
+    align-items: center;
+}
+
+.nav-bar .nav-bar-section > * {
+    margin: 0 20px;
+}
+
+.nav-bar .nav-bar-left-section .logo {
+    background-image: url("../assets/logo.svg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    height: 8rem;
+    width: 8rem;
+}
+
+.nav-bar .nav-bar-right-section p {
+    font-size: 24px;
+}
+
+.nav-bar .nav-bar-right-section .profile-picture {
+    background-image: url("../assets/acarlott.jpg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    height: 6.5rem;
+    width: 6.5rem;
+}
+
+/* search-bar */
+
+.search-bar {
+    position: relative;
+    margin-left: 5rem;
+}
+
+.search-bar form {
+    height: 3.5rem;
+    width: 40rem;
+}
+
+.search-bar form .search-bar-icon {
+    position: absolute;
+    left: 15px;
+    top: 25%;
+    height: 1.5rem;
+}
+
+.search-bar form .search-bar-input-container {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #FF16C6, #00D0FF);
+    padding: 1px;
+    border-radius: 10px;
+}
+
+.search-bar form .search-bar-input-container input {
+    color: white;
+    font-size: 1.2rem;
+    padding-left: 50px;
+    height: 100%;
+    width: 100%;
+    background: #121216;
+    border-radius: 10px;
 }

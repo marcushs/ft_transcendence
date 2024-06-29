@@ -15,10 +15,11 @@ services:
   ft_transcendence:
     container_name: transcendence
     env_file: ./requirements/django/ft_transcendence/.env
+    restart: always
     build:
       context: ./requirements/django
       dockerfile: Dockerfile
-    command: ["sh", "-c", "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"]
+    command: ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"]
     volumes:
       - ./requirements/django/ft_transcendence:/ft_transcendence
     ports:

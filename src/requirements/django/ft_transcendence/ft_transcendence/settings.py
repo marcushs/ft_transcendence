@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import environ
 import os
+import datetime
 
 # Read from .env file
 env = environ.Env()
@@ -29,37 +30,61 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 
+    # /--> JWT <--\
+JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
+JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
+JWT_EXP_DELTA_SECONDS = 3000 # 15 minutes
+JWT_REFRESH_EXP_DELTA_SECONDS = 6000 # 1day
+    # /--> 2FA <--\
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'kingpong.info@gmail.com'
+EMAIL_HOST_PASSWORD = 'mlxe bkoa gjue tigk'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1']
 
-
 # Application definition
 
 INSTALLED_APPS = [
 	"corsheaders",
-    'django.contrib.admin',
+	'account',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'account',
+    # 2FA
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
+    'django_otp.plugins.otp_email',  # <- for email capability.
+    'two_factor',
+    'two_factor.plugins.phonenumber',  # <- for phone number capability.
+    'two_factor.plugins.email',  # <- for email capability.
+    # 'two_factor.plugins.yubikey',  # <- for yubikey capability.
 ]
 
+
 MIDDLEWARE = [
-	"corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'corsheaders.middleware.CorsMiddleware',
+    'django_otp.middleware.OTPMiddleware', # Base middleware for two_factor feature
+    'account.auth.middleware.JWTAuthenticationMiddleware', # Custom middleware for jwt token feature
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'ft_transcendence.urls'
+
 
 TEMPLATES = [
     {
@@ -77,6 +102,7 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'ft_transcendence.wsgi.application'
 
 
@@ -84,8 +110,12 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_HEADER = [
-	'Accept',
-	'content-type',
+	"accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
 ]
 
 CORS_ALLOW_METHODS = [
@@ -99,6 +129,11 @@ CORS_ALLOW_METHODS = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+	'http://frontend'
+]
+
+CSRF_TRUSTED_ORIGINS = [
+	'http://localhost:3000',
 	'http://frontend'
 ]
 
@@ -116,22 +151,42 @@ DATABASES = {
     }
 }
 
+LOGIN_URL = 'two_factor:login'
+AUTH_USER_MODEL = "account.User"
 
 # Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-pa   ssword-validators
 
 AUTH_PASSWORD_VALIDATORS = [
+    # check similarity with email and username
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', 
     },
+    # setup min length password
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
     },
+    # check low password strength
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
+    # check password contains only numeric char
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+    {
+        'NAME': 'account.auth.signup.NumericValidator',
+    },
+    # check password contains uppercase char
+    {
+        'NAME': 'account.auth.signup.UppercaseValidator',
+    },
+    # check password contains lowercase char
+    {
+        'NAME': 'account.auth.signup.LowercaseValidator',
     },
 ]
 

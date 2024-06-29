@@ -8,7 +8,9 @@ WORKDIR /ft_transcendence
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install django-two-factor-auth[phonenumbers]
+RUN pip install PyJWT
 
 COPY ./ft_transcendence .
 
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+# CMD ["sh", "-c", "python3 manage.py migrate && python3 manage.py create_superuser --noinput && python3 manage.py runserver 0.0.0.0:8000"]

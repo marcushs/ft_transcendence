@@ -1,3 +1,6 @@
+import index from "../views/index.js";
+import { getCookie } from "../utils/cookie.js";
+
 class CustomBtn extends HTMLButtonElement {
     static get observedAttributes() {
         return ["text"];
@@ -6,17 +9,21 @@ class CustomBtn extends HTMLButtonElement {
     constructor() {
         super();
         
-        // Set default text
-        this.text = 'text';
-
         // Add a class to the button
         this.classList.add('btn');
+
+        // Set default text
+        this.text = 'text';
 
         // Set the initial text content
         this.textContent = this.text;
 
-        // Bind the getData method to this instance
-        this.addEventListener('click', this.getData.bind(this));
+        // Bind the postData method to this instance
+        this.addEventListener('click', this.postData.bind(this));
+
+        this.type = 'submit';
+
+        this.disabled = true;
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -26,19 +33,53 @@ class CustomBtn extends HTMLButtonElement {
         }
     }
 
-    async getData() {
-        const config = {
-            headers: {
-                'Accept': 'application/json'
+    async postData(event) {
+        // Prevent form submission
+        console.log('test')
+        event.preventDefault();
+        // Get the closest form element of the button
+        const form = this.closest('form');
+        if (form) {
+            // Construct a FormData object, a set of key/value pairs
+            const formData = new FormData(form);
+            
+            // formData.entries() return an iterator that traverse all the key/value pairs
+            // Object.fromEntries() transforms a list of key-value pairs into an object
+            const formValues = Object.fromEntries(formData.entries());
+            const json = JSON.stringify(formValues);
+            console.log(json);
+            const config = {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
+                },
+                credentials: 'include', // Needed for send cookie
+                body: json, // Send form values as JSON
+            };
+
+            try {
+                console.log(this.text.toLowerCase())
+                const res = await fetch(`http://localhost:8000/account/${this.text.toLowerCase()}/`, config);
+                if (res.status == 403)
+                    throw new Error('Access Denied')
+                const data = await res.json();
+                if (data.error)
+                    alert(data.error)
+                else
+                    window.location.replace(data.redirect_url);
+            } catch (error) {
+                if (error.data && error.data.status === 'jwt_failed') {
+                    history.replaceState("", "", "/");
+                    document.title = "Index";
+                    app.innerHTML = index();
+                }
+                console.log('Catch error :', error);
+                alert(`Error: ${error.message}`)
             }
-        }
-        try {
-            const res = await fetch(`http://localhost:8000/account/${this.text.toLowerCase()}`, config);
-            const data = await res.json();
-            console.log(data.message);
-        } catch (error) {
-            console.error('Network error:', error);
-            // Handle the error, such as displaying an error message to the user
+        } else {
+            console.error('No form found!');
         }
     }
 }

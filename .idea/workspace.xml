@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="aad3eb36-6878-4b47-ae05-7a19b41777c8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/auth/csrf_utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/auth/decorator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/auth/jwt_utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/auth/login.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/auth/logout.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/auth/middleware.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/auth/signup.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/auth/two_factor_auth.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/migrations/0002_user_is_verified_user_two_factor_token.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/migrations/0003_user_phonenumber.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/components/PasswordFeedback.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/components/SignupBtn.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/cookie.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/formValidation.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/getCookie.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/loginFormValidation.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/responseHandler.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/logout.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/profile.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/two_factor/backup2fa.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/two_factor/disable2fa.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/two_factor/enable2fa.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/style/components/PasswordFeedback.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/style/views/profile.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/django/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/django/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/apps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/account/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/ft_transcendence/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/ft_transcendence/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/ft_transcendence/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/django/ft_transcendence/ft_transcendence/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/django/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/django/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/assets/sunshine-debian-bullseye-amd64.deb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/anim/formWave.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/anim/formWave.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/components/CustomBtn.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/components/CustomBtn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/components/Game/Game.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/components/Game/Game.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/components/NavBar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/components/NavBar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/signup.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/signup.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/style/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/style/style.css" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2hnGbYuC7zxhHZ2VZiS5zliIx4l" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="false" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Merging frontend->authentication",
+    "last_opened_file_path": "/home/tduprez/Documents/ft_transcendence",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.Color Scheme Font",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/requirements/frontend/static/assets" />
+      <recent name="$PROJECT_DIR$/src/requirements/frontend/static/js/components/Game/states/onlineHome" />
+      <recent name="$PROJECT_DIR$/src/requirements/frontend/static/js/components/Game/states/localHome" />
+      <recent name="$PROJECT_DIR$/src/requirements/frontend/static/js/components/Game/states/tournamentHome" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="formWave" />
+    </option>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-WS-241.17011.90" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="aad3eb36-6878-4b47-ae05-7a19b41777c8" name="Changes" comment="" />
+      <created>1718222499999</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1718222499999</updated>
+      <workItem from="1718222501012" duration="7887000" />
+      <workItem from="1718294102320" duration="7828000" />
+      <workItem from="1718308992040" duration="6128000" />
+      <workItem from="1718358593297" duration="28726000" />
+      <workItem from="1718445121320" duration="22371000" />
+      <workItem from="1718529937114" duration="15084000" />
+      <workItem from="1718555196602" duration="8749000" />
+      <workItem from="1718618313572" duration="10129000" />
+      <workItem from="1718642950131" duration="1167000" />
+      <workItem from="1718737112768" duration="9097000" />
+      <workItem from="1718825425182" duration="5403000" />
+      <workItem from="1718913223951" duration="890000" />
+      <workItem from="1719255907772" duration="5959000" />
+      <workItem from="1719504948693" duration="15181000" />
+      <workItem from="1719571120318" duration="2319000" />
+      <workItem from="1719666550382" duration="607000" />
+      <workItem from="1719667523600" duration="1064000" />
+      <workItem from="1719668712303" duration="129000" />
+      <workItem from="1719697318522" duration="357000" />
+      <workItem from="1719697675852" duration="5485000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
