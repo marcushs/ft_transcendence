@@ -1,9 +1,7 @@
 import login from "./views/login.js";
 import index from "./views/index.js";
 import signup from "./views/signup.js";
-import enable2fa from "./views/two_factor/enable2fa.js";
-import LogoutFormHandler from "./views/logout.js";
-import { getCookie ,generateCsrfToken } from "./utils/cookie.js";
+import { generateCsrfToken } from "./utils/cookie.js";
 import profile from "./views/profile.js";
 import logout from "./views/logout.js"
 

@@ -49,12 +49,15 @@ const steps = [
         html: `
             <h2>Enable Two-Factor Authentication</h2>
             <p>enter the code you received by ${selectedMethod} below:</p>
+            <div id="qrcode">
+                <p>salut</p>
+            </div>
             <form>
 				<div class="form-control">
 					<input id="otpCode" type="text" name="Verification code" required>
 					<label for="otpCode"></label>
 				</div>
-			</form>
+                </form>
             <button id="otpButton">Submit Code</button>
             <button id="backButton">Back</button>
             <button id="nextButton">Next</button>
@@ -99,12 +102,12 @@ function enableTwoFactorAuthentication() {
         }
         const otpButton = document.getElementById('otpButton');
         if (otpButton) {
+            if (selectedMethod === 'authenticator')
+                displayQRCode();
             otpButton.addEventListener('click', () => {
                 const verificationCode = document.getElementById('otpCode').value
                 if (verificationCode) {
-                    isValidCode = VerifyTwoFactorRequest(verificationCode)
-                    if (isValidCode === true)
-                        steps[currentStep].onNext();
+                    VerifyTwoFactorRequest(verificationCode);
                 }
                 enableTwoFactorAuthentication();
             });
@@ -113,6 +116,15 @@ function enableTwoFactorAuthentication() {
     else {
         history.replaceState("", "", "/");
         window.location.replace('profile');
+    }
+}
+
+async function displayQRCode() {
+    const qrcodeElement = document.getElementById('qrcode');
+    const qrcodeuri = sessionStorage.getItem('qrcodeuri');
+
+    if (qrcodeuri) {
+        new QRCode(qrcodeElement, qrcodeuri);
     }
 }
 
@@ -135,7 +147,8 @@ async function VerifyTwoFactorRequest(verificationCode) {
         },
         credentials: 'include', // Needed for send cookie
         body: JSON.stringify({
-            code: verificationCode
+            code: verificationCode,
+            method: selectedMethod
         })
     }
     try {
@@ -175,8 +188,11 @@ async function enableTwoFactorRequest() {
             throw new Error('Access Denied')
         const data = await res.json();
         if (data.message) {
-            console.log('enable backend response: ', data.message)
-
+            console.log('enable backend response: ', data.message);
+            if (data.qrcode) {
+                console.log('enable qrcode uri: ', data.qrcode);
+                sessionStorage.setItem('qrcodeuri', data.qrcode);
+            }
         } else {
             alert(`Error: ${data.error}`);
         }
