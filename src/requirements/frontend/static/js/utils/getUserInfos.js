@@ -1,4 +1,4 @@
-import getCookie from "./getCookie.js";
+import { getCookie } from "./cookie.js";
 
 export default async function getUserInfos() {
 	const config = {

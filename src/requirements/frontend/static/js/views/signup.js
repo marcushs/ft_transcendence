@@ -1,7 +1,10 @@
-import formWave from "../anim/formWave.js";
+// import formWave from "../anim/formWave.js";
 import "../components/ButtonComponent.js"
 import rotatingGradient from "../anim/rotatingGradient.js";
-import getCookie from "../utils/getCookie.js";
+import { getCookie } from "../utils/cookie.js";
+import validateSignupInputs from "../utils/signupFormValidation.js";
+import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js";
+import { manageConfirmPasswordToggle } from "../utils/managePasswordInputVisibility.js";
 
 export default () => {
 	const html = `
@@ -15,14 +18,19 @@ export default () => {
 					</div>
 					<div class="form-fields">
 						<input type="text" placeholder="Email" name="email" required>
+						<div id="emailFeedback" class="input-feedback"></div>
 					</div>
 					<div class="form-fields">
 						<input type="password" placeholder="Password" name="password" required>
+						<i class="fa-solid fa-eye" id="password-eye"></i>
+						<span id="passwordFeedback" class="input-feedback"></span>
 					</div>
 					<div class="form-fields">
 						<input type="password" placeholder="Confirm password" name="confirm_password" required>
+						<i class="fa-solid fa-eye" id="confirm-password-eye"></i>
+						<span id="confirmPasswordFeedback" class="input-feedback"></span>
 					</div>
-					<button-component id="registerBtn" label="Signup" class="generic-auth-btn"></button-component>
+					<button-component id="registerBtn" label="Signup" class="generic-auth-btn-disabled"></button-component>
 					<p>Already have an account? <a href="/login">Login</a></p>
 				</form>
 			</div>
@@ -31,8 +39,12 @@ export default () => {
 	setTimeout(() =>{
 		rotatingGradient('.signup-form-container-background');
 		rotatingGradient('.signup-form-container');
+		validateSignupInputs();
+		managePasswordToggle();
+		manageConfirmPasswordToggle();
 		const registerBtn = document.querySelector('#registerBtn');
 		registerBtn.addEventListener('click', event => postData(event, registerBtn));
+
 	}, 0);
 
 	return html;

@@ -28,7 +28,6 @@ button-component .signup-nav-bar-btn {
 	border: none;
 	border-radius: 4px;
 	background: black;
-	/*background: var(--background-color);*/
 	font-size: 2.2rem;
 	padding: 0.1rem 2rem;
 }
@@ -43,6 +42,17 @@ button-component .generic-auth-btn {
 	width: 100%;
 	border: none;
 	border-radius: 4px;
+	color: var(--text-primary-color);
+	background: var(--component-background-color);
+	font-size: 2.2rem;
+	padding: 0.1rem 2rem;
+}
+
+button-component .generic-auth-btn-disabled {
+	width: 100%;
+	border: none;
+	border-radius: 4px;
+	color: var(--light-grey);
 	background: var(--component-background-color);
 	font-size: 2.2rem;
 	padding: 0.1rem 2rem;
@@ -58,11 +68,14 @@ button-component .button-background:hover .login-nav-bar-btn {
 }
 
 .generic-auth-btn .button-background, .signup-nav-bar-btn .button-background {
-	/*display: flex;*/
-	/*align-items: center;*/
-	/*justify-content: center;*/
 	padding: 1px;
 	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
+	border-radius: 5px;
+}
+
+.generic-auth-btn-disabled .button-background {
+	padding: 1px;
+	background: var(--light-grey);
 	border-radius: 5px;
 }
 
@@ -75,7 +88,6 @@ button-component .button-background:hover .login-nav-bar-btn {
 	width: 5rem;
 	padding: 1px;
 	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
-	/*background: var(--neon-gradiant);*/
 	border-radius: 5px;
 }
 
@@ -107,7 +119,6 @@ button-component .player-number-inactive {
 	width: 4rem;
 	padding: 1px;
 	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
-	/*background: var(--neon-gradiant);*/
 	border-radius: 5px;
 }
 

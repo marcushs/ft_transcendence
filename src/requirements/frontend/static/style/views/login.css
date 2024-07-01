@@ -48,6 +48,7 @@
 
 
 .login-page .form-fields {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -57,13 +58,26 @@
 	margin-bottom: 7rem;
 }
 
+.login-page .form-fields i {
+	position: absolute;
+	right: 2rem;
+	font-size: 1.5rem;
+}
+
 .login-page form input {
 	border-bottom: 2px solid var(--light-grey);
 	width: 100%;
 	color: var(--text-primary-color);
+	font-size: 2rem;
 	line-height: 3rem;
 	padding-left: 1rem;
 	padding-bottom: 0.7rem;
+}
+
+.login-page form input:-webkit-autofill,
+.login-page form input:-webkit-autofill:active {
+	box-shadow: 0 0 0 30px var(--component-background-color) inset !important;
+	-webkit-text-fill-color: var(--text-primary-color) !important;
 }
 
 .login-page form input::placeholder {
@@ -82,9 +96,7 @@
 	margin-top: 2rem;
 }
 
-
 .login-page p a {
-	/*color: var(--neon-pink);*/
 	background: linear-gradient(45deg, var(--neon-pink), var(--neon-blue));
 	font-weight: 700;
 	background-clip: text;

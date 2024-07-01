@@ -1,7 +1,9 @@
 // import formWave from "../anim/formWave.js";
 import "../components/ButtonComponent.js"
 import rotatingGradient from "../anim/rotatingGradient.js";
-import {getCookie} from "../utils/cookie.js";
+import { getCookie } from "../utils/cookie.js";
+import loginFormValidation from "../utils/loginFormValidation.js";
+import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js";
 
 export default () => {
 	const html = `
@@ -15,16 +17,19 @@ export default () => {
 					</div>
 					<div class="form-fields">
 						<input type="password" placeholder="Password" name="password" required>
+						<i class="fa-solid fa-eye" id="password-eye"></i>
 					</div>
-					<button-component id="loginBtn" label="Login" class="generic-auth-btn"></button-component>
+					<button-component id="loginBtn" label="Login" class="generic-auth-btn-disabled"></button-component>
 					<p>Don't have an account? <a href="/signup">Signup</a></p>
 				</form>
 			</div>
 		</section>`;
 
-	setTimeout(() =>{
+	setTimeout(() => {
 		rotatingGradient('.login-form-container-background');
 		rotatingGradient('.login-form-container');
+		loginFormValidation();
+		managePasswordToggle();
 		const loginBtn = document.querySelector('#loginBtn');
 
 		loginBtn.addEventListener('click', event => postData(event, loginBtn));

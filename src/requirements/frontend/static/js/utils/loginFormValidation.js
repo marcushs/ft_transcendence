@@ -1,14 +1,14 @@
-export function checkFieldsCompleted() {
-    const usernameInput = document.getElementById('username');
-    const pwInput = document.getElementById('password');
-    const btn = document.querySelector('button');
+export default function checkFieldsCompleted() {
+    const usernameInput = document.querySelector('input[name="username"]');
+    const passwordInput = document.querySelector('input[name="password"]');
+    const btn = document.querySelector('.generic-auth-btn-disabled');
 
     function inputsFilled() {
-        if (usernameInput.value && pwInput.value)
-            btn.disabled = false;
+        if (usernameInput.value && passwordInput.value)
+            btn.className = 'generic-auth-btn';
         else
-            btn.disabled = true;
+            btn.className = 'generic-auth-btn-disabled';
     }
     usernameInput.addEventListener('input', inputsFilled);
-    pwInput.addEventListener('input', inputsFilled);
+    passwordInput.addEventListener('input', inputsFilled);
 }
