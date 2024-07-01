@@ -22,7 +22,7 @@ export default () => {
 					<div class="form-fields">
 						<input type="password" placeholder="Confirm password" name="confirm_password" required>
 					</div>
-					<button-component id="registerBtn" label="Signup" class="special-btn"></button-component>
+					<button-component id="registerBtn" label="Signup" class="generic-auth-btn"></button-component>
 					<p>Already have an account? <a href="/login">Login</a></p>
 				</form>
 			</div>

@@ -7,7 +7,6 @@ nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /*height: 100%;*/
     border-bottom-width: 1px;
     border-bottom-style: solid;
     border-image: var(--neon-gradiant) 30;
@@ -25,6 +24,15 @@ nav .nav-bar-section {
 
 nav .nav-bar-section > * {
     margin: 0 20px;
+}
+
+nav .account-infos {
+    display: flex;
+    align-items: center;
+}
+
+nav .account-infos button-component[label='Login'] {
+    margin-right: 3rem;
 }
 
 nav .nav-bar-left-section .logo {
@@ -47,4 +55,5 @@ nav .nav-bar-right-section .profile-picture {
     border-radius: 50%;
     height: 6rem;
     width: 6rem;
+    margin-left: 3rem;
 }

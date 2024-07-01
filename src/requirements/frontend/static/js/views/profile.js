@@ -17,7 +17,8 @@ export default () => {
 
     return html;
 }
-async function getProfile() { 
+
+async function getProfile() {
     const config = {
         method: 'GET',
         headers: {

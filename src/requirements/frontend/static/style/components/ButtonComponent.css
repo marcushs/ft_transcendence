@@ -12,9 +12,35 @@ button-component .generic-btn {
 	padding: 0 1.5rem;
 }
 
-/* Special btn (login, signup, ...) */
+/* Auth btn (login, signup, ...) */
 
-.special-btn {
+button-component .login-nav-bar-btn {
+	background: var(--background-color);
+	border: none;
+	color: var(--neon-blue);
+	border-radius: 5px;
+	font-size: 2.2rem;
+	padding: 0.1rem 2rem;
+}
+
+button-component .signup-nav-bar-btn {
+	width: 100%;
+	border: none;
+	border-radius: 4px;
+	background: black;
+	/*background: var(--background-color);*/
+	font-size: 2.2rem;
+	padding: 0.1rem 2rem;
+}
+
+.login-nav-bar-btn .button-background {
+	padding: 1px;
+	background: var(--neon-blue);
+	border-radius: 5px;
+}
+
+button-component .generic-auth-btn {
+	width: 100%;
 	border: none;
 	border-radius: 4px;
 	background: var(--component-background-color);
@@ -22,14 +48,19 @@ button-component .generic-btn {
 	padding: 0.1rem 2rem;
 }
 
-.button-background:hover .special-btn  {
+button-component .button-background:hover .generic-auth-btn, button-component .button-background:hover .signup-nav-bar-btn {
 	background: rgba(0, 0, 0, 0.8);
 }
 
-.special-btn .button-background {
-	display: flex;
-	align-items: center;
-	justify-content: center;
+button-component .button-background:hover .login-nav-bar-btn {
+	background: rgba(0, 0, 0, 0.85);
+
+}
+
+.generic-auth-btn .button-background, .signup-nav-bar-btn .button-background {
+	/*display: flex;*/
+	/*align-items: center;*/
+	/*justify-content: center;*/
 	padding: 1px;
 	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
 	border-radius: 5px;
@@ -58,7 +89,7 @@ button-component .generic-btn {
 	font-size: 2rem;
 }
 
-.player-number-inactive {
+button-component .player-number-inactive {
 	justify-content: center;
 	width: 5rem;
 	border: 1px solid var(--light-grey);
@@ -80,7 +111,7 @@ button-component .generic-btn {
 	border-radius: 5px;
 }
 
-.score-to-win-active {
+button-component .score-to-win-active {
 	width: 100%;
 	height: 100%;
 	border: none;
@@ -90,7 +121,7 @@ button-component .generic-btn {
 	font-size: 1.5rem;
 }
 
-.score-to-win-inactive {
+button-component .score-to-win-inactive {
 	justify-content: center;
 	width: 4rem;
 	border: 1px solid var(--light-grey);

@@ -27,8 +27,8 @@ def index(request):
     return response
 
 # test view for jwt token
-@check_jwt
+# @check_jwt
 def protectedView(request):
     if isinstance(request.user, AnonymousUser): 
-        return JsonResponse({'error': 'User not found'}, status=404)
+        return JsonResponse({'error': 'User not found'}, status=201)
     return JsonResponse({'message': 'protected view ok', 'user': request.user.to_dict()}, status=201)
