@@ -1,5 +1,5 @@
 import { getCookie } from "../utils/cookie.js";
-import enableTwoFactor from "./two_factor/enable2fa.js"
+import enableTwoFactor from "./two_factor/enable.js"
 import "../components/NavBar.js";
 
 export default () => {
@@ -31,19 +31,8 @@ async function getProfile() {
         const data = await res.json();
         console.log(data)
         if (data.user && !data.error) {
-            const container = document.getElementById('container');
-            const welcome = document.querySelector('h1');
-            const profilePic = document.createElement('div');
-            const score = document.createElement('h3');
-            
-            profilePic.classList.add('pic');
-            profilePic.style.background = `url('${data.user.profile_image}') no-repeat center center/cover`;
-            
-            welcome.textContent = `Welcome, ${data.user.username}`;
-            score.textContent = `Score: ${data.user.score}`;
-            container.appendChild(profilePic);
-            container.appendChild(score);
-            displayUserInformation(data.user)
+            generateProfilePage(data);
+            // displayUserInformation(data.user) 
         }
         else {
             console.log(data.error)
@@ -73,6 +62,7 @@ function displayUserInformation (data) {
     container.innerHTML += `${two_factor_inner}` 
     twoFactorEventListener();
 }
+
 function addStyleToView() {
     const cssLink = document.createElement('link');
 
@@ -99,3 +89,44 @@ function twoFactorEventListener () {
         }
     });
 }   
+
+
+function generateProfilePage(data) {
+    const container = document.getElementById('container');
+    const welcome = document.querySelector('h1');
+    const profilePic = document.createElement('div');
+    const score = document.createElement('h3');
+    const anchor = document.createElement('a');
+    const infoCollapse = document.createElement('div');
+    
+    welcome.textContent = `Welcome, ${data.user.username}`;
+    
+    profilePic.classList.add('pic');
+    profilePic.style.background = `url('${data.user.profile_image}') no-repeat center center/cover`;
+    
+    score.textContent = `Score: ${data.user.score}`;
+    
+    anchor.innerText = "Two-factor authentication (2FA)";
+    
+    infoCollapse.classList.add('info');
+    infoCollapse.innerHTML = `
+    <p>
+        Prior to configuring two-factor authentication, please read the following article carefully:
+        <a href="https://www.microsoft.com/en-us/security/business/security-101/what-is-two-factor-authentication-2fa">What is 2FA Authentication ?</a>
+        <br>
+        Supported applications: FreeOTP, Google Authenticator
+        <br>
+        ⚠️ You will receive an email with a link. Please follow the instructions to complete the two-factor authentication setup.
+        <br>
+    </p>
+    <a href="/2fa/enable" data-link class="enableBtn">Enable 2FA</a>
+    `;
+    
+    container.appendChild(profilePic);
+    container.appendChild(score);
+    container.appendChild(anchor);
+    container.appendChild(infoCollapse);
+
+    anchor.addEventListener('click', () => infoCollapse.classList.toggle('collapse'));
+}
+
