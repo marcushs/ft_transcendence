@@ -32,8 +32,6 @@ class twoFactorEnableView(View):
             response = self.checkVerificationCode(request, code, method)
             return response
         match method:
-            case 'sms':
-                response = self.smsHandler(request)
             case 'email':
                 response = self.emailHandler(request)
             case 'authenticator':
@@ -44,12 +42,7 @@ class twoFactorEnableView(View):
             request.user.two_factor_method = method
             request.user.save()
         return response
-    
-    def smsHandler(self, request):
-        if not request.user.phonenumber:
-            return JsonResponse({'error': 'no associated phone number'}, status=201)
-        pass
-    
+        
     def emailHandler(self, request):
         verification_code = secrets.token_hex(6)
         subject = 'Two Factor Activation'
@@ -101,6 +94,8 @@ class twoFactorDisableView(View):
     
     
     def post(self, request):
+        if request.user.is_verified == False:
+            return JsonResponse({'message': 'Two factor authentification not set on your account'}, status=201)
         request.user.is_verified = False
         request.user.save()
         return JsonResponse({'message': 'Two factor authentification disabled'}, status=201)
