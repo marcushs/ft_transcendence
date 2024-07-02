@@ -1,5 +1,5 @@
 import { getCookie } from "../utils/cookie.js";
-import "../components/NavBar.js";
+import "../components/NavBarComponent.js";
 
 export default () => {
     const html = `

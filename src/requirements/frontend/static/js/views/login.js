@@ -26,14 +26,19 @@ export default () => {
 		</section>`;
 
 	setTimeout(() => {
+		const loginBtn = document.querySelector('#loginBtn');
+
+		loginBtn.addEventListener('click', event => {
+			if (loginBtn.className === 'generic-auth-btn')
+				postData(event, loginBtn);
+		});
+
 		rotatingGradient('.login-form-container-background');
 		rotatingGradient('.login-form-container');
 		loginFormValidation();
 		managePasswordToggle();
-		const loginBtn = document.querySelector('#loginBtn');
-
-		loginBtn.addEventListener('click', event => postData(event, loginBtn));
 	}, 0);
+
 	return html;
 }
 

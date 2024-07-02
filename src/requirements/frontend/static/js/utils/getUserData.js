@@ -1,6 +1,6 @@
 import { getCookie } from "./cookie.js";
 
-export default async function getUserInfos() {
+export default async function getUserData() {
 	const config = {
 		method: 'GET',
 		headers: {
@@ -17,7 +17,7 @@ export default async function getUserInfos() {
 			throw new Error('Access Denied');
 		}
 		const data = await res.json();
-		return data;
+		return data.user;
 	} catch (error) {
 		console.log(error);
 	}

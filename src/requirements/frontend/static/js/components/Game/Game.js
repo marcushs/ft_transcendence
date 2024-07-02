@@ -7,6 +7,7 @@ import tournamentHome from "./states/tournamentHome/tournamentHome.js";
 import onlineHome from "./states/onlineHome/onlineHome.js";
 import localHome from "./states/localHome/localHome.js";
 import bracket from "./states/tournamentHome/bracket/bracket.js";
+import rotatingGradient from "../../anim/rotatingGradient.js";
 
 class GameComponent extends HTMLElement {
     constructor() {
@@ -22,8 +23,7 @@ class GameComponent extends HTMLElement {
 
         this.innerHTML = `
             <div class="game-background"></div>
-            <div class="states-container">
-            </div>
+            <div class="states-container"></div>
             <game-top-bar></game-top-bar>
         `;
 
@@ -35,6 +35,11 @@ class GameComponent extends HTMLElement {
         this.pushNewState(this.states[this.currentState].state);
 
         this.attachEventListener();
+    }
+
+    connectedCallback() {
+        rotatingGradient('game-component');
+        rotatingGradient('.game-background');
     }
 
     pushNewState(state) {

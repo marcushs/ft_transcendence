@@ -37,14 +37,18 @@ export default () => {
 		</section>`;
 
 	setTimeout(() =>{
+		const registerBtn = document.querySelector('#registerBtn');
+
+		registerBtn.addEventListener('click', event => {
+			if (registerBtn.className === 'generic-auth-btn')
+				postData(event, registerBtn);
+		});
+
 		rotatingGradient('.signup-form-container-background');
 		rotatingGradient('.signup-form-container');
 		validateSignupInputs();
 		managePasswordToggle();
 		manageConfirmPasswordToggle();
-		const registerBtn = document.querySelector('#registerBtn');
-		registerBtn.addEventListener('click', event => postData(event, registerBtn));
-
 	}, 0);
 
 	return html;

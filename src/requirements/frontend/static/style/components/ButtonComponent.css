@@ -12,6 +12,15 @@ button-component .generic-btn {
 	padding: 0 1.5rem;
 }
 
+button-component .generic-btn-disabled {
+	border: 1px solid var(--light-grey);
+	color: var(--light-grey);
+	border-radius: 5px;
+	font-size: 2rem;
+	padding: 0 1.5rem;
+	cursor: initial;
+}
+
 /* Auth btn (login, signup, ...) */
 
 button-component .login-nav-bar-btn {
@@ -56,6 +65,7 @@ button-component .generic-auth-btn-disabled {
 	background: var(--component-background-color);
 	font-size: 2.2rem;
 	padding: 0.1rem 2rem;
+	cursor: initial;
 }
 
 button-component .button-background:hover .generic-auth-btn, button-component .button-background:hover .signup-nav-bar-btn {
@@ -77,6 +87,7 @@ button-component .button-background:hover .login-nav-bar-btn {
 	padding: 1px;
 	background: var(--light-grey);
 	border-radius: 5px;
+	cursor: initial;
 }
 
 /* Player number */

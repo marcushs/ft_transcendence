@@ -3,6 +3,7 @@
 @import './views/home.css';
 @import './views/login.css';
 @import './views/signup.css';
+@import './views/profile.css';
 @import './_variables.css';
 
 :root {

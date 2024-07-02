@@ -1,8 +1,9 @@
 import "./SearchBar.js"
 import checkAuthentication from '../utils/checkAuthentication.js'
-import getUserInfos from "../utils/getUserInfos.js";
+import getUserData from "../utils/getUserData.js";
 import signup from "../views/signup.js";
 import login from "../views/login.js";
+import typeAndReplaceWords from "../anim/typeAndReplaceWords.js";
 
 class NavBarComponent extends HTMLElement {
 
@@ -26,6 +27,7 @@ class NavBarComponent extends HTMLElement {
 
     connectedCallback() {
         this.generateNavBarRightSection();
+        typeAndReplaceWords();
     }
 
     generateAnonymousUser() {
@@ -47,13 +49,17 @@ class NavBarComponent extends HTMLElement {
         }
     }
     async generateUserInfos() {
-        const userData = await getUserInfos();
+        const userData = await getUserData();
+        const profilePicture = document.createElement('div');
+
+        profilePicture.className = 'profile-picture';
+        profilePicture.style.backgroundImage = `url(${(userData.profile_image !== undefined) ? userData.profile_image : '../../assets/anonymous-profile-picture.png'})`;
 
         return `
             <img src="../../assets/bell.svg" alt="notifs-bell">
             <div class="account-infos">
-                <p>${userData.user.username}</p>
-                <img src="${userData.user.profile_image}" class="profile-picture" alt="Profile picture">
+                <p>${userData.username}</p>
+                ${profilePicture.outerHTML}
             </div>
         `;
     }

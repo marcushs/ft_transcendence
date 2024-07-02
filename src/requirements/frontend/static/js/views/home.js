@@ -1,7 +1,6 @@
-import "../components/NavBar.js"
+import "../components/NavBarComponent.js"
 import "../components/Game/Game.js"
 import "../components/MatchHistory.js"
-import typeAndReplaceWords from "../anim/typeAndReplaceWords.js";
 import rotatingGradient from "../anim/rotatingGradient.js";
 
 export default () => {
@@ -16,11 +15,9 @@ export default () => {
 		</section>
 	`;
 
-	setTimeout(() =>{
-		typeAndReplaceWords();
-		rotatingGradient('game-component');
-		rotatingGradient('.game-background');
-	}, 0);
+	// setTimeout(() =>{
+	//
+	// }, 0);
 
 	return homePage;
 }

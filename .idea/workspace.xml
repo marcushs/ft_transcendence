@@ -5,21 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="aad3eb36-6878-4b47-ae05-7a19b41777c8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/signupFormValidation.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/checkAuthentication.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/checkAuthentication.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/formValidation.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/getCookie.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/getUserInfos.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/getUserInfos.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/loginFormValidation.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/loginFormValidation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/components/Game/Game.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/components/Game/Game.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/components/NavBar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/components/NavBarComponent.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/getUserInfos.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/utils/getUserData.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/home.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/index.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/logout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/logout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/profile.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/signup.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/js/views/signup.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/style/components/AuthenticationLoginComponent.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/style/components/AuthenticationRegisterComponent.css" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/style/components/ButtonComponent.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/style/components/ButtonComponent.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/style/components/NavBar.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/style/components/NavBar.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/style/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/style/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/style/views/login.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/style/views/login.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/style/views/signup.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/style/views/signup.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/requirements/frontend/static/style/views/profile.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/requirements/frontend/static/style/views/profile.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,20 +38,20 @@
     <option name="showExcludedFiles" value="false" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "frontend->authentication",
-    "last_opened_file_path": "/home/tduprez/Documents/ft_transcendence",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;frontend-&gt;authentication&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/tduprez/Documents/ft_transcendence&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/requirements/frontend/static/assets" />
@@ -101,7 +101,9 @@
       <workItem from="1719697318522" duration="357000" />
       <workItem from="1719697675852" duration="9942000" />
       <workItem from="1719715429787" duration="2387000" />
-      <workItem from="1719813682624" duration="19277000" />
+      <workItem from="1719813682624" duration="20347000" />
+      <workItem from="1719851398090" duration="2353000" />
+      <workItem from="1719903916148" duration="15042000" />
     </task>
     <servers />
   </component>
