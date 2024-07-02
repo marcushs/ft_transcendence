@@ -31,7 +31,6 @@ const steps = [
         <h2>Enable Two-Factor Authentication</h2>
         <p>Please choose your two-factor authentication method:</p>
         <select id="methodSelect">
-            <option value="sms">SMS</option>
             <option value="email">Email</option>
             <option value="authenticator">Authenticator App</option>
         </select>
@@ -50,7 +49,6 @@ const steps = [
             <h2>Enable Two-Factor Authentication</h2>
             <p>enter the code you received by ${selectedMethod} below:</p>
             <div id="qrcode">
-                <p>salut</p>
             </div>
             <form>
 				<div class="form-control">

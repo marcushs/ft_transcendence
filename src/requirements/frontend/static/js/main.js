@@ -1,7 +1,8 @@
 import login from "./views/login.js";
 import index from "./views/index.js";
 import signup from "./views/signup.js";
-import { generateCsrfToken } from "./utils/cookie.js";
+import enable2fa from "./views/two_factor/enable.js";
+import { getCookie ,generateCsrfToken } from "./utils/cookie.js";
 import profile from "./views/profile.js";
 import logout from "./views/logout.js"
 
@@ -11,6 +12,7 @@ const routes = {
     "/signup": { title: "Signup", render: signup },
     "/profile": { title: "Profile", render: profile },
     "/logout": { title: "Logout", render: logout },
+    "/2fa/enable": { title: "Enable2FA", render: enable2fa },
 };
 console.log('pathname', location.pathname);
 

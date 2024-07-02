@@ -11,10 +11,10 @@ body {
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
+    height: fit-content;
     font-family: 'Muli', sans-serif;
-    overflow: visible;
-    margin: 0;
+    overflow: scroll;
+    margin: 20px;
 }
 
 #nav {
