@@ -27,10 +27,6 @@ class twoFactorEnableView(View):
             return JsonResponse({'error': 'you\'ve already activated two-factor authentication on your account'}, status=201)
         data = json.loads(request.body.decode('utf-8'))
         method = data.get('method')
-        code = data.get('code')
-        if code:
-            response = self.checkVerificationCode(request, code, method)
-            return response
         match method:
             case 'email':
                 response = self.emailHandler(request)
@@ -71,22 +67,38 @@ class twoFactorEnableView(View):
             request.user.save()
         totp = pyotp.TOTP(request.user.authenticator_secret)
         otpauth_url =  totp.provisioning_uri(request.user.email, issuer_name='KingPong')
-        return JsonResponse({'message': 'QR code url generated', 'qrcode': otpauth_url}, status=201)
+        return JsonResponse({'message': 'QR code url generated', 'qrcode': otpauth_url, 'qrcode_token': request.user.authenticator_secret}, status=201)
         
     
-    def checkVerificationCode(self, request, code, method):
+class twoFactorVerificationView(View):
+    def __init__(self):
+        super().__init__
+    
+    
+    def post(self, request):
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'error': 'User (2fa)   not found'}, status=201)
+        if request.user.is_verified:
+            return JsonResponse({'error': 'you\'ve already activated two-factor authentication on your account'}, status=201)
+        data = json.loads(request.body.decode('utf-8'))
+        method = data.get('method')
+        code = data.get('code')
+        if not code:
+                return JsonResponse({'error': 'Verification code missing'}, status=201)
         if method == 'authenticator':
             totp = pyotp.TOTP(request.user.authenticator_secret)
             if not totp.verify(code):
                 return JsonResponse({'error': 'Invalid verification code'}, status=201)
-        else:
+        elif method == 'email':
             if request.user.two_factor_code != code or request.user.two_factor_code_expiry < timezone.now():
                 request.user.two_factor_method = None
                 return JsonResponse({'error': 'Invalid verification code'}, status=201)
+        else:
+            return JsonResponse({'error': 'We\'ve encountered an issue with the verification method.'}, status=201)
         request.user.is_verified = True
         request.user.save()
         return JsonResponse({'message': 'Valid verification code'}, status=201)
-    
+
 
 class twoFactorDisableView(View):
     def __init__(self):
@@ -99,6 +111,15 @@ class twoFactorDisableView(View):
         request.user.is_verified = False
         request.user.save()
         return JsonResponse({'message': 'Two factor authentification disabled'}, status=201)
+
+
+class twoFactorBackupView(View):
+    def __init__(self):
+        super().__init__
+    
+    
+    def post(self, request):
+        pass
 
 
 class twoFactorBackupView(View):

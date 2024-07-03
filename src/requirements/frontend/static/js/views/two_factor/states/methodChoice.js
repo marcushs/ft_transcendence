@@ -1,3 +1,6 @@
+import { getCookie } from "../../../utils/cookie.js";
+
+
 class twoFactorMethodChoice {
 
 	constructor() {
@@ -19,6 +22,44 @@ class twoFactorMethodChoice {
         </div>
         `
 	}
+
+    getSelectedMethod() {
+        const selectedField = document.getElementById('methodSelect');
+    
+        let selectedMethod = selectedField.value;
+        selectedField.addEventListener('change', () => {
+            selectedMethod = selectedField.value;
+        });
+        return selectedMethod;
+    }
+
+    async enableTwoFactorRequest(selectedMethod = 'N/A') {
+        const config = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
+            },
+            credentials: 'include', // Needed for send cookie
+            body: JSON.stringify({
+                method: selectedMethod
+            })
+        };
+        const res = await fetch(`http://localhost:8000/account/2fa/enable/`, config);
+        if (res.status == 403)
+            throw new Error('Access Denied')
+        const data = await res.json();
+        if (data.message) {
+            console.log('enable backend response: ', data.message);
+            if (data.qrcode) {
+                sessionStorage.setItem('qrcodeuri', data.qrcode);
+                sessionStorage.setItem('qrcode_token', data.qrcode_token);
+            }
+        } else {
+            throw new Error(data.error);
+        }
+    }
 }
 
 export default twoFactorMethodChoice;

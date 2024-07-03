@@ -14,6 +14,7 @@ class TwoFactorEnablerComponent extends HTMLElement {
             "tokenVerify": { context: '/profile/2fa/enable/method/verify', state: new tokenVerify},
             "enableDone": { context: '/profile/2fa/enable/method/verify/done', state: new enableDone},
         };
+        this.selectedMethod = "N/A";
         this.innerHTML = `<div class="states-container"></div>`
         this.stateContainer = document.querySelector('.states-container');
         this.currentContext = this.states["enableHome"].context;
@@ -50,16 +51,38 @@ class TwoFactorEnablerComponent extends HTMLElement {
         });
     }
 
-    handleStateRedirection(event) {
-        console.log('currentstate: ', this.currentState);
-        if (this.currentState === "enableDone")
-            this.handleProfileRedirection();
+    async handleStateInstruction() {
+        switch (this.currentState) {
+            case "enableDone":
+                this.handleProfileRedirection();
+                break;
+            case "MethodChoice":
+                this.selectedMethod = this.states[this.currentState].state.getSelectedMethod();
+                await this.states[this.currentState].state.enableTwoFactorRequest(this.selectedMethod);
+                this.states["tokenVerify"].state.setSelectedMethod(this.selectedMethod);
+                break;
+            case "tokenVerify":
+                await this.states[this.currentState].state.VerifyTwoFactorRequest();
+                break;
+        }
+    }
+
+    async handleStateRedirection(event) {
+        try {
+            await this.handleStateInstruction();
+        } catch (error) {
+            alert(`Error: Two factor: ${error.message}`);
+            return;
+        }
         const statesArray = Object.entries(this.states);
 
         for (const stateItem of statesArray) {
             if (event.target.hasAttribute(stateItem[1].state.redirectState)) {
                 this.changeState(stateItem[1].state, stateItem[1].context);
                 this.currentState = stateItem[0];
+                if (this.currentState === 'tokenVerify' && this.states[this.currentState].state.selectedMethod === 'authenticator') {
+                    this.states[this.currentState].state.displayQRCode();
+                }
                 break ;
             }
         }
