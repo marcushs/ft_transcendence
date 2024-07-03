@@ -2,18 +2,19 @@ import enableHome from './states/enableHome.js'
 import methodChoice from './states/methodChoice.js'
 import tokenVerify from './states/tokenVerify.js'
 import enableDone from './states/enableDone.js'
+import profile from "../profile.js";
 
 class TwoFactorEnablerComponent extends HTMLElement {
     constructor() {
         super();
 
         this.states = {
-            "enableHome": { context: '/profile/2fa/enable', state: enableHome},
-            "MethodChoice": { context: '/profile/2fa/enable/method', state: methodChoice},
-            "tokenVerify": { context: '/profile/2fa/enable/verify', state: tokenVerify},
-            "enableSucces": { context: '/profile/2fa/enable/done', state: enableDone},
+            "enableHome": { context: '/profile/2fa/enable', state: new enableHome},
+            "MethodChoice": { context: '/profile/2fa/enable/method', state: new methodChoice},
+            "tokenVerify": { context: '/profile/2fa/enable/method/verify', state: new tokenVerify},
+            "enableDone": { context: '/profile/2fa/enable/method/verify/done', state: new enableDone},
         };
-        this.innerHTML = `<div id="states-container"></div>`
+        this.innerHTML = `<div class="states-container"></div>`
         this.stateContainer = document.querySelector('.states-container');
         this.currentContext = this.states["enableHome"].context;
         this.currentState = "enableHome";
@@ -40,12 +41,19 @@ class TwoFactorEnablerComponent extends HTMLElement {
 
     attachEventListener() {
         this.stateContainer.addEventListener('click', (event) => {
-            if (event.target.hasAttribute('state-redirect'))
-                this.handleStateRedirection(event);
+            if (event.target.hasAttribute('state-redirect')) {
+                if (event.target.id === 'next-button')
+                    this.handleStateRedirection(event);
+                else
+                    this.handleBackRedirection();
+            }
         });
     }
 
     handleStateRedirection(event) {
+        console.log('currentstate: ', this.currentState);
+        if (this.currentState === "enableDone")
+            this.handleProfileRedirection();
         const statesArray = Object.entries(this.states);
 
         for (const stateItem of statesArray) {
@@ -58,6 +66,8 @@ class TwoFactorEnablerComponent extends HTMLElement {
     }
 
     handleBackRedirection() {
+        if (this.currentState === "enableHome")
+            this.handleProfileRedirection();
         const lastSlashIndex = this.currentContext.lastIndexOf('/');
         const statesArray = Object.entries(this.states);
         let newContext;
@@ -69,6 +79,16 @@ class TwoFactorEnablerComponent extends HTMLElement {
                 this.currentState = stateItem[0];
                 break ;
             }
+        }
+    }
+
+    handleProfileRedirection() {
+        const app = document.querySelector('#app');
+        
+        if (app) {
+            app.innerHTML = '';
+            history.pushState("", "", "/profile");
+            app.innerHTML = profile();
         }
     }
 }

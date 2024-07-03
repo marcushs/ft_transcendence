@@ -14,8 +14,8 @@ class twoFactorMethodChoice {
                 <option value="email">Email</option>
                 <option value="authenticator">Authenticator App</option>
             </select>
-            <button id="backButton">Back</button>
-            <button id="nextButton">Next</button>
+            <button id='back-button' state-redirect>Back</button>
+            <button id='next-button'state-redirect token-verify>Next</button>
         </div>
         `
 	}

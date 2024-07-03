@@ -19,8 +19,8 @@ class twoFactorTokenVerify {
 				</div>
                 </form>
             <button id="otpButton">Submit Code</button>
-            <button id="backButton">Back</button>
-            <button id="nextButton">Next</button
+            <button id='back-button' state-redirect>Back</button>
+            <button id='next-button'state-redirect enable-twofactor-done>Next</button>
         </div>
         `
 	}
