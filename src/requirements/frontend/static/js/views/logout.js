@@ -2,7 +2,8 @@ import { getCookie } from "../utils/cookie.js";
 import "../components/NavBar.js";
 
 export default () => {
-    const status = checkStatus();
+    // const status = checkStatus();
+    // console.log('status: ', status)
     const html = `
             <nav-bar auth="true"></nav-bar>
             <div class="container">
@@ -13,30 +14,30 @@ export default () => {
         `;
 
     setTimeout(() => {
-		attachEvent(status);   
+		attachEvent(200);   
 	}, 0);
 
     return html;
 }
 
-async function checkStatus() {
-    const config = {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
-        },
-        credentials: 'include' // Needed for send cookie
-    };
-    const res = await fetch(`http://localhost:8000/account/logout/`, config);
-    const data = await res.json();
-    if (data.error) {
-        alert(data.error);
-        window.location.replace('login');
-    }
-    return res.status;
-}
+// async function checkStatus() {
+//     const config = {
+//         method: 'GET',
+//         headers: {
+//             'Accept': 'application/json',
+//             'Content-Type': 'application/json',
+//             'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
+//         },
+//         credentials: 'include' // Needed for send cookie
+//     };
+//     const res = await fetch(`http://localhost:8000/account/logout/`, config);
+//     const data = await res.json();
+//     if (data.error) {
+//         alert(data.error);
+//         window.location.replace('login');
+//     }
+//     return res.status;
+// }
 
 function attachEvent(status) {
     if (status !== 200)
