@@ -9,6 +9,7 @@ urlpatterns = [
 	path('signup/', signup.signupView.as_view(), name='signup'),
  	path('logout/', logout.logoutView.as_view(), name="logout"),
   	path('protected/', views.protectedView, name='protected'), # view for jwt test
+	path('change-username/', views.change_username_view, name='change-username'),
     path('2fa/enable/', two_factor_auth.twoFactorEnableView.as_view(), name='enable2fa'),
     path('2fa/disable/', two_factor_auth.twoFactorDisableView.as_view(), name='disable2fa'),
     path('2fa/backup/', two_factor_auth.twoFactorBackupView.as_view(), name='backup2fa'),
