@@ -10,7 +10,8 @@ urlpatterns = [
  	path('logout/', logout.logoutView.as_view(), name="logout"),
     path('2fa/enable/', two_factor_auth.twoFactorEnableView.as_view(), name='enable2fa'),
     path('2fa/verify/', two_factor_auth.twoFactorVerificationView.as_view(), name='verify2fa'),
-    path('2fa/user_info/', two_factor_auth.twoFactorInformationView.as_view(), name='verify2fa'),
+    path('2fa/disable/', two_factor_auth.twoFactorDisableView.as_view(), name='disable2fa'),
+    path('2fa/get_2fa_code/', two_factor_auth.getTwoFactorCodeView.as_view(), name='get2faCode'),
     path('user_info/', views.getInformationView, name='userInfo'),
     path('2fa/backup/', two_factor_auth.twoFactorBackupView.as_view(), name='backup2fa'),
 ]

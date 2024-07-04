@@ -94,8 +94,6 @@ function generateProfilePage(data) {
     const welcome = document.querySelector('h1');
     const profilePic = document.createElement('div');
     const score = document.createElement('h3');
-    const anchor = document.createElement('a');
-    const infoCollapse = document.createElement('div');
     
     welcome.textContent = `Welcome, ${data.user.username}`;
     
@@ -104,27 +102,41 @@ function generateProfilePage(data) {
     
     score.textContent = `Score: ${data.user.score}`;
     
-    anchor.innerText = "Two-factor authentication (2FA)";
-    
-    infoCollapse.classList.add('info');
-    infoCollapse.innerHTML = `
-    <p>
-        Prior to configuring two-factor authentication, please read the following article carefully:
-        <a href="https://www.microsoft.com/en-us/security/business/security-101/what-is-two-factor-authentication-2fa">What is 2FA Authentication ?</a>
-        <br>
-        Supported applications: FreeOTP, Google Authenticator
-        <br>
-        ⚠️ You will receive an email with a link. Please follow the instructions to complete the two-factor authentication setup.
-        <br>
-    </p>
-    <a href="/2fa/enable" data-link class="enableBtn">Enable 2FA</a>
-    `;
-    
     container.appendChild(profilePic);
     container.appendChild(score);
-    container.appendChild(anchor);
-    container.appendChild(infoCollapse);
-
-    anchor.addEventListener('click', () => infoCollapse.classList.toggle('collapse'));
+    displayTwoFactorChoice(data);
 }
 
+function displayTwoFactorChoice(data) {
+    const container = document.getElementById('container');
+    const anchor = document.createElement('a');
+    const infoCollapse = document.createElement('div');
+
+    if (data.user.is_verified) {
+        anchor.innerText = "Two-factor authentication (2FA)";
+    
+        infoCollapse.classList.add('info');
+        infoCollapse.innerHTML = `
+        <a href="/2fa/disable" data-link class="enableBtn">Disable 2FA</a>
+        `;
+    } else {
+        anchor.innerText = "Two-factor authentication (2FA)";
+    
+        infoCollapse.classList.add('info');
+        infoCollapse.innerHTML = `
+        <p>
+            Prior to configuring two-factor authentication, please read the following article carefully:
+            <a href="https://www.microsoft.com/en-us/security/business/security-101/what-is-two-factor-authentication-2fa">What is 2FA Authentication ?</a>
+            <br>
+            Supported applications: FreeOTP, Google Authenticator
+            <br>
+            ⚠️ You will receive an email with a link. Please follow the instructions to complete the two-factor authentication setup.
+            <br>
+        </p>
+        <a href="/2fa/enable" data-link class="enableBtn">Enable 2FA</a>
+        `;
+    }
+    anchor.addEventListener('click', () => infoCollapse.classList.toggle('collapse'));
+    container.appendChild(anchor);
+    container.appendChild(infoCollapse);
+}

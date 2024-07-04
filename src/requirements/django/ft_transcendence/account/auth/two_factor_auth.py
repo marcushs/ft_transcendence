@@ -29,7 +29,7 @@ class twoFactorEnableView(View):
         method = data.get('method')
         match method:
             case 'email':
-                response = self.emailHandler(request)
+                response = self.emailHandler(request, 'activation')
             case 'authenticator':
                 response = self.authenticatorHandler(request)
             case _:
@@ -39,14 +39,14 @@ class twoFactorEnableView(View):
             request.user.save()
         return response
         
-    def emailHandler(self, request):
+    def emailHandler(self, request, choice):
         verification_code = secrets.token_hex(6)
         subject = 'Two Factor Activation'
         message = f"""
             Hi {request.user.username},
             
-            You have requested activation of double authentication on your KingPong account.
-            To complete this activation, please use the code below:
+            You have requested {choice} of double authentication on your KingPong account.
+            To complete this {choice}, please use the code below:
             
             Verification code :     {verification_code}
             
@@ -74,7 +74,6 @@ class twoFactorVerificationView(View):
     def __init__(self):
         super().__init__
     
-    
     def post(self, request):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'User not found'}, status=401)
@@ -91,21 +90,31 @@ class twoFactorVerificationView(View):
                 return JsonResponse({'message': 'Invalid verification code'}, status=400)
         elif method == 'email':
             if request.user.two_factor_code != code or request.user.two_factor_code_expiry < timezone.now():
-                request.user.two_factor_method = None
                 return JsonResponse({'message': 'Invalid verification code'}, status=400)
         else:
             return JsonResponse({'message': 'We\'ve encountered an issue with the verification method.'}, status=400)
+        request.user.two_factor_method = method
         request.user.is_verified = True
         request.user.save()
         return JsonResponse({'message': 'Valid verification code'}, status=200)
 
-class twoFactorInformationView(View):
+class getTwoFactorCodeView(View):
     def __init__(self):
         super().__init__
     
     
     def get(self, request):
-        return JsonResponse({'is_verified': request.user.is_verified, 'email': request.user.email}, status=200)
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'message': 'User not found'}, status=401)
+        if request.user.is_verified == False:
+            return JsonResponse({'message': 'two-factor authentication is not activated on your account'}, status=400)
+        if request.user.two_factor_method == 'email':
+            twoFactorEnableView().emailHandler(request, 'deactivation')
+            return JsonResponse({'method': request.user.two_factor_method}, status=200)
+        elif request.user.two_factor_method == 'authenticator':
+            return JsonResponse({'method': request.user.two_factor_method}, status=200)
+        else:
+            return JsonResponse({'message': 'We\'ve encountered an issue with the verification method.'}, status=400)
 
 class twoFactorDisableView(View):
     def __init__(self):
@@ -113,11 +122,27 @@ class twoFactorDisableView(View):
     
     
     def post(self, request):
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'message': 'User not found'}, status=401)
         if request.user.is_verified == False:
-            return JsonResponse({'message': 'Two factor authentification not set on your account'}, status=201)
+            return JsonResponse({'message': 'Two factor authentification not set on your account'}, status=400)
+        data = json.loads(request.body.decode('utf-8'))
+        code = data.get('code')
+        if not code:
+                return JsonResponse({'message': 'Verification code missing'}, status=400)
+        if request.user.two_factor_method == 'authenticator':
+            totp = pyotp.TOTP(request.user.authenticator_secret)
+            if not totp.verify(code):
+                return JsonResponse({'message': 'Invalid verification code'}, status=400)
+        elif request.user.two_factor_method == 'email':
+            if request.user.two_factor_code != code or request.user.two_factor_code_expiry < timezone.now():
+                return JsonResponse({'message': 'Invalid verification code'}, status=400)
+        else:
+            return JsonResponse({'message': 'We\'ve encountered an issue with the verification method.'}, status=400)
+        request.user.two_factor_method = ''
         request.user.is_verified = False
         request.user.save()
-        return JsonResponse({'message': 'Two factor authentification disabled'}, status=201)
+        return JsonResponse({'message': 'Two factor authentification disabled'}, status=200)
 
 
 class twoFactorBackupView(View):
