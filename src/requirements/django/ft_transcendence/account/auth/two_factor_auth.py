@@ -22,7 +22,7 @@ class twoFactorEnableView(View):
         response = None
         
         if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'error': 'User (2fa)   not found'}, status=201)
+            return JsonResponse({'error': 'you are not connected'}, status=201)
         if request.user.is_verified:
             return JsonResponse({'error': 'you\'ve already activated two-factor authentication on your account'}, status=201)
         data = json.loads(request.body.decode('utf-8'))
@@ -77,28 +77,35 @@ class twoFactorVerificationView(View):
     
     def post(self, request):
         if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'error': 'User (2fa)   not found'}, status=201)
+            return JsonResponse({'message': 'User not found'}, status=401)
         if request.user.is_verified:
-            return JsonResponse({'error': 'you\'ve already activated two-factor authentication on your account'}, status=201)
+            return JsonResponse({'message': 'you\'ve already activated two-factor authentication on your account'}, status=400)
         data = json.loads(request.body.decode('utf-8'))
         method = data.get('method')
         code = data.get('code')
         if not code:
-                return JsonResponse({'error': 'Verification code missing'}, status=201)
+                return JsonResponse({'message': 'Verification code missing'}, status=400)
         if method == 'authenticator':
             totp = pyotp.TOTP(request.user.authenticator_secret)
             if not totp.verify(code):
-                return JsonResponse({'error': 'Invalid verification code'}, status=201)
+                return JsonResponse({'message': 'Invalid verification code'}, status=400)
         elif method == 'email':
             if request.user.two_factor_code != code or request.user.two_factor_code_expiry < timezone.now():
                 request.user.two_factor_method = None
-                return JsonResponse({'error': 'Invalid verification code'}, status=201)
+                return JsonResponse({'message': 'Invalid verification code'}, status=400)
         else:
-            return JsonResponse({'error': 'We\'ve encountered an issue with the verification method.'}, status=201)
+            return JsonResponse({'message': 'We\'ve encountered an issue with the verification method.'}, status=400)
         request.user.is_verified = True
         request.user.save()
-        return JsonResponse({'message': 'Valid verification code'}, status=201)
+        return JsonResponse({'message': 'Valid verification code'}, status=200)
 
+class twoFactorInformationView(View):
+    def __init__(self):
+        super().__init__
+    
+    
+    def get(self, request):
+        return JsonResponse({'is_verified': request.user.is_verified, 'email': request.user.email}, status=200)
 
 class twoFactorDisableView(View):
     def __init__(self):

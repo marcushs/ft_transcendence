@@ -1,5 +1,4 @@
 import { getCookie } from "../utils/cookie.js";
-import enableTwoFactor from "./two_factor/enable.js"
 import "../components/NavBar.js";
 
 export default () => {
@@ -27,20 +26,19 @@ async function getProfile() {
         credentials: 'include' // Needed for send cookie
     };
     try {
-        const res = await fetch('http://localhost:8000/account/protected/', config);
+        const res = await fetch('http://localhost:8000/account/user_info/', config);
         const data = await res.json();
         console.log(data)
-        if (data.user && !data.error) {
+        if (res.status === 200) {
             generateProfilePage(data);
             // displayUserInformation(data.user) 
         }
         else {
-            console.log(data.error)
-            alert("You are not logged in");
+            alert(data.message);
             window.location.replace('login');
         }
     } catch (error) {
-        console.log('Catch error :', error);
+        console.log('Error :', error);
         alert(`Error: ${error.message}`)
     }
 }

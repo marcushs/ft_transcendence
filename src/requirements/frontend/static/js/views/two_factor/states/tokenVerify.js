@@ -29,11 +29,9 @@ class twoFactorTokenVerify {
         <div class="twofactor-token-verify-container">
             <h2>Enable Two-Factor Authentication</h2>
             ${methodSpecificContent}
-            <form>
-				<div class="form-control">
+            <form class="twofactor-form">
 					<input id="otpCode" type="text" name="Verification code" required>
 					<label for="otpCode"></label>
-				</div>
             </form>
             <button id='back-button' state-redirect>Back</button>
             <button id='next-button'state-redirect enable-twofactor-done>Verify code</button>
@@ -41,11 +39,23 @@ class twoFactorTokenVerify {
         `
 	}
 
+    async attachEventListener() {
+        const form = document.querySelector('.twofactor-form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            try {
+                await this.VerifyTwoFactorRequest();
+            } catch (error) {
+                alert(`Error: Two factor: ${error.message}`);
+            }
+        });
+    }
+
     displayQRCode() {
         const qrCodeElement = document.getElementById('qrcode');
         const qrCodeTokenElement = document.getElementById('qrcode-token');
         const qrCodeUri = sessionStorage.getItem('qrcodeuri');
-        qrCodeTokenElement.innerHTML = sessionStorage.getItem('qrcode_token');
+        qrCodeTokenElement.innerHTML = 'Secret: ' + sessionStorage.getItem('qrcode_token');
         if (qrCodeUri) {
             new QRCode(qrCodeElement, qrCodeUri);
         }
@@ -71,14 +81,13 @@ class twoFactorTokenVerify {
             })
         }
         const res = await fetch(`http://localhost:8000/account/2fa/verify/`, config);
-        if (res.status == 403)
+        if (res.status === 403)
             throw new Error('Access Denied')
         const data = await res.json();
-        if (data.message) {
+        if (res.status === 200) {
             console.log('enable backend response: ', data.message)
-        } else if (data.error) {
-            throw new Error(data.error);
-        }
+        } else
+            throw new Error(data.message);
     }
 }
 

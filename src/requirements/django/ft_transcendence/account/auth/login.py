@@ -17,11 +17,14 @@ class loginView(View):
         response = self._check_data(request, data)
         if response is not None:
             return response
-        user = User.objects.get(username=data['username'])
-        if user is not None and check_password(data['password'], user.password):
-            response = self._create_user_session(user)
-        else:
-            response = JsonResponse({'error': 'Invalid username or password, please try again'}, status=400)
+        try:
+            user = User.objects.get(username=data['username'])
+            if check_password(data['password'], user.password):
+                response = self._create_user_session(user)
+            else:
+                response = JsonResponse({'error': 'Invalid password, please try again'}, status=400)
+        except User.DoesNotExist:
+            response = JsonResponse({'error': 'Invalid username, please try again'}, status=400)
         return response
     
     

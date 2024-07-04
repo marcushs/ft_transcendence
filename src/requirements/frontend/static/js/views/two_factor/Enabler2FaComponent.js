@@ -10,7 +10,7 @@ class TwoFactorEnablerComponent extends HTMLElement {
 
         this.states = {
             "enableHome": { context: '/profile/2fa/enable', state: new enableHome},
-            "MethodChoice": { context: '/profile/2fa/enable/method', state: new methodChoice},
+            "methodChoice": { context: '/profile/2fa/enable/method', state: new methodChoice},
             "tokenVerify": { context: '/profile/2fa/enable/method/verify', state: new tokenVerify},
             "enableDone": { context: '/profile/2fa/enable/method/verify/done', state: new enableDone},
         };
@@ -40,7 +40,7 @@ class TwoFactorEnablerComponent extends HTMLElement {
         this.currentContext = context;
     }
 
-    attachEventListener() {
+    async attachEventListener() {
         this.stateContainer.addEventListener('click', (event) => {
             if (event.target.hasAttribute('state-redirect')) {
                 if (event.target.id === 'next-button')
@@ -49,6 +49,14 @@ class TwoFactorEnablerComponent extends HTMLElement {
                     this.handleBackRedirection();
             }
         });
+        // if (this.currentState === 'tokenVerify') {
+        //     console.log('salut');
+            // try {
+            //     await this.states[this.currentState].state.attachEventListener()
+            // } catch (error) {
+            //     alert(`Error: Two factor: ${error.message}`);
+            // }
+        // }
     }
 
     async handleStateInstruction() {
@@ -56,7 +64,7 @@ class TwoFactorEnablerComponent extends HTMLElement {
             case "enableDone":
                 this.handleProfileRedirection();
                 break;
-            case "MethodChoice":
+            case "methodChoice":
                 this.selectedMethod = this.states[this.currentState].state.getSelectedMethod();
                 await this.states[this.currentState].state.enableTwoFactorRequest(this.selectedMethod);
                 this.states["tokenVerify"].state.setSelectedMethod(this.selectedMethod);
@@ -80,8 +88,10 @@ class TwoFactorEnablerComponent extends HTMLElement {
             if (event.target.hasAttribute(stateItem[1].state.redirectState)) {
                 this.changeState(stateItem[1].state, stateItem[1].context);
                 this.currentState = stateItem[0];
-                if (this.currentState === 'tokenVerify' && this.states[this.currentState].state.selectedMethod === 'authenticator') {
-                    this.states[this.currentState].state.displayQRCode();
+                if (this.currentState === 'tokenVerify') {
+                    this.states[this.currentState].state.attachEventListener()
+                    if (this.states[this.currentState].state.selectedMethod === 'authenticator')
+                        this.states[this.currentState].state.displayQRCode();
                 }
                 break ;
             }
