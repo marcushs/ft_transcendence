@@ -33,6 +33,13 @@ main {
     width: 100%;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:active {
+    box-shadow: 0 0 0 30px var(--component-background-color) inset;
+    -webkit-text-fill-color: var(--text-primary-color);
+    caret-color: var(--text-primary-color);
+}
+
 .component {
     display: block;
 }

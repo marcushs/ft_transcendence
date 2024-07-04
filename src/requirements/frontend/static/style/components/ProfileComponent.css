@@ -8,9 +8,10 @@ profile-component {
 
 .profile-component-background {
 	position: absolute;
+	top: 0;
+	left: 0;
 	width: 100%;
 	height: 100%;
-	background: red;
 	border-radius: 10px;
 	filter: blur(15px);
 	z-index: -1;
@@ -56,7 +57,7 @@ profile-component {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
-	margin: 1rem 0;
+	margin: 1.5rem 0;
 }
 
 .profile-component-content .user-infos-container .user-info p {
@@ -73,6 +74,7 @@ profile-component {
 	border: 1px solid var(--light-grey);
 	color: var(--text-primary-color);
 	padding-left: 1rem;
+	padding-right: 3.5rem;
 }
 
 .profile-component-content .user-infos-container .user-info i {
@@ -82,6 +84,12 @@ profile-component {
 	right: 3%;
 	top: 55%;
 	cursor: pointer;
+}
+
+.profile-component-content .user-infos-container .user-info .input-feedback {
+	position: absolute;
+	top: 100%;
+	font-size: 1.5rem;
 }
 
 .profile-component-content .user-infos-container button-component {

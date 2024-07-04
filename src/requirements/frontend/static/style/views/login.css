@@ -74,12 +74,6 @@
 	padding-bottom: 0.7rem;
 }
 
-.login-page form input:-webkit-autofill,
-.login-page form input:-webkit-autofill:active {
-	box-shadow: 0 0 0 30px var(--component-background-color) inset !important;
-	-webkit-text-fill-color: var(--text-primary-color) !important;
-}
-
 .login-page form input::placeholder {
 	color: var(--text-primary-color);
 	font-size: 1.8rem;

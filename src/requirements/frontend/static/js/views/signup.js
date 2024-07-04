@@ -18,7 +18,7 @@ export default () => {
 					</div>
 					<div class="form-fields">
 						<input type="text" placeholder="Email" name="email" required>
-						<div id="emailFeedback" class="input-feedback"></div>
+						<span id="emailFeedback" class="input-feedback"></span>
 					</div>
 					<div class="form-fields">
 						<input type="password" placeholder="Password" name="password" required>
@@ -54,6 +54,9 @@ export default () => {
 	return html;
 }
 
+function showAlreadyExistsData(message) {
+	alert(message);
+}
 
 async function postData(event, registerBtn) {
 	// Prevent form submission
@@ -96,8 +99,8 @@ async function postData(event, registerBtn) {
 				document.title = "Index";
 				app.innerHTML = index();
 			}
-			console.log('Catch error :', error);
-			alert(`Error: ${error.message}`)
+			// console.log('Catch error :', error);
+			showAlreadyExistsData(error.message);
 		}
 	} else {
 		console.error('No form found!');

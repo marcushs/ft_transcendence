@@ -18,7 +18,7 @@ class tournamentHome {
 					<join-component></join-component>
 				</div>
 			</div>
-		`
+		`;
 	}
 }
 
