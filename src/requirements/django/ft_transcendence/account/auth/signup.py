@@ -1,7 +1,6 @@
 # --- SRC --- #
 from django.views import View
 from django.http import JsonResponse
-from ..models import User
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model
@@ -25,7 +24,7 @@ class signupView(View):
         if response is not None:
             return response
         User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
-        return JsonResponse({'message': 'User created successfully', 'redirect_url': 'login'}, status=201)
+        return JsonResponse({'message': 'User created successfully', 'redirect_url': 'login'}, status=200)
     
     
     def _check_data(self, request, data):

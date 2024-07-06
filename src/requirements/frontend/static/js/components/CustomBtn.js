@@ -1,5 +1,7 @@
 import index from "../views/index.js";
 import { getCookie } from "../utils/cookie.js";
+import { TwoFactorVerify } from '../views/two_factor/twoFactorLoginVerify.js'
+import profile from "../views/profile.js";
 
 class CustomBtn extends HTMLButtonElement {
     static get observedAttributes() {
@@ -61,20 +63,22 @@ class CustomBtn extends HTMLButtonElement {
 
             try {
                 const res = await fetch(`http://localhost:8000/account/${this.text.toLowerCase()}/`, config);
-                if (res.status == 403)
+                if (res.status === 403)
                     throw new Error('Access Denied')
                 const data = await res.json();
                 console.log(data);
-                if (data.error)
-                    alert(data.error)
-                else
-                    window.location.replace(data.redirect_url);
+                if (res.status === 200) {
+                    if (this.text.toLowerCase() === 'login' && data.is_verified === true) {
+                        new TwoFactorVerify(json);
+                    } else {
+                        // console.log('coucou');
+                        history.pushState("", "", `/${data.redirect_url}`);
+                        window.location.replace(data.redirect_url)
+                        // app.innerHTML = data.redirect_url();
+                    }
+                } else
+                    alert(data.message)
             } catch (error) {
-                if (error.data && error.data.status === 'jwt_failed') {
-                    history.replaceState("", "", "/");
-                    document.title = "Index";
-                    app.innerHTML = index();
-                }
                 console.log('Catch error :', error);
                 alert(`Error: ${error.message}`)
             }
