@@ -53,7 +53,8 @@ class NavBarComponent extends HTMLElement {
         const profilePicture = document.createElement('div');
 
         profilePicture.className = 'profile-picture';
-        profilePicture.style.backgroundImage = `url(${(userData.profile_image !== undefined) ? userData.profile_image : '../../assets/anonymous-profile-picture.png'})`;
+        profilePicture.style.backgroundImage = `url(${(userData.profile_image !== null) ? `http://localhost:8000${userData.profile_image}` : '../../assets/anonymous-profile-picture.png'})`;
+        console.log(profilePicture.style.backgroundImage)
 
         return `
             <img src="../../assets/bell.svg" alt="notifs-bell">

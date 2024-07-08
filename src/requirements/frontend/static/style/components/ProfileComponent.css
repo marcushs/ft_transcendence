@@ -23,6 +23,9 @@ profile-component {
 	border-radius: 7px;
 	background: var(--component-background-color);
 	z-index: 5;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .profile-component-content .profile-picture {
@@ -39,15 +42,6 @@ profile-component {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-}
-
-.profile-component-content .user-infos-container .profile-picture {
-	width: 15rem;
-	height: 15rem;
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-	border-radius: 50%;
 }
 
 .profile-component-content .user-infos-container .user-info {
@@ -67,7 +61,8 @@ profile-component {
 	letter-spacing: 0.2px;
 }
 
-.profile-component-content .user-infos-container .user-info input {
+.profile-component-content .user-infos-container .user-info input[type="text"],
+.profile-component-content .user-infos-container .user-info input[type="email"] {
 	width: 100%;
 	height: 55%;
 	border-radius: 5px;
@@ -84,6 +79,32 @@ profile-component {
 	right: 3%;
 	top: 55%;
 	cursor: pointer;
+}
+
+.profile-component-content .user-infos-container .user-info-image {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 18rem;
+	width: 100%;
+}
+
+.profile-component-content .user-infos-container input[type="file"] {
+	display: none;
+}
+
+.profile-component-content .user-infos-container .user-info-image img {
+	width: 18rem;
+	height: 18rem;
+	border-radius: 50%;
+}
+
+.profile-component-content .user-infos-container .user-info-image i {
+	border: 1px solid var(--light-grey);
+	border-radius: 7px;
+	padding: 1rem;
+	top: auto;
+	right: 0;
 }
 
 .profile-component-content .user-infos-container .user-info .input-feedback {
