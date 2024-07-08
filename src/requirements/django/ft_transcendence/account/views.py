@@ -1,4 +1,5 @@
 import json
+from urllib import response
 
 from django.http import JsonResponse
 from .auth.csrf_utils import generate_csrf_token
@@ -45,21 +46,23 @@ def change_username_view(request):
 
     if request.method == 'POST':
         current_user = request.user
-        data = json.loads(request.body)
+        # data = json.loads(request.body)
         response = {}
 
-        response.update(change_username(User, current_user, data))
-        response.update(change_email(User, current_user, data))
+        response.update(change_username(User, current_user, request))
+        response.update(change_email(User, current_user, request))
+        response.update(change_profile_image(current_user, request))
 
         return JsonResponse(response, status=201)
     return JsonResponse({'error': 'User not found'}, status=400)
 
 
 
-def change_username(User, current_user, data):
-    new_username = data['username']
+def change_username(User, current_user, request):
+    new_username = request.POST.get('username')
     response = {}
 
+    print(new_username)
     if new_username == current_user.username:
         response['username_conflict'] = 'Username is the same'
         return response
@@ -77,8 +80,8 @@ def change_username(User, current_user, data):
     current_user.save()
     return response
 
-def change_email(User, current_user, data):
-    new_email = data['email']
+def change_email(User, current_user, request):
+    new_email = request.POST.get('email')
     response = {}
 
     if new_email == current_user.email:
@@ -95,5 +98,19 @@ def change_email(User, current_user, data):
 
     response['email_message'] = 'Email has been successfully changed'
     current_user.email = new_email
+    current_user.save()
+    return response
+
+
+def change_profile_image(current_user, request):
+    # new_image = request['image']
+    new_image = request.FILES.get('profile_image')
+    response = {}
+
+    if new_image == current_user.profile_image:
+        response['image_conflict'] = 'Profile image is the same'
+
+    response['image_message'] = 'Profile image has been successfully changed'
+    current_user.profile_image = new_image
     current_user.save()
     return response
