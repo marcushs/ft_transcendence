@@ -56,15 +56,14 @@ class loginView(View):
         user = User.objects.get(username=data['username'])
         code = data.get('twofactor')
         if not code:
-                return JsonResponse({'message': 'Verification code missing'}, status=400)
+                return JsonResponse({'message': 'Twofactor code not supplied'}, status=400)
         if user.two_factor_method == 'authenticator':
             totp = pyotp.TOTP(user.authenticator_secret)
             if not totp.verify(code):
-                return JsonResponse({'message': 'Invalid verification code'}, status=400)
+                return JsonResponse({'message': 'Invalid Twofactor code'}, status=400)
         elif user.two_factor_method == 'email':
             if user.two_factor_code != code or user.two_factor_code_expiry < timezone.now():
-                return JsonResponse({'message': 'Invalid verification code'}, status=400)
+                return JsonResponse({'message': 'Invalid Twofactor code'}, status=400)
         else:
-            return JsonResponse({'message': 'We\'ve encountered an issue with the verification method.'}, status=400)
-        print('user: ', user)
+            return JsonResponse({'message': 'We\'ve encountered an issue with the TwoFactor method.'}, status=400)
         return self._create_user_session(user)

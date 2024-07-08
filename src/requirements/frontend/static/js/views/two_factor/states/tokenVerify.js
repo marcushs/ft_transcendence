@@ -1,6 +1,6 @@
 import { getCookie } from "../../../utils/cookie.js";
 
-class twoFactorTokenVerify {
+export default class twoFactorTokenVerify {
 
 	constructor() {
 		this.redirectState = "token-verify";
@@ -76,19 +76,18 @@ class twoFactorTokenVerify {
             },
             credentials: 'include', // Needed for send cookie
             body: JSON.stringify({
-                code: verificationCode,
+                twofactor: verificationCode,
                 method: this.selectedMethod,
             })
         }
-        const res = await fetch(`http://localhost:8000/account/2fa/verify/`, config);
+        const res = await fetch(`http://localhost:8000/account/2fa/enable/`, config);
         if (res.status === 403)
             throw new Error('Access Denied')
         const data = await res.json();
+        console.log('test')
         if (res.status === 200) {
             console.log('enable backend response: ', data.message)
         } else
             throw new Error(data.message);
     }
 }
-
-export default twoFactorTokenVerify;

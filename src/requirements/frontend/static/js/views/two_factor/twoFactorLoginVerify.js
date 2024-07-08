@@ -104,7 +104,8 @@ export class TwoFactorVerify {
             }
             const data = await res.json();
             if (res.status === 200) {
-                this.handleRedirection('/profile')
+                alert(data.message);
+                this.handleRedirection('/profile');
             } else {
                 alert(`Error: ${data.message}`);
             }

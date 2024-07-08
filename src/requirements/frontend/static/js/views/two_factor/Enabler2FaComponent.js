@@ -26,12 +26,10 @@ class TwoFactorEnablerComponent extends HTMLElement {
 
     pushNewState(state) {
         this.stateContainer.innerHTML = state.render();
-        // this.stateContainer.classList.add(state.class);
     }
 
     removeCurrentState() {
         this.stateContainer.innerHTML = '';
-        // this.stateContainer.classList.remove(this.states[this.currentState].state.class);
     }
 
     changeState(state, context) {
@@ -49,14 +47,6 @@ class TwoFactorEnablerComponent extends HTMLElement {
                     this.handleBackRedirection();
             }
         });
-        // if (this.currentState === 'tokenVerify') {
-        //     console.log('salut');
-            // try {
-            //     await this.states[this.currentState].state.attachEventListener()
-            // } catch (error) {
-            //     alert(`Error: Two factor: ${error.message}`);
-            // }
-        // }
     }
 
     async handleStateInstruction() {
