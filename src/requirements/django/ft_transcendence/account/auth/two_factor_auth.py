@@ -17,9 +17,9 @@ class twoFactorEnableView(View):
     
     def post(self, request):
         if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'error': 'you are not connected'}, status=201)
+            return JsonResponse({'message': 'you are not connected'}, status=403)
         if request.user.is_verified:
-            return JsonResponse({'error': 'you\'ve already activated two-factor authentication on your account'}, status=201)
+            return JsonResponse({'message': 'you\'ve already activated two-factor authentication on your account'}, status=403)
         data = json.loads(request.body.decode('utf-8'))
         method = data.get('method')
         twofactor_code = data.get('twofactor')
@@ -31,7 +31,7 @@ class twoFactorEnableView(View):
             case 'authenticator':
                 return self._authenticator_handler(request)
             case _:
-                return JsonResponse({'error': 'We\'ve encountered an issue with the selected authentication method.'}, status=201)
+                return JsonResponse({'message': 'We\'ve encountered an issue with the selected authentication method.'}, status=201)
         
     def _email_handler(self, request):
         verification_code = secrets.token_hex(6)
@@ -51,7 +51,7 @@ class twoFactorEnableView(View):
         recipient_list = [request.user.email, ]
         error_message = _send_mail(subject, message, recipient_list)
         if error_message is not None:
-            return JsonResponse({'error': error_message}, status=500)
+            return JsonResponse({'message': error_message}, status=500)
         request.user.set_two_factor_code(verification_code, 5)
         return JsonResponse({'message': 'Email send'}, status=200)
     
@@ -64,12 +64,12 @@ class twoFactorEnableView(View):
             totp = pyotp.TOTP(request.user.authenticator_secret)
             otpauth_url =  totp.provisioning_uri(request.user.email, issuer_name='KingPong')
         except Exception as error:
-            return JsonResponse({'error': str(error)}, status=500)
-        return JsonResponse({'message': 'QR code url generated', 'qrcode': otpauth_url, 'qrcode_token': request.user.authenticator_secret}, status=201)
+            return JsonResponse({'message': str(error)}, status=500)
+        return JsonResponse({'message': 'QR code url generated', 'qrcode': otpauth_url, 'qrcode_token': request.user.authenticator_secret}, status=200)
     
     def _verification_handler(self, request, twofactor_code, method):
         if method is None:
-            return JsonResponse({'error': 'We\'ve encountered an issue with the selected authentication method.'}, status=201)
+            return JsonResponse({'message': 'We\'ve encountered an issue with the selected authentication method.'}, status=201)
         response = _two_factor_verify_view(request, twofactor_code, method)
         if response.status_code != 200:
             return response
@@ -136,7 +136,7 @@ class getTwoFactorCodeView(View):
         recipient_list = [user.email, ]
         error_message = _send_mail(subject, message, recipient_list)
         if error_message is not None:
-            return JsonResponse({'error': error_message}, status=500)
+            return JsonResponse({'message': error_message}, status=500)
         user.set_two_factor_code(verification_code, 5)
         return JsonResponse({'method': user.two_factor_method}, status=200)
 

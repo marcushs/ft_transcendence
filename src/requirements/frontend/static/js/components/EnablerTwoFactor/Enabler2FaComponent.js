@@ -2,7 +2,7 @@ import enableHome from './states/enableHome.js'
 import methodChoice from './states/methodChoice.js'
 import tokenVerify from './states/tokenVerify.js'
 import enableDone from './states/enableDone.js'
-import profile from "../profile.js";
+import profile from "../../views/profile.js";
 
 class TwoFactorEnablerComponent extends HTMLElement {
     constructor() {
@@ -56,7 +56,9 @@ class TwoFactorEnablerComponent extends HTMLElement {
                 break;
             case "methodChoice":
                 this.selectedMethod = this.states[this.currentState].state.getSelectedMethod();
-                await this.states[this.currentState].state.enableTwoFactorRequest(this.selectedMethod);
+                const responseStatus = await this.states[this.currentState].state.enableTwoFactorRequest(this.selectedMethod);
+                if (responseStatus === 403)
+                    this.handleProfileRedirection()
                 this.states["tokenVerify"].state.setSelectedMethod(this.selectedMethod);
                 break;
             case "tokenVerify":
@@ -79,7 +81,10 @@ class TwoFactorEnablerComponent extends HTMLElement {
                 this.changeState(stateItem[1].state, stateItem[1].context);
                 this.currentState = stateItem[0];
                 if (this.currentState === 'tokenVerify') {
-                    this.states[this.currentState].state.attachEventListener()
+                    const form = document.querySelector('.twofactor-form'); // add this event for prevent reloading of the page when we press enter, maybe change this to better handling ?
+                    form.addEventListener('submit', async (event) => {
+                        event.preventDefault();
+                    });
                     if (this.states[this.currentState].state.selectedMethod === 'authenticator')
                         this.states[this.currentState].state.displayQRCode();
                 }

@@ -47,17 +47,18 @@ class twoFactorMethodChoice {
             })
         };
         const res = await fetch(`http://localhost:8000/account/2fa/enable/`, config);
-        if (res.status == 403)
-            throw new Error('Access Denied')
+        if (res.status === 403)
+           return res.status; 
         const data = await res.json();
-        if (data.message) {
+        if (res.status === 200) {
             console.log('enable backend response: ', data.message);
             if (data.qrcode) {
                 sessionStorage.setItem('qrcodeuri', data.qrcode);
                 sessionStorage.setItem('qrcode_token', data.qrcode_token);
+                return res.status;
             }
         } else {
-            throw new Error(data.error);
+            throw new Error(data.message);
         }
     }
 }

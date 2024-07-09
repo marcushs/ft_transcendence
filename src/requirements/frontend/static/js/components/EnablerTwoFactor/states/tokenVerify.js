@@ -39,18 +39,6 @@ export default class twoFactorTokenVerify {
         `
 	}
 
-    async attachEventListener() {
-        const form = document.querySelector('.twofactor-form');
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            try {
-                await this.VerifyTwoFactorRequest();
-            } catch (error) {
-                alert(`Error: Two factor: ${error.message}`);
-            }
-        });
-    }
-
     displayQRCode() {
         const qrCodeElement = document.getElementById('qrcode');
         const qrCodeTokenElement = document.getElementById('qrcode-token');
