@@ -1,5 +1,6 @@
 import "./SearchBar.js"
 import checkAuthentication from '../utils/checkAuthentication.js'
+import getProfileImage from "../utils/getProfileImage.js";
 import getUserData from "../utils/getUserData.js";
 import signup from "../views/signup.js";
 import login from "../views/login.js";
@@ -10,6 +11,11 @@ class NavBarComponent extends HTMLElement {
     constructor() {
         super();
 
+        this.initializeComponent();
+    }
+
+
+    initializeComponent() {
         this.innerHTML = `
             <nav>
                 <div class="nav-bar-section nav-bar-left-section">
@@ -25,36 +31,30 @@ class NavBarComponent extends HTMLElement {
         this.classList.add('component');
     }
 
+
     connectedCallback() {
         this.generateNavBarRightSection();
         typeAndReplaceWords();
     }
 
-    generateAnonymousUser() {
-        return `
-            <div class="account-infos">
-                <button-component label="Login" class="login-nav-bar-btn"></button-component>
-                <button-component label="Signup" class="signup-nav-bar-btn"></button-component>
-            </div>
-        `;
-    }
 
     async generateNavBarRightSection() {
         if (await checkAuthentication()) {
-            this.querySelector('.nav-bar-right-section').innerHTML = await this.generateUserInfos();
+            this.querySelector('.nav-bar-right-section').innerHTML = await this.generateLoggedUserInfos();
         } else {
-            this.querySelector('.nav-bar-right-section').innerHTML = this.generateAnonymousUser();
+            this.querySelector('.nav-bar-right-section').innerHTML = this.generateUnloggedUserInfos();
             this.querySelector('.login-nav-bar-btn').addEventListener('click', () => this.handleAuthenticationRedirection('login'));
             this.querySelector('.signup-nav-bar-btn').addEventListener('click', () => this.handleAuthenticationRedirection('signup'));
         }
     }
-    async generateUserInfos() {
+
+
+    async generateLoggedUserInfos() {
         const userData = await getUserData();
-        const profilePicture = document.createElement('div');
+        const profilePicture = document.createElement('img');
 
         profilePicture.className = 'profile-picture';
-        profilePicture.style.backgroundImage = `url(${(userData.profile_image !== null) ? `http://localhost:8000${userData.profile_image}` : '../../assets/anonymous-profile-picture.png'})`;
-        console.log(profilePicture.style.backgroundImage)
+        profilePicture.src = getProfileImage(userData);
 
         return `
             <img src="../../assets/bell.svg" alt="notifs-bell">
@@ -65,6 +65,17 @@ class NavBarComponent extends HTMLElement {
         `;
     }
 
+
+    generateUnloggedUserInfos() {
+        return `
+            <div class="account-infos">
+                <button-component label="Login" class="login-nav-bar-btn"></button-component>
+                <button-component label="Signup" class="signup-nav-bar-btn"></button-component>
+            </div>
+        `;
+    }
+
+
     handleAuthenticationRedirection(redirection) {
         history.replaceState('', '', `/${redirection}`);
         if (redirection === 'signup') {
@@ -73,6 +84,7 @@ class NavBarComponent extends HTMLElement {
             app.innerHTML = login();
         }
     }
+
 }
 
 customElements.define('nav-bar-component', NavBarComponent);

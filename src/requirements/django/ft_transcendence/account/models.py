@@ -42,19 +42,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     #
   
     def to_dict(self):
-        if self.profile_image:
-            profile_image = self.profile_image.url
-        elif self.profile_image_link:
-            profile_image = self.profile_image_link
-        else:
-            profile_image = None
         return {
             'username': self.username,
             'email': self.email,
             'first_name': self.first_name,
             'last_name': self.last_name,
             # 'profile_image': self.profile_image.url if hasattr(self, 'profile_image/Sowoo') else None,
-            'profile_image': profile_image,
+            'profile_image': self.profile_image.url if self.profile_image else None,
+            'profile_image_link': self.profile_image_link,
             'score': self.score,
             'is_verified': self.is_verified,
         }

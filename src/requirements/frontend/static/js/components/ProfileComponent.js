@@ -1,5 +1,7 @@
 import rotatingGradient from "../anim/rotatingGradient.js";
+import getProfileImage from "../utils/getProfileImage.js";
 import getUserData from "../utils/getUserData.js";
+import { isContainWhitespace, isAlphanumeric } from "../utils/utils.js";
 import {getCookie} from "../utils/cookie.js";
 
 class ProfileComponent extends HTMLElement {
@@ -8,8 +10,10 @@ class ProfileComponent extends HTMLElement {
 
 	constructor() {
 		super();
+
 		this.initializeComponent();
 	}
+
 
 	initializeComponent() {
 		this.innerHTML = `
@@ -19,7 +23,7 @@ class ProfileComponent extends HTMLElement {
 					<div class="user-info user-info-image">
 						<img src="" alt="">
 						<i class="fa-solid fa-pen profile-picture-pen"></i>
-						<input type="file" accept="image/*">
+						<input type="file" accept="image/*" name="profile-image">
 					</div>
 					<div class="user-info">
 						<p id="username">Username</p>
@@ -40,119 +44,45 @@ class ProfileComponent extends HTMLElement {
 		`;
 	}
 
-	// Component initialisation once it is on DOM
 
 	connectedCallback() {
 		rotatingGradient('profile-component');
 		rotatingGradient('.profile-component-background');
 
-		this.generateUserInfos();
 		this.attachEventsListener();
+		this.generateUserInfos();
 		this.displayFeedbackFromLocalStorage();
-	}
-
-
-	async generateUserInfos() {
-		const userInfosInputs = this.querySelectorAll('input[type="text"], input[type="email"]');
-		const userData = await getUserData();
-		const userInfos = [userData.username, userData.email, userData.phone, userData.firstname, userData.lastname];
-
-		userInfosInputs.forEach((input, index) => {
-			if (userInfos[index])
-				input.value = userInfos[index];
-		});
-
-		this.querySelector('.user-info > img').src =
-			(userData.profile_image !== null) ? `http://localhost:8000${userData.profile_image}` : '../../assets/anonymous-profile-picture.png';
-		console.log(userData.profile_image)
 	}
 
 
 	async attachEventsListener() {
 		const userData = await getUserData();
 		const saveBtn = this.querySelector('button-component');
-		const imageInput = this.querySelector('input[type="file"]');
+		const imageInput = this.querySelector('input[name="profile-image"]');
 
-		this.querySelector('.user-infos-container').addEventListener('input', (event) => this.handleInputChange(event, userData, saveBtn));
-		this.querySelector('button-component').addEventListener('click', (event) => this.handleClickOnSaveBtn(event));
+		saveBtn.addEventListener('click', (event) => this.handleSaveInfos(event));
+		this.addEventListener('input', (event) => this.handleInputsChanged(userData));
+		imageInput.addEventListener('change', (event) => this.handlePictureImageChanged(event, userData));
 
-		imageInput.addEventListener('change', (event) => this.handlePictureProfileChange(event, userData));
 		this.querySelector('.profile-picture-pen').addEventListener('click', () => imageInput.click());
 		this.querySelectorAll('.classic-pen').forEach(penButton => {
-			penButton.addEventListener('click', () => this.handleClickOnPenButton(penButton));
+			penButton.addEventListener('click', () => this.handlePenButtonClicked(penButton));
 		});
 	}
 
 
-	handleInputChange(event, userData, saveBtn) {
-		let isSettingsChanged = false;
-		let isValidEmail;
+	async generateUserInfos() {
+		const usernameInput = this.querySelector('input[name="username"]');
+		const emailInput = this.querySelector('input[name="email"]');
+		const userImage = this.querySelector('.user-info > img');
+		const userData = await getUserData();
 
-		this.querySelectorAll('.user-info > input').forEach(input => {
-			if (userData[input.name] !== input.value && input.value !== '')
-				isSettingsChanged = true;
-			if (input.name === 'email')
-				isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
-		});
-
-		this.updateEmailFeedback(isValidEmail);
-
-		if (isSettingsChanged && isValidEmail && saveBtn.className === 'generic-btn-disabled') {
-			saveBtn.className = 'generic-btn';
-		} else if (!isSettingsChanged && saveBtn.className === 'generic-btn') {
-			saveBtn.className = 'generic-btn-disabled';
-		}
+		usernameInput.value = userData.username;
+		emailInput.value = userData.email;
+		userImage.src = getProfileImage(userData);
 	}
 
-	handlePictureProfileChange(event, userData) {
-		const file = event.target.files[0];
-		const reader = new FileReader();
-		const imageSizeMax = 2097152; // 2Mb
-
-		if (!file.type.startsWith('image/')) {
-			alert('Not image');
-		}
-
-		reader.onload = event => {
-			this.querySelector('.user-info-image > img').src = event.target.result;
-		};
-
-		reader.onerror = event => {
-			alert('Error');
-		}
-
-		reader.readAsDataURL(file);
-	}
-
-	updateEmailFeedback(isValidEmail) {
-		const emailInputFeedback = this.querySelector('input[name="email"]').parentElement.querySelector('.input-feedback');
-
-		if (emailInputFeedback.textContent === '' && !isValidEmail) {
-			emailInputFeedback.style.color = 'red';
-			emailInputFeedback.textContent = 'Invalid email address';
-		} else if (emailInputFeedback.textContent !== '' && isValidEmail) {
-			emailInputFeedback.textContent = '';
-		}
-	}
-
-	async handleClickOnSaveBtn(event) {
-		let  newUserInfos = new FormData();
-		const inputs = this.querySelectorAll('.user-info > input[type="text"], .user-info > input[type="email"]');
-
-		if (event.target.className !== 'generic-btn')
-			return ;
-
-		inputs.forEach(input => {
-			newUserInfos.append(input.name, input.value);
-		});
-		newUserInfos.append('profile_image', this.querySelector('input[type="file"]').files[0]);
-
-		const response = await postNewUserInfos(newUserInfos);
-
-		localStorage.setItem('userUpdateResponse', JSON.stringify(response));
-		location.reload();
-	}
-
+	// A refactorer
 	displayFeedbackFromLocalStorage() {
 		const response = JSON.parse(localStorage.getItem('userUpdateResponse'));
 
@@ -163,6 +93,140 @@ class ProfileComponent extends HTMLElement {
 			localStorage.removeItem('userUpdateResponse');
 		}
 	}
+
+
+	// EVENT HANDLER //
+
+	// Handle save infos when save button is clicked
+
+	async handleSaveInfos(event) {
+		if (event.target.className === 'generic-btn') {
+			let  newUserData = new FormData();
+			const usernameInput = this.querySelector('input[name="username"]');
+			const emailInput = this.querySelector('input[name="email"]');
+			const imageInput = this.querySelector('input[name="profile-image"]');
+
+			newUserData.append(usernameInput.name, usernameInput.value);
+			newUserData.append(emailInput.name, emailInput.value);
+			newUserData.append('profile_image', imageInput.files[0]);
+
+			const requestResponse = await postNewUserInfos(newUserData);
+
+			localStorage.setItem('userUpdateResponse', JSON.stringify(requestResponse));
+			location.reload();
+		}
+	}
+
+
+	// Handle inputs changed and image changed
+
+	handleInputsChanged(userData) {
+		const usernameInput = this.querySelector('input[name="username"]');
+		const emailInput = this.querySelector('input[name="email"]');
+		const isValidUsername = this.isValidUsername(usernameInput.value);
+		const isValidEmail = this.isValidEmail(emailInput.value);
+
+		this.updateUsernameFeedback(usernameInput.value, isValidUsername);
+		this.updateEmailFeedback(emailInput.value, isValidEmail);
+		// Update wrong input
+		this.updateSaveButtonState(userData, isValidUsername, isValidEmail);
+	}
+
+
+	handlePictureImageChanged(event, userData) {
+		const file = event.target.files[0];
+		const reader = new FileReader();
+		const profileImageElement = this.querySelector('.user-info-image > img')
+
+		reader.onload = (event) => { profileImageElement.src = event.target.result; };
+
+		reader.readAsDataURL(file);
+	}
+
+
+	// Check validity of inputs
+
+	isValidUsername(username) {
+		return username !== '' && isAlphanumeric(username);
+	}
+
+	isValidEmail(email) {
+		return email !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+	}
+
+
+	// Check if user infos is different of user infos of the profile
+
+	isUserInfosChanged(userData) {
+		const usernameInput = this.querySelector('input[name="username"]');
+		const emailInput = this.querySelector('input[name="email"]');
+		const profileImageElement = this.querySelector('.user-info-image > img');
+
+		if (userData[usernameInput.name] !== usernameInput.value)
+			return true;
+		if (userData[emailInput.name] !== emailInput.value)
+			return true;
+		if (userData['profile-image'] !== profileImageElement.src)
+			return true;
+		return false;
+	}
+
+
+	// Update elements (button save and feedbacks)
+
+	updateSaveButtonState(userData, isValidUsername, isValidEmail) {
+		const saveButton = this.querySelector('button-component');
+
+		if (isValidUsername && isValidEmail && this.isUserInfosChanged(userData)) {
+			saveButton.className = 'generic-btn';
+		} else {
+			saveButton.className = 'generic-btn-disabled';
+		}
+	}
+
+	updateUsernameFeedback(username, isValidUsername) {
+		const usernameFeedbackElement = this.querySelector('input[name="username"]').parentElement.querySelector('.input-feedback');
+
+		if (!isValidUsername)
+			usernameFeedbackElement.style.color = 'red';
+
+		if (!isValidUsername && username === '')
+			usernameFeedbackElement.textContent = 'Username cannot be empty';
+		else if (!isValidUsername && !isAlphanumeric(username))
+			usernameFeedbackElement.textContent = 'Username can contain only letters and numbers';
+		else if (usernameFeedbackElement.textContent !== '' && isValidUsername)
+			usernameFeedbackElement.textContent = '';
+	}
+
+	updateEmailFeedback(email, isValidEmail) {
+		const emailFeedbackElement = this.querySelector('input[name="email"]').parentElement.querySelector('.input-feedback');
+
+		if (!isValidEmail)
+			emailFeedbackElement.style.color = 'red';
+
+		if (!isValidEmail && email === '')
+			emailFeedbackElement.textContent = 'Email address cannot be empty';
+		else if (!isValidEmail)
+			emailFeedbackElement.textContent = 'Invalid email address';
+		else if (emailFeedbackElement.textContent !== '' && isValidEmail)
+			emailFeedbackElement.textContent = '';
+	}
+
+	
+	////////////////////////////////////////////////
+
+
+	handlePenButtonClicked(penButton) {
+		const input = penButton.parentElement.querySelector('input[type="text"], input[type="email"]');
+
+		input.removeAttribute('disabled');
+		input.focus();
+		penButton.style.display = 'none';
+
+		const handler = (event) => this.handleClickOutsideInput(event, input, penButton, handler); // Create handler reference to delete it in handleClickOutsideInput (event should be give by eventListener)
+		window.addEventListener('click', handler);
+	}
+
 
 	showUserInfosFeedback(response, inputs) {
 		inputs.forEach(input => {
@@ -180,17 +244,6 @@ class ProfileComponent extends HTMLElement {
 
 		feedbackElement.textContent = message;
 		feedbackElement.style.color = color;
-	}
-
-	handleClickOnPenButton(penButton) {
-		const input = penButton.parentElement.querySelector('input[type="text"], input[type="email"]');
-
-		input.removeAttribute('disabled');
-		input.focus();
-		penButton.style.display = 'none';
-
-		const handler = (event) => this.handleClickOutsideInput(event, input, penButton, handler); // Create handler reference to delete it in handleClickOutsideInput (event should be give by eventListener)
-		window.addEventListener('click', handler);
 	}
 
 

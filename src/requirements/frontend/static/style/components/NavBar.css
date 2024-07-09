@@ -49,10 +49,6 @@ nav .nav-bar-right-section p {
 }
 
 nav .nav-bar-right-section .profile-picture {
-    /*background-image: url("../../assets/acarlott.jpg");*/
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
     border-radius: 50%;
     height: 6rem;
     width: 6rem;
