@@ -8,6 +8,10 @@ class TwoFactorEnablerComponent extends HTMLElement {
     constructor() {
         super();
 
+        this.initialize()
+    }
+
+    async initialize() {
         this.states = {
             "enableHome": { context: '/profile/2fa/enable', state: new enableHome},
             "methodChoice": { context: '/profile/2fa/enable/method', state: new methodChoice},
@@ -19,7 +23,8 @@ class TwoFactorEnablerComponent extends HTMLElement {
         this.stateContainer = document.querySelector('.states-container');
         this.currentContext = this.states["enableHome"].context;
         this.currentState = "enableHome";
-
+        
+        await this.states[this.currentState].state.isConnectedUser()
         this.pushNewState(this.states[this.currentState].state);
         this.attachEventListener();
     }
@@ -82,9 +87,11 @@ class TwoFactorEnablerComponent extends HTMLElement {
                 this.currentState = stateItem[0];
                 if (this.currentState === 'tokenVerify') {
                     const form = document.querySelector('.twofactor-form'); // add this event for prevent reloading of the page when we press enter, maybe change this to better handling ?
-                    form.addEventListener('submit', async (event) => {
-                        event.preventDefault();
-                    });
+                        if (form) {
+                            form.addEventListener('submit', async (event) => {
+                                event.preventDefault();
+                            });
+                        }
                     if (this.states[this.currentState].state.selectedMethod === 'authenticator')
                         this.states[this.currentState].state.displayQRCode();
                 }

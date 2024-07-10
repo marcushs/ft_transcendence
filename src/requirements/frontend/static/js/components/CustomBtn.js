@@ -1,6 +1,6 @@
 import index from "../views/index.js";
 import { getCookie } from "../utils/cookie.js";
-import { TwoFactorVerify } from '../views/two_factor/twoFactorLoginVerify.js'
+import { TwoFactorVerify } from '../views/two_factor/TwoFactorLoginVerify.js'
 import profile from "../views/profile.js";
 
 class CustomBtn extends HTMLButtonElement {

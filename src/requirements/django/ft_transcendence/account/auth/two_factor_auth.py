@@ -182,3 +182,16 @@ class twoFactorDisableView(View):
         request.user.is_verified = False
         request.user.save()
         return JsonResponse({'message': 'Two factor authentification disabled'}, status=200)
+    
+class get_two_factor_status_view(View):
+    def __init__(self):
+        super().__init__
+    
+    
+    def get(self, request):
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'message': 'you are not logged in'}, status=401)
+        if request.user.is_verified == True:
+            return JsonResponse({'message': 'you already have setup twofactor on your account', 'is_verified': True}, status=200)
+        else:
+            return JsonResponse({'message': 'you dont have setup twofactor on your account', 'is_verified': False}, status=200)

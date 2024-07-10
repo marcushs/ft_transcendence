@@ -1,4 +1,4 @@
-import './Enabler2FaComponent.js'
+import '../../components/two_factor_auth/TwoFactorEnableComponent.js'
 
 export default () => {
     const html = `
