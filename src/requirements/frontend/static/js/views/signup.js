@@ -36,6 +36,8 @@ export default () => {
 				</div>
 		
 				<button is="custom-btn" text="signup"></button>
+
+				<a href="http://localhost:8000/account/signup">Signup with 42</a>
 		
 			</form>	
 		</div>

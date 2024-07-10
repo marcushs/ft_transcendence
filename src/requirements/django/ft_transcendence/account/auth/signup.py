@@ -9,8 +9,15 @@ from django.contrib.auth import get_user_model
 # --- UTILS --- #
 import json
 import re #regular expression
+import environ
+import os
+import requests
 
 User = get_user_model()
+
+env = environ.Env()
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 class signupView(View):
     def __init__(self):
@@ -18,7 +25,17 @@ class signupView(View):
         self.regexUsernameCheck = r'^[a-zA-Z0-9_-]+$'
         self.regexEmailCheck = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     
-    
+    def get(self, request):
+        url = "https://api.intra.42.fr/oauth/token"
+        data = {
+            "grant_type": "client_credentials",
+            "client_id": env("42_API_UID"),
+            "client_secret": env("42_API_SECRET")
+        }
+        response = requests.post(url, data=data)
+        return JsonResponse({'message': 'get response', 'responst': response.json()})
+
+
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
         response = self._check_data(request, data)
