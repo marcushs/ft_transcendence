@@ -1,4 +1,4 @@
-from .jwt_utils import getUserFromJwtToken
+from .jwt_utils import get_user_from_jwt
 from django.http import JsonResponse
 from functools import wraps
 
@@ -9,7 +9,7 @@ def check_jwt(view_func):
     def _wrapped_view(request, *args, **kwargs): # manage a variable number of positional arguments (*args) and named arguments (or keywords) (**kwargs)
         token = request.COOKIES.get('jwt')
         if token:
-            user = getUserFromJwtToken(token)
+            user = get_user_from_jwt(token)
             if user:
                 request.user = user # Associates user with the request
                 return view_func(request, *args, **kwargs) #  Call the original view with the modified query

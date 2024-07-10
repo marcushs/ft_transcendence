@@ -11,7 +11,7 @@ import re #regular expression
 
 User = get_user_model()
 
-class signupView(View):
+class signup_view(View):
     def __init__(self):
         super().__init__
         self.regexUsernameCheck = r'^[a-zA-Z0-9_-]+$'
@@ -52,7 +52,7 @@ class signupView(View):
         return None
     
     
-class NumericValidator:
+class numeric_validator:
     def validate(self, password, user=None):
         if not re.search(r'[0-9]', password):
             raise ValidationError(
@@ -63,7 +63,7 @@ class NumericValidator:
     def get_help_text(self):
         return _("Your password must contain at least one numeric character.")
 
-class UppercaseValidator:
+class uppercase_validator:
     def validate(self, password, user=None):
         if not re.search(r'[A-Z]', password):
             raise ValidationError(
@@ -74,7 +74,7 @@ class UppercaseValidator:
     def get_help_text(self):
         return _("Your password must contain at least one uppercase letter.")
 
-class LowercaseValidator:
+class lowercase_validator:
     def validate(self, password, user=None):
         if not re.search(r'[a-z]', password):
             raise ValidationError(

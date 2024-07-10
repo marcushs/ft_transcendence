@@ -46,7 +46,7 @@ class twoFactorMethodChoice {
                 method: selectedMethod
             })
         };
-        const res = await fetch(`http://localhost:8000/account/2fa/enable/`, config);
+        const res = await fetch(`http://localhost:8000/account/twofactor/enable/`, config);
         if (res.status === 403)
            return res.status; 
         const data = await res.json();

@@ -77,7 +77,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
     'django_otp.middleware.OTPMiddleware', # Base middleware for two_factor feature
-    'account.auth.middleware.JWTAuthenticationMiddleware', # Custom middleware for jwt token feature
+    'account.auth.middleware.JWTAuthMiddleware', # Custom middleware for jwt token feature
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -178,15 +178,15 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
     {
-        'NAME': 'account.auth.signup.NumericValidator',
+        'NAME': 'account.auth.signup.numeric_validator',
     },
     # check password contains uppercase char
     {
-        'NAME': 'account.auth.signup.UppercaseValidator',
+        'NAME': 'account.auth.signup.uppercase_validator',
     },
     # check password contains lowercase char
     {
-        'NAME': 'account.auth.signup.LowercaseValidator',
+        'NAME': 'account.auth.signup.lowercase_validator',
     },
 ]
 

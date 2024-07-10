@@ -1,4 +1,4 @@
-from .jwt_utils import createJwtToken
+from .jwt_utils import create_jwt_token
 from django.http import JsonResponse
 from django.conf import settings
 from django.views import View
@@ -9,7 +9,7 @@ import pyotp
 import json
 
 User = get_user_model()
-class loginView(View):
+class login_view(View):
     def __init__(self):
         super().__init__
     
@@ -45,8 +45,8 @@ class loginView(View):
     
     
     def _create_user_session(self, user):
-        token = createJwtToken(user, 'access')
-        refresh_token = createJwtToken(user, 'refresh')
+        token = create_jwt_token(user, 'access')
+        refresh_token = create_jwt_token(user, 'refresh')
         response = JsonResponse({'message': 'Login successfully', 'redirect_url': 'profile'}, status=200)
         response.set_cookie('jwt', token, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
         response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)

@@ -1,19 +1,13 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.middleware.csrf import get_token
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-from django.http import JsonResponse
 from django.conf import settings
 import datetime
 import jwt
 
 User = get_user_model()
 
-def generate_csrf_token(request):
-    csrf_token = get_token(request)  # generate new token CSRF
-    return csrf_token
-
-def createJwtToken(user, type: str) -> None:
+def create_jwt_token(user, type: str) -> None:
     if not isinstance(type, str) or (type != 'access' and type != 'refresh'):
         raise TypeError("Inrecognized type for jwt token")
     if type == 'access':
@@ -31,7 +25,7 @@ def createJwtToken(user, type: str) -> None:
         refresh_token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
         return refresh_token
 
-def decodeJwtToken(token):
+def decode_jwt_token(token):
     try:
         payload = jwt.decode(token, settings.JWT_SECRET_KEY,  algorithms=[settings.JWT_ALGORITHM])
         return payload['user_id']
@@ -40,14 +34,14 @@ def decodeJwtToken(token):
     except jwt.InvalidTokenError:
         return None
 
-def RefreshJwtToken(refresh_token, type: str):
-    user_id = decodeJwtToken(refresh_token)
+def Refresh_jwt_token(refresh_token, type: str):
+    user_id = decode_jwt_token(refresh_token)
     if user_id:
-        return createJwtToken(getUserFromJwtToken(refresh_token), type)    
+        return create_jwt_token(get_user_from_jwt(refresh_token), type)    
     return None
 
-def getUserFromJwtToken(token):
-    user_id = decodeJwtToken(token)
+def get_user_from_jwt(token):
+    user_id = decode_jwt_token(token)
     if user_id:
         try:
             return User.objects.get(id=user_id)

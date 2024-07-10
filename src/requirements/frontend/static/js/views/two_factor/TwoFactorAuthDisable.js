@@ -59,7 +59,7 @@ async function getTwoFactorCode() {
         credentials: 'include', // Needed for send cookie
     };
     try {
-        const res = await fetch(`http://localhost:8000/account/2fa/get_2fa_code/`, config);
+        const res = await fetch(`http://localhost:8000/account/twofactor/get_2fa_code/`, config);
         if (res.status === 403)
             throw new Error('Access Denied')
         const data = await res.json();
@@ -89,7 +89,7 @@ async function disableTwoFactor(verificationCode) {
         })
     };
     try {
-        const res = await fetch(`http://localhost:8000/account/2fa/disable/`, config);
+        const res = await fetch(`http://localhost:8000/account/twofactor/disable/`, config);
         if (res.status === 403)
             throw new Error('Access Denied')
         const data = await res.json();

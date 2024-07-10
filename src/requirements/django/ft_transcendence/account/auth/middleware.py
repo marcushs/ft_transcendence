@@ -1,4 +1,4 @@
-from .jwt_utils import getUserFromJwtToken, RefreshJwtToken
+from .jwt_utils import get_user_from_jwt, Refresh_jwt_token
 from django.utils.deprecation import MiddlewareMixin # assure the retro-compability for recent django middleware
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
@@ -8,11 +8,11 @@ from django.conf import settings
 User = get_user_model()
 
 # Middleware for jwt authentication
-class JWTAuthenticationMiddleware(MiddlewareMixin):
+class JWTAuthMiddleware(MiddlewareMixin):
     def process_request(self, request):
         token = request.COOKIES.get('jwt')
         if token:
-            jwt_user = getUserFromJwtToken(token)
+            jwt_user = get_user_from_jwt(token)
             if jwt_user:
                 request.user = jwt_user
             else:
@@ -21,11 +21,11 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
         else:
             refresh_token = request.COOKIES.get('jwt_refresh')
             if refresh_token:
-                jwt_user = getUserFromJwtToken(refresh_token)
+                jwt_user = get_user_from_jwt(refresh_token)
                 if jwt_user:
-                    token = RefreshJwtToken(refresh_token, 'access')
+                    token = Refresh_jwt_token(refresh_token, 'access')
                     request.new_jwt = token
-                    token_refresh = RefreshJwtToken(refresh_token, 'refresh')
+                    token_refresh = Refresh_jwt_token(refresh_token, 'refresh')
                     request.new_jwt_refresh = token_refresh
                     request.user = jwt_user
                 else:

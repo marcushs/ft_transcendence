@@ -10,7 +10,7 @@ import secrets
 import pyotp
 
 User = get_user_model()
-class twoFactorEnableView(View):
+class twofactor_enable_view(View):
     def __init__(self):
         super().__init__
         
@@ -70,7 +70,7 @@ class twoFactorEnableView(View):
     def _verification_handler(self, request, twofactor_code, method):
         if method is None:
             return JsonResponse({'message': 'We\'ve encountered an issue with the selected authentication method.'}, status=201)
-        response = _two_factor_verify_view(request, twofactor_code, method)
+        response = twofactor_verify_view(request, twofactor_code, method)
         if response.status_code != 200:
             return response
         request.user.two_factor_method = method
@@ -86,7 +86,7 @@ def _send_mail(subject, message, recipient_list):
             return None
         except Exception as error:
             return f'An error occurred with email sending : {str(error)}'
-class getTwoFactorCodeView(View):
+class twofactor_get_code_view(View):
     def __init__(self):
         super().__init__
     
@@ -140,7 +140,7 @@ class getTwoFactorCodeView(View):
         user.set_two_factor_code(verification_code, 5)
         return JsonResponse({'method': user.two_factor_method}, status=200)
 
-def _two_factor_verify_view(request, two_factor_code, two_factor_method):
+def twofactor_verify_view(request, two_factor_code, two_factor_method):
     if two_factor_method == 'authenticator':
         totp = pyotp.TOTP(request.user.authenticator_secret)
         if not totp.verify(two_factor_code):
@@ -154,7 +154,7 @@ def _two_factor_verify_view(request, two_factor_code, two_factor_method):
         return JsonResponse({'message': 'We\'ve encountered an issue with the TwoFactor method.'}, status=400)
     return JsonResponse({'message': 'successful two-factor authentication'}, status=200)
 
-class twoFactorDisableView(View):
+class twofactor_disable_view(View):
     def __init__(self):
         super().__init__
     
@@ -183,7 +183,7 @@ class twoFactorDisableView(View):
         request.user.save()
         return JsonResponse({'message': 'Two factor authentification disabled'}, status=200)
     
-class get_two_factor_status_view(View):
+class twofactor_get_status_view(View):
     def __init__(self):
         super().__init__
     

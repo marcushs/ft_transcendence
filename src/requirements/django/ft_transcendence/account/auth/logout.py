@@ -3,7 +3,7 @@ from django.views import View
 from .decorator import check_jwt
 from django.utils.decorators import method_decorator
 
-class logoutView(View):
+class logout_view(View):
     def __init__(self):
         super().__init__
     
