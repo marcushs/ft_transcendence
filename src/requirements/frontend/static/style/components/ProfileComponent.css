@@ -65,6 +65,7 @@ profile-component {
 .profile-component-content .user-infos-container .user-info input[type="email"] {
 	width: 100%;
 	height: 55%;
+	font-size: 1.5rem;
 	border-radius: 5px;
 	border: 1px solid var(--light-grey);
 	color: var(--text-primary-color);

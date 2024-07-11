@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,Permiss
 
 def user_directory_path(instance, filename):
     # File will be uploaded to MEDIA_ROOT/profile_images/<username>/<filename>
-    return f'profile_images/{instance.username}/{filename}'
+    return f'profile_images/{instance.id}/{filename}'
 
 class UserManager(BaseUserManager):
     def create_user(self, email, username, password, **extra_fields):
@@ -47,7 +47,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             'email': self.email,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            # 'profile_image': self.profile_image.url if hasattr(self, 'profile_image/Sowoo') else None,
             'profile_image': self.profile_image.url if self.profile_image else None,
             'profile_image_link': self.profile_image_link,
             'score': self.score,

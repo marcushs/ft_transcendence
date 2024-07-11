@@ -46,7 +46,6 @@ def change_username_view(request):
 
     if request.method == 'POST':
         current_user = request.user
-        # data = json.loads(request.body)
         response = {}
 
         response.update(change_username(User, current_user, request))
@@ -103,14 +102,13 @@ def change_email(User, current_user, request):
 
 
 def change_profile_image(current_user, request):
-    # new_image = request['image']
     new_image = request.FILES.get('profile_image')
     response = {}
 
-    if new_image == current_user.profile_image:
+    if new_image == current_user.profile_image or new_image is None:
         response['image_conflict'] = 'Profile image is the same'
-
-    response['image_message'] = 'Profile image has been successfully changed'
-    current_user.profile_image = new_image
-    current_user.save()
+    else:
+        response['image_message'] = 'Profile image has been successfully changed'
+        current_user.profile_image = new_image
+        current_user.save()
     return response
