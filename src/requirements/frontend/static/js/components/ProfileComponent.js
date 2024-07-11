@@ -130,11 +130,6 @@ class ProfileComponent extends HTMLElement {
 		reader.readAsDataURL(file);
 	}
 
-	function powerBy(a) {
-		return function test(2) {
-			return 2 + a
-		}
-	}
 
 	handlePenButtonClicked(penButton) {
 		const input = penButton.parentElement.querySelector('input');
@@ -190,7 +185,6 @@ class ProfileComponent extends HTMLElement {
 	updateSaveButtonState(userData, isValidUsername, isValidEmail) {
 		const saveButton = this.querySelector('button-component');
 
-		// console.log(isValidUsername, isValidEmail, this.isUserInfosChanged(userData))
 		console.log(this.hasProfilePictureChanged);
 		if (isValidUsername && isValidEmail && this.isUserInfosChanged(userData)) {
 			saveButton.className = 'generic-btn';
@@ -277,8 +271,9 @@ async function postNewUserInfos(newUserInfos) {
 		credentials: 'include' // Needed for send cookie
 	};
 
+	console.log(config.body)
 	try {
-		const res = await fetch(`http://localhost:8000/account/change-username/`, config);
+		const res = await fetch(`http://localhost:8000/account/change-user-infos/`, config);
 		if (res.status == 403) {
 			throw new Error('Access Denied');
 		}
