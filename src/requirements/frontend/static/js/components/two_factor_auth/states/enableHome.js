@@ -1,7 +1,6 @@
 import index from '../../../views/index.js'
 import { getCookie } from "../../../utils/cookie.js";
 
-
 class twoFactorEnableHome {
 
 	constructor() {
@@ -42,8 +41,6 @@ class twoFactorEnableHome {
             }
         } catch (error) {
             alert(error.message);
-            const app = document.querySelector('#app');
-        
             if (app) {
                 app.innerHTML = '';
                 history.pushState("", "", "/");

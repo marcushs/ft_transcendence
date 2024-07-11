@@ -1,7 +1,7 @@
-import index from "../views/index.js";
 import { getCookie } from "../utils/cookie.js";
 import { TwoFactorVerify } from '../views/two_factor/TwoFactorLoginVerify.js'
-import profile from "../views/profile.js";
+import { handleRedirection } from "../utils/handleRedirection.js";
+
 
 class CustomBtn extends HTMLButtonElement {
     static get observedAttributes() {
@@ -68,14 +68,10 @@ class CustomBtn extends HTMLButtonElement {
                 const data = await res.json();
                 console.log(data);
                 if (res.status === 200) {
-                    if (this.text.toLowerCase() === 'login' && data.is_verified === true) {
+                    if (this.text.toLowerCase() === 'login' && data.is_verified === true)
                         new TwoFactorVerify(json);
-                    } else {
-                        // console.log('coucou');
-                        history.pushState("", "", `/${data.redirect_url}`);
-                        window.location.replace(data.redirect_url)
-                        // app.innerHTML = data.redirect_url();
-                    }
+                    else
+                        handleRedirection(data.redirect_url)
                 } else
                     alert(data.message)
             } catch (error) {

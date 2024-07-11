@@ -8,10 +8,12 @@ class TwoFactorEnablerComponent extends HTMLElement {
     constructor() {
         super();
 
-        this.initialize()
+        this.initialize();
+        this.pushNewState(this.states[this.currentState].state);
+        this.attachEventListener();
     }
 
-    async initialize() {
+    initialize() {
         this.states = {
             "enableHome": { context: '/profile/2fa/enable', state: new enableHome},
             "methodChoice": { context: '/profile/2fa/enable/method', state: new methodChoice},
@@ -23,10 +25,6 @@ class TwoFactorEnablerComponent extends HTMLElement {
         this.stateContainer = document.querySelector('.states-container');
         this.currentContext = this.states["enableHome"].context;
         this.currentState = "enableHome";
-        
-        await this.states[this.currentState].state.isConnectedUser()
-        this.pushNewState(this.states[this.currentState].state);
-        this.attachEventListener();
     }
 
     pushNewState(state) {
@@ -118,8 +116,6 @@ class TwoFactorEnablerComponent extends HTMLElement {
     }
 
     handleProfileRedirection() {
-        const app = document.querySelector('#app');
-        
         if (app) {
             app.innerHTML = '';
             history.pushState("", "", "/profile");

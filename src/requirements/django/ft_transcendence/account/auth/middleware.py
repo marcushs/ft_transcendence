@@ -1,4 +1,4 @@
-from .jwt_utils import get_user_from_jwt, Refresh_jwt_token
+from .utils.jwt_utils import get_user_from_jwt, Refresh_jwt_token
 from django.utils.deprecation import MiddlewareMixin # assure the retro-compability for recent django middleware
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model

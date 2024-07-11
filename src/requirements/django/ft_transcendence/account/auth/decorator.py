@@ -1,4 +1,4 @@
-from .jwt_utils import get_user_from_jwt
+from .utils.jwt_utils import get_user_from_jwt
 from django.http import JsonResponse
 from functools import wraps
 

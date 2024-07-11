@@ -14,7 +14,6 @@ export class TwoFactorVerify {
 
     initRender() {
         history.pushState("", "", "/login/verify");
-        const app = document.querySelector('#app');
         if (app) {
             app.innerHTML = `
                 <nav-bar auth="true"></nav-bar>
@@ -115,7 +114,6 @@ export class TwoFactorVerify {
     }
 
     handleRedirection(redirect) {
-        const app = document.querySelector('#app');
         if (app) {
             app.innerHTML = '';
             history.pushState("", "", redirect);

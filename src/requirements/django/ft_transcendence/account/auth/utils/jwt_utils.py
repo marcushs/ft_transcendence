@@ -23,7 +23,7 @@ def create_jwt_token(user, type: str) -> None:
             'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
         }
         refresh_token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
-        return refresh_token
+        return refresh_token    
 
 def decode_jwt_token(token):
     try:

@@ -29,26 +29,26 @@ class signup_view(View):
     
     def _check_data(self, request, data):
         if not data['username']:
-            return JsonResponse({'error': 'No username provided'}, status=401)
+            return JsonResponse({'message': 'No username provided'}, status=401)
         elif not re.match(self.regexUsernameCheck, data['username']):
-            return JsonResponse({'error': 'Invalid characters in username'}, status=401)
+            return JsonResponse({'message': 'Invalid characters in username'}, status=401)
         elif not data['email']:
-            return JsonResponse({'error': 'No email provided'}, status=401)
+            return JsonResponse({'message': 'No email provided'}, status=401)
         elif User.objects.filter(email=data['email']).exists():
-            return JsonResponse({'error': 'This email have already an account'}, status=401)
+            return JsonResponse({'message': 'This email have already an account'}, status=401)
         elif not re.match(self.regexEmailCheck, data['email']):
-            return JsonResponse({'error': 'Invalid email'}, status=401)
+            return JsonResponse({'message': 'Invalid email'}, status=401)
         elif not data['password']:
-            return JsonResponse({'error': 'No password provided'}, status=401)
+            return JsonResponse({'message': 'No password provided'}, status=401)
+        username = data['username']
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({'message': 'Username already exists'}, status=401)
         try:
             validate_password(data['password'])
         except ValidationError as error:
-            return JsonResponse({'error': str(error.messages[0])}, status=401)
+            return JsonResponse({'message': str(error.messages[0])}, status=401)
         if data['password'] != data['confirm_password']:
-            return JsonResponse({'error': 'Password did not match'}, status=401)
-        username = data['username']
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({'error': 'Username already exists'}, status=401)
+            return JsonResponse({'message': 'Password did not match'}, status=401)  
         return None
     
     
