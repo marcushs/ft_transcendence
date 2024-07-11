@@ -1,4 +1,5 @@
 services:
+  # --> FRONTEND <--
   frontend:
     container_name: frontend
     build:
@@ -12,6 +13,7 @@ services:
     networks:
       - transcendence-network
 
+  # --> BACKEND <--
   ft_transcendence:
     container_name: transcendence
     env_file: ./requirements/django/ft_transcendence/.env
@@ -29,6 +31,47 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
+
+  auth:
+    container_name: auth
+    env_file: ./requirements/django/auth_service/.env
+    restart: always
+    build:
+      context: ./requirements/django/auth_service
+      dockerfile: Dockerfile
+    command: ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8001"]
+    volumes:
+      - ./requirements/django/auth_service:/app
+    ports:
+      - "8001:8001"
+    depends_on:
+      auth_db:
+        condition: service_healthy
+    networks:
+      - transcendence-network
+  
+  # --> DATABASE <--
+  auth_db:
+    container_name: auth_db
+    image: postgres
+    restart: always
+    env_file: ./requirements/django/auth_service/.env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - auth_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports: 
+     - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgresdb:
     container_name: postgresdb  
@@ -54,6 +97,7 @@ services:
 
 volumes:
   pgdata:
+  auth_pgdata:
 
 networks:
   transcendence-network:
