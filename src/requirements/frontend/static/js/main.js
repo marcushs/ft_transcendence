@@ -11,12 +11,11 @@ console.log('pathname', location.pathname);
 const routes = {
     "/": { title: "Index", render: index },
     "/login": { title: "Login", render: login },
-    "/login/verify": { title: "Login", render: login },
     "/signup": { title: "Signup", render: signup },
     "/profile": { title: "Profile", render: profile },
     "/logout": { title: "Logout", render: logout },
-    "/2fa/enable": { title: "EnableTwoFactor", render: enableTwoFactor },
-    "/2fa/disable": { title: "DisableTwoFactor", render: disableTwoFactor },
+    "/twofactor/enable": { title: "EnableTwoFactor", render: enableTwoFactor },
+    "/twofactor/disable": { title: "DisableTwoFactor", render: disableTwoFactor },
 };
 
 // create the csrf token if it does not already exist
@@ -24,6 +23,7 @@ generateCsrfToken();
 function router() {
     let view = routes[location.pathname];
     
+    console.log('test');
     if (view) {
         console.log(view);
         document.title = view.title;

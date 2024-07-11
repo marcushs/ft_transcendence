@@ -96,7 +96,7 @@ function displayTwoFactorChoice(data) {
             ⚠️ You will receive an email with a link. Please follow the instructions to complete the two-factor authentication setup.
             <br>
         </p>
-        <a href="/2fa/enable" data-link class="enableBtn">Enable 2FA</a>
+        <a href="/twofactor/enable" data-link class="enableBtn">Enable 2FA</a>
         `;
     }
     anchor.addEventListener('click', () => infoCollapse.classList.toggle('collapse'));

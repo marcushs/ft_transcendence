@@ -14,7 +14,6 @@ export default () => {
 
 async function initialize() {
     const is_verified = await isVerifiedUser();
-    console.log('test: ', is_verified)
     if (!is_verified && is_verified === false) {
         alert('you can\'t access this page, two-factor authentication is not active on your account');
         handleRedirection('profile');

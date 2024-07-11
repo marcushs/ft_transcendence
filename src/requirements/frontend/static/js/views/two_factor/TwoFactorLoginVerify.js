@@ -1,6 +1,5 @@
+import { handleRedirection } from '../../utils/handleRedirection.js'
 import { getCookie } from "../../utils/cookie.js";
-import profile from "../profile.js";
-import home from "../index.js";
 
 
 export class TwoFactorVerify {
@@ -13,7 +12,6 @@ export class TwoFactorVerify {
     }
 
     initRender() {
-        history.pushState("", "", "/login/verify");
         if (app) {
             app.innerHTML = `
                 <nav-bar auth="true"></nav-bar>
@@ -44,7 +42,7 @@ export class TwoFactorVerify {
         });
 
         cancelButton.addEventListener('click', () => {
-            this.handleRedirection('/home')
+            handleRedirection('home')
         });
     }
 
@@ -104,23 +102,12 @@ export class TwoFactorVerify {
             const data = await res.json();
             if (res.status === 200) {
                 alert(data.message);
-                this.handleRedirection('/profile');
+                handleRedirection('profile');
             } else {
                 alert(`Error: ${data.message}`);
             }
         } catch (error) {
             alert(`Error: ${error.message}`);
-        }
-    }
-
-    handleRedirection(redirect) {
-        if (app) {
-            app.innerHTML = '';
-            history.pushState("", "", redirect);
-            if (redirect === '/profile')
-                app.innerHTML = profile();
-            else
-                app.innerHTML = home();
         }
     }
 }
