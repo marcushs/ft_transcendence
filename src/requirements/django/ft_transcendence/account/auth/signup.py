@@ -11,7 +11,7 @@ import json
 import re #regular expression
 import environ
 import os
-import requests
+# import requests
 
 User = get_user_model()
 
@@ -25,15 +25,14 @@ class signupView(View):
         self.regexUsernameCheck = r'^[a-zA-Z0-9_-]+$'
         self.regexEmailCheck = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     
-    def get(self, request):
-        url = "https://api.intra.42.fr/oauth/token"
-        data = {
-            "grant_type": "client_credentials",
-            "client_id": env("42_API_UID"),
-            "client_secret": env("42_API_SECRET")
-        }
-        response = requests.post(url, data=data)
-        return JsonResponse({'message': 'get response', 'responst': response.json()})
+    # def get(self, request):
+    #     url = "https://api.intra.42.fr/"
+    #     data = {
+    #         "client_id": env("42_API_UID"),
+    #         "client_secret": env("42_API_SECRET")
+    #     }
+    #     response = requests.post(url, data=data)
+    #     return JsonResponse({'message': 'get response', 'responst': response.json()})
 
 
     def post(self, request):
