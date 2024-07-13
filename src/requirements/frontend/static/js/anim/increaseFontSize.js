@@ -1,3 +1,4 @@
+import sleep from '../utils/sleep.js'
 
 async function extendGameComponent(gameComponent) {
     let topPosition = gameComponent.offsetTop; // Position of game before animation
@@ -32,10 +33,6 @@ function throwGameExtendedEvent() {
     });
 
     document.dispatchEvent(event);
-}
-
-function sleep(sleepDuration) {
-    return new Promise(resolve => setTimeout(resolve, sleepDuration));
 }
 
 export default extendGameComponent;

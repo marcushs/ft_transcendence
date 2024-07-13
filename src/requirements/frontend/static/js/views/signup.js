@@ -44,8 +44,9 @@ export default () => {
 				postData(event, registerBtn);
 		});
 
-		rotatingGradient('.signup-form-container-background');
-		rotatingGradient('.signup-form-container');
+		rotatingGradient('.signup-form-container-background', '#FF16C6', '#00D0FF');
+		rotatingGradient('.signup-form-container', '#FF16C6', '#00D0FF');
+		rotatingGradient('.signup-form-container > form', '#1c0015', '#001519');
 		validateSignupInputs();
 		managePasswordToggle();
 		manageConfirmPasswordToggle();

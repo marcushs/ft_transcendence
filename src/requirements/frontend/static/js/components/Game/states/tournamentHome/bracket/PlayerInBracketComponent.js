@@ -1,3 +1,5 @@
+import sleep from "../../../../../utils/sleep.js";
+
 class PlayerInBracketComponent extends HTMLElement {
     // static get observedAttributes() {
     //     return ['name', 'score', 'class', 'left', 'right'];
@@ -71,10 +73,6 @@ class PlayerInBracketComponent extends HTMLElement {
         return parseFloat(getComputedStyle(element).fontSize) / rootSizeInPx;
     }
 
-}
-
-function sleep(sleepDuration) {
-    return new Promise(resolve => setTimeout(resolve, sleepDuration));
 }
 
 customElements.define('player-in-bracket', PlayerInBracketComponent);

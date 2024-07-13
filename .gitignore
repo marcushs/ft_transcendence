@@ -2,4 +2,4 @@
 **/*.env
 .idea
 .vscode
-media/
+**/media/

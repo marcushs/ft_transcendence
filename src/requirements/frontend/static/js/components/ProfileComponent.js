@@ -3,6 +3,7 @@ import getProfileImage from "../utils/getProfileImage.js";
 import getUserData from "../utils/getUserData.js";
 import { isContainWhitespace, isAlphanumeric } from "../utils/utils.js";
 import {getCookie} from "../utils/cookie.js";
+import sleep from "../utils/sleep.js";
 
 class ProfileComponent extends HTMLElement {
 
@@ -22,9 +23,12 @@ class ProfileComponent extends HTMLElement {
 			<div class="profile-component-content">
 				<div class="user-infos-container">
 					<div class="user-info user-info-image">
+						<div class="change-profile-image">
+							<i class="fa-solid fa-pen profile-picture-pen"></i>
+						</div>
 						<img src="" alt="">
-						<i class="fa-solid fa-pen profile-picture-pen"></i>
 						<input type="file" accept="image/*" name="profile-image">
+						<span id="profileImageFeedback" class="input-feedback"></span>
 					</div>
 					<div class="user-info">
 						<p id="username">Username</p>
@@ -39,6 +43,7 @@ class ProfileComponent extends HTMLElement {
 						<span id="emailFeedback" class="input-feedback"></span>
 					</div>
 					<button-component label="Save" class="generic-btn-disabled"></button-component>
+					<span id="genericErrorFeedback" class="error-feedback"></span>
 				</div>
 				<div class="stats-infos-container"></div>
 			</div>
@@ -47,8 +52,9 @@ class ProfileComponent extends HTMLElement {
 
 
 	connectedCallback() {
-		rotatingGradient('profile-component');
-		rotatingGradient('.profile-component-background');
+		rotatingGradient('profile-component', '#FF16C6', '#00D0FF');
+		rotatingGradient('.profile-component-background', '#FF16C6', '#00D0FF');
+		rotatingGradient('.profile-component-content', '#1c0015', '#001519');
 
 		this.usernameInput = this.querySelector('input[name="username"]');
 		this.emailInput = this.querySelector('input[name="email"]');
@@ -71,6 +77,42 @@ class ProfileComponent extends HTMLElement {
 		this.querySelectorAll('.classic-pen').forEach(penButton => {
 			penButton.addEventListener('click', () => this.handlePenButtonClicked(penButton));
 		});
+
+
+		const hoverTarget = document.querySelector('.user-info-image > .change-profile-image');
+		const userInfoImage = document.querySelector('.user-info-image > img');
+		let animationInProgress = false;
+
+		hoverTarget.addEventListener('animationend', () => {
+			animationInProgress = false;
+		})
+
+		hoverTarget.addEventListener('animationstart', () => {
+			animationInProgress = true;
+		})
+
+		hoverTarget.addEventListener('mouseover', async (event) => {
+			// while (animationInProgress === true) ;
+			if (animationInProgress)
+				await sleep(300);
+			this.querySelector('.user-info-image > .change-profile-image').classList.remove('reset-change-profile-image-size');
+			this.querySelector('.user-info-image > img').classList.remove('reset-image-position');
+
+			this.querySelector('.user-info-image > .change-profile-image').classList.add('expand-change-profile-image-size');
+			this.querySelector('.user-info-image > img').classList.add('move-image-to-left');
+		});
+
+		hoverTarget.addEventListener('mouseout', async (event) => {
+			// while (animationInProgress === true) ;
+			if (animationInProgress)
+				await sleep(300);
+			this.querySelector('.user-info-image > .change-profile-image').classList.remove('expand-change-profile-image-size');
+			this.querySelector('.user-info-image > img').classList.remove('move-image-to-left');
+
+			this.querySelector('.user-info-image > .change-profile-image').classList.add('reset-change-profile-image-size');
+			this.querySelector('.user-info-image > img').classList.add('reset-image-position');
+		});
+
 	}
 
 
@@ -200,7 +242,7 @@ class ProfileComponent extends HTMLElement {
 		const response = JSON.parse(localStorage.getItem('userUpdateResponse'));
 
 		if (response) {
-			const inputs = [this.usernameInput, this.emailInput];
+			const inputs = [this.usernameInput, this.emailInput, this.profileImageInput];
 
 			this.showUserInfosFeedback(response, inputs);
 			localStorage.removeItem('userUpdateResponse');
@@ -209,13 +251,16 @@ class ProfileComponent extends HTMLElement {
 
 
 	showUserInfosFeedback(response, inputs) {
-		inputs.forEach(input => {
-			const feedbackElement = input.parentElement.querySelector('.input-feedback');
+		const feedbackErrorElement = this.querySelector('#genericErrorFeedback');
 
+		inputs.forEach(input => {
+			const feedbackSuccessElement = input.parentElement.querySelector('.input-feedback');
+
+			console.log(input.name, response)
 			if (`${input.name}_error` in response)
-				this.updateFeedback(feedbackElement, response[`${input.name}_error`], false);
+				this.updateFeedback(feedbackErrorElement, response[`${input.name}_error`], false);
 			else if (`${input.name}_message` in response)
-				this.updateFeedback(feedbackElement, response[`${input.name}_message`], true);
+				this.updateFeedback(feedbackSuccessElement, response[`${input.name}_message`], true);
 		});
 	}
 
@@ -228,7 +273,7 @@ class ProfileComponent extends HTMLElement {
 		if (!isValidUsername && username === '')
 			this.updateFeedback(usernameFeedbackElement, 'Username cannot be empty', isValidUsername);
 		else if (!isValidUsername && !isAlphanumeric(username))
-			this.updateFeedback(usernameFeedbackElement, "Username can contain only: letters, numbers, _ and -", isValidUsername);
+			this.updateFeedback(usernameFeedbackElement, "Username: letters, numbers, _ , -", isValidUsername);
 		else if (usernameFeedbackElement.textContent !== '' && isValidUsername)
 			usernameFeedbackElement.textContent = '';
 	}
@@ -244,7 +289,6 @@ class ProfileComponent extends HTMLElement {
 		else if (emailFeedbackElement.textContent !== '' && isValidEmail)
 			emailFeedbackElement.textContent = '';
 	}
-
 
 	// Function to updateFeedbackField
 

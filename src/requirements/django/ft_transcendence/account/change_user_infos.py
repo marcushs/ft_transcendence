@@ -3,12 +3,13 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
+import magic
 import re
 
 
 class ChangeUserInfosView(View):
     def __init__(self):
-        super.__init__
+        super().__init__
 
 
     def post(self, request):
@@ -23,11 +24,11 @@ class ChangeUserInfosView(View):
         except ValidationError as e:
             return JsonResponse(e.message_dict, status=409)
 
-        if request.user.username != request.POST.get('username'):
+        if request.POST.get('username') and request.user.username != request.POST.get('username'):
             response.update(self.change_username(User, request))
-        if request.user.email != request.POST.get('email'):
+        if request.POST.get('email') and request.user.email != request.POST.get('email'):
             response.update(self.change_email(User, request))
-        if request.FILES.get('profile_image') is not None:
+        if request.FILES.get('profile_image'):
             response.update(self.change_profile_image(request))
 
         return JsonResponse(response, status=201)
@@ -36,29 +37,58 @@ class ChangeUserInfosView(View):
     def check_update_error(self, User, request):
         new_username = request.POST.get('username')
         new_email = request.POST.get('email')
-        error = {}
+        new_profile_image = request.FILES.get('profile_image')
 
         if new_username is not None:
-            if User.objects.filter(username=new_username).exists() and new_username != request.user.username:
-                error['username_error'] = f"Username '{new_username}' already exists"
-                raise ValidationError(error)
-            if len(new_username) > 12:
-                error['username_error'] = f"Username must be less than 12 characters"
-                raise ValidationError(error)
-
+            self.check_username_errors(User, new_username, request)
         if new_email is not None:
-            if User.objects.filter(email=new_email).exists() and new_email != request.user.email:
-                error['email_error'] = f'Email {new_email} is already associated with an account'
-                raise ValidationError(error)
-            if re.search(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", new_email) is None:
-                error['email_error'] = f'Invalid email format'
-                raise ValidationError(error)
+            self.check_email_errors(User, new_email, request)
+        if new_profile_image is not None:
+            self.check_profile_image_errors(new_profile_image)
+
+
+    def check_username_errors(self, User, new_username, request):
+        error = {}
+
+        if User.objects.filter(username=new_username).exists() and new_username != request.user.username:
+            error['username_error'] = f"Username '{new_username}' already exists"
+            raise ValidationError(error)
+        if len(new_username) > 12:
+            error['username_error'] = f"Username must be less than 12 characters"
+            raise ValidationError(error)
+        if re.search(r"^[a-zA-Z0-9_-]+$", new_username) is None:
+            error['username_error'] = f"Username must container only letters, numbers, _ , -"
+            raise ValidationError(error)
+
+
+    def check_email_errors(self, User, new_email, request):
+        error = {}
+
+        if User.objects.filter(email=new_email).exists() and new_email != request.user.email:
+            error['email_error'] = f'Email {new_email} is already associated with an account'
+            raise ValidationError(error)
+        if re.search(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", new_email) is None:
+            error['email_error'] = f'Invalid email format'
+            raise ValidationError(error)
+
+
+    def check_profile_image_errors(self, new_profile_image):
+        error = {}
+        mime = magic.Magic(mime=True)
+        myme_type = mime.from_buffer(new_profile_image.read()) # get the mime of the image
+        # new_profile_image.seek(0) # Reset file pointer to the start (required after a read)
+
+        valid_mime_type = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp']
+        print(myme_type)
+        if myme_type not in valid_mime_type:
+            error['profile-image_error'] = f'Invalid profile image format, valid formats are: (png, jpg, jpeg, gif, svg, webp)'
+            raise ValidationError(error)
 
 
     def change_username(self, User, request):
         response = {}
 
-        response['username_message'] = 'Username has been successfully changed'
+        response['username_message'] = 'Username successfully changed'
         request.user.username = request.POST.get('username')
         request.user.save()
         return response
@@ -67,7 +97,7 @@ class ChangeUserInfosView(View):
     def change_email(self, User, request):
         response = {}
 
-        response['email_message'] = 'Email has been successfully changed'
+        response['email_message'] = 'Email successfully changed'
         request.user.email = request.POST.get('email')
         request.user.save()
         return response
@@ -77,7 +107,7 @@ class ChangeUserInfosView(View):
         new_image = request.FILES.get('profile_image')
         response = {}
 
-        response['image_message'] = 'Profile image has been successfully changed'
+        response['profile-image_message'] = 'Profile image successfully changed'
         request.user.profile_image = new_image
         request.user.save()
         return response

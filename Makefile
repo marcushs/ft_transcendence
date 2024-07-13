@@ -15,7 +15,7 @@ down:
 clean: down
 
 delete_medias:
-	docker container exec transcendence rm -rf media
+	rm -rf ./src/requirements/django/ft_transcendence/media
 
 fclean: delete_medias clean
 	docker system prune -a -f --volumes

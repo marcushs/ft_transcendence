@@ -29,8 +29,6 @@
 	height: 100%;
 	width: 100%;
 	border-radius: 7px;
-	/*background: var(--component-background-color);*/
-	background: rgba(0, 0, 0, 0.85);
 }
 
 .signup-page h1 {

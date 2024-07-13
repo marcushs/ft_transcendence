@@ -54,4 +54,5 @@ nav .nav-bar-right-section .profile-picture {
     height: 6.5rem;
     width: 6.5rem;
     margin-left: 3rem;
+    border: 2px solid var(--light-grey);
 }

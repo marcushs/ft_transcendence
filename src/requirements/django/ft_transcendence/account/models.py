@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
 
 def user_directory_path(instance, filename):
-    # File will be uploaded to MEDIA_ROOT/profile_images/<username>/<filename>
     return f'profile_images/{instance.id}/{filename}'
 
 class UserManager(BaseUserManager):
