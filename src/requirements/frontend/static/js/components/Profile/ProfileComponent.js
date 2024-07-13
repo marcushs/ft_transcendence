@@ -1,9 +1,9 @@
-import rotatingGradient from "../anim/rotatingGradient.js";
-import getProfileImage from "../utils/getProfileImage.js";
-import getUserData from "../utils/getUserData.js";
-import { isContainWhitespace, isAlphanumeric } from "../utils/utils.js";
-import {getCookie} from "../utils/cookie.js";
-import sleep from "../utils/sleep.js";
+import rotatingGradient from "../../anim/rotatingGradient.js";
+import getProfileImage from "../../utils/getProfileImage.js";
+import getUserData from "../../utils/getUserData.js";
+import { isAlphanumeric } from "../../utils/utils.js";
+import {getCookie} from "../../utils/cookie.js";
+import './PopUpComponent.js'
 
 class ProfileComponent extends HTMLElement {
 
@@ -84,17 +84,26 @@ class ProfileComponent extends HTMLElement {
 		const userData = await getUserData();
 		const saveBtn = this.querySelector('button-component');
 
+		// To send a request if button clicked (and valid infos)
 		saveBtn.addEventListener('click', (event) => this.handleSaveInfos(event));
-		this.addEventListener('input', (event) => this.handleInputsChanged(event, userData));
-		this.profileImageInput.addEventListener('change', (event) => this.handlePictureImageChanged(event, userData));
 
-		this.querySelector('#uploadImage').addEventListener('click', () => this.profileImageInput.click());
+		// To set input editable if pen clicked
 		this.querySelectorAll('.classic-pen').forEach(penButton => {
 			penButton.addEventListener('click', () => this.handlePenButtonClicked(penButton));
 		});
 
+		// To handle animation on change-profile-image
 		this.querySelector('.change-profile-image').addEventListener('click',  (event) => this.handleExpandImageChoiceAnimation(event));
 		this.querySelector('.change-profile-image').addEventListener('mouseleave', (event) => this.handleResetImageChoiceAnimation(event));
+
+		// To handle different type of image setter
+		this.querySelector('#imageLink').addEventListener('click', (event) => this.handleDisplaySetImageLinkPopUp());
+		this.querySelector('#uploadImage').addEventListener('click', () => this.profileImageInput.click());
+
+		// To handle changed information
+		this.addEventListener('input', (event) => this.handleInputsChanged(event, userData));
+		this.profileImageInput.addEventListener('change', (event) => this.handleProfileImageUpload(event, userData));
+		document.addEventListener('imageLinkSaved', (event) => this.handleProfileImageLinkSet(event, userData));
 	}
 
 
@@ -140,18 +149,59 @@ class ProfileComponent extends HTMLElement {
 	}
 
 
-	handlePictureImageChanged(event, userData) {
+	async handleProfileImageUpload(event, userData) {
 		const file = event.target.files[0];
 		const reader = new FileReader();
 		const profileImageElement = this.querySelector('.user-info-image > img')
+		const isValidImage = await this.isValidImageUploaded(event.target.files[0]);
 
 		reader.onload = (event) => {
-			profileImageElement.src = event.target.result;
-			this.hasProfilePictureChanged = true;
-			this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), this.isValidEmail(this.emailInput.value));
+			if (isValidImage) {
+				profileImageElement.src = event.target.result;
+				this.hasProfilePictureChanged = true;
+			} else {
+				this.hasProfilePictureChanged = false;
+				this.updateImageFeedback(isValidImage, 'Invalid image file');
+			}
+			this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), this.isValidEmail(this.emailInput.value), isValidImage);
 		};
 
 		reader.readAsDataURL(file);
+	}
+
+
+	async handleProfileImageLinkSet(event, userData) {
+		const imageUrl = event.detail.url;
+		const isValidImageUrl = await this.isValidImageUrl(imageUrl);
+
+		if (isValidImageUrl) {
+			this.hasProfilePictureChanged = true;
+			this.querySelector('.user-info-image > img').src = event.detail.url;
+			this.updateImageFeedback(isValidImageUrl);
+		}
+		else {
+			this.hasProfilePictureChanged = false;
+			this.updateImageFeedback(isValidImageUrl, 'Invalid image link');
+		}
+		this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), this.isValidEmail(this.emailInput.value), isValidImageUrl);
+	}
+
+
+	handleDisplaySetImageLinkPopUp() {
+		const popUp = document.createElement('pop-up-component');
+		const closePopUpHandler = () => this.handleClosePopUp(closePopUpHandler);
+
+		popUp.classList.add('image-link-pop-up');
+		document.querySelector('.profile-page').appendChild(popUp);
+		document.addEventListener('closePopUp', closePopUpHandler);
+	}
+
+
+	handleClosePopUp(handler) {
+		const popUp = document.querySelector('pop-up-component');
+
+		popUp.remove();
+		document.removeEventListener('closePopUp', handler);
 	}
 
 
@@ -221,6 +271,31 @@ class ProfileComponent extends HTMLElement {
 		return email !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 	}
 
+	isValidImageUploaded(imageFile) {
+		return new Promise(resolve => {
+			const img = new Image();
+
+			img.onload = () => resolve(true);
+			img.onerror = () => resolve(false);
+
+			const reader = new FileReader();
+			reader.onload = (event) => {
+				img.src = event.target.result;
+			}
+			reader.readAsDataURL(imageFile);
+		});
+	}
+
+	isValidImageUrl(imageUrl) {
+		return new Promise(resolve => {
+			const img = new Image();
+
+			img.onload = () => resolve(true);
+			img.onerror = () => resolve(false);
+			img.src = imageUrl;
+		});
+	}
+
 
 	// Check if new user infos on front is different of user infos in back
 
@@ -239,11 +314,12 @@ class ProfileComponent extends HTMLElement {
 
 	// Update elements (button save and feedbacks)
 
-	updateSaveButtonState(userData, isValidUsername, isValidEmail) {
+	updateSaveButtonState(userData, isValidUsername, isValidEmail, isValidImage) {
 		const saveButton = this.querySelector('button-component');
 
-		console.log(this.hasProfilePictureChanged);
-		if (isValidUsername && isValidEmail && this.isUserInfosChanged(userData)) {
+		if (isValidImage === undefined)
+			isValidImage = true;
+		if (isValidImage && isValidUsername && isValidEmail && this.isUserInfosChanged(userData)) {
 			saveButton.className = 'generic-btn';
 		} else {
 			saveButton.className = 'generic-btn-disabled';
@@ -303,6 +379,17 @@ class ProfileComponent extends HTMLElement {
 			this.updateFeedback(emailFeedbackElement, 'Invalid email address', isValidEmail);
 		else if (emailFeedbackElement.textContent !== '' && isValidEmail)
 			emailFeedbackElement.textContent = '';
+	}
+
+
+	updateImageFeedback(isValidImage, message) {
+		const imageFeedbackElement = this.profileImageInput.parentElement.querySelector('.input-feedback');
+
+		if (!isValidImage) {
+			this.updateFeedback(imageFeedbackElement, message);
+		} else if (imageFeedbackElement.textContent !== '') {
+			imageFeedbackElement.textContent = '';
+		}
 	}
 
 	// Function to updateFeedbackField

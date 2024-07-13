@@ -1,3 +1,5 @@
+@import './PopUpComponent.css';
+
 profile-component {
 	position: relative;
 	/*height: 70%;*/
