@@ -24,6 +24,9 @@ class ProfileComponent extends HTMLElement {
 				<div class="user-infos-container">
 					<div class="user-info user-info-image">
 						<div class="change-profile-image">
+							<p id="imageLink">Use image link <i class="fa-solid fa-link"></i></p>
+							<p id="uploadImage">Upload image <i class="fa-solid fa-upload"></i></p>
+							<p id="image42">Use 42 image <img src="../../assets/42_Logo.png" alt="42 logo"></p>
 							<i class="fa-solid fa-pen profile-picture-pen"></i>
 						</div>
 						<img src="" alt="">
@@ -59,9 +62,21 @@ class ProfileComponent extends HTMLElement {
 		this.usernameInput = this.querySelector('input[name="username"]');
 		this.emailInput = this.querySelector('input[name="email"]');
 		this.profileImageInput = this.querySelector('input[name="profile-image"]');
+		this.setChangeProfileImageSize();
 		this.attachEventsListener();
 		this.generateUserInfos();
 		this.displayFeedbackFromLocalStorage();
+	}
+
+
+	setChangeProfileImageSize() {
+		if (this.querySelector('.change-profile-image').children.length === 3) {
+			this.style.setProperty('--choose-image-hover-height', '8rem');
+			this.style.setProperty('--choose-image-hover-width', '18rem');
+		} else {
+			this.style.setProperty('--choose-image-hover-height', '12rem');
+			this.style.setProperty('--choose-image-hover-width', '18rem');
+		}
 	}
 
 
@@ -73,46 +88,13 @@ class ProfileComponent extends HTMLElement {
 		this.addEventListener('input', (event) => this.handleInputsChanged(event, userData));
 		this.profileImageInput.addEventListener('change', (event) => this.handlePictureImageChanged(event, userData));
 
-		this.querySelector('.profile-picture-pen').addEventListener('click', () => this.profileImageInput.click());
+		this.querySelector('#uploadImage').addEventListener('click', () => this.profileImageInput.click());
 		this.querySelectorAll('.classic-pen').forEach(penButton => {
 			penButton.addEventListener('click', () => this.handlePenButtonClicked(penButton));
 		});
 
-
-		const hoverTarget = document.querySelector('.user-info-image > .change-profile-image');
-		const userInfoImage = document.querySelector('.user-info-image > img');
-		let animationInProgress = false;
-
-		hoverTarget.addEventListener('animationend', () => {
-			animationInProgress = false;
-		})
-
-		hoverTarget.addEventListener('animationstart', () => {
-			animationInProgress = true;
-		})
-
-		hoverTarget.addEventListener('mouseover', async (event) => {
-			// while (animationInProgress === true) ;
-			if (animationInProgress)
-				await sleep(300);
-			this.querySelector('.user-info-image > .change-profile-image').classList.remove('reset-change-profile-image-size');
-			this.querySelector('.user-info-image > img').classList.remove('reset-image-position');
-
-			this.querySelector('.user-info-image > .change-profile-image').classList.add('expand-change-profile-image-size');
-			this.querySelector('.user-info-image > img').classList.add('move-image-to-left');
-		});
-
-		hoverTarget.addEventListener('mouseout', async (event) => {
-			// while (animationInProgress === true) ;
-			if (animationInProgress)
-				await sleep(300);
-			this.querySelector('.user-info-image > .change-profile-image').classList.remove('expand-change-profile-image-size');
-			this.querySelector('.user-info-image > img').classList.remove('move-image-to-left');
-
-			this.querySelector('.user-info-image > .change-profile-image').classList.add('reset-change-profile-image-size');
-			this.querySelector('.user-info-image > img').classList.add('reset-image-position');
-		});
-
+		this.querySelector('.change-profile-image').addEventListener('click',  (event) => this.handleExpandImageChoiceAnimation(event));
+		this.querySelector('.change-profile-image').addEventListener('mouseleave', (event) => this.handleResetImageChoiceAnimation(event));
 	}
 
 
@@ -191,6 +173,39 @@ class ProfileComponent extends HTMLElement {
 			penButton.style.display = 'block';
 			window.removeEventListener('click', handler);
 		}
+	}
+
+
+	handleExpandImageChoiceAnimation(event) {
+		const changeProfileImage = this.querySelector('.user-info-image > .change-profile-image');
+		const profileImage = this.querySelector('.user-info-image > img');
+
+		changeProfileImage.classList.remove('reset-change-profile-image-size');
+		profileImage.classList.remove('reset-image-position');
+
+		changeProfileImage.classList.add('expand-change-profile-image-size');
+		profileImage.classList.add('move-image-to-left');
+		changeProfileImage.querySelector('.profile-picture-pen').style.display = 'none';
+		changeProfileImage.querySelectorAll('p').forEach(elem => { elem.style.display = 'flex'; });
+	}
+
+
+	handleResetImageChoiceAnimation(event) {
+		const changeProfileImage = this.querySelector('.user-info-image > .change-profile-image');
+		const profileImage = this.querySelector('.user-info-image > img');
+
+		if (changeProfileImage.className === 'change-profile-image') // To stop first mouseleave animation
+			return ;
+
+		changeProfileImage.classList.remove('expand-change-profile-image-size');
+		profileImage.classList.remove('move-image-to-left');
+
+		changeProfileImage.classList.add('reset-change-profile-image-size');
+		profileImage.classList.add('reset-image-position');
+		setTimeout(() => {
+			event.target.querySelector('.profile-picture-pen').style.display = 'block';
+		}, 250)
+		event.target.querySelectorAll('p').forEach(elem => { elem.style.display = 'none'; });
 	}
 
 
