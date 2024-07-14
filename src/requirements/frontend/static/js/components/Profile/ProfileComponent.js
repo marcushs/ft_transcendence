@@ -29,7 +29,7 @@ class ProfileComponent extends HTMLElement {
 							<p id="image42">Use 42 image <img src="../../assets/42_Logo.png" alt="42 logo"></p>
 							<i class="fa-solid fa-pen profile-picture-pen"></i>
 						</div>
-						<img src="" alt="">
+						<img id="profileImage" src="" alt="">
 						<input type="file" accept="image/*" name="profile-image">
 						<span id="profileImageFeedback" class="input-feedback"></span>
 					</div>
@@ -62,12 +62,12 @@ class ProfileComponent extends HTMLElement {
 		this.usernameInput = this.querySelector('input[name="username"]');
 		this.emailInput = this.querySelector('input[name="email"]');
 		this.profileImageInput = this.querySelector('input[name="profile-image"]');
+		this.newProfileImageLink = null;
 		this.setChangeProfileImageSize();
 		this.attachEventsListener();
 		this.generateUserInfos();
 		this.displayFeedbackFromLocalStorage();
 	}
-
 
 	setChangeProfileImageSize() {
 		if (this.querySelector('.change-profile-image').children.length === 3) {
@@ -128,6 +128,9 @@ class ProfileComponent extends HTMLElement {
 			newUserData.append(this.usernameInput.name, this.usernameInput.value);
 			newUserData.append(this.emailInput.name, this.emailInput.value);
 			newUserData.append('profile_image', this.profileImageInput.files[0]);
+			newUserData.append('profile_image_link', this.newProfileImageLink);
+
+			console.log(this.profileImageInput.files[0], this.newProfileImageLink)
 
 			const requestResponse = await postNewUserInfos(newUserData);
 
@@ -159,6 +162,7 @@ class ProfileComponent extends HTMLElement {
 			if (isValidImage) {
 				profileImageElement.src = event.target.result;
 				this.hasProfilePictureChanged = true;
+				this.newProfileImageLink = null;
 			} else {
 				this.hasProfilePictureChanged = false;
 				this.updateImageFeedback(isValidImage, 'Invalid image file');
@@ -175,9 +179,11 @@ class ProfileComponent extends HTMLElement {
 		const isValidImageUrl = await this.isValidImageUrl(imageUrl);
 
 		if (isValidImageUrl) {
-			this.hasProfilePictureChanged = true;
 			this.querySelector('.user-info-image > img').src = event.detail.url;
 			this.updateImageFeedback(isValidImageUrl);
+			this.profileImageInput.value = '';
+			this.newProfileImageLink = event.detail.url;
+			this.hasProfilePictureChanged = true;
 		}
 		else {
 			this.hasProfilePictureChanged = false;

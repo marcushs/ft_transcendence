@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
+import requests
 import magic
 import re
 
@@ -30,6 +31,8 @@ class ChangeUserInfosView(View):
             response.update(self.change_email(User, request))
         if request.FILES.get('profile_image'):
             response.update(self.change_profile_image(request))
+        elif request.POST.get('profile_image_link'):
+            response.update(self.change_profile_image_link(request))
 
         return JsonResponse(response, status=201)
 
@@ -38,6 +41,7 @@ class ChangeUserInfosView(View):
         new_username = request.POST.get('username')
         new_email = request.POST.get('email')
         new_profile_image = request.FILES.get('profile_image')
+        new_profile_image_link = request.POST.get('profile_image_link')
 
         if new_username is not None:
             self.check_username_errors(User, new_username, request)
@@ -45,6 +49,8 @@ class ChangeUserInfosView(View):
             self.check_email_errors(User, new_email, request)
         if new_profile_image is not None:
             self.check_profile_image_errors(new_profile_image)
+        elif new_profile_image_link is not None:
+            self.check_profile_image_link_errors(new_profile_image_link)
 
 
     def check_username_errors(self, User, new_username, request):
@@ -76,13 +82,22 @@ class ChangeUserInfosView(View):
         error = {}
         mime = magic.Magic(mime=True)
         myme_type = mime.from_buffer(new_profile_image.read()) # get the mime of the image
-        # new_profile_image.seek(0) # Reset file pointer to the start (required after a read)
 
         valid_mime_type = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp']
         print(myme_type)
         if myme_type not in valid_mime_type:
             error['profile-image_error'] = f'Invalid profile image format, valid formats are: (png, jpg, jpeg, gif, svg, webp)'
             raise ValidationError(error)
+
+
+    def check_profile_image_link_errors(self, new_profile_image_link):
+        try:
+            response = requests.get(new_profile_image_link, stream=True) # stream=True to don't download the body, just the header
+            if response.status_code == 200 and 'image' in response.headers.get('Content-type', '').lower():
+                return True
+            return False
+        except requests.RequestException:
+            return False
 
 
     def change_username(self, User, request):
@@ -109,5 +124,17 @@ class ChangeUserInfosView(View):
 
         response['profile-image_message'] = 'Profile image successfully changed'
         request.user.profile_image = new_image
+        request.user.profile_image_link = None
+        request.user.save()
+        return response
+
+
+    def change_profile_image_link(self, request):
+        new_image_link = request.POST.get('profile_image_link')
+        response = {}
+
+        response['profile-image_message'] = 'Profile image successfully changed'
+        request.user.profile_image = None
+        request.user.profile_image_link = new_image_link
         request.user.save()
         return response
