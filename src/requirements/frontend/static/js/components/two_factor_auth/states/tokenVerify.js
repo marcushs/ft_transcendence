@@ -68,7 +68,7 @@ export default class twoFactorTokenVerify {
                 method: this.selectedMethod,
             })
         }
-        const res = await fetch(`http://localhost:8000/account/twofactor/enable/`, config);
+        const res = await fetch(`http://localhost:8001/auth/twofactor/enable/`, config);
         if (res.status === 403)
             throw new Error('Access Denied')
         const data = await res.json();

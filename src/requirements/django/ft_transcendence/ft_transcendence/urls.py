@@ -16,9 +16,7 @@ Including another URLconf
 """
 
 from django.urls import include, path
-from two_factor.urls import urlpatterns as tf_urls
 
 urlpatterns = [
 	path('account/', include('account.urls')),
-    path('', include(tf_urls)),
 ]

@@ -2,7 +2,9 @@ NAME = ft_transcendence
 DOCKER_COMPOSE = docker compose -f ./src/docker-compose.yml
 # VOLUME = /home/${USER}/data/
 RM = sudo rm -rf
-ENV = --env-file ./src/requirements/django/ft_transcendence/.env
+USER_ENV = --env-file ./src/requirements/django/ft_transcendence/.env
+AUTH_ENV = --env-file ./src/requirements/django/auth_service/.env
+ENV = $(USER_ENV) $(AUTH_ENV)
 
 all: up	
 

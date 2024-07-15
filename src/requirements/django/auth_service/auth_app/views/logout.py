@@ -1,6 +1,6 @@
 from django.http import JsonResponse, HttpResponse
 from django.views import View
-from .decorator import check_jwt
+from ..decorator import check_jwt
 from django.utils.decorators import method_decorator
 
 class logout_view(View):

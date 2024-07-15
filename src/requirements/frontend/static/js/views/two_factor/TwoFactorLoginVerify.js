@@ -59,7 +59,7 @@ export class TwoFactorVerify {
             body: JSON.stringify(this.userJson),
         };
         try {
-            const res = await fetch(`http://localhost:8000/account/twofactor/get_2fa_code/`, config);
+            const res = await fetch(`http://localhost:8001/auth/twofactor/get_2fa_code/`, config);
             if (res.status === 403)
                 throw new Error('Access Denied')
             const data = await res.json();
@@ -95,7 +95,7 @@ export class TwoFactorVerify {
         };
 
         try {
-            const res = await fetch('http://localhost:8000/account/login/', config);
+            const res = await fetch('http://localhost:8001/auth/login/', config);
             if (res.status === 403) {
                 throw new Error('Access Denied');
             }

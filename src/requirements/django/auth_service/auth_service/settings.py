@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import environ
 import os
-import datetime
 
 # Read from .env file
 env = environ.Env()
@@ -52,7 +51,7 @@ ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1']
 
 INSTALLED_APPS = [
 	"corsheaders",
-	'account',
+	'auth_app',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -66,7 +65,6 @@ INSTALLED_APPS = [
     'two_factor',
     'two_factor.plugins.phonenumber',  # <- for phone number capability.
     'two_factor.plugins.email',  # <- for email capability.
-    # 'two_factor.plugins.yubikey',  # <- for yubikey capability.
 ]
 
 
@@ -77,13 +75,13 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
     'django_otp.middleware.OTPMiddleware', # Base middleware for two_factor feature
-    'account.auth.middleware.JWTAuthMiddleware', # Custom middleware for jwt token feature
+    'auth_app.middleware.JWTAuthMiddleware', # Custom middleware for jwt token feature
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 
-ROOT_URLCONF = 'ft_transcendence.urls'
+ROOT_URLCONF = 'auth_service.urls'
 
 
 TEMPLATES = [
@@ -103,7 +101,7 @@ TEMPLATES = [
 ]
 
 
-WSGI_APPLICATION = 'ft_transcendence.wsgi.application'
+WSGI_APPLICATION = 'auth_service.wsgi.application'
 
 
 CORS_ALLOW_CREDENTIALS = True
@@ -143,16 +141,15 @@ CSRF_TRUSTED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),
-        'PORT': env('DB_PORT'),
+        'NAME': env('AUTH_DB_NAME'),
+        'USER': env('AUTH_DB_USER'),
+        'PASSWORD': env('AUTH_DB_PASSWORD'),
+        'HOST': env('AUTH_DB_HOST'),
+        'PORT': env('AUTH_DB_PORT'),
     }
 }
 
-LOGIN_URL = 'two_factor:login'
-AUTH_USER_MODEL = "account.User"
+AUTH_USER_MODEL = "auth_app.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-pa   ssword-validators
@@ -178,15 +175,15 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
     {
-        'NAME': 'account.auth.signup.numeric_validator',
+        'NAME': 'auth_app.views.signup.numeric_validator',
     },
     # check password contains uppercase char
     {
-        'NAME': 'account.auth.signup.uppercase_validator',
+        'NAME': 'auth_app.views.signup.uppercase_validator',
     },
     # check password contains lowercase char
     {
-        'NAME': 'account.auth.signup.lowercase_validator',
+        'NAME': 'auth_app.views.signup.lowercase_validator',
     },
 ]
 

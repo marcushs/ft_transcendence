@@ -35,7 +35,7 @@ class TwoFactorDisableComponent extends HTMLElement {
             credentials: 'include', // Needed for send cookie
         };
         try {
-            const res = await fetch(`http://localhost:8000/account/twofactor/get_2fa_code/`, config);
+            const res = await fetch(`http://localhost:8001/auth/twofactor/get_2fa_code/`, config);
             if (res.status === 403)
                 throw new Error('Access Denied')
             const data = await res.json();
@@ -90,7 +90,7 @@ class TwoFactorDisableComponent extends HTMLElement {
             })
         };
         try {
-            const res = await fetch(`http://localhost:8000/account/twofactor/disable/`, config);
+            const res = await fetch(`http://localhost:8001/auth/twofactor/disable/`, config);
             if (res.status === 403)
                 throw new Error('Access Denied')
             const data = await res.json();

@@ -31,7 +31,7 @@ class twoFactorEnableHome {
             credentials: 'include' // Needed for send cookie
         };
         try {
-            const res = await fetch('http://localhost:8000/account/twofactor/status/', config);
+            const res = await fetch('http://localhost:8001/auth/twofactor/status/', config);
             const data = await res.json();
             if (res.status !== 200) {
                 throw new Error('you cant access this page, please login to your account')

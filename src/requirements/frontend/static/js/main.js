@@ -23,7 +23,6 @@ generateCsrfToken();
 function router() {
     let view = routes[location.pathname];
     
-    console.log('test');
     if (view) {
         console.log(view);
         document.title = view.title;

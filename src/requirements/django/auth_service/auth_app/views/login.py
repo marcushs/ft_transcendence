@@ -1,4 +1,4 @@
-from .utils.jwt_utils import create_jwt_token
+from ..utils.jwt_utils import create_jwt_token
 from django.http import JsonResponse
 from django.conf import settings
 from django.views import View
