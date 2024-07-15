@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from .auth.utils.csrf_utils import generate_csrf_token
+from .utils.csrf_utils import generate_csrf_token
 from django.contrib.auth.models import AnonymousUser
 
 def index(request):

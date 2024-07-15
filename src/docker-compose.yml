@@ -12,43 +12,43 @@ services:
       - "3000:80"
     networks:
       - transcendence-network
-  # --> ACCOUNT SERVICE <-- #
-  ft_transcendence:
-    container_name: transcendence
-    env_file: ./requirements/django/ft_transcendence/.env
+  # --> USER SERVICE <-- #
+  user:
+    container_name: user
+    env_file: ./requirements/backend/user_service/.env
     restart: always
     build:
-      context: ./requirements/django
-      dockerfile: Dockerfile
+      context: ./requirements/backend/user_service
+      dockerfile: docker/Dockerfile
     command: >
       sh -c "
       python3 manage.py makemigrations &&
       python3 manage.py migrate &&
       python3 manage.py runserver 0.0.0.0:8000"
     volumes:
-      - ./requirements/django/ft_transcendence:/ft_transcendence
+      - ./requirements/backend/user_service:/app
     ports:
       - "8000:8000"
     depends_on:
-      postgresdb:
+      user_db:
         condition: service_healthy
     networks:
       - transcendence-network
   # --> AUTH SERVICE <-- #
   auth:
     container_name: auth
-    env_file: ./requirements/django/auth_service/.env
+    env_file: ./requirements/backend/auth_service/.env
     restart: always
     build:
-      context: ./requirements/django/auth_service
-      dockerfile: Dockerfile
+      context: ./requirements/backend/auth_service
+      dockerfile: docker/Dockerfile
     command: >
       sh -c "
       python3 manage.py makemigrations &&
       python3 manage.py migrate &&
       python3 manage.py runserver 0.0.0.0:8000"
     volumes:
-      - ./requirements/django/auth_service:/app
+      - ./requirements/backend/auth_service:/app
     ports:
       - "8001:8000"
     depends_on:
@@ -61,7 +61,7 @@ services:
     container_name: auth_db
     image: postgres
     restart: always
-    env_file: ./requirements/django/auth_service/.env
+    env_file: ./requirements/backend/auth_service/.env
     environment:
       - POSTGRES_USER=${AUTH_DB_USER}
       - POSTGRES_DB=${AUTH_DB_NAME}
@@ -78,19 +78,19 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  # --> DATABASE ACCOUNT <-- #
-  postgresdb:
-    container_name: postgresdb  
+  # --> DATABASE USER <-- #
+  user_db:
+    container_name: user_db
     image: postgres
     restart: always
-    env_file: ./requirements/django/ft_transcendence/.env
+    env_file: ./requirements/backend/user_service/.env
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     shm_size: 128mb
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - user_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
     ports: 
@@ -102,8 +102,8 @@ services:
       retries: 5
 
 volumes:
-  pgdata:
-    name: account_data
+  user_pgdata:
+    name: user_data
   auth_pgdata:
     name: auth_data
 

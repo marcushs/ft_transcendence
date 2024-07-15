@@ -38,7 +38,7 @@ async function getProfile() {
             window.location.replace('login');
         }
     } catch (error) {
-        console('ici cest le catch')    
+        console.log('ici cest le catch')    
         console.log('Error :', error);
         alert(`Error: ${error.message}`)
     }
