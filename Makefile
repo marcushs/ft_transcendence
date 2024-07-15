@@ -10,7 +10,7 @@ up: #${VOLUME}
 	${DOCKER_COMPOSE} ${ENV} up --build --detach --quiet-pull
 
 down:
-	${DOCKER_COMPOSE} down --volumes
+	${DOCKER_COMPOSE} ${ENV} down --volumes
 
 clean: down
 	

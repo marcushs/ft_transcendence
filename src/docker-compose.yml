@@ -1,5 +1,5 @@
 services:
-  # --> FRONTEND <--
+  # --> FRONTEND SERVICE <-- #
   frontend:
     container_name: frontend
     build:
@@ -12,8 +12,7 @@ services:
       - "3000:80"
     networks:
       - transcendence-network
-
-  # --> BACKEND <--
+  # --> ACCOUNT SERVICE <-- #
   ft_transcendence:
     container_name: transcendence
     env_file: ./requirements/django/ft_transcendence/.env
@@ -21,7 +20,11 @@ services:
     build:
       context: ./requirements/django
       dockerfile: Dockerfile
-    command: ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"]
+    command: >
+      sh -c "
+      python3 manage.py makemigrations &&
+      python3 manage.py migrate &&
+      python3 manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./requirements/django/ft_transcendence:/ft_transcendence
     ports:
@@ -31,7 +34,7 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
-
+  # --> AUTH SERVICE <-- #
   auth:
     container_name: auth
     env_file: ./requirements/django/auth_service/.env
@@ -39,18 +42,21 @@ services:
     build:
       context: ./requirements/django/auth_service
       dockerfile: Dockerfile
-    command: ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8001"]
+    command: >
+      sh -c "
+      python3 manage.py makemigrations &&
+      python3 manage.py migrate &&
+      python3 manage.py runserver 0.0.0.0:8001"
     volumes:
       - ./requirements/django/auth_service:/app
     ports:
-      - "8001:8001"
+      - "8001:8000"
     depends_on:
       auth_db:
         condition: service_healthy
     networks:
       - transcendence-network
-  
-  # --> DATABASE <--
+  # --> DATABASE AUTH <-- #
   auth_db:
     container_name: auth_db
     image: postgres
@@ -72,7 +78,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
+  # --> DATABASE ACCOUNT <-- #
   postgresdb:
     container_name: postgresdb  
     image: postgres
@@ -97,7 +103,9 @@ services:
 
 volumes:
   pgdata:
+    name: account_data
   auth_pgdata:
+    name: auth_data
 
 networks:
   transcendence-network:
