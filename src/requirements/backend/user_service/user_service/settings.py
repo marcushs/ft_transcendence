@@ -27,14 +27,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = env("USER_SECRET_KEY")
 
-    # /--> JWT <--\
+# /--> RabbitMQ configuration <--\      
+RABBITMQ_HOST = env('RABBITMQ_HOST')
+RABBITMQ_PORT = env('RABBITMQ_PORT')
+RABBITMQ_USER = env('RABBITMQ_USER')
+RABBITMQ_PASSWORD = env('RABBITMQ_PASSWORD')
+RABBITMQ_VHOST = env('RABBITMQ_VHOST')
+
+# /--> JWT <--\      
 JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
 JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
 JWT_EXP_DELTA_SECONDS = 3000 # 15 minutes
 JWT_REFRESH_EXP_DELTA_SECONDS = 6000 # 1day
-    # /--> 2FA <--\
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -126,11 +132,11 @@ CSRF_TRUSTED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),
-        'PORT': env('DB_PORT'),
+        'NAME': env('USER_DB_NAME'),
+        'USER': env('USER_DB_USER'),
+        'PASSWORD': env('USER_DB_PASSWORD'),
+        'HOST': env('USER_DB_HOST'),
+        'PORT': env('USER_DB_PORT'),
     }
 }
 

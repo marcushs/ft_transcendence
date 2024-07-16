@@ -15,11 +15,11 @@ services:
   # --> USER SERVICE <-- #
   user:
     container_name: user
-    env_file: ./requirements/backend/user_service/.env
     restart: always
     build:
       context: ./requirements/backend/user_service
       dockerfile: docker/Dockerfile
+    env_file: ./requirements/backend/.env
     command: >
       sh -c "
       python3 manage.py makemigrations &&
@@ -32,16 +32,18 @@ services:
     depends_on:
       user_db:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
       - transcendence-network
   # --> AUTH SERVICE <-- #
   auth:
     container_name: auth
-    env_file: ./requirements/backend/auth_service/.env
     restart: always
     build:
       context: ./requirements/backend/auth_service
       dockerfile: docker/Dockerfile
+    env_file: ./requirements/backend/.env
     command: >
       sh -c "
       python3 manage.py makemigrations &&
@@ -54,14 +56,38 @@ services:
     depends_on:
       auth_db:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
       - transcendence-network
+  # --> MESSAGE BROKER SERVICE <-- #
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management-alpine
+    restart: always
+    env_file: ./requirements/backend/.env
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - rabbitmq_logs:/var/log/rabbitmq
+    networks:
+      - transcendence-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   # --> DATABASE AUTH <-- #
   auth_db:
     container_name: auth_db
     image: postgres
     restart: always
-    env_file: ./requirements/backend/auth_service/.env
+    env_file: ./requirements/backend/.env
     environment:
       - POSTGRES_USER=${AUTH_DB_USER}
       - POSTGRES_DB=${AUTH_DB_NAME}
@@ -83,11 +109,11 @@ services:
     container_name: user_db
     image: postgres
     restart: always
-    env_file: ./requirements/backend/user_service/.env
+    env_file: ./requirements/backend/.env
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${USER_DB_USER}
+      - POSTGRES_DB=${USER_DB_NAME}
+      - POSTGRES_PASSWORD=${USER_DB_PASSWORD}
     shm_size: 128mb
     volumes:
       - user_pgdata:/var/lib/postgresql/data
@@ -96,7 +122,7 @@ services:
     ports: 
      - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${USER_DB_USER} -d ${USER_DB_NAME}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -106,6 +132,10 @@ volumes:
     name: user_data
   auth_pgdata:
     name: auth_data
+  rabbitmq_data:
+    name: rabbitmq_data
+  rabbitmq_logs:
+    name: rabbitmq_logs
 
 networks:
   transcendence-network:

@@ -27,13 +27,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = env("AUTH_SECRET_KEY")
+
+
+# /--> RabbitMQ configuration <--\      
+RABBITMQ_HOST = env('RABBITMQ_HOST')
+RABBITMQ_PORT = env('RABBITMQ_PORT')
+RABBITMQ_USER = env('RABBITMQ_USER')
+RABBITMQ_PASSWORD = env('RABBITMQ_PASSWORD')
+RABBITMQ_VHOST = env('RABBITMQ_VHOST')
 
     # /--> JWT <--\
 JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
 JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
 JWT_EXP_DELTA_SECONDS = 3000 # 15 minutes
 JWT_REFRESH_EXP_DELTA_SECONDS = 6000 # 1day
+
     # /--> 2FA <--\
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
