@@ -4,7 +4,7 @@ game-top-bar {
 	justify-content: space-between;
 	align-items: flex-start;
 	height: 8%;
-	padding-top: 2rem;
+	padding-top: 1.8rem;
 	width: calc(100% - 6px);
 	right: 3px;
 	top: 3px;
@@ -22,6 +22,7 @@ game-top-bar .top-bar-options {
 }
 
 game-top-bar img {
+	/*margin-top: 3.5rem;*/
 	height: 2.5rem;
 }
 
@@ -57,13 +58,13 @@ game-top-bar .game-settings {
 }
 
 game-top-bar .game-settings .reduce-game-button {
-	height: 3rem;
+	height: 4rem;
 	display: none;
 }
 
 game-top-bar .game-settings .reduce-game-button:hover {
 	cursor: pointer;
-	height: 3.2rem;
+	height: 4.2rem;
 }
 
 game-top-bar .game-settings .extend-game-button:hover {

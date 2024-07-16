@@ -1,18 +1,20 @@
 import login from "./views/login.js";
 import signup from "./views/signup.js";
+import logout from "./views/logout.js"
+import changePassword from "./views/change-password.js";
 import enable2fa from "./views/two_factor/enable2fa.js";
 // import LogoutFormHandler from "./views/logout.js";
 import { getCookie ,generateCsrfToken } from "./utils/cookie.js";
 import profile from "./views/profile.js";
-import logout from "./views/logout.js"
 import home from "./views/home.js";
 
 const routes = {
     "/": { title: "Home", render: home },
     "/login": { title: "Login", render: login },
     "/signup": { title: "Signup", render: signup },
-    "/profile": { title: "Profile", render: profile },
     "/logout": { title: "Logout", render: logout },
+    "/change-password": { title: "Change password", render: changePassword },
+    "/profile": { title: "Profile", render: profile },
 };
 
 // create the csrf token if it does not already exist

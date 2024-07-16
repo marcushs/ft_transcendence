@@ -1,7 +1,6 @@
-export default function validateSignupInputs() {
+export default function validateChangePasswordInputs() {
 	let inputRequiredInfos = { user: false, email: false, password: false, passwordMatch: false };
 	const btn = document.querySelector('.generic-auth-btn-disabled');
-	const userInput = document.querySelector('input[name="username"]');
 
 	function checkValidity() {
 		if ( Object.values(inputRequiredInfos).every(item => item === true))
@@ -10,54 +9,15 @@ export default function validateSignupInputs() {
 			btn.className = 'generic-auth-btn-disabled';
 	}
 
-	validateEmailInput(inputRequiredInfos, checkValidity);
 	validatePasswordInput(inputRequiredInfos, checkValidity);
 	confirmPasswordMatch(inputRequiredInfos, checkValidity);
-	userInput.addEventListener('input', () => {
-		if (userInput.value === '')
-			inputRequiredInfos.user = false;
-		else
-			inputRequiredInfos.user = true;
-		checkValidity();
-	});
 }
-
-function validateEmailInput(inputRequiredInfos, checkValidity) {
-	const emailInput = document.querySelector('input[name="email"]');
-	const feedbackElement = document.querySelector('#emailFeedback');
-	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-	emailInput.addEventListener('input', () => {
-		const emailValue = emailInput.value.trim();
-
-		inputRequiredInfos.email = emailRegex.test(emailValue);
-		updateEmailFeedback();
-		checkValidity();
-	});
-}
-
-function updateEmailFeedback() {
-	const feedbackElement = document.querySelector('#emailFeedback');
-	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-	const emailValue = document.querySelector('input[name="email"]').value;
-
-	if (emailValue === '')
-		feedbackElement.textContent = '';
-	else if (emailRegex.test(emailValue)) {
-		feedbackElement.textContent = "Email is valid ✓"; // Email is valid
-		feedbackElement.style.color = '#32CD32';
-	} else {
-		feedbackElement.textContent = "Please enter a valid email address.";
-		feedbackElement.style.color = 'red';
-	}
-}
-
 
 /* Password check */
 
 function validatePasswordInput(inputRequiredInfos, checkValidity) {
-	const passwordInput = document.querySelector('input[name="password"]');
-	const feedbackElement = document.querySelector('#passwordFeedback');
+	const passwordInput = document.querySelector('input[name="new_password"]');
+	const feedbackElement = document.querySelector('#newPasswordFeedback');
 	const passwordRequirements = [
 		{ regex: /.{8,}/, id: "charLen", isValid: false },
 		{ regex: /[0-9]/, id: "num", isValid: false },
@@ -80,8 +40,8 @@ function validatePasswordInput(inputRequiredInfos, checkValidity) {
 }
 
 function updatePasswordFeedback(inputRequiredInfos, passwordRequirements) {
-	const feedbackElement = document.querySelector('#passwordFeedback');
-	const passwordValue = document.querySelector('input[name="password"]').value;
+	const feedbackElement = document.querySelector('#newPasswordFeedback');
+	const passwordValue = document.querySelector('input[name="new_password"]').value;
 	let isValidPassword;
 
 
@@ -99,7 +59,7 @@ function updatePasswordFeedback(inputRequiredInfos, passwordRequirements) {
 /* Confirm password check */
 
 function confirmPasswordMatch(inputRequiredInfos, checkValidity) {
-	const confPwInput = document.querySelector('input[name="confirm_password"]');
+	const confPwInput = document.querySelector('input[name="confirm_new_password"]');
 	confPwInput.addEventListener('input', () => {
 		updateConfirmPasswordMatchFeedback(inputRequiredInfos)
 		checkValidity();
@@ -107,9 +67,9 @@ function confirmPasswordMatch(inputRequiredInfos, checkValidity) {
 }
 
 function updateConfirmPasswordMatchFeedback(inputRequiredInfos) {
-	const passwordValue = document.querySelector('input[name="password"]').value;
-	const confirmPasswordValue = document.querySelector('input[name="confirm_password"]').value;
-	const feedbackElement = document.querySelector('#confirmPasswordFeedback');
+	const passwordValue = document.querySelector('input[name="new_password"]').value;
+	const confirmPasswordValue = document.querySelector('input[name="confirm_new_password"]').value;
+	const feedbackElement = document.querySelector('#confirmNewPasswordFeedback');
 
 	if (confirmPasswordValue === '') {
 		feedbackElement.textContent = '';

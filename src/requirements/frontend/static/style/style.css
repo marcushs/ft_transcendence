@@ -4,10 +4,11 @@
 @import './views/login.css';
 @import './views/signup.css';
 @import './views/profile.css';
+@import './views/change-password.css';
 @import './_variables.css';
 
 :root {
-    font-size: 50%;
+    font-size: 100%;
 }
 
 * {

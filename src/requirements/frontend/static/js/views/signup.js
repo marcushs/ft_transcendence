@@ -4,7 +4,6 @@ import rotatingGradient from "../anim/rotatingGradient.js";
 import { getCookie } from "../utils/cookie.js";
 import validateSignupInputs from "../utils/signupFormValidation.js";
 import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js";
-import { manageConfirmPasswordToggle } from "../utils/managePasswordInputVisibility.js";
 
 export default () => {
 	const html = `
@@ -47,8 +46,8 @@ export default () => {
 		rotatingGradient('.signup-form-container-background');
 		rotatingGradient('.signup-form-container');
 		validateSignupInputs();
-		managePasswordToggle();
-		manageConfirmPasswordToggle();
+		managePasswordToggle('password');
+		managePasswordToggle('confirm_password');
 	}, 0);
 
 	return html;

@@ -36,7 +36,8 @@ export default () => {
 		rotatingGradient('.login-form-container-background');
 		rotatingGradient('.login-form-container');
 		loginFormValidation();
-		managePasswordToggle();
+		managePasswordToggle('password');
+		managePasswordToggle('confirm_password');
 	}, 0);
 
 	return html;
