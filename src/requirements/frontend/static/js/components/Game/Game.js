@@ -38,8 +38,8 @@ class GameComponent extends HTMLElement {
     }
 
     connectedCallback() {
-        rotatingGradient('game-component');
-        rotatingGradient('.game-background');
+        rotatingGradient('game-component', '#FF16C6', '#00D0FF');
+        rotatingGradient('.game-background', '#FF16C6', '#00D0FF');
     }
 
     pushNewState(state) {

@@ -1,0 +1,38 @@
+@import './PopUpComponent.css';
+@import './UserInfosComponent.css';
+
+profile-component {
+	position: relative;
+	height: 78rem;
+	width: 130rem;
+	border-radius: 10px;
+	padding: 3px;
+}
+
+.profile-component-background {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 10px;
+	filter: blur(15px);
+	z-index: -1;
+}
+
+.profile-component-content {
+	height: 100%;
+	width: 100%;
+	border-radius: 7px;
+	z-index: 5;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.profile-component-content input:-webkit-autofill,
+.profile-component-content input:-webkit-autofill:active {
+	-webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+	-webkit-background-clip: text; /* To have the background color for the text only */
+	font-weight: 300; /* To disable the bold effect of previous css line */
+}

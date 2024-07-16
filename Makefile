@@ -13,8 +13,11 @@ down:
 	${DOCKER_COMPOSE} down --volumes
 
 clean: down
-	
-fclean: clean
+
+delete_medias:
+	sudo rm -rf ./src/requirements/django/ft_transcendence/media
+
+fclean: delete_medias clean
 	docker system prune -a -f --volumes
 
 re: 

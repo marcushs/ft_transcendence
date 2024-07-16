@@ -10,6 +10,7 @@ nav {
     border-bottom-width: 1px;
     border-bottom-style: solid;
     border-image: var(--neon-gradiant) 30;
+    background: var(--background-color);
     padding: 0 8rem;
 }
 
@@ -49,12 +50,9 @@ nav .nav-bar-right-section p {
 }
 
 nav .nav-bar-right-section .profile-picture {
-    /*background-image: url("../../assets/acarlott.jpg");*/
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
     border-radius: 50%;
-    height: 6rem;
-    width: 6rem;
+    height: 6.5rem;
+    width: 6.5rem;
     margin-left: 3rem;
+    border: 2px solid var(--light-grey);
 }

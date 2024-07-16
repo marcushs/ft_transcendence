@@ -1,3 +1,5 @@
+import sleep from "../utils/sleep.js";
+
 async function typeAndReplaceWords() {
 	const words = [' users', ' tournaments'];
 	const searchBarInput = document.querySelector('#searchBarInput');
@@ -23,10 +25,6 @@ async function removeLetters(word, searchBarInput) {
 		await sleep(75);
 		searchBarInput.placeholder = searchBarInput.placeholder.slice(0, -1);
 	}
-}
-
-function sleep(sleepDuration) {
-	return new Promise(resolve => setTimeout(resolve, sleepDuration));
 }
 
 export default typeAndReplaceWords;

@@ -1,9 +1,12 @@
+import json
+from urllib import response
+
 from django.http import JsonResponse
 from .auth.csrf_utils import generate_csrf_token
 from django.views.decorators.csrf import csrf_exempt
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import AnonymousUser
-# from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model
 from .auth.decorator import check_jwt
 
 # User = get_user_model()
@@ -29,6 +32,6 @@ def index(request):
 # test view for jwt token
 # @check_jwt
 def protectedView(request):
-    if isinstance(request.user, AnonymousUser): 
+    if isinstance(request.user, AnonymousUser):
         return JsonResponse({'error': 'User not found'}, status=201)
     return JsonResponse({'message': 'protected view ok', 'user': request.user.to_dict()}, status=201)

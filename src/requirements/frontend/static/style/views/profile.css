@@ -1,6 +1,7 @@
-@import "../components/ProfileComponent.css";
+@import "../components/Profile/ProfileComponent.css";
 
 .profile-main-section {
+	position: relative;
 	height: 92vh;
 	display: flex;
 	justify-content: center;

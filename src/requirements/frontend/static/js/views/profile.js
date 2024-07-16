@@ -1,8 +1,8 @@
 import { getCookie } from "../utils/cookie.js";
 import enableTwoFactor from "./two_factor/enable2fa.js"
 import { disableTwoFactor } from "./two_factor/disable2fa.js"
-import "../components/NavBarComponent.js";
-import "../components/ProfileComponent.js"
+import "../components/NavBarComponent.js"
+import "../components/Profile/ProfileComponent.js"
 
 export default () => {
     const html = `
