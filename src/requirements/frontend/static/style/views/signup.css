@@ -80,6 +80,14 @@
 	padding-bottom: 0.7rem;
 }
 
+.signup-page form input:-webkit-autofill,
+.signup-page form input:-webkit-autofill:active {
+	font-size: 2rem;
+	-webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+	-webkit-background-clip: text; /* To have the background color for the text only */
+	font-weight: 300; /* To disable the bold effect of previous css line */
+}
+
 .signup-page form input::placeholder {
 	color: var(--text-primary-color);
 	font-size: 1.8rem;

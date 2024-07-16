@@ -29,3 +29,10 @@ profile-component {
 	justify-content: center;
 	align-items: center;
 }
+
+.profile-component-content input:-webkit-autofill,
+.profile-component-content input:-webkit-autofill:active {
+	-webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+	-webkit-background-clip: text; /* To have the background color for the text only */
+	font-weight: 300; /* To disable the bold effect of previous css line */
+}

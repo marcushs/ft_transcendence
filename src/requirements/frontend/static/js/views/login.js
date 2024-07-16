@@ -18,6 +18,7 @@ export default () => {
 					<div class="form-fields">
 						<input type="password" placeholder="Password" name="password" required>
 						<i class="fa-solid fa-eye" id="password-eye"></i>
+						<a href="/change-password" id="forgotten-password">Forgotten password?</a>
 					</div>
 					<button-component id="loginBtn" label="Login" class="generic-auth-btn-disabled"></button-component>
 					<p>Don't have an account? <a href="/signup">Signup</a></p>

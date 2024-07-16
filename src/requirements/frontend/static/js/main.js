@@ -39,6 +39,7 @@ window.addEventListener("click", e => {
     }
 });
 
+
 // Update router
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
