@@ -1,0 +1,60 @@
+from django.views import View
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.password_validation import validate_password
+from django.http import JsonResponse
+
+
+class ChangePassword(View):
+    def __init__(self):
+        super().__init__
+
+
+    def post(self, request):
+        User = get_user_model()
+
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'error': 'User not found'}, status=401)
+
+        password_error = self.check_password_errors(User,  request)
+        if password_error:
+            return JsonResponse(password_error, status=400)
+
+        response = self.change_password(User, request)
+        return JsonResponse(response, status=201)
+
+
+    def check_password_errors(self, User, request):
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_new_password = request.POST.get('confirm_new_password')
+        error = {}
+
+        if not current_password:
+            return {'current_password': 'Current password is required'}
+        if not new_password:
+            return {'new_password': 'New password is required'}
+        if not new_password:
+            return {'confirm_new_password': 'Confirm password is required'}
+
+        if not check_password(current_password, request.user.password):
+            return {'current_password': 'Incorrect current password'}
+        if check_password(new_password, request.user.password):
+            return {'new_password': 'New password is the same as current'}
+        if new_password != confirm_new_password:
+            return {'confirm_new_password': 'Passwords do not match'}
+
+        try:
+            validate_password(new_password)
+        except ValidationError as error:
+            return {'new_password': str(error.messages[0])}
+
+        return None
+
+
+    def change_password(self, User, request):
+        request.user.set_password(request.POST.get('new_password'))
+        request.user.save()
+        return {"message": "Password successfully changed"}

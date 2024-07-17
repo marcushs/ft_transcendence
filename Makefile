@@ -4,7 +4,7 @@ DOCKER_COMPOSE = docker compose -f ./src/docker-compose.yml
 RM = sudo rm -rf
 ENV = --env-file ./src/requirements/django/ft_transcendence/.env
 
-all: up	
+all: up
 
 up: #${VOLUME}
 	${DOCKER_COMPOSE} ${ENV} up --build --detach --quiet-pull
@@ -15,7 +15,7 @@ down:
 clean: down
 
 delete_medias:
-	sudo rm -rf ./src/requirements/django/ft_transcendence/media
+# 	sudo rm -rf ./src/requirements/django/ft_transcendence/media
 
 fclean: delete_medias clean
 	docker system prune -a -f --volumes
