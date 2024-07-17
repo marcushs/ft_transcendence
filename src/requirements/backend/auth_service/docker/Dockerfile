@@ -7,9 +7,13 @@ WORKDIR /app
 COPY docker/requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install django-two-factor-auth[phonenumbers]
+#two factor
+RUN pip install pyotp django-two-factor-auth[phonenumbers]
+#jwt
 RUN pip install PyJWT
-RUN pip install pyotp
+#rabbitMQ
 RUN pip install pika
+#web socket
+RUN pip install channels channels_rabbitmq daphne
 
 COPY ../auth_service /app

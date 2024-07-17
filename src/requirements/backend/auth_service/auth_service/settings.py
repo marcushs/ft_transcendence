@@ -29,7 +29,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("AUTH_SECRET_KEY")
 
-
 # /--> RabbitMQ configuration <--\      
 RABBITMQ_HOST = env('RABBITMQ_HOST')
 RABBITMQ_PORT = env('RABBITMQ_PORT')
@@ -57,9 +56,11 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1']
 
 # Application definition
+ASGI_APPLICATION = "auth_service.asgi.application"
 
 INSTALLED_APPS = [
-	"corsheaders",
+    'daphne',
+	'corsheaders',
 	'auth_app',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -79,10 +80,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+	'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-	'corsheaders.middleware.CorsMiddleware',
     'django_otp.middleware.OTPMiddleware', # Base middleware for two_factor feature
     'auth_app.middleware.JWTAuthMiddleware', # Custom middleware for jwt token feature
     'django.contrib.messages.middleware.MessageMiddleware',
