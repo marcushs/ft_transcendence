@@ -51,7 +51,7 @@ ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1']
 
 INSTALLED_APPS = [
 	"corsheaders",
-	'user_app',
+    'user_app',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -91,7 +91,6 @@ TEMPLATES = [
     },
 ]
 
-print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 WSGI_APPLICATION = 'user_service.wsgi.application'
 
 

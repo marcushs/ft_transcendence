@@ -9,7 +9,7 @@ User = get_user_model()
 
 # Middleware for jwt authentication
 class JWTAuthMiddleware(MiddlewareMixin):
-    async def process_request(self, request):
+    def process_request(self, request):
         token = request.COOKIES.get('jwt')
         if token:
             jwt_user = get_user_from_jwt(token)

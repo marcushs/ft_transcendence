@@ -18,15 +18,5 @@ def publish_message(queue_name, message):
         body=json.dumps(message),
         properties=pika.BasicProperties(delivery_mode=2)
     )
+    print('!!!!!!!!!----->>>>>> Update succesfully publish on message broker')
     connection.close()
-    
-def consume_message(queue_name, callback):
-    connection = get_rabbitmq_connection()
-    channel = connection.channel()
-    channel.queue_declare(queue=queue_name, durable=True)
-    channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
-    channel.start_consuming()
-    
-def send_message_to_queue(queue_name, action, data):
-    message = {'action': action, 'data': data}
-    publish_message(queue_name, message)

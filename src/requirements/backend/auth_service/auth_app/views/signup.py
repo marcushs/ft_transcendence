@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model
+from ..utils.rabbitmq_utils import publish_message
 
 # --- UTILS --- #
 import json
@@ -23,7 +24,16 @@ class signup_view(View):
         response = self._check_data(request, data)
         if response is not None:
             return response
-        User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
+        user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
+        message = {
+            'action': 'user_created',
+            'data': {
+                'user_id': user.id,
+                'username': user.username,
+                'email': user.email,
+            }
+        }
+        publish_message('auth_updates', message)
         return JsonResponse({'message': 'User created successfully', 'redirect_url': 'login'}, status=200)
     
     

@@ -1,13 +1,19 @@
+from channels.generic.websocket import AsyncWebsocketConsumer
 from utils.rabbitmq_utils import consume_message
-from django.contrib.auth import get_user_model
+from asgiref.sync import sync_to_async
 import json
 
-User = get_user_model()
+class RabbitMQConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.accept()
+        await self.start_consuming()
 
-def process_message(body):
-    message = json.loads(body)
-    match message['action']:
-        case 'update':
-            pass
-        case 'create':
-            pass
+    async def start_consuming(self):
+        def callback(body):
+            message = json.loads(body)
+            sync_to_async(self.send)(text_data=json.dumps(message))
+    
+        await consume_message('db_update', callback)
+
+    async def disconnect(self, close_code):
+        pass

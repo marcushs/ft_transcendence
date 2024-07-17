@@ -13,7 +13,5 @@ RUN pip install pyotp django-two-factor-auth[phonenumbers]
 RUN pip install PyJWT
 #rabbitMQ
 RUN pip install pika
-#web socket
-RUN pip install channels channels_rabbitmq daphne
 
 COPY ../auth_service /app
