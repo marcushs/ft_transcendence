@@ -3,6 +3,7 @@ import getUserData from "../../utils/getUserData.js";
 import { isAlphanumeric } from "../../utils/utils.js";
 import {getCookie} from "../../utils/cookie.js";
 import './PopUpComponent.js'
+import sleep from "../../utils/sleep.js";
 
 class UserInfosComponent extends HTMLElement {
 
@@ -120,8 +121,6 @@ class UserInfosComponent extends HTMLElement {
 			newUserData.append('profile_image', this.newUploadedImage);
 			newUserData.append('profile_image_link', this.newProfileImageLink);
 
-			console.log(this.profileImageInput.files[0], this.newProfileImageLink)
-
 			const requestResponse = await postNewUserInfos(newUserData);
 
 			localStorage.setItem('userUpdateResponse', JSON.stringify(requestResponse));
@@ -176,7 +175,6 @@ class UserInfosComponent extends HTMLElement {
 			this.hasProfilePictureChanged = true;
 		}
 		else {
-			// this.hasProfilePictureChanged = false;
 			this.updateImageFeedback(isValidImageUrl, 'Invalid image link');
 		}
 		this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), this.isValidEmail(this.emailInput.value));
@@ -236,7 +234,7 @@ class UserInfosComponent extends HTMLElement {
 	}
 
 
-	handleResetImageChoiceAnimation(event) {
+	async handleResetImageChoiceAnimation(event) {
 		const changeProfileImage = this.querySelector('.user-info-image > .change-profile-image');
 		const profileImage = this.querySelector('.user-info-image > img');
 

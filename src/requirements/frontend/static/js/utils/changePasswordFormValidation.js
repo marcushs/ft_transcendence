@@ -1,5 +1,6 @@
 export default function validateChangePasswordInputs() {
-	let inputRequiredInfos = { user: false, email: false, password: false, passwordMatch: false };
+	let inputRequiredInfos = { password: false, newPassword: false, newPasswordMatch: false };
+	const passwordInput = document.querySelector('input[type="password"]');
 	const btn = document.querySelector('.generic-auth-btn-disabled');
 
 	function checkValidity() {
@@ -9,14 +10,18 @@ export default function validateChangePasswordInputs() {
 			btn.className = 'generic-auth-btn-disabled';
 	}
 
-	validatePasswordInput(inputRequiredInfos, checkValidity);
-	confirmPasswordMatch(inputRequiredInfos, checkValidity);
+	passwordInput.addEventListener('input', () => {
+		(passwordInput.value !== '') ? inputRequiredInfos.password = true : inputRequiredInfos.password = false;
+		checkValidity();
+	})
+	validateNewPasswordInput(inputRequiredInfos, checkValidity);
+	confirmNewPasswordMatch(inputRequiredInfos, checkValidity);
 }
 
 /* Password check */
 
-function validatePasswordInput(inputRequiredInfos, checkValidity) {
-	const passwordInput = document.querySelector('input[name="new_password"]');
+function validateNewPasswordInput(inputRequiredInfos, checkValidity) {
+	const newPasswordInput = document.querySelector('input[name="new_password"]');
 	const feedbackElement = document.querySelector('#newPasswordFeedback');
 	const passwordRequirements = [
 		{ regex: /.{8,}/, id: "charLen", isValid: false },
@@ -26,28 +31,26 @@ function validatePasswordInput(inputRequiredInfos, checkValidity) {
 		{ regex: /[^A-Za-z0-9]/, id: "specChar", isValid: false }
 	]
 
-	passwordInput.addEventListener('input', () => {
-		if (passwordInput.value === '')
+	newPasswordInput.addEventListener('input', () => {
+		if (newPasswordInput.value === '')
 			feedbackElement.textContent = '';
 		passwordRequirements.forEach(item => {
-			item.regex.test(passwordInput.value) ? item.isValid = true : item.isValid = false;
+			item.regex.test(newPasswordInput.value) ? item.isValid = true : item.isValid = false;
 		});
-		inputRequiredInfos.password = passwordRequirements.every(item => item.isValid);
-		updatePasswordFeedback(inputRequiredInfos, passwordRequirements);
-		updateConfirmPasswordMatchFeedback(inputRequiredInfos);
+		inputRequiredInfos.newPassword = passwordRequirements.every(item => item.isValid);
+		updateNewPasswordFeedback(inputRequiredInfos, passwordRequirements);
+		updateConfirmNewPasswordMatchFeedback(inputRequiredInfos);
 		checkValidity();
 	});
 }
 
-function updatePasswordFeedback(inputRequiredInfos, passwordRequirements) {
+function updateNewPasswordFeedback(inputRequiredInfos, passwordRequirements) {
 	const feedbackElement = document.querySelector('#newPasswordFeedback');
 	const passwordValue = document.querySelector('input[name="new_password"]').value;
-	let isValidPassword;
-
 
 	if (passwordValue === '')
 		feedbackElement.textContent = '';
-	else if (inputRequiredInfos.password) {
+	else if (inputRequiredInfos.newPassword) {
 		feedbackElement.textContent = "Password is valid ✓"; // Email is valid
 		feedbackElement.style.color = '#32CD32';
 	} else {
@@ -58,29 +61,29 @@ function updatePasswordFeedback(inputRequiredInfos, passwordRequirements) {
 
 /* Confirm password check */
 
-function confirmPasswordMatch(inputRequiredInfos, checkValidity) {
+function confirmNewPasswordMatch(inputRequiredInfos, checkValidity) {
 	const confPwInput = document.querySelector('input[name="confirm_new_password"]');
 	confPwInput.addEventListener('input', () => {
-		updateConfirmPasswordMatchFeedback(inputRequiredInfos)
+		updateConfirmNewPasswordMatchFeedback(inputRequiredInfos)
 		checkValidity();
 	});
 }
 
-function updateConfirmPasswordMatchFeedback(inputRequiredInfos) {
-	const passwordValue = document.querySelector('input[name="new_password"]').value;
-	const confirmPasswordValue = document.querySelector('input[name="confirm_new_password"]').value;
+function updateConfirmNewPasswordMatchFeedback(inputRequiredInfos) {
+	const newPasswordValue = document.querySelector('input[name="new_password"]').value;
+	const confirmNewPasswordValue = document.querySelector('input[name="confirm_new_password"]').value;
 	const feedbackElement = document.querySelector('#confirmNewPasswordFeedback');
 
-	if (confirmPasswordValue === '') {
+	if (confirmNewPasswordValue === '') {
 		feedbackElement.textContent = '';
-		inputRequiredInfos.passwordMatch = false;
-	} else if (passwordValue === confirmPasswordValue) {
+		inputRequiredInfos.newPasswordMatch = false;
+	} else if (newPasswordValue === confirmNewPasswordValue) {
 		feedbackElement.textContent = 'Password match!';
 		feedbackElement.style.color = '#32CD32';
-		inputRequiredInfos.passwordMatch = true;
+		inputRequiredInfos.newPasswordMatch = true;
 	} else {
 		feedbackElement.textContent = "Password does not match.";
 		feedbackElement.style.color = 'red';
-		inputRequiredInfos.passwordMatch = false;
+		inputRequiredInfos.newPasswordMatch = false;
 	}
 }

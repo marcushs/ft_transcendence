@@ -23,7 +23,6 @@ class ProfileComponent extends HTMLElement {
 
 
 	connectedCallback() {
-		console.log('test')
 		rotatingGradient('profile-component', '#FF16C6', '#00D0FF');
 		rotatingGradient('.profile-component-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.profile-component-content', '#1c0015', '#001519');

@@ -29,18 +29,18 @@ export default () => {
 						<i class="fa-solid fa-eye" id="confirm-password-eye"></i>
 						<span id="confirmPasswordFeedback" class="input-feedback"></span>
 					</div>
-					<button-component id="registerBtn" label="Signup" class="generic-auth-btn-disabled"></button-component>
+					<button-component id="signupBtn" label="Signup" class="generic-auth-btn-disabled"></button-component>
 					<p>Already have an account? <a href="/login">Login</a></p>
 				</form>
 			</div>
 		</section>`;
 
 	setTimeout(() =>{
-		const registerBtn = document.querySelector('#registerBtn');
+		const signupBtn = document.querySelector('#signupBtn');
 
-		registerBtn.addEventListener('click', event => {
-			if (registerBtn.className === 'generic-auth-btn')
-				postData(event, registerBtn);
+		signupBtn.addEventListener('click', event => {
+			// if (signupBtn.className === 'generic-auth-btn')
+				postData(event, signupBtn);
 		});
 
 		rotatingGradient('.signup-form-container-background', '#FF16C6', '#00D0FF');
@@ -58,11 +58,11 @@ function showAlreadyExistsData(message) {
 	alert(message);
 }
 
-async function postData(event, registerBtn) {
+async function postData(event, signupBtn) {
 	// Prevent form submission
 	event.preventDefault();
 	// Get the closest form element of the button
-	const form = registerBtn.closest('form');
+	const form = signupBtn.closest('form');
 	if (form) {
 		// Construct a FormData object, a set of key/value pairs
 		const formData = new FormData(form);
