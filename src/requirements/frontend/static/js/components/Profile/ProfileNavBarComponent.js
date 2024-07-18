@@ -16,7 +16,7 @@ class ProfileNavBarComponent extends HTMLElement {
                 <li state-redirect security>
                     <p>Security</p>
                 </li>
-                <li>
+                <li state-redirect statsAndRank>
                     <p>Stats and rank</p>
                 </li>
             </ul>

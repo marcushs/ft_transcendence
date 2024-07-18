@@ -1,6 +1,7 @@
 import rotatingGradient from "../../anim/rotatingGradient.js";
 import './ProfileNavBarComponent.js'
 import './UserInfosComponent.js'
+import './SecurityComponent.js'
 import './PopUpComponent.js'
 
 class ProfileComponent extends HTMLElement {
@@ -10,7 +11,7 @@ class ProfileComponent extends HTMLElement {
 
 		this.states = {
 			"personalInformation": { context: "/personalInformation", state: '<user-infos-component></user-infos-component>' },
-			"security": { context: "/security", state: '<h1>security</h1>' },
+			"security": { context: "/security", state: '<security-component></security-component>' },
 			// "statsAndRank": { context: "/statsAndRank", state: new onlineHome() },
 		}
 
