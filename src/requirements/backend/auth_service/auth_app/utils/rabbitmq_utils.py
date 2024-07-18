@@ -18,5 +18,4 @@ def publish_message(queue_name, message):
         body=json.dumps(message),
         properties=pika.BasicProperties(delivery_mode=2)
     )
-    print('!!!!!!!!!----->>>>>> Update succesfully publish on message broker')
     connection.close()

@@ -10,9 +10,8 @@ class UserManager(BaseUserManager):
         if not username:
             raise ValueError('The username field must be set')
         email = self.normalize_email(email)
-        user = self.model(email=email, username=username)
-        user.set_password(None)
-        user.id = user_id
+        user = self.model(email=email, username=username, id=user_id)
+        user.set_unusable_password()
         user.save(using=self._db)
         return user
 
@@ -27,10 +26,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     objects = UserManager()
-    
+
     def __str__(self):
       return self.username
-  
+
   
     def to_dict(self):
         return {

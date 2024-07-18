@@ -51,12 +51,12 @@ ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1']
 
 INSTALLED_APPS = [
 	"corsheaders",
-    'user_app',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'user_app',
 ]
 
 
