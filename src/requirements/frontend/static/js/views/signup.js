@@ -39,7 +39,7 @@ export default () => {
 		const signupBtn = document.querySelector('#signupBtn');
 
 		signupBtn.addEventListener('click', event => {
-			// if (signupBtn.className === 'generic-auth-btn')
+			if (signupBtn.className === 'generic-auth-btn')
 				postData(event, signupBtn);
 		});
 

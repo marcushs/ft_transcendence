@@ -16,11 +16,11 @@ game-component {
     flex-shrink: 0;
 }
 
-.states-container * {
-    z-index: 20;
+game-component .states-container * {
+    z-index: 2;
 }
 
-.game-background {
+game-component .game-background {
     position: absolute;
     top: 0;
     left: 0;
@@ -30,7 +30,7 @@ game-component {
     filter: blur(15px);
 }
 
-.states-container {
+game-component .states-container {
     position: relative;
     width: 100%;
     height: 100%;

@@ -1,7 +1,8 @@
 export function managePasswordToggle(inputName) {
-	const passwordEyeIcon = document.getElementById('password-eye');
 	const passwordInput = document.querySelector(`input[name="${inputName}"]`);
+	const passwordEyeIcon = passwordInput.parentElement.querySelector('i');
 
+	console.log(passwordInput.parentElement)
 	passwordEyeIcon.addEventListener('click', () => togglePasswordVisibility(passwordEyeIcon, passwordInput));
 }
 
