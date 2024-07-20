@@ -9,38 +9,41 @@ class SecurityComponent extends HTMLElement {
 		this.innerHTML = `
 			<div class="two-factor-container">
 				<div class="title">
-					<p>2Fa</p>
+					<p>Two-factor authentication</p>
 				</div>
-				<div class="two-factor-email">
-					<div class="two-factor-infos">					
-						<p>2fa by email</p>
-						<div class="two-factor-status">
-							<div class="inactive-2fa"><i class="fa-solid fa-xmark"></i></div>
-							<p>Inactive</p>
-						</div>
+				<p class="information-sentence">
+					Help protect your account from unauthorized access by requiring a second authentication method
+					in addition to your password.
+				</p>
+				<hr>
+				<div class="two-factor-type">					
+					<p>2fa by email</p>
+					<div class="toggle-button">
+						<div class="toggle-circle"></div>
 					</div>
-						<button-component label="Disable" class="generic-btn"></button-component>
 				</div>
-				<div class="two-factor-app">
-					<div class="two-factor-infos">					
-						<p>2fa by authenticator app</p>
-						<div class="two-factor-status">
-							<div class="active-2fa"><i class="fa-solid fa-check"></i></div>
-							<p>Active</p>
-						</div>
+				<hr>
+				<div class="two-factor-type">					
+					<p>2fa by app</p>
+					<div class="toggle-button">
+						<div class="toggle-circle"></div>
 					</div>
-					<button-component label="Disable" class="generic-btn"></button-component>
 				</div>
 			</div>
 			<div class="change-password-container">
-				<p>Change password</p>
+				<div class="title">
+					<p>Change password</p>
+				</div>
+				<p class="information-sentence">
+					Change your password regularly to keep your account secure.
+				</p>
+				<button-component label="Change" class="generic-btn" href="/change-password"></button-component>
 			</div>
 		`;
 	}
 
 	connectedCallback() {
 	}
-
 
 }
 

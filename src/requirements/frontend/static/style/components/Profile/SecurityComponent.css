@@ -1,11 +1,33 @@
 security-component {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	/*justify-content: center;*/
+	justify-content: space-evenly;
 	align-items: center;
 	height: 100%;
 	width: 100%;
 }
+
+security-component .title {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 5rem;
+	width: 100%;
+	background: var(--background-color);
+	font-size: 2.2rem;
+	font-weight: bold;
+	border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+}
+
+security-component .information-sentence {
+	font-size: 1.5rem;
+	margin-left: 2.5rem;
+	margin-top: 1rem;
+}
+
+/* Two factor container */
 
 security-component .two-factor-container > * {
 	width: 100%;
@@ -16,78 +38,140 @@ security-component .two-factor-container {
 	flex-direction: column;
 	align-items: center;
 	width: 40%;
-	height: 40%;
+	height: 45%;
 	background: var(--component-background-color);
 	border-radius: 5px;
 	border: 1px solid #333;
 }
 
-security-component .two-factor-container .title {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 16%;
-	background: var(--background-color);
-	font-size: 2.2rem;
-	font-weight: bold;
-	border-top-right-radius: 5px;
-	border-top-left-radius: 5px;
-}
 
-.two-factor-infos {
+security-component .two-factor-container > hr {
+	margin: 2.5rem 0;
 	width: 80%;
+}
+
+security-component .two-factor-type {
 	display: flex;
+	align-items: center;
 	justify-content: space-between;
-	align-items: center;
+	width: 60% ;
 }
 
-security-component .two-factor-container .two-factor-email {
-	margin-left: 3rem;
-	height: 42%;
+security-component .two-factor-type p {
+	font-size: 1.8rem;
+	font-weight: bold;
 }
 
-security-component .two-factor-container .two-factor-app {
-	height: 42%;
-}
-
-security-component .two-factor-container .two-factor-email .two-factor-infos > p {
-	font-size: 1.7rem;
-	font-weight: 500;
-}
-
-security-component .two-factor-container .two-factor-app .two-factor-infos > p {
-	font-size: 1.7rem;
-	font-weight: 500;
-}
-
-security-component .two-factor-container .two-factor-status {
+security-component .toggle-button {
+	cursor: pointer;
 	display: flex;
 	align-items: center;
-}
-
-security-component .two-factor-container .two-factor-status p {
-	font-size: 1.2rem;
-}
-
-security-component .two-factor-container .active-2fa {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 1.5rem;
-	height: 1.5rem;
-	border-radius: 50%;
-	background: green;
-	margin-right: 0.2rem;
-}
-
-security-component .two-factor-container .inactive-2fa {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 1.5rem;
-	height: 1.5rem;
-	border-radius: 50%;
+	width: 5rem;
+	height: 2.5rem;
 	background: red;
-	font-size: 1.2rem;
-	margin-right: 0.2rem;
+	border-radius: 2rem;
+	animation: test2 0.5s ease forwards;
 }
+
+security-component .toggle-button .toggle-circle {
+	background: var(--text-primary-color);
+	width: calc(2rem);
+	height: calc(2rem);
+	border-radius: 100%;
+	margin-left: 0.3rem;
+	animation: test 0.5s ease forwards;
+}
+
+@keyframes test {
+	0% {
+		margin-left: 0.3rem;
+	}
+	100% {
+		margin-left: calc(100% - 2.3rem);
+	}
+}
+
+@keyframes test2 {
+	0% {
+		background: red;
+	}
+	100% {
+		background: var(--neon-blue);
+	}
+}
+
+
+/* Change password container */
+
+security-component .change-password-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 40%;
+	height: 25%;
+	background: var(--component-background-color);
+	border-radius: 5px;
+	border: 1px solid #333;
+}
+
+security-component .change-password-container button-component {
+	margin-top: 1.4rem;
+}
+
+/*.two-factor-infos {*/
+/*	width: 80%;*/
+/*	display: flex;*/
+/*	justify-content: space-between;*/
+/*	align-items: center;*/
+/*}*/
+
+/*security-component .two-factor-container .two-factor-email {*/
+/*	margin-left: 3rem;*/
+/*	height: 42%;*/
+/*}*/
+
+/*security-component .two-factor-container .two-factor-app {*/
+/*	height: 42%;*/
+/*}*/
+
+/*security-component .two-factor-container .two-factor-email .two-factor-infos > p {*/
+/*	font-size: 1.7rem;*/
+/*	font-weight: 500;*/
+/*}*/
+
+/*security-component .two-factor-container .two-factor-app .two-factor-infos > p {*/
+/*	font-size: 1.7rem;*/
+/*	font-weight: 500;*/
+/*}*/
+
+/*security-component .two-factor-container .two-factor-status {*/
+/*	display: flex;*/
+/*	align-items: center;*/
+/*}*/
+
+/*security-component .two-factor-container .two-factor-status p {*/
+/*	font-size: 1.2rem;*/
+/*}*/
+
+/*security-component .two-factor-container .active-2fa {*/
+/*	display: flex;*/
+/*	justify-content: center;*/
+/*	align-items: center;*/
+/*	width: 1.5rem;*/
+/*	height: 1.5rem;*/
+/*	border-radius: 50%;*/
+/*	background: green;*/
+/*	margin-right: 0.2rem;*/
+/*}*/
+
+/*security-component .two-factor-container .inactive-2fa {*/
+/*	display: flex;*/
+/*	justify-content: center;*/
+/*	align-items: center;*/
+/*	width: 1.5rem;*/
+/*	height: 1.5rem;*/
+/*	border-radius: 50%;*/
+/*	background: red;*/
+/*	font-size: 1.2rem;*/
+/*	margin-right: 0.2rem;*/
+/*}*/

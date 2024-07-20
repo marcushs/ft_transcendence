@@ -1,6 +1,6 @@
 class ButtonComponent extends HTMLElement {
 	static get observedAttributes() {
-		return ['disabled', 'label', 'class'];
+		return ['disabled', 'label', 'class', 'href'];
 	}
 
 	constructor() {
@@ -27,7 +27,13 @@ class ButtonComponent extends HTMLElement {
 			(this.button) ? this.button.label = newValue : this.label = newValue;
 		} else if (name === 'class') {
 			(this.button) ? this.button.className = newValue : this.class = newValue;
+		} else if (name === 'href') {
+			this.addEventListener('click', () => this.redirectUrl(newValue));
 		}
+	}
+
+	redirectUrl(url) {
+		location.href = url;
 	}
 
 }
