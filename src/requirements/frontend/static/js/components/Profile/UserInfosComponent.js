@@ -341,7 +341,6 @@ class UserInfosComponent extends HTMLElement {
 		inputs.forEach(input => {
 			const feedbackSuccessElement = input.parentElement.querySelector('.input-feedback');
 
-			console.log(input.name, response)
 			if (`${input.name}_error` in response)
 				this.updateFeedback(feedbackErrorElement, response[`${input.name}_error`], false);
 			else if (`${input.name}_message` in response)

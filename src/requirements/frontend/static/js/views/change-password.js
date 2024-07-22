@@ -11,7 +11,7 @@ export default () => {
 				<form>
 					<h1>Change password</h1>
 					<div class="form-fields">
-						<input type="password" placeholder="Current password" name="current_password" required>
+						<input type="password" placeholder="Current password" name="current_password" autofocus required>
 						<i class="fa-solid fa-eye" id="password-eye"></i>
 						<span id="currentPasswordFeedback" class="input-feedback"></span>
 					</div>
@@ -40,6 +40,7 @@ export default () => {
 		});
 
 		displayFeedbackFromLocalStorage();
+		document.querySelector('input[name="current_password"]').addEventListener('input', (event) => handleInputChange(event));
 
 		rotatingGradient('.change-password-form-container-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.change-password-form-container', '#FF16C6', '#00D0FF');
@@ -51,6 +52,14 @@ export default () => {
 	}, 0);
 
 	return html;
+}
+
+
+function handleInputChange(event) {
+	const feedbackElement = event.target.parentElement.querySelector('#currentPasswordFeedback');
+
+	if (feedbackElement.innerHTML === 'Incorrect current password')
+		feedbackElement.innerHTML = '';
 }
 
 
@@ -108,9 +117,14 @@ async function postNewPassword(formData) {
 		if (res.status == 403)
 			throw new Error('Access Denied')
 		const data = await res.json();
-		if (res.status === 400)
+		if (res.status === 200) {
+			localStorage.setItem('state', 'security');
+			localStorage.setItem('passwordFeedback', 'Password has been successfully changed');
+			location.href = '/profile';
+		} else if (res.status === 400) {
 			localStorage.setItem('userUpdateResponse', JSON.stringify(data));
-		location.reload();
+			location.reload();
+		}
 	} catch (error) {
 		console.log(error)
 	}

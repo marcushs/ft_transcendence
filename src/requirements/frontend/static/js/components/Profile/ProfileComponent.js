@@ -15,7 +15,18 @@ class ProfileComponent extends HTMLElement {
 			// "statsAndRank": { context: "/statsAndRank", state: new onlineHome() },
 		}
 
+		this.currentState = "personalInformation";
 		this.initializeComponent();
+	}
+
+
+	setCurrentState() {
+		const currentState = localStorage.getItem('state');
+
+		if (currentState) {
+			this.currentState = currentState;
+			localStorage.removeItem('state');
+		}
 	}
 
 
@@ -31,8 +42,9 @@ class ProfileComponent extends HTMLElement {
 
 
 	connectedCallback() {
+		this.setCurrentState();
 		this.statesContainer = this.querySelector('.states-container');
-		this.pushNewState(this.states["personalInformation"].state);
+		this.pushNewState(this.states[this.currentState].state);
 		this.attachEventListener();
 
 		rotatingGradient('profile-component', '#FF16C6', '#00D0FF');

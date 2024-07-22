@@ -21,7 +21,7 @@ class PopUpComponent extends HTMLElement {
 				<div class="pop-up-content">
 					<i class="fa-solid fa-xmark"></i>
 					<h2>Paste link to an image</h2>
-					<input type="url" name="image-link">
+					<input type="url" name="image-link" autofocus>
 					<button-component label="Save" class="generic-btn-disabled"></button-component>
 				</div>
 			`;

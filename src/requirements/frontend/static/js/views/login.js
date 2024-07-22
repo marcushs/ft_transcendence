@@ -13,7 +13,7 @@ export default () => {
 				<form>
 					<h1>Login</h1>
 					<div class="form-fields">
-						<input type="text" placeholder="Username" name="username" required>
+						<input type="text" placeholder="Username" name="username" autofocus required>
 					</div>
 					<div class="form-fields">
 						<input type="password" placeholder="Password" name="password" required>

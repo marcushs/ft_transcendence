@@ -3,14 +3,23 @@ class ProfileNavBarComponent extends HTMLElement {
 	constructor() {
 		super();
 
+		this.currentState = 'personalInformation';
 		this.initializeComponent();
+	}
+
+
+	setCurrentState() {
+		const currentState = localStorage.getItem('state');
+
+		if (currentState)
+			this.currentState = currentState;
 	}
 
 
 	initializeComponent() {
 		this.innerHTML = `
 		    <ul>
-                <li class="activated-li" state-redirect personalInformation>
+                <li state-redirect personalInformation>
                     <p>Personal information</p>
                 </li>
                 <li state-redirect security>
@@ -25,6 +34,8 @@ class ProfileNavBarComponent extends HTMLElement {
 
 
 	connectedCallback() {
+		this.setCurrentState();
+		this.querySelector(`li[${this.currentState}]`).className = 'activated-li';
 		this.attachEventListener();
 	}
 

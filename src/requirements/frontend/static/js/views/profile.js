@@ -6,7 +6,7 @@ export default () => {
         <section class="profile-page">
             <nav-bar-component></nav-bar-component>
             <div class="profile-main-section">
-                <profile-component></profile-component>
+                <profile-component state="personalInformation"></profile-component>
             </div>
         </section>
     `;

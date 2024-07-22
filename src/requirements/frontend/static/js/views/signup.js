@@ -16,7 +16,7 @@ export default () => {
 						<input type="text" placeholder="Username" name="username" required>
 					</div>
 					<div class="form-fields">
-						<input type="text" placeholder="Email" name="email" required>
+						<input type="text" placeholder="Email" name="email" autofocus required>
 						<span id="emailFeedback" class="input-feedback"></span>
 					</div>
 					<div class="form-fields">

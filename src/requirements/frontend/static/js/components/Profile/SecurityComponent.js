@@ -30,6 +30,7 @@ class SecurityComponent extends HTMLElement {
 					</div>
 				</div>
 			</div>
+			<span class="feedbackInformation" id="twoFactorFeedback"></span>
 			<div class="change-password-container">
 				<div class="title">
 					<p>Change password</p>
@@ -39,10 +40,34 @@ class SecurityComponent extends HTMLElement {
 				</p>
 				<button-component label="Change" class="generic-btn" href="/change-password"></button-component>
 			</div>
+			<span class="feedbackInformation" id="passwordFeedback"></span>
 		`;
 	}
 
+
 	connectedCallback() {
+		console.log('test');
+		this.displayFeedbackFromLocalStorage();
+	}
+
+
+	displayFeedbackFromLocalStorage() {
+		const twoFactorFeedbackElement = this.querySelector('#twoFactorFeedback');
+		const passwordFeedbackElement = this.querySelector('#passwordFeedback');
+		const twoFactorResponse = localStorage.getItem('twoFactorFeedback');
+		const passwordResponse = localStorage.getItem('passwordFeedback');
+
+		console.log(passwordResponse)
+		if (twoFactorResponse) {
+			twoFactorFeedbackElement.innerHTML = twoFactorResponse;
+			localStorage.removeItem('twoFactorFeedback');
+		}
+
+		if (passwordResponse) {
+			passwordFeedbackElement.innerHTML = passwordResponse;
+			localStorage.removeItem('passwordFeedback');
+		}
+
 	}
 
 }

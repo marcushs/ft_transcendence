@@ -27,6 +27,20 @@ security-component .information-sentence {
 	margin-top: 1rem;
 }
 
+security-component .feedbackInformation {
+	position: absolute;
+	color: #32CD32;
+	font-size: 1.5rem;
+}
+
+security-component #twoFactorFeedback {
+	top: 59.5%;
+}
+
+security-component #passwordFeedback {
+	top: 91%;
+}
+
 /* Two factor container */
 
 security-component .two-factor-container > * {
@@ -34,6 +48,7 @@ security-component .two-factor-container > * {
 }
 
 security-component .two-factor-container {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -104,6 +119,7 @@ security-component .toggle-button .toggle-circle {
 /* Change password container */
 
 security-component .change-password-container {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	align-items: center;

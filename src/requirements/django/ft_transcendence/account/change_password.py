@@ -23,7 +23,7 @@ class ChangePassword(View):
             return JsonResponse(password_error, status=400)
 
         response = self.change_password(User, request)
-        return JsonResponse(response, status=201)
+        return JsonResponse(response, status=200)
 
 
     def check_password_errors(self, User, request):
