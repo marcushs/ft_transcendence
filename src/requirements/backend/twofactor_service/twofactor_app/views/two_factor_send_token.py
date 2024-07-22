@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.contrib.auth.models import AnonymousUser
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
+from django.conf import settings
 import json
 import secrets
 
@@ -43,21 +44,23 @@ class twofactor_send_token_view(View):
             return JsonResponse({'message': 'We\'ve encountered an issue with the verification method.'}, status=400)
         
     def _handle_email_method(self, user, subject, EmailMessageSetting):
-        verification_code = secrets.token_hex(6)
-        message=f"""
-                Hi {user.username},
-                
-                {EmailMessageSetting}
+        try:
+            email_from = settings.EMAIL_HOST_USER
+            verification_code = secrets.token_hex(6)
+            message=f"""
+                    Hi {user.username},
 
-                Verification code : {verification_code}
+                    {EmailMessageSetting}
 
-                This code is valid for a short period of time(5 minutes). Do not share this code with others.
+                    Verification code : {verification_code}
 
-                If you have not requested this action, please ignore this email.
-                """
-        recipient_list = [user.email, ]
-        error_message = send_mail(subject, message, recipient_list)
-        if error_message is not None:
-            return JsonResponse({'message': error_message}, status=500)
-        user.set_two_factor_code(verification_code, 5)
-        return JsonResponse({'method': user.two_factor_method}, status=200)
+                    This code is valid for a short period of time(5 minutes). Do not share this code with others.
+
+                    If you have not requested this action, please ignore this email.
+                    """
+            recipient_list = [user.email, ]
+            send_mail(subject, message, email_from, recipient_list)
+            user.set_two_factor_code(verification_code, 5)
+            return JsonResponse({'method': user.two_factor_method}, status=200)
+        except Exception as error:
+            return JsonResponse({'message': f'An error occurred with email sending : {str(error)}'}, status=400)

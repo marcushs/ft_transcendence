@@ -47,7 +47,6 @@ export class TwoFactorVerify {
     }
 
     async getTwoFactorCode() {
-        console.log('this.userJson: ', this.userJson);
         const config = {
             method: 'POST',
             headers: {
@@ -59,7 +58,7 @@ export class TwoFactorVerify {
             body: JSON.stringify(this.userJson),
         };
         try {
-            const res = await fetch(`http://localhost:8001/auth/twofactor/get_2fa_code/`, config);
+            const res = await fetch(`http://localhost:8002/twofactor/get_2fa_code/`, config);
             if (res.status === 403)
                 throw new Error('Access Denied')
             const data = await res.json();

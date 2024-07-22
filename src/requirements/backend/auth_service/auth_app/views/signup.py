@@ -18,7 +18,7 @@ class signup_view(View):
         self.regexUsernameCheck = r'^[a-zA-Z0-9_-]+$'
         self.regexEmailCheck = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     
-    
+
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
         response = self._check_data(request, data)
@@ -38,6 +38,9 @@ class signup_view(View):
                 'email': user.email,
         }
         response = send_post_request(url='http://user:8000/account/add_user/', payload=payload, csrf_token=csrf_token)
+        if response.status_code != 200:
+            return response
+        response = send_post_request(url='http://twofactor:8000/twofactor/add_user/', payload=payload, csrf_token=csrf_token)
         return response
 
     def _check_data(self, request, data):

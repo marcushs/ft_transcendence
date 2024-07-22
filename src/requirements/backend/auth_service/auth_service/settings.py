@@ -35,18 +35,10 @@ JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
 JWT_EXP_DELTA_SECONDS = 3000 # 15 minutes
 JWT_REFRESH_EXP_DELTA_SECONDS = 6000 # 1day
 
-    # /--> 2FA <--\
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'kingpong.info@gmail.com'
-EMAIL_HOST_PASSWORD = 'mlxe bkoa gjue tigk'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'auth']
 
 INSTALLED_APPS = [
 	'corsheaders',
@@ -56,14 +48,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 2FA
-    'django_otp',
-    'django_otp.plugins.otp_static',
-    'django_otp.plugins.otp_totp',
-    'django_otp.plugins.otp_email',  # <- for email capability.
-    'two_factor',
-    'two_factor.plugins.phonenumber',  # <- for phone number capability.
-    'two_factor.plugins.email',  # <- for email capability.
 ]
 
 
@@ -73,7 +57,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
-    'django_otp.middleware.OTPMiddleware', # Base middleware for two_factor feature
     'auth_app.middleware.JWTAuthMiddleware', # Custom middleware for jwt token feature
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -126,11 +109,13 @@ CORS_ALLOW_METHODS = [
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
 	'http://frontend',
+	'http://auth',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
 	'http://localhost:3000',
 	'http://frontend',
+	'http://auth',
 ]
 
 # Database

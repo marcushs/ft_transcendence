@@ -5,6 +5,7 @@ services:
     build:
       context: ./requirements/frontend
       dockerfile: Dockerfile
+    image: frontend
     volumes:
       - ./requirements/frontend/static:/var/www/static
       - ./requirements/frontend/nginx.conf:/etc/nginx/conf.d/default.conf
@@ -19,12 +20,14 @@ services:
     build:
       context: ./requirements/backend/user_service
       dockerfile: docker/Dockerfile
+    image: user
     env_file: ./requirements/backend/.env
     command: >
       sh -c "
-      python3 manage.py makemigrations &&
-      python3 manage.py migrate &&
-      python3 manage.py runserver 0.0.0.0:8000"
+        python3 manage.py makemigrations &&
+        python3 manage.py migrate &&
+        python3 manage.py runserver 0.0.0.0:8000
+      "
     volumes:
       - ./requirements/backend/user_service:/app
     ports:
@@ -41,12 +44,14 @@ services:
     build:
       context: ./requirements/backend/auth_service
       dockerfile: docker/Dockerfile
+    image: auth
     env_file: ./requirements/backend/.env
     command: >
       sh -c "
-      python3 manage.py makemigrations &&
-      python3 manage.py migrate &&
-      python3 manage.py runserver 0.0.0.0:8000"
+        python3 manage.py makemigrations &&
+        python3 manage.py migrate &&
+        python3 manage.py runserver 0.0.0.0:8000
+      "
     volumes:
       - ./requirements/backend/auth_service:/app
     ports:
@@ -56,6 +61,52 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
+  # --> TWOFACTOR SERVICE <-- #
+  twofactor:
+    container_name: twofactor
+    restart: always
+    build:
+      context: ./requirements/backend/twofactor_service
+      dockerfile: docker/Dockerfile
+    image: twofactor
+    env_file: ./requirements/backend/.env
+    command: >
+      sh -c "
+          python3 manage.py makemigrations &&
+          python3 manage.py migrate &&
+          python3 manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./requirements/backend/twofactor_service:/app
+    ports:
+      - "8002:8000"
+    depends_on:
+      twofactor_db:
+        condition: service_healthy
+    networks:
+      - transcendence-network
+  # --> DATABASE TWOFACTOR <-- #
+  twofactor_db:
+    container_name: twofactor_db
+    image: postgres
+    restart: always
+    env_file: ./requirements/backend/.env
+    environment:
+      - POSTGRES_USER=${TWOFACTOR_DB_USER}
+      - POSTGRES_DB=${TWOFACTOR_DB_NAME}
+      - POSTGRES_PASSWORD=${TWOFACTOR_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - twofactor_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports: 
+     - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${TWOFACTOR_DB_USER} -d ${TWOFACTOR_DB_NAME}"]
+      interval: 4s
+      timeout: 3s
+      retries: 5
   # --> DATABASE AUTH <-- #
   auth_db:
     container_name: auth_db
@@ -93,7 +144,7 @@ services:
       - user_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
-    ports: 
+    ports:
      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${USER_DB_USER} -d ${USER_DB_NAME}"]
@@ -106,6 +157,8 @@ volumes:
     name: user_data
   auth_pgdata:
     name: auth_data
+  twofactor_pgdata:
+    name: twofactor_pgdata
 
 networks:
   transcendence-network:

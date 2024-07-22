@@ -13,5 +13,7 @@ def send_post_request(url, payload, csrf_token):
     if response.status_code == 200:
         return JsonResponse({'message': 'success'}, status=200)
     else:
-        print(f'error: failed to fetch user service: {response.text}')
-        return JsonResponse({'message': f'error: failed to fetch user service: {response.text}'}, status=400)
+        response_data = json.loads(response.text)
+
+        message = response_data.get('message')
+        return JsonResponse({'message': message}, status=400)

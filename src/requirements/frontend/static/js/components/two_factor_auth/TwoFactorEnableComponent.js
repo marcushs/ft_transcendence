@@ -74,7 +74,7 @@ class TwoFactorEnablerComponent extends HTMLElement {
         try {
             await this.handleStateInstruction();
         } catch (error) {
-            alert(`Error: Two factor: ${error.message}`);
+            alert(`Error: ${error.message}`);
             return;
         }
         const statesArray = Object.entries(this.states);

@@ -2,10 +2,10 @@ from ..utils.jwt_utils import create_jwt_token
 from django.http import JsonResponse
 from django.conf import settings
 from django.views import View
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.hashers import check_password
-from django.utils import timezone
+from .send_post_request import send_post_request
 from django.contrib.auth import get_user_model
-import pyotp
 import json
 
 User = get_user_model()
@@ -17,8 +17,8 @@ class login_view(View):
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
         if 'twofactor' in data:
-            return self._two_factor_login_check(data)
-        response = self._check_data(request, data)
+            return self._send_twofactor_request(data=data, csrf_token=request.headers.get('X-CSRFToken'))
+        response = self._check_data(request=request, data=data)
         if response is not None:
             return response
         try:
@@ -26,7 +26,7 @@ class login_view(View):
             if check_password(data['password'], user.password):
                 if user.is_verified is True:
                     return JsonResponse({'message': '2FA activated on this account, need to verify before log', 'is_verified': user.is_verified}, status=200)
-                response = self._create_user_session(user)
+                response = self._create_user_session(user=user)
             else:
                 response = JsonResponse({'message': 'Invalid password, please try again'}, status=400)
         except User.DoesNotExist:
@@ -52,18 +52,13 @@ class login_view(View):
         response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
         return response
     
-    def _two_factor_login_check(self, data):
-        user = User.objects.get(username=data['username'])
-        code = data.get('twofactor')
-        if not code:
-                return JsonResponse({'message': 'Twofactor code not supplied'}, status=400)
-        if user.two_factor_method == 'authenticator':
-            totp = pyotp.TOTP(user.authenticator_secret)
-            if not totp.verify(code):
-                return JsonResponse({'message': 'Invalid Twofactor code'}, status=400)
-        elif user.two_factor_method == 'email':
-            if user.two_factor_code != code or user.two_factor_code_expiry < timezone.now():
-                return JsonResponse({'message': 'Invalid Twofactor code'}, status=400)
-        else:
-            return JsonResponse({'message': 'We\'ve encountered an issue with the TwoFactor method.'}, status=400)
-        return self._create_user_session(user)
+    def _send_twofactor_request(self, data, csrf_token):
+        try:
+            user = User.objects.get(username=data['username'])
+            response = send_post_request(url='http://twofactor:8000/twofactor/twofactor_login/', payload=data, csrf_token=csrf_token)
+            if response.status_code != 200:
+                return response
+            return self._create_user_session(user=user)
+        except ObjectDoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+

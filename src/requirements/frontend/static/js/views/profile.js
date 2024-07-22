@@ -31,14 +31,12 @@ async function getProfile() {
         console.log(data)
         if (res.status === 200) {
             generateProfilePage(data);
-            // displayUserInformation(data.user) 
         }
         else {
             alert(data.message);
             window.location.replace('login');
         }
-    } catch (error) {
-        console.log('ici cest le catch')    
+    } catch (error) { 
         console.log('Error :', error);
         alert(`Error: ${error.message}`)
     }
@@ -80,7 +78,7 @@ function displayTwoFactorChoice(data) {
     
         infoCollapse.classList.add('info');
         infoCollapse.innerHTML = `
-        <a href="/2fa/disable" data-link class="enableBtn">Disable 2FA</a>
+        <a href="/twofactor/disable" data-link class="enableBtn">Disable 2FA</a>
         `;
     } else {
         anchor.innerText = "Two-factor authentication (2FA)";

@@ -2,7 +2,8 @@ from django.views import View
 from django.http import JsonResponse
 from django.contrib.auth.models import AnonymousUser
 from django.core.mail import send_mail
-from ..utils.two_factor_utils import twofactor_verify_view
+from django.conf import settings
+from .two_factor_utils import twofactor_verify_view, send_update_request
 
 import secrets
 import pyotp
@@ -48,12 +49,12 @@ class twofactor_enable_view(View):
                 If you have not requested this action, please ignore this email.
                 """
         recipient_list = [request.user.email, ]
-        error_message = _send_mail(subject, message, recipient_list)
+        error_message = self._send_mail(subject, message, recipient_list)
         if error_message is not None:
-            return JsonResponse({'message': error_message}, status=500)
+            return JsonResponse({'message': error_message}, status=400)
         request.user.set_two_factor_code(verification_code, 5)
         return JsonResponse({'message': 'Email send'}, status=200)
-    
+   
     def _authenticator_handler(self, request):
         if not request.user.authenticator_secret:
             secret = pyotp.random_base32()
@@ -63,7 +64,7 @@ class twofactor_enable_view(View):
             totp = pyotp.TOTP(request.user.authenticator_secret)
             otpauth_url =  totp.provisioning_uri(request.user.email, issuer_name='KingPong')
         except Exception as error:
-            return JsonResponse({'message': str(error)}, status=500)
+            return JsonResponse({'message': str(error)}, status=400)
         return JsonResponse({'message': 'QR code url generated', 'qrcode': otpauth_url, 'qrcode_token': request.user.authenticator_secret}, status=200)
     
     def _verification_handler(self, request, twofactor_code, method):
@@ -74,10 +75,13 @@ class twofactor_enable_view(View):
             return response
         request.user.two_factor_method = method
         request.user.is_verified = True
+        request_response = send_update_request(user=request.user, csrf_token=request.headers.get('X-CSRFToken'))
+        if request_response.status_code != 200:
+            return request_response
         request.user.save()
         return response
-        
-def _send_mail(subject, message, recipient_list):
+
+    def _send_mail(self, subject, message, recipient_list):
         email_from = settings.EMAIL_HOST_USER
         
         try:
@@ -85,3 +89,4 @@ def _send_mail(subject, message, recipient_list):
             return None
         except Exception as error:
             return f'An error occurred with email sending : {str(error)}'
+    

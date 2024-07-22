@@ -1,6 +1,8 @@
 from django.views import View
 from django.http import JsonResponse
+from django.utils import timezone
 from django.contrib.auth.models import AnonymousUser
+from .two_factor_utils import send_update_request
 
 import pyotp
 import json
@@ -31,5 +33,8 @@ class twofactor_disable_view(View):
         request.user.authenticator_secret = None
         request.user.two_factor_method = ''
         request.user.is_verified = False
+        response = send_update_request(user=request.user, csrf_token=request.headers.get('X-CSRFToken'))
+        if response.status_code != 200:
+            return response
         request.user.save()
         return JsonResponse({'message': 'Two factor authentification disabled'}, status=200)
