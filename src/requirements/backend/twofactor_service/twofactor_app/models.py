@@ -14,11 +14,6 @@ class UserManager(BaseUserManager):
         user.set_unusable_password()
         user.save(using=self._db)
         return user
-    
-    TWO_FACTOR_CHOICES = [
-    ('email', 'Email'),
-    ('authenticator', 'Authenticator App'),
-    ]
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=12, unique=True, default='default')

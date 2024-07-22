@@ -19,6 +19,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_image = models.URLField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
     score = models.IntegerField(default=0)
     is_verified = models.BooleanField(default=False)
+    two_factor_method = models.CharField(max_length=20, blank=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -36,5 +37,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             'profile_image': self.profile_image,
             'score': self.score,
             'is_verified': self.is_verified,
+            'two_factor_method': self.two_factor_method
         }
     
