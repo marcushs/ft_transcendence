@@ -29,13 +29,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("AUTH_SECRET_KEY")
 
-# /--> RabbitMQ configuration <--\      
-RABBITMQ_HOST = env('RABBITMQ_HOST')
-RABBITMQ_PORT = env('RABBITMQ_PORT')
-RABBITMQ_USER = env('RABBITMQ_USER')
-RABBITMQ_PASSWORD = env('RABBITMQ_PASSWORD')
-RABBITMQ_VHOST = env('RABBITMQ_VHOST')
-
     # /--> JWT <--\
 JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
 JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
@@ -132,12 +125,12 @@ CORS_ALLOW_METHODS = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
-	'http://frontend'
+	'http://frontend',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
 	'http://localhost:3000',
-	'http://frontend'
+	'http://frontend',
 ]
 
 # Database

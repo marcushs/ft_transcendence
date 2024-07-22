@@ -11,7 +11,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install pyotp django-two-factor-auth[phonenumbers]
 #jwt
 RUN pip install PyJWT
-#rabbitMQ
-RUN pip install pika
 
 COPY ../auth_service /app

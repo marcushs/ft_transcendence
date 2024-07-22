@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model
-from ..utils.rabbitmq_utils import publish_message
+from .send_post_request import send_post_request
 
 # --- UTILS --- #
 import json
@@ -25,18 +25,21 @@ class signup_view(View):
         if response is not None:
             return response
         user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
-        message = {
-            'action': 'user_created',
-            'data': {
+        response = self._send_request(user=user, csrf_token=request.headers.get('X-CSRFToken'))
+        if response.status_code != 200:
+            user.delete()
+            return response
+        return JsonResponse({'message': 'User created successfully', 'redirect_url': 'login'}, status=200)
+
+    def _send_request(self, user, csrf_token):
+        payload = {
                 'user_id': user.id,
                 'username': user.username,
                 'email': user.email,
-            }
         }
-        publish_message('auth_updates', message)
-        return JsonResponse({'message': 'User created successfully', 'redirect_url': 'login'}, status=200)
-    
-    
+        response = send_post_request(url='http://user:8000/account/add_user/', payload=payload, csrf_token=csrf_token)
+        return response
+
     def _check_data(self, request, data):
         if not data['username']:
             return JsonResponse({'message': 'No username provided'}, status=401)

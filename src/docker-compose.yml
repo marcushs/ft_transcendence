@@ -32,8 +32,6 @@ services:
     depends_on:
       user_db:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
     networks:
       - transcendence-network
   # --> AUTH SERVICE <-- #
@@ -56,32 +54,8 @@ services:
     depends_on:
       auth_db:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
     networks:
       - transcendence-network
-  # --> MESSAGE BROKER SERVICE <-- #
-  rabbitmq:
-    container_name: rabbitmq
-    image: rabbitmq:3-management-alpine
-    restart: always
-    env_file: ./requirements/backend/.env
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq/
-      - rabbitmq_logs:/var/log/rabbitmq
-    networks:
-      - transcendence-network
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
   # --> DATABASE AUTH <-- #
   auth_db:
     container_name: auth_db
@@ -101,8 +75,8 @@ services:
      - "5433:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${AUTH_DB_USER} -d ${AUTH_DB_NAME}"]
-      interval: 10s
-      timeout: 5s
+      interval: 4s
+      timeout: 3s
       retries: 5
   # --> DATABASE USER <-- #
   user_db:
@@ -123,8 +97,8 @@ services:
      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${USER_DB_USER} -d ${USER_DB_NAME}"]
-      interval: 10s
-      timeout: 5s
+      interval: 4s
+      timeout: 3s
       retries: 5
 
 volumes:
@@ -132,10 +106,6 @@ volumes:
     name: user_data
   auth_pgdata:
     name: auth_data
-  rabbitmq_data:
-    name: rabbitmq_data
-  rabbitmq_logs:
-    name: rabbitmq_logs
 
 networks:
   transcendence-network:
