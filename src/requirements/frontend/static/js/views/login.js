@@ -46,19 +46,13 @@ export default () => {
 }
 
 async function postData(event, loginBtn) {
-	// Prevent form submission
 	event.preventDefault();
-	// Get the closest form element of the button
 	const form = loginBtn.closest('form');
 	if (form) {
-		// Construct a FormData object, a set of key/value pairs
 		const formData = new FormData(form);
-		// formData.entries() return an iterator that traverse all the key/value pairs
-		// Object.fromEntries() transforms a list of key-value pairs into an object
 
 		const formValues = Object.fromEntries(formData.entries());
 		const json = JSON.stringify(formValues);
-		console.log(json)
 		const config = {
 			method: 'POST',
 			headers: {
@@ -71,7 +65,6 @@ async function postData(event, loginBtn) {
 		};
 
 		try {
-			console.log(config)
 			const res = await fetch(`http://localhost:8001/auth/login/`, config);
 			if (res.status == 403)
 				throw new Error('Access Denied')
@@ -79,10 +72,11 @@ async function postData(event, loginBtn) {
 			if (res.status === 200) {
 				if (data.is_verified === true)
 					new TwoFactorVerify(json);
-				alert(data.message)
+				else
+					window.location.replace('/');
+			} else {
+				console.log(data.message)
 			}
-			if (data.error)
-				alert(data.error)
 		} catch (error) {
 			if (error.data && error.data.status === 'jwt_failed') {
 				history.replaceState("", "", "/");

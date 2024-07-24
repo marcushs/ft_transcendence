@@ -127,7 +127,7 @@ class ChangeUserInfosView(View):
 
         request.user.profile_image = new_image
         request.user.profile_image_link = None
-        request.user.save()
+        request.user.save(has_new_image=True)
 
         return {'profile-image_message': 'Profile image successfully changed'}
 
@@ -137,6 +137,6 @@ class ChangeUserInfosView(View):
 
         request.user.profile_image = None
         request.user.profile_image_link = new_image_link
-        request.user.save()
+        request.user.save(has_new_image=True)
 
         return {'profile-image_message': 'Profile image successfully changed'}

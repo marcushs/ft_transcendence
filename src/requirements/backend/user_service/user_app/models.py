@@ -33,16 +33,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
       return self.username
 
-    def save(self, *args, **kwargs):
-        if self.id: # If instance already exist in db
-            try:
-                old_instance = User.objects.get(id=self.id) # Get old instance to check if an image already exists
-                if old_instance.profile_image:
-                    if os.path.isfile(old_instance.profile_image.path): # Check if the file exists in file system
-                        os.remove(old_instance.profile_image.path)
-            except User.DoesNotExist:
-                pass
-        super(User, self).save(*args, **kwargs) # To call the real save method
+    def save(self, has_new_image=False):
+        if has_new_image:
+            if self.id: # If instance already exist in db
+                try:
+                    old_instance = User.objects.get(id=self.id) # Get old instance to check if an image already exists
+                    if old_instance.profile_image:
+                        if os.path.isfile(old_instance.profile_image.path): # Check if the file exists in file system
+                            os.remove(old_instance.profile_image.path)
+                except User.DoesNotExist:
+                    pass
+        super(User, self).save() # To call the real save method
 
   
     def to_dict(self):

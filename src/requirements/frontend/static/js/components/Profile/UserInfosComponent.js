@@ -105,6 +105,7 @@ class UserInfosComponent extends HTMLElement {
 		this.usernameInput.value = userData.username;
 		this.emailInput.value = userData.email;
 		userImage.src = getProfileImage(userData);
+		console.log(userImage.src);
 	}
 
 
@@ -118,8 +119,14 @@ class UserInfosComponent extends HTMLElement {
 
 			newUserData.append(this.usernameInput.name, this.usernameInput.value);
 			newUserData.append(this.emailInput.name, this.emailInput.value);
-			newUserData.append('profile_image', this.newUploadedImage);
-			newUserData.append('profile_image_link', this.newProfileImageLink);
+			if (this.newUploadedImage) {
+				alert('ouuuu')
+				newUserData.append('profile_image', this.newUploadedImage);
+			}
+			if (this.newProfileImageLink) {
+				alert('aaaaaah')
+				newUserData.append('profile_image_link', this.newProfileImageLink);
+			}
 
 			const requestResponse = await postNewUserInfos(newUserData);
 
