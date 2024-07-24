@@ -37,8 +37,7 @@ export default () => {
 		
 				<button is="custom-btn" text="signup"></button>
 
-				<a href="http://localhost:8000/account/oauth/signup">Signup with 42</a>
-		
+				<button class="btn" id="oauthBtn" type="button">Signup with 42</button>		
 			</form>	
 		</div>
 	`;
@@ -48,9 +47,32 @@ export default () => {
 		validateSignupInputs();
 		seePasswordToggle();
 		seeConfirmPasswordToggle();
+		addStyleToView();
+		oauthSignup();
 	}, 0);
 
 	return html;
 }
 
+function oauthSignup() {
+	const oauthBtn = document.getElementById('oauthBtn');
 
+	oauthBtn.addEventListener('click', async() => {
+		try {
+			const res = await fetch(`http://localhost:8000/account/oauth/signup/`);
+			const data = await res.json();
+			console.log(data);
+			window.location.replace(data.url);
+		} catch (error) {
+			console.log(error);
+		}
+	});
+}
+
+function addStyleToView() {
+    const cssLink = document.createElement('link');
+
+    cssLink.setAttribute('rel', 'stylesheet');
+    cssLink.setAttribute('href', '../../style/views/signup.css');
+    document.head.appendChild(cssLink);
+}

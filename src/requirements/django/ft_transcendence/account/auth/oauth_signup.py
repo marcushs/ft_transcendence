@@ -1,9 +1,10 @@
 # --- SRC --- #
 from django.views import View
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from ..models import User
 from django.contrib.auth import get_user_model
 from oauthlib.oauth2 import WebApplicationClient
+import secrets
 
 # --- UTILS --- #
 import json
@@ -24,18 +25,48 @@ class oauthSignupView(View):
     
     def get(self, request):
         url = self.authorization()
-        return JsonResponse({'url': url})
+        response = JsonResponse({'url': url})
+        
+        # Set the state parameter as an HttpOnly cookie
+        state = self.state
+        response.set_cookie('oauth2_state', state, httponly=True, secure=True, samesite='Strict')
+        
+        return response
     
     def authorization(self):
         client_id = env("42_API_UID")
         authorization_url = "https://api.intra.42.fr/oauth/authorize"
         client = WebApplicationClient(client_id)
         
+        # Generate a secure random state parameter
+        self.state = secrets.token_urlsafe(16)
+        
+        # Prepare the authorization URL with the state parameter
         url = client.prepare_request_uri(
             authorization_url,
-            redirect_uri="http://localhost:3000/login",
+            redirect_uri="https://localhost:3000/login",
             scope=['public'],
-            state="randomstate"
+            state=self.state
         )
+
         return url
 
+class oauthRedirectView(View):
+    def get(self, request):
+        state = request.GET.get('state')
+        code = request.GET.get('code')
+        
+        cookie_state = request.COOKIES.get('oauth2_state')
+        
+        if state != cookie_state:
+            return JsonResponse({'error': 'Invalid state parameter'}, status=400)
+        
+        response_data = {
+            'code': code,
+            'state': state
+        }
+        
+        response = JsonResponse(response_data)
+        response.delete_cookie('oauth2_state')
+        
+        return response

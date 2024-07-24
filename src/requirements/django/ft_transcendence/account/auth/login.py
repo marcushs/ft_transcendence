@@ -10,7 +10,7 @@ import json
 class loginView(View):
     def __init__(self):
         super().__init__
-    
+
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
         response = self._check_data(request, data)
