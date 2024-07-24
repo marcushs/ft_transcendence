@@ -85,7 +85,7 @@ async function postData(event, signupBtn) {
 
 		try {
 			console.log(config)
-			const res = await fetch(`http://localhost:8000/account/signup/`, config);
+			const res = await fetch(`http://localhost:8001/auth/signup/`, config);
 			if (res.status == 403)
 				throw new Error('Access Denied')
 			const data = await res.json();

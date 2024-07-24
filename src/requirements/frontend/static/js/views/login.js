@@ -4,6 +4,7 @@ import rotatingGradient from "../anim/rotatingGradient.js";
 import { getCookie } from "../utils/cookie.js";
 import loginFormValidation from "../utils/loginFormValidation.js";
 import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js";
+import { TwoFactorVerify } from './two_factor/TwoFactorLoginVerify.js'
 
 export default () => {
 	const html = `
@@ -71,14 +72,17 @@ async function postData(event, loginBtn) {
 
 		try {
 			console.log(config)
-			const res = await fetch(`http://localhost:8000/account/login/`, config);
+			const res = await fetch(`http://localhost:8001/auth/login/`, config);
 			if (res.status == 403)
 				throw new Error('Access Denied')
 			const data = await res.json();
+			if (res.status === 200) {
+				if (data.is_verified === true)
+					new TwoFactorVerify(json);
+				alert(data.message)
+			}
 			if (data.error)
 				alert(data.error)
-			else
-				window.location.replace(data.redirect_url);
 		} catch (error) {
 			if (error.data && error.data.status === 'jwt_failed') {
 				history.replaceState("", "", "/");

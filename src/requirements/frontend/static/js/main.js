@@ -1,12 +1,12 @@
+import home from "./views/home.js";
 import login from "./views/login.js";
 import signup from "./views/signup.js";
 import logout from "./views/logout.js"
-import changePassword from "./views/change-password.js";
-import enable2fa from "./views/two_factor/enable2fa.js";
-// import LogoutFormHandler from "./views/logout.js";
-import { getCookie ,generateCsrfToken } from "./utils/cookie.js";
 import profile from "./views/profile.js";
-import home from "./views/home.js";
+import changePassword from "./views/change-password.js";
+import { generateCsrfToken } from "./utils/cookie.js";
+import enableTwoFactor from './views/two_factor/TwoFactorAuthEnable.js';
+import disableTwoFactor from './views/two_factor/TwoFactorAuthDisable.js';
 
 const routes = {
     "/": { title: "Home", render: home },
@@ -15,6 +15,8 @@ const routes = {
     "/logout": { title: "Logout", render: logout },
     "/change-password": { title: "Change password", render: changePassword },
     "/profile": { title: "Profile", render: profile },
+    "/twofactor/enable": { title: "EnableTwoFactor", render: enableTwoFactor },
+    "/twofactor/disable": { title: "DisableTwoFactor", render: disableTwoFactor },
 };
 
 // create the csrf token if it does not already exist

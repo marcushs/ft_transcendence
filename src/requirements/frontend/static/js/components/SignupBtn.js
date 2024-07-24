@@ -19,7 +19,7 @@ class SignupBtn extends HTMLElement {
 			}
 		}
 		try {
-			const res = await fetch('http://localhost:8000/account/signup', config);
+			const res = await fetch('http://localhost:8001/auth/signup', config);
 			const data = await res.json();
 			console.log(data.message);
 		} catch (error) {

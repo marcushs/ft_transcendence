@@ -113,7 +113,7 @@ async function postNewPassword(formData) {
 	};
 
 	try {
-		const res = await fetch(`http://localhost:8000/account/change-password/`, config);
+		const res = await fetch(`http://localhost:8001/auth/change-password/`, config);
 		if (res.status == 403)
 			throw new Error('Access Denied')
 		const data = await res.json();

@@ -12,7 +12,7 @@ export default async function getUserData() {
 	};
 
 	try {
-		const res = await fetch(`http://localhost:8000/account/protected/`, config);
+		const res = await fetch(`http://localhost:8000/user/user_info/`, config);
 		if (res.status == 403) {
 			throw new Error('Access Denied');
 		}

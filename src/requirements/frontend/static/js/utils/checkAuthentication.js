@@ -12,11 +12,12 @@ export default async function checkAuthentication() {
 	};
 
 	try {
-		const res = await fetch(`http://localhost:8000/account/protected/`, config);
-		if (res.status === 403 || res.status === 401)
-			return false;
-
+		const res = await fetch(`http://localhost:8000/user/user_info/`, config);
 		const data = await res.json();
+		if (res.status === 403 || res.status === 401) {
+			alert(data.message)
+			return false;
+		}
 		if (data.error) {
 			return false;
 		}
