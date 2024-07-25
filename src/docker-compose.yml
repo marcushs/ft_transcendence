@@ -85,6 +85,31 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
+  # --> OAUTH SERVICE <-- #
+  oauth:
+    container_name: oauth
+    restart: always
+    build:
+      context: ./requirements/backend/oauth_service
+      dockerfile: docker/Dockerfile
+    image: oauth
+    env_file:
+      - ./requirements/backend/.env
+    command: >
+      sh -c "
+          python3 manage.py makemigrations &&
+          python3 manage.py migrate &&
+          python3 manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./requirements/backend/twofactor_service:/app
+    ports:
+      - "8003:8000"
+    depends_on:
+      oauth_db:
+        condition: service_healthy
+    networks:
+      - transcendence-network
   # --> DATABASE TWOFACTOR <-- #
   twofactor_db:
     container_name: twofactor_db
@@ -151,6 +176,28 @@ services:
       interval: 4s
       timeout: 3s
       retries: 5
+  # --> DATABASE OAUTH <-- #
+  oauth_db:
+    container_name: oauth_db
+    image: postgres
+    restart: always
+    env_file: ./requirements/backend/.env
+    environment:
+      - POSTGRES_USER=${OAUTH_DB_USER}
+      - POSTGRES_DB=${OAUTH_DB_NAME}
+      - POSTGRES_PASSWORD=${OAUTH_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - oauth_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+     - "5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${OAUTH_DB_USER} -d ${OAUTH_DB_NAME}"]
+      interval: 4s
+      timeout: 3s
+      retries: 5
 
 volumes:
   user_pgdata:
@@ -159,6 +206,8 @@ volumes:
     name: auth_data
   twofactor_pgdata:
     name: twofactor_pgdata
+  oauth_pgdata:
+    name: oauth_pgdata
 
 networks:
   transcendence-network:
