@@ -24,7 +24,6 @@ export default class ChatContactComponent extends HTMLElement {
 		let profileImage = await getProfileImage(this.userData);
 		const lastMessage = await this.getChatroomLastMessage();
 
-		console.log('in ChatContactComponent: ', lastMessage);
 		this.innerHTML = `
 		<div class="chat-contact-profile-picture">
 			<img src=${profileImage} alt='contact picture'></img>

@@ -38,6 +38,7 @@ async def starting_game_instance(data):
     player_one_infos = (await send_request(request_type="GET", url=f"http://user:8000/api/user/get_user_by_id/?q={str(data['player1'])}")).json()['user_data']
     player_two_infos = (await send_request(request_type="GET", url=f"http://user:8000/api/user/get_user_by_id/?q={str(data['player2'])}")).json()['user_data']
 
+    print(f'-----------> player one infos : {player_one_infos}') 
     try:
         game_users_data = {
             'game': str(uuid.uuid4()),

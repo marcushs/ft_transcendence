@@ -11,12 +11,15 @@ class MatchResultManager(View):
     def __init__(self):
         super()
         
+        self.winner_old_points = None
+        self.loser_old_points = None
+        
         self.ranks = {
             'bronze': (0, 999),
             'silver': (1000, 2999),
             'gold': (3000, 5999),
             'diamond': (6000, 9999),
-            'master': (10000, float('inf'))  
+            'master': (10000, float('inf'))
         } 
 
     def post(self, request):
@@ -25,13 +28,16 @@ class MatchResultManager(View):
             self.is_valid_data(data)
             if not self.update_match_result_data(data):
                 return JsonResponse({'status': 'success', 'message': 'result not taken into account, game cancelled with draw'}, status=200)
+            print(f'WINNER: OLD POINTS : {self.winner_old_points} -- NEW POINTS : {self.winner.rankPoints}')
+            print(f'LOSER: OLD POINTS : {self.loser_old_points} -- NEW POINTS : {self.loser.rankPoints}')
+
             if data['type'] == 'ranked':
                 winner_rank = self.get_rank(self.winner.rankPoints)
                 loser_rank = self.get_rank(self.loser.rankPoints)
                 payload = {
                     'winner': {
                         'old_rank_points': self.winner_old_points,
-                        'new_rank_points': self.winner.rankPoints,
+                        'new_rank_points': self.winner.rankPoints, 
                         'rank': self.winner_old_rank,
                         'new_rank': winner_rank if winner_rank != self.winner_old_rank else None
                     },
@@ -41,7 +47,7 @@ class MatchResultManager(View):
                         'rank': self.loser_old_rank,
                         'new_rank': loser_rank if loser_rank != self.loser_old_rank else None
                     }
-                } 
+                }
                 return JsonResponse({'status': 'success', 'results': payload}, status=200)
             return JsonResponse({'status': 'success', 'message': 'match data updated'}, status=200)
         except Exception as e:
@@ -82,6 +88,9 @@ class MatchResultManager(View):
         self.winner.goals_conceded += data['loser']['score']
         self.loser.goals_scored += data['loser']['score']
         self.loser.goals_conceded += data['winner']['score']
+        if data['type'] == 'unranked':
+            self.winner.rankPoints = 925
+            self.loser.rankPoints = 925
         self.create_new_match_history(data=data, winner_instance=self.winner, loser_instance=self.loser)
         self.winner.save()
         self.loser.save()
@@ -113,13 +122,13 @@ class MatchResultManager(View):
     def save_old_ranks_value(self, data):
         self.winner_old_rank = self.get_rank(self.winner.rankPoints)
         self.winner_old_points = self.winner.rankPoints
-        self.loser_old_points = self.winner.rankPoints
+        self.loser_old_points = self.loser.rankPoints
         self.loser_old_rank = self.get_rank(self.loser.rankPoints)
-        
+
 
     def get_rank(self, points):
         for rank, (min, max) in self.ranks.items():
-            if min <= points < max:
+            if min <= points <= max:
                 return rank
         return None
 
@@ -131,13 +140,11 @@ class MatchResultManager(View):
         else:
             winner_points = self.manage_ranked_points_update(user=self.winner, user_score=int(data['winner']['score']), opponent=self.loser, opponent_score=int(data['loser']['score']))
             loser_points = self.manage_ranked_points_update(user=self.loser, user_score=int(data['loser']['score']), opponent=self.winner, opponent_score=int(data['winner']['score']))
-        print(f'winner.rankPoints: {self.winner.rankPoints} -- winner_points: {winner_points}')
-        print(f'loser.rankPoints: {self.loser.rankPoints} -- loser_points: {loser_points}')
         if self.winner.rankPoints + winner_points >= 0:
             self.winner.rankPoints += winner_points
         else:
             self.winner.rankPoints = 0
-        if self.loser.rankPoints + loser_points >= 0: 
+        if self.loser.rankPoints + loser_points >= 0:
             self.loser.rankPoints += loser_points
         else:
             self.loser.rankPoints = 0
@@ -154,10 +161,6 @@ class MatchResultManager(View):
             points = base_point - rank_percentage + surrend_penality
         points_won = round(max(50, min(150, points)))
         points_lost = round(min(-50, max(-150, points * -1)))
-        
-        print(f'------> rank_difference: {rank_difference} -- rank percentage : {rank_percentage}')
-        print(f'points: {points}')
-        print(f'points_lost: {points_lost} -- points_won: {points_won}')
         return round(points_won), round(points_lost)
 
 
@@ -166,7 +169,6 @@ class MatchResultManager(View):
         rank_difference = user.rankPoints - opponent.rankPoints
         rank_percentage = (abs(rank_difference) * 100) / max(1, user.rankPoints, opponent.rankPoints)
         score_difference = user_score - opponent_score
-        print(f'------> rank_difference: {rank_difference} -- rank percentage : {rank_percentage} -- score_difference: {score_difference}') 
         if score_difference > 0:
             if rank_difference > 0:
                 points = base_point - rank_percentage + score_difference

@@ -1,7 +1,7 @@
 
 
 export default class Intro {
-	constructor(canvas, leftPlayer, rightPlayer) {
+	constructor(canvas, isRanked, leftPlayer, rightPlayer) {
 		this.canvas = canvas;
 		this.isAnimationEnabled = false;
 		this.isCountDownEnabled = false;
@@ -10,7 +10,7 @@ export default class Intro {
 		this.leftPlayer = leftPlayer;
 		this.rightPlayer = rightPlayer;
 
-		this.isRanked = false;
+		this.isRanked = true;
 
 		this.playersInfos = {
 			isRanked: false,

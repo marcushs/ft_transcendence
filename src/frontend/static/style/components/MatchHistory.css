@@ -12,7 +12,7 @@ match-history-component h1 {
     font-weight: 500;
 }
 
-match-history-component p {
+match-history-component .unlogged-sentence {
     font-size: 2.5rem;
     width: 85%;
     position: absolute;

@@ -11,6 +11,7 @@ import Ball from "./Ball.js";
 import Intro from "./Intro.js";
 import Outro from "./Outro.js";
 import CircularList from "../../../../utils/CircularList.js";
+import RankOutro from "./RankOutro.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
 	localStorage.removeItem('isSearchingGame');
@@ -50,11 +51,15 @@ export default class Game {
 		this.isGameRunning = false;
 		this.isIntroAnimationEnabled = true;
 		this.isOutroAnimationEnabled = false;
+		this.isRankOutroAnimationEnabled = false;
 		this.isSentEmoteAnimationEnabled = false;
 		this.isReceivedEmoteAnimationEnabled = false;
 
-		this.Intro = new Intro(this.canvas, gameState.player_two.user_infos, gameState.player_one.user_infos);
+		console.log('is ranked : ', gameState.is_ranked);
+
+		this.Intro = new Intro(this.canvas, gameState.is_ranked, gameState.player_two.user_infos, gameState.player_one.user_infos);
 		this.Outro = new Outro(this.canvas);
+		this.RankOutro = new RankOutro(this.canvas);
 
 		this.gameTopBar = document.querySelector('game-top-bar');
 		this.gameTopBar.classList.add('in-game-top-bar');
@@ -159,6 +164,8 @@ export default class Game {
 			this.Intro.drawIntro();
 		if (this.isOutroAnimationEnabled)
 			this.Outro.drawOutro();
+		if (this.isRankOutroAnimationEnabled)
+			this.RankOutro.drawRankOutro();
 
 		requestAnimationFrame(() => this.renderLoop());
 	}
@@ -435,13 +442,19 @@ export default class Game {
 		this.throwLoadOutroAnimationEvent(isWin);
 		this.isOutroAnimationEnabled = true;
 
-		console.log(data);
+		console.log(data.message);
+		setTimeout(() => {
+			this.isOutroAnimationEnabled = false;
+			this.isRankOutroAnimationEnabled = true;
+			this.throwLoadRankOutroAnimationEvent(data.message, isWin);
+		}, 7000);
+
 		// Not definitive
 		setTimeout(() => {
 			this.gameInProgress = false;
 			disconnectGameWebSocket(this.userId, false);
 			throwRedirectionEvent('/');
-		}, 10000);
+		}, 20000);
 	}
 
 	cleanup() {
@@ -493,6 +506,18 @@ export default class Game {
 		const event = new CustomEvent('loadOutroAnimationEvent', {
 			bubbles: true,
 			detail: {
+				isWin: isWin
+			}
+		});
+
+		document.dispatchEvent(event);
+	}
+
+	throwLoadRankOutroAnimationEvent(rankData, isWin) {
+		const event = new CustomEvent('loadRankOutroAnimationEvent', {
+			bubbles: true,
+			detail: {
+				rankData: rankData,
 				isWin: isWin
 			}
 		});

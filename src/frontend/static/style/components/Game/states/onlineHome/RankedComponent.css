@@ -100,7 +100,7 @@ ranked-component {
 
 .rank-container-content .next-rank-infos .next-rank-percentage-bar .inner-bar {
 	height: 100%;
-	width: 80%;
+	/*width: 80%;*/
 	border-radius: 5px;
 }
 

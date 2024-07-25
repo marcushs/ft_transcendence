@@ -72,6 +72,5 @@ class GetMatchableRankedPlayers(View):
 
     def get_rank(self, points):
         for rank, (min, max) in self.ranks.items():
-            if min <= points < max:
+            if min <= points <= max:
                 return rank
-        return None
