@@ -7,6 +7,8 @@ import changePassword from "./views/change-password.js";
 import { generateCsrfToken } from "./utils/cookie.js";
 import enableTwoFactor from './views/two_factor/TwoFactorAuthEnable.js';
 import disableTwoFactor from './views/two_factor/TwoFactorAuthDisable.js';
+import twoFactorApp from "./views/two-factor-app.js";
+import twoFactorEmail from "./views/two-factor-email.js";
 
 const routes = {
     "/": { title: "Home", render: home },
@@ -15,6 +17,8 @@ const routes = {
     "/logout": { title: "Logout", render: logout },
     "/change-password": { title: "Change password", render: changePassword },
     "/profile": { title: "Profile", render: profile },
+    "/two-factor-app": { title: "TwoFactorApp", render: twoFactorApp },
+    "/two-factor-email": { title: "TwoFactorEmail", render: twoFactorEmail },
     "/twofactor/enable": { title: "EnableTwoFactor", render: enableTwoFactor },
     "/twofactor/disable": { title: "DisableTwoFactor", render: disableTwoFactor },
 };
@@ -23,6 +27,7 @@ const routes = {
 generateCsrfToken();
 function router() {
     let view = routes[location.pathname];
+    // let view = routes['/two-factor']
 
     if (view) {
         document.title = view.title;

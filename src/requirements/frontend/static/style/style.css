@@ -5,10 +5,12 @@
 @import './views/signup.css';
 @import './views/profile.css';
 @import './views/change-password.css';
+@import 'views/two-factor-app.css';
+@import 'views/two-factor-email.css';
 @import './_variables.css';
 
 :root {
-    font-size: 100%;
+    font-size: 50%;
 }
 
 * {

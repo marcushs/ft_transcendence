@@ -1,0 +1,96 @@
+.two-factor-app-page {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.two-factor-app-form-container {
+	position: relative;
+	height: 100rem;
+	width: 90rem;
+	background: var(--neon-gradiant);
+	padding: 3px;
+	border-radius: 10px;
+}
+
+.two-factor-app-form-container-background {
+	z-index: 0;
+	position: absolute;
+	height: 100rem;
+	width: 90rem;
+	background: var(--neon-gradiant);
+	filter: blur(15px);
+}
+
+.two-factor-app-page h1 {
+	font-size: 5rem;
+	font-weight: 400;
+	letter-spacing: 1px;
+	margin-bottom: 7rem;
+}
+
+.two-factor-app-page form {
+	height: 100%;
+	width: 100%;
+	border-radius: 7px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.two-factor-app-page form p {
+	font-size: 1.8rem;
+	text-align: center;
+	padding: 1rem 7rem;
+}
+
+.two-factor-app-page form #qrcode {
+	padding: 2rem 0 4.5rem 0;
+}
+
+.two-factor-app-page form #qrcode-token {
+	padding: 1rem 0 4.5rem 0;
+}
+
+.two-factor-app-page form #qrcode-token p {
+	font-size: 2rem;
+	padding: 0;
+}
+
+.two-factor-app-page .form-fields {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 60%;
+	height: 4rem;
+	margin-bottom: 7rem;
+}
+
+.two-factor-app-page .feedbackInformation {
+	position: absolute;
+	color: red;
+	font-size: 1.8rem;
+	top: 92%;
+}
+
+.two-factor-app-page .form-fields {
+	display: flex;
+	flex-direction: row;
+}
+
+.two-factor-app-page form input {
+	text-align: center;
+	vertical-align: center;
+	border-radius: 10px;
+	border: 1px solid var(--light-grey);
+	height: 5rem;
+	width: 5rem;
+	margin: 0 0.5rem;
+	font-size: 3rem;
+	color: var(--text-primary-color);
+}

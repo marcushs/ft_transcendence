@@ -1,7 +1,8 @@
+@import '../ToggleButtonComponent.css';
+
 security-component {
 	display: flex;
 	flex-direction: column;
-	/*justify-content: center;*/
 	justify-content: space-evenly;
 	align-items: center;
 	height: 100%;
@@ -23,8 +24,9 @@ security-component .title {
 
 security-component .information-sentence {
 	font-size: 1.5rem;
-	margin-left: 2.5rem;
 	margin-top: 1rem;
+	text-align: center;
+	padding: 0 1rem;
 }
 
 security-component .feedbackInformation {
@@ -76,45 +78,6 @@ security-component .two-factor-type p {
 	font-size: 1.8rem;
 	font-weight: bold;
 }
-
-security-component .toggle-button {
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	width: 5rem;
-	height: 2.5rem;
-	background: red;
-	border-radius: 2rem;
-	animation: test2 0.5s ease forwards;
-}
-
-security-component .toggle-button .toggle-circle {
-	background: var(--text-primary-color);
-	width: calc(2rem);
-	height: calc(2rem);
-	border-radius: 100%;
-	margin-left: 0.3rem;
-	animation: test 0.5s ease forwards;
-}
-
-@keyframes test {
-	0% {
-		margin-left: 0.3rem;
-	}
-	100% {
-		margin-left: calc(100% - 2.3rem);
-	}
-}
-
-@keyframes test2 {
-	0% {
-		background: red;
-	}
-	100% {
-		background: var(--neon-blue);
-	}
-}
-
 
 /* Change password container */
 

@@ -34,7 +34,8 @@ class twofactor_enable_view(View):
                 return JsonResponse({'message': 'We\'ve encountered an issue with the selected authentication method.'}, status=201)
         
     def _email_handler(self, request):
-        verification_code = secrets.token_hex(6)
+        # verification_code = secrets.token_hex(6)
+        verification_code = self._generate_6_digits_code()
         subject='Two Factor Activation'
         message=f"""
                 Hi {request.user.username},
@@ -89,4 +90,7 @@ class twofactor_enable_view(View):
             return None
         except Exception as error:
             return f'An error occurred with email sending : {str(error)}'
-    
+
+    def _generate_6_digits_code(self):
+        code = secrets.randbelow(1000000)
+        return f"{code:06d}"

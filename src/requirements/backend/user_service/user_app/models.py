@@ -33,7 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
       return self.username
 
-    def save(self, has_new_image=False):
+    def save(self, has_new_image=False, *args, **kwargs):
         if has_new_image:
             if self.id: # If instance already exist in db
                 try:
@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                             os.remove(old_instance.profile_image.path)
                 except User.DoesNotExist:
                     pass
-        super(User, self).save() # To call the real save method
+        super(User, self).save(*args, **kwargs) # To call the real save method
 
   
     def to_dict(self):

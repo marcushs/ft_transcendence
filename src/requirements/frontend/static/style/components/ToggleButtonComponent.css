@@ -1,0 +1,57 @@
+.toggle-button {
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	width: 5rem;
+	height: 2.5rem;
+	background: red;
+	border-radius: 2rem;
+	animation: test2 0.5s ease forwards;
+}
+
+.toggle-button .toggle-circle {
+	background: var(--text-primary-color);
+	width: calc(2rem);
+	height: calc(2rem);
+	border-radius: 100%;
+	margin-left: 0.3rem;
+}
+
+
+@keyframes move-circle-to-enabled {
+	0% {
+		margin-left: 0.3rem;
+	}
+	100% {
+		margin-left: calc(100% - 2.3rem);
+	}
+}
+
+@keyframes change-color-to-enabled {
+	0% {
+		background: red;
+	}
+	100% {
+		background: var(--neon-blue);
+	}
+}
+
+
+@keyframes move-circle-to-disabled {
+	0% {
+		margin-left: calc(100% - 2.3rem);
+	}
+	100% {
+		margin-left: 0.3rem;
+	}
+}
+
+@keyframes change-color-to-disabled {
+	0% {
+		background: var(--neon-blue);
+	}
+	100% {
+		background: red;
+	}
+}
+

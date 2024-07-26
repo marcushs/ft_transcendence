@@ -8,20 +8,21 @@ class TwoFactorEnablerComponent extends HTMLElement {
     constructor() {
         super();
 
-        this.initialize();
-        this.pushNewState(this.states[this.currentState].state);
-        this.attachEventListener();
-    }
-
-    initialize() {
         this.states = {
             "enableHome": { context: '/profile/2fa/enable', state: new enableHome},
             "methodChoice": { context: '/profile/2fa/enable/method', state: new methodChoice},
             "tokenVerify": { context: '/profile/2fa/enable/method/verify', state: new tokenVerify},
             "enableDone": { context: '/profile/2fa/enable/method/verify/done', state: new enableDone},
         };
+
+        this.initializeComponent();
+        this.pushNewState(this.states[this.currentState].state);
+        this.attachEventListener();
+    }
+
+    initializeComponent() {
         this.selectedMethod = "N/A";
-        this.innerHTML = `<div class="states-container"></div>`
+        this.innerHTML = `<div class="states-container"></div>`;
         this.stateContainer = document.querySelector('.states-container');
         this.currentContext = this.states["enableHome"].context;
         this.currentState = "enableHome";

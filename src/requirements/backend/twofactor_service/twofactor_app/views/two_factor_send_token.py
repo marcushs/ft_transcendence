@@ -46,7 +46,7 @@ class twofactor_send_token_view(View):
     def _handle_email_method(self, user, subject, EmailMessageSetting):
         try:
             email_from = settings.EMAIL_HOST_USER
-            verification_code = secrets.token_hex(6)
+            verification_code = self._generate_6_digits_code()
             message=f"""
                     Hi {user.username},
 
@@ -64,3 +64,7 @@ class twofactor_send_token_view(View):
             return JsonResponse({'method': user.two_factor_method}, status=200)
         except Exception as error:
             return JsonResponse({'message': f'An error occurred with email sending : {str(error)}'}, status=400)
+
+    def _generate_6_digits_code(self):
+        code = secrets.randbelow(1000000)
+        return f"{code:06d}"

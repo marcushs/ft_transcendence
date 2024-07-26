@@ -1,6 +1,8 @@
 import profile from "../views/profile.js";
 import login from "../views/login.js";
 import logout from "../views/logout.js";
+import signup from "../views/signup.js";
+import twoFactor from "../views/two-factor-app.js";
 
 
 export function handleRedirection(redirection) {
@@ -20,6 +22,8 @@ export function handleRedirection(redirection) {
             case 'logout':
                 app.innerHTML = logout();
                 break;
+            case 'two-factor':
+                app.innerHTML = twoFactor();
             default:
                 app.innerHTML = index();
                 break;

@@ -1,3 +1,5 @@
+import '../ToggleButtonComponent.js'
+
 class SecurityComponent extends HTMLElement {
 	constructor() {
 		super();
@@ -18,16 +20,12 @@ class SecurityComponent extends HTMLElement {
 				<hr>
 				<div class="two-factor-type">					
 					<p>2fa by email</p>
-					<div class="toggle-button">
-						<div class="toggle-circle"></div>
-					</div>
+					<toggle-button-component></toggle-button-component>
 				</div>
 				<hr>
-				<div class="two-factor-type">					
+				<div class="two-factor-type">
 					<p>2fa by app</p>
-					<div class="toggle-button">
-						<div class="toggle-circle"></div>
-					</div>
+					<toggle-button-component></toggle-button-component>
 				</div>
 			</div>
 			<span class="feedbackInformation" id="twoFactorFeedback"></span>
