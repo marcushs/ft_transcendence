@@ -30,6 +30,8 @@ export default () => {
 						<span id="confirmPasswordFeedback" class="input-feedback"></span>
 					</div>
 					<button-component id="signupBtn" label="Signup" class="generic-auth-btn-disabled"></button-component>
+					<button-component id="oauthSignupBtn" label="Signup with 42" class="generic-auth-btn" icon="true">
+					</button-component>
 					<p>Already have an account? <a href="/login">Login</a></p>
 				</form>
 			</div>

@@ -1,6 +1,6 @@
 class ButtonComponent extends HTMLElement {
 	static get observedAttributes() {
-		return ['disabled', 'label', 'class', 'href'];
+		return ['disabled', 'label', 'class', 'href', 'icon'];
 	}
 
 	constructor() {
@@ -8,16 +8,36 @@ class ButtonComponent extends HTMLElement {
 
 		this.label = null;
 		this.class = null;
+		this.icon = null;
 	}
 
 	connectedCallback() {
-		this.innerHTML = `
+		this.icon = this.getAttribute('icon');
+
+		// oauth button with 42 icon
+		if (this.icon) {
+			this.innerHTML = `
 			<div class="button-background">
-				<button>${this.getAttribute('label')}</button>
+				<button>
+					<img src="../../assets/42_Logo.png" class="logo42">
+					${this.getAttribute('label')}
+				</button>
 			</div>
-		`;
+			`;
+		} else {
+			this.innerHTML = `
+				<div class="button-background">
+					<button>${this.getAttribute('label')}</button>
+				</div>
+			`;
+		}
 
 		this.button = this.querySelector('button');
+		if (this.icon) {
+			this.button.style.display = 'flex';
+			this.button.style.alignItems = 'center';
+			this.button.style.justifyContent = 'center';
+		}
 		this.button.label = this.label;
 		this.button.className = this.class;
 	}

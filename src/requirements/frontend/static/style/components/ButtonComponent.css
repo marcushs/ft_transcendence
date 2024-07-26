@@ -83,6 +83,13 @@ button-component .button-background:hover .login-nav-bar-btn {
 	border-radius: 5px;
 }
 
+/* style for oauth button */
+.generic-auth-btn .logo42{
+	width: 8%;
+	display: inline;
+	margin-right: 20px;
+}
+
 .generic-auth-btn-disabled .button-background {
 	padding: 1px;
 	background: var(--light-grey);
