@@ -15,13 +15,11 @@ export default async function checkAuthentication() {
 		const res = await fetch(`http://localhost:8000/user/user_info/`, config);
 		const data = await res.json();
 		if (res.status === 403 || res.status === 401) {
-			alert(data.message)
 			return false;
 		}
 		if (data.error) {
 			return false;
 		}
-
 		return true;
 	} catch (error) {
 		return false;
