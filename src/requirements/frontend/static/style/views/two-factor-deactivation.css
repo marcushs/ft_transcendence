@@ -1,0 +1,88 @@
+.two-factor-deactivation-page {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.two-factor-deactivation-form-container {
+	position: relative;
+	height: 50rem;
+	width: 90rem;
+	background: var(--neon-gradiant);
+	padding: 3px;
+	border-radius: 10px;
+}
+
+.two-factor-deactivation-form-container-background {
+	z-index: 0;
+	position: absolute;
+	height: 50rem;
+	width: 90rem;
+	background: var(--neon-gradiant);
+	filter: blur(15px);
+}
+
+.two-factor-deactivation-page h1 {
+	font-size: 5rem;
+	font-weight: 400;
+	letter-spacing: 1px;
+	margin-bottom: 7rem;
+}
+
+.two-factor-deactivation-page form {
+	height: 100%;
+	width: 100%;
+	border-radius: 7px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.two-factor-deactivation-page form p {
+	font-size: 1.8rem;
+	text-align: center;
+	padding: 0 7rem;
+}
+
+.two-factor-deactivation-page form p:has(strong) {
+	font-size: 2rem;
+}
+
+.two-factor-deactivation-page .form-fields {
+	margin-top: 3rem;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 60%;
+	height: 4rem;
+	margin-bottom: 7rem;
+}
+
+.two-factor-deactivation-page .feedbackInformation {
+	position: absolute;
+	color: red;
+	font-size: 1.8rem;
+	top: 92%;
+}
+
+.two-factor-deactivation-page .form-fields {
+	display: flex;
+	flex-direction: row;
+}
+
+.two-factor-deactivation-page form input {
+	text-align: center;
+	vertical-align: center;
+	border-radius: 10px;
+	border: 1px solid var(--light-grey);
+	height: 5rem;
+	width: 5rem;
+	margin: 0 0.5rem;
+	font-size: 3rem;
+	color: var(--text-primary-color);
+}

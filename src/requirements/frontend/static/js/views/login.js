@@ -4,7 +4,9 @@ import rotatingGradient from "../anim/rotatingGradient.js";
 import { getCookie } from "../utils/cookie.js";
 import loginFormValidation from "../utils/loginFormValidation.js";
 import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js";
-import { TwoFactorVerify } from './two_factor/TwoFactorLoginVerify.js'
+import {TwoFactorVerify} from './two-factor-verify.js';
+// import {TwoFactorVerify} from "./two_factor/TwoFactorLoginVerify.js";
+import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 
 export default () => {
 	const html = `
@@ -27,7 +29,7 @@ export default () => {
 			</div>
 		</section>`;
 
-	setTimeout(() => {
+	setTimeout(async () => {
 		const loginBtn = document.querySelector('#loginBtn');
 
 		loginBtn.addEventListener('click', event => {
@@ -71,20 +73,17 @@ async function postData(event, loginBtn) {
 			const data = await res.json();
 			if (res.status === 200) {
 				if (data.is_verified === true)
-					new TwoFactorVerify(json);
+					new TwoFactorVerify(JSON.parse(json));
+					// new TwoFactorVerify(json);
 				else
-					window.location.replace('/');
+					throwRedirectionEvent('/');
 			} else {
 				console.log(data.message)
 			}
 		} catch (error) {
-			if (error.data && error.data.status === 'jwt_failed') {
-				history.replaceState("", "", "/");
-				document.title = "Index";
-				app.innerHTML = index();
-			}
+			if (error.data && error.data.status === 'jwt_failed')
+				throwRedirectionEvent('/')
 			console.log('Catch error :', error);
-			alert(`Error: ${error.message}`)
 		}
 	} else {
 		console.error('No form found!');

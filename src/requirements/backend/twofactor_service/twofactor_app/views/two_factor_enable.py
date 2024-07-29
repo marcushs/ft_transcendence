@@ -49,7 +49,7 @@ class twofactor_enable_view(View):
 
                 If you have not requested this action, please ignore this email.
                 """
-        recipient_list = [request.user.email, ]
+        recipient_list = [request.user.email]
         error_message = self._send_mail(subject, message, recipient_list)
         if error_message is not None:
             return JsonResponse({'message': error_message}, status=400)
@@ -90,7 +90,7 @@ class twofactor_enable_view(View):
             return None
         except Exception as error:
             return f'An error occurred with email sending : {str(error)}'
-
+        
     def _generate_6_digits_code(self):
         code = secrets.randbelow(1000000)
         return f"{code:06d}"

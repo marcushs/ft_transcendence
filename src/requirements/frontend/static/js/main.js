@@ -6,9 +6,20 @@ import profile from "./views/profile.js";
 import changePassword from "./views/change-password.js";
 import { generateCsrfToken } from "./utils/cookie.js";
 import enableTwoFactor from './views/two_factor/TwoFactorAuthEnable.js';
-import disableTwoFactor from './views/two_factor/TwoFactorAuthDisable.js';
 import twoFactorApp from "./views/two-factor-app.js";
 import twoFactorEmail from "./views/two-factor-email.js";
+import checkAuthentication from "./utils/checkAuthentication.js";
+import twoFactorDeactivation from "./views/two-factor-deactivation.js";
+
+// (async () => {
+//     if (await isTwoFactorActivated()) {
+//         localStorage.setItem('isTwoFactorActivated', 'true');
+//         localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
+//     } else {
+//         localStorage.setItem('isTwoFactorActivated', 'false');
+//         localStorage.removeItem('twoFactorMethod');
+//     }
+// })();
 
 const routes = {
     "/": { title: "Home", render: home },
@@ -19,24 +30,51 @@ const routes = {
     "/profile": { title: "Profile", render: profile },
     "/two-factor-app": { title: "TwoFactorApp", render: twoFactorApp },
     "/two-factor-email": { title: "TwoFactorEmail", render: twoFactorEmail },
-    "/twofactor/enable": { title: "EnableTwoFactor", render: enableTwoFactor },
-    "/twofactor/disable": { title: "DisableTwoFactor", render: disableTwoFactor },
+    "/two-factor-deactivation": { title: "TwoFactorDeactivate", render: twoFactorDeactivation },
 };
 
 // create the csrf token if it does not already exist
 generateCsrfToken();
-function router() {
+async function router() {
     let view = routes[location.pathname];
-    // let view = routes['/two-factor']
 
-    if (view) {
-        document.title = view.title;
-        app.innerHTML = view.render();
-    } else {
-        history.replaceState("", "", "/");
-        router();
+    if (!view || !await isViewAccessible(location.pathname)) {
+        history.replaceState("", "", localStorage.getItem('lastAuthorizedPage'));
+        view = routes[localStorage.getItem('lastAuthorizedPage')];
     }
-};
+
+    document.title = view.title;
+    app.innerHTML = view.render();
+}
+
+
+async function isViewAccessible(view) {
+    const isUserConnected = await checkAuthentication();
+    const loggedOutViews = ['/login', '/signup'];
+    const loggedInViews = ['/change-password', '/profile', '/two-factor-app', '/two-factor-email', '/two-factor-deactivation', '/logout'];
+    const twoFactorEnableViews = ['/two-factor-deactivation'];
+    const twoFactorDisableViews = ['/two-factor-app', '/two-factor-email'];
+
+    if (loggedOutViews.includes(view)) {
+        if (isUserConnected)
+            return false;
+    }
+    if (loggedInViews.includes(view)) {
+        if (!isUserConnected)
+            return false;
+        if (twoFactorEnableViews.includes(view) && localStorage.getItem('isTwoFactorActivated') === 'false') {
+            return false;
+        }
+        if (twoFactorDisableViews.includes(view) && localStorage.getItem('isTwoFactorActivated') === 'true') {
+            return false;
+        }
+    }
+
+    if (view === '/' || view === '/profile')
+        localStorage.setItem('lastAuthorizedPage', location.pathname);
+    return true;
+}
+
 
 // Handle navigation
 window.addEventListener("click", e => {
@@ -45,6 +83,14 @@ window.addEventListener("click", e => {
         history.pushState("", "", e.target.href);
         router();
     }
+});
+
+window.addEventListener('redirection', e => {
+    if (location.pathname !== e.detail.route)
+        history.pushState("", "", e.detail.route);
+    else
+        history.replaceState("", "", e.detail.route); // To reload components without reload the whole page
+    router();
 });
 
 

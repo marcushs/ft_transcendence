@@ -1,6 +1,6 @@
 import { getCookie } from "./cookie.js";
 
-export async function isVerifiedUser() { 
+export async function isTwoFactorActivated() {
     const config = {
         method: 'GET',
         headers: {
@@ -16,14 +16,15 @@ export async function isVerifiedUser() {
         if (res.status !== 200) {
             throw new Error('you cant access this page, please login to your account')
         } else {
+            console.log('test', data)
             return data.is_verified;
         }
     } catch (error) {
-        alert(error.message);
-        if (app) {
-            app.innerHTML = '';
-            history.pushState("", "", "/");
-            app.innerHTML = index();
-        }
+        // alert(error.message);
+        // if (app) {
+        //     app.innerHTML = '';
+        //     history.pushState("", "", "/");
+        //     app.innerHTML = index();
+        // }
     }
 }

@@ -4,6 +4,8 @@ import {getCookie} from "../utils/cookie.js";
 import '../components/ButtonComponent.js';
 import '../components/two_factor_auth/TwoFactorInputComponent.js';
 import getUserData from "../utils/getUserData.js";
+import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
+import {setTwoFactorLocalStorage} from "../utils/setTwoFactorLocalStorage.js";
 
 export default () => {
 	enableTwoFactorRequest();
@@ -95,7 +97,9 @@ async function VerifyTwoFactorRequest(verificationCode) {
 		throw new Error('Access Denied')
 	const data = await res.json();
 	if (res.status === 200) {
-		console.log('enable backend response: ', data.message)
+		throwRedirectionEvent('/profile');
+		localStorage.setItem('state', 'security');
+		setTwoFactorLocalStorage();
 	} else
 		document.querySelector('.feedbackInformation').innerHTML = data.message;
 }

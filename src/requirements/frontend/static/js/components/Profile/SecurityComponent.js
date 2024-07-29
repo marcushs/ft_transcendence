@@ -1,4 +1,5 @@
 import '../ToggleButtonComponent.js'
+import {throwRedirectionEvent} from "../../utils/throwRedirectionEvent.js";
 
 class SecurityComponent extends HTMLElement {
 	constructor() {
@@ -18,14 +19,14 @@ class SecurityComponent extends HTMLElement {
 					in addition to your password.
 				</p>
 				<hr>
-				<div class="two-factor-type">					
+				<div class="two-factor-type">
 					<p>2fa by email</p>
-					<toggle-button-component></toggle-button-component>
+					<toggle-button-component enabled-route="/two-factor-email" disabled-route="/two-factor-deactivation"></toggle-button-component>
 				</div>
 				<hr>
 				<div class="two-factor-type">
 					<p>2fa by app</p>
-					<toggle-button-component></toggle-button-component>
+					<toggle-button-component enabled-route="/two-factor-app" disabled-route="/two-factor-deactivation"></toggle-button-component>
 				</div>
 			</div>
 			<span class="feedbackInformation" id="twoFactorFeedback"></span>
@@ -36,16 +37,23 @@ class SecurityComponent extends HTMLElement {
 				<p class="information-sentence">
 					Change your password regularly to keep your account secure.
 				</p>
-				<button-component label="Change" class="generic-btn" href="/change-password"></button-component>
+				<button-component label="Change" class="generic-btn"></button-component>
 			</div>
 			<span class="feedbackInformation" id="passwordFeedback"></span>
 		`;
 	}
 
 
-	connectedCallback() {
-		console.log('test');
+	async connectedCallback() {
 		this.displayFeedbackFromLocalStorage();
+		this.attachEventsListener();
+	}
+
+
+	attachEventsListener() {
+		const buttonComponent = this.querySelector('button-component');
+
+		buttonComponent.addEventListener('click', () => throwRedirectionEvent('/change-password'));
 	}
 
 
@@ -55,7 +63,6 @@ class SecurityComponent extends HTMLElement {
 		const twoFactorResponse = localStorage.getItem('twoFactorFeedback');
 		const passwordResponse = localStorage.getItem('passwordFeedback');
 
-		console.log(passwordResponse)
 		if (twoFactorResponse) {
 			twoFactorFeedbackElement.innerHTML = twoFactorResponse;
 			localStorage.removeItem('twoFactorFeedback');

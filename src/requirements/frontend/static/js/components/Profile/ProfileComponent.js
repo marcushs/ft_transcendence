@@ -2,7 +2,7 @@ import rotatingGradient from "../../anim/rotatingGradient.js";
 import './ProfileNavBarComponent.js'
 import './UserInfosComponent.js'
 import './SecurityComponent.js'
-import './PopUpComponent.js'
+import '../PopUpComponent.js'
 
 class ProfileComponent extends HTMLElement {
 

@@ -5,6 +5,7 @@ import getUserData from "../utils/getUserData.js";
 import signup from "../views/signup.js";
 import login from "../views/login.js";
 import typeAndReplaceWords from "../anim/typeAndReplaceWords.js";
+import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 
 class NavBarComponent extends HTMLElement {
 
@@ -32,9 +33,26 @@ class NavBarComponent extends HTMLElement {
     }
 
 
-    connectedCallback() {
-        this.generateNavBarRightSection();
+    async connectedCallback() {
+        await this.generateNavBarRightSection();
         typeAndReplaceWords();
+        this.attachEventsListener();
+    }
+
+
+    attachEventsListener() {
+        const logo = this.querySelector('.logo');
+        const homeLink = this.querySelector('a');
+        const profileElement = this.querySelector('#loggedUser');
+
+        logo.addEventListener('click', (event) => throwRedirectionEvent('/'))
+        homeLink.addEventListener('click', (event) => throwRedirectionEvent('/'));
+        if (profileElement)
+            profileElement.addEventListener('click', (event) => throwRedirectionEvent('/profile'));
+        else {
+            this.querySelector('button-component[label="Login"]').addEventListener('click', (event) => throwRedirectionEvent('/login'));
+            this.querySelector('button-component[label="Signup"]').addEventListener('click', (event) => throwRedirectionEvent('/signup'));
+        }
     }
 
 
@@ -43,8 +61,6 @@ class NavBarComponent extends HTMLElement {
             this.querySelector('.nav-bar-right-section').innerHTML = await this.generateLoggedUserInfos();
         } else {
             this.querySelector('.nav-bar-right-section').innerHTML = this.generateUnloggedUserInfos();
-            this.querySelector('.login-nav-bar-btn').addEventListener('click', () => this.handleAuthenticationRedirection('login'));
-            this.querySelector('.signup-nav-bar-btn').addEventListener('click', () => this.handleAuthenticationRedirection('signup'));
         }
     }
 
@@ -58,7 +74,7 @@ class NavBarComponent extends HTMLElement {
 
         return `
             <img src="../../assets/bell.svg" alt="notifs-bell">
-            <div class="account-infos">
+            <div class="account-infos" id="loggedUser">
                 <p>${userData.username}</p>
                 ${profilePicture.outerHTML}
             </div>

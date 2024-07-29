@@ -4,6 +4,7 @@ import rotatingGradient from "../anim/rotatingGradient.js";
 import { getCookie } from "../utils/cookie.js";
 import validateSignupInputs from "../utils/signupFormValidation.js";
 import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js";
+import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 
 export default () => {
 	const html = `
@@ -92,14 +93,11 @@ async function postData(event, signupBtn) {
 			if (data.error)
 				alert(data.error)
 			else
-				window.location.replace(data.redirect_url);
+				throwRedirectionEvent(data.redirect_url);
+			// Why data.redirect_url ????
 		} catch (error) {
-			if (error.data && error.data.status === 'jwt_failed') {
-				history.replaceState("", "", "/");
-				document.title = "Index";
-				app.innerHTML = index();
-			}
-			// console.log('Catch error :', error);
+			if (error.data && error.data.status === 'jwt_failed')
+				throwRedirectionEvent('/');
 			showAlreadyExistsData(error.message);
 		}
 	} else {

@@ -4,9 +4,7 @@
 	align-items: center;
 	width: 5rem;
 	height: 2.5rem;
-	background: red;
 	border-radius: 2rem;
-	animation: test2 0.5s ease forwards;
 }
 
 .toggle-button .toggle-circle {
@@ -14,9 +12,23 @@
 	width: calc(2rem);
 	height: calc(2rem);
 	border-radius: 100%;
-	margin-left: 0.3rem;
 }
 
+.toggle-button-enabled {
+	background: var(--neon-blue);
+}
+
+.toggle-button-disabled {
+	background: red;
+}
+
+.toggle-button-enabled .toggle-circle {
+	margin-left: calc(100% - 2.3rem);
+}
+
+.toggle-button-disabled .toggle-circle {
+	margin-left: 0.3rem;
+}
 
 @keyframes move-circle-to-enabled {
 	0% {

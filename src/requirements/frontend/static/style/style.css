@@ -7,6 +7,8 @@
 @import './views/change-password.css';
 @import 'views/two-factor-app.css';
 @import 'views/two-factor-email.css';
+@import 'views/two-factor-verify.css';
+@import 'views/two-factor-deactivation.css';
 @import './_variables.css';
 
 :root {
@@ -43,188 +45,18 @@ input:-webkit-autofill:active {
     caret-color: var(--text-primary-color);
 }
 
+a {
+    text-decoration: none;
+    color: var(--text-primary-color);
+}
+
 .component {
     display: block;
 }
-
-/* Style login part (not definitive) */
-
-.container {
-    background-color: rgba(0, 0, 0, 0.4);
-    padding: 20px 40px;
-    border-radius: 5px;
-}
-
-.container h1 {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.container a {
-    text-decoration: none;
-    color: lightblue;
-}
-
-.btn {
-    cursor: pointer;
-    display: inline-block;
-    width: 100%;
-    background: lightblue;
-    padding: 15px;
-    border-radius: 5px;
-    border-style: none;
-    color: white;
-    font-family: inherit;
-    font-size: 16px;
-    color: black;
-}
-.btn:focus {
-    outline: none;
-}
-
-.btn:hover {
-    background-color: steelblue;
-    transition: background-color .1s ease-in;
-}
-
-.btn:active {
-    transform: scale(0.98);
-}
-
-.form-control {
-    position: relative;
-    margin: 20px 0 40px;
-    width: 300px;
-}
-
-.form-control input {
-    background-color: transparent;
-    border: 0;
-    border-bottom: 2px white solid;
-    display: block;
-    width: 100%;
-    padding: 15px 0;
-    font-size: 18px;
-    color: white;
-}
-
-.form-control input:focus, .form-control input:valid {
-    outline: none;
-    border-bottom-color: lightblue;
-}
-
-.text {
-    margin-top: 30px;
-}
-
-.form-control label {
-    position: absolute;
-    top: 15px;
-    left: 0;
-}
-
-.form-control label span {
-    display: inline-block;
-    font-size: 18px;
-    min-width: 5px;
-    transition: .3s cubic-bezier(.68, -.55, 0.265, 1.55)
-}
-
-.form-control input:focus + label span,
-.form-control input:valid + label span {
-    color: lightblue;
-    transform: translateY(-30px);
-}
-
 
 /* HOME */
 
 main {
     height: 100vh;
     width: 100vw;
-}
-
-/* nav-bar */
-.nav-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100vw;
-    height: 8vh;
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-image: linear-gradient(90deg, #FF16C6, #00D0FF) 30;
-    padding: 0 8rem;
-}
-
-.nav-bar .nav-bar-link {
-    font-size: 2.4rem;
-}
-
-.nav-bar .nav-bar-section {
-    display: flex;
-    align-items: center;
-}
-
-.nav-bar .nav-bar-section > * {
-    margin: 0 20px;
-}
-
-.nav-bar .nav-bar-left-section .logo {
-    background-image: url("../assets/logo.svg");
-    background-size: cover;
-    background-position: center;
-    border-radius: 50%;
-    height: 8rem;
-    width: 8rem;
-}
-
-.nav-bar .nav-bar-right-section p {
-    font-size: 24px;
-}
-
-.nav-bar .nav-bar-right-section .profile-picture {
-    background-image: url("../assets/acarlott.jpg");
-    background-size: cover;
-    background-position: center;
-    border-radius: 50%;
-    height: 6.5rem;
-    width: 6.5rem;
-}
-
-/* search-bar */
-
-.search-bar {
-    position: relative;
-    margin-left: 5rem;
-}
-
-.search-bar form {
-    height: 3.5rem;
-    width: 40rem;
-}
-
-.search-bar form .search-bar-icon {
-    position: absolute;
-    left: 15px;
-    top: 25%;
-    height: 1.5rem;
-}
-
-.search-bar form .search-bar-input-container {
-    height: 100%;
-    width: 100%;
-    background: linear-gradient(90deg, #FF16C6, #00D0FF);
-    padding: 1px;
-    border-radius: 10px;
-}
-
-.search-bar form .search-bar-input-container input {
-    color: white;
-    font-size: 1.2rem;
-    padding-left: 50px;
-    height: 100%;
-    width: 100%;
-    background: #121216;
-    border-radius: 10px;
 }

@@ -1,6 +1,6 @@
 import '../../components/two_factor_auth/TwoFactorEnableComponent.js'
 import { handleRedirection } from '../../utils/handleRedirection.js'
-import { isVerifiedUser } from '../../utils/isVerifiedUser.js'
+import { isTwoFactorActivated } from '../../utils/isTwoFactorActivated.js'
 
 export default () => {
     const html = ` <div class="container"></div> `;

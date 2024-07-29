@@ -1,5 +1,5 @@
 import '../../components/two_factor_auth/TwoFactorDisableComponent.js'
-import { isVerifiedUser } from '../../utils/isVerifiedUser.js'
+import { isTwoFactorActivated } from '../../utils/isTwoFactorActivated.js'
 import { handleRedirection } from '../../utils/handleRedirection.js'
 
 export default () => {
@@ -13,7 +13,7 @@ export default () => {
 }
 
 async function initialize() {
-    const is_verified = await isVerifiedUser();
+    const is_verified = await isTwoFactorActivated();
     if (!is_verified && is_verified === false) {
         alert('you can\'t access this page, two-factor authentication is not active on your account');
         handleRedirection('profile');

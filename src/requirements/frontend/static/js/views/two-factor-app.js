@@ -3,11 +3,10 @@ import rotatingGradient from "../anim/rotatingGradient.js";
 import {getCookie} from "../utils/cookie.js";
 import '../components/ButtonComponent.js';
 import '../components/two_factor_auth/TwoFactorInputComponent.js';
-// import twoFactorTokenVerify from "../components/two_factor_auth/states/tokenVerify.js";
+import { setTwoFactorLocalStorage } from "../utils/setTwoFactorLocalStorage.js";
+import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 
 export default () => {
-	enableTwoFactorRequest();
-
 	const html = `
 		<section class="two-factor-app-page">
 			<div class="two-factor-app-form-container-background"></div>
@@ -31,7 +30,9 @@ export default () => {
 		</section>
 	`;
 
-	setTimeout(() => {
+	setTimeout(async () => {
+		await enableTwoFactorRequest();
+
 		document.querySelector('form').addEventListener('submit', (event) => {
 			event.preventDefault();
 			const inputs = [...event.target.querySelectorAll('input')];
@@ -104,7 +105,9 @@ async function VerifyTwoFactorRequest(verificationCode) {
 		throw new Error('Access Denied')
 	const data = await res.json();
 	if (res.status === 200) {
-		console.log('enable backend response: ', data.message)
+		throwRedirectionEvent('/profile');
+		localStorage.setItem('state', 'security');
+		setTwoFactorLocalStorage();
 	} else
 		document.querySelector('.feedbackInformation').innerHTML = data.message;
 }

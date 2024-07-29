@@ -2,8 +2,8 @@ import getProfileImage from "../../utils/getProfileImage.js";
 import getUserData from "../../utils/getUserData.js";
 import { isAlphanumeric } from "../../utils/utils.js";
 import {getCookie} from "../../utils/cookie.js";
-import './PopUpComponent.js'
-import sleep from "../../utils/sleep.js";
+import '../PopUpComponent.js'
+import {throwRedirectionEvent} from "../../utils/throwRedirectionEvent.js";
 
 class UserInfosComponent extends HTMLElement {
 
@@ -105,7 +105,6 @@ class UserInfosComponent extends HTMLElement {
 		this.usernameInput.value = userData.username;
 		this.emailInput.value = userData.email;
 		userImage.src = getProfileImage(userData);
-		console.log(userImage.src);
 	}
 
 
@@ -119,19 +118,15 @@ class UserInfosComponent extends HTMLElement {
 
 			newUserData.append(this.usernameInput.name, this.usernameInput.value);
 			newUserData.append(this.emailInput.name, this.emailInput.value);
-			if (this.newUploadedImage) {
-				alert('ouuuu')
+			if (this.newUploadedImage)
 				newUserData.append('profile_image', this.newUploadedImage);
-			}
-			if (this.newProfileImageLink) {
-				alert('aaaaaah')
+			if (this.newProfileImageLink)
 				newUserData.append('profile_image_link', this.newProfileImageLink);
-			}
 
 			const requestResponse = await postNewUserInfos(newUserData);
 
 			localStorage.setItem('userUpdateResponse', JSON.stringify(requestResponse));
-			location.reload();
+			throwRedirectionEvent('/profile');
 		}
 	}
 
@@ -417,7 +412,6 @@ async function postNewUserInfos(newUserInfos) {
 		credentials: 'include' // Needed for send cookie
 	};
 
-	console.log(config.body)
 	try {
 		const res = await fetch(`http://localhost:8000/user/change-user-infos/`, config);
 		if (res.status == 403) {

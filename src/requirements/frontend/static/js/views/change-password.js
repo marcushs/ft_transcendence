@@ -2,6 +2,7 @@ import rotatingGradient from "../anim/rotatingGradient.js";
 import validateChangePasswordInputs from "../utils/changePasswordFormValidation.js";
 import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js";
 import {getCookie} from "../utils/cookie.js";
+import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 
 export default () => {
 	const html = `
@@ -120,10 +121,10 @@ async function postNewPassword(formData) {
 		if (res.status === 200) {
 			localStorage.setItem('state', 'security');
 			localStorage.setItem('passwordFeedback', 'Password has been successfully changed');
-			location.href = '/profile';
+			throwRedirectionEvent('/profile');
 		} else if (res.status === 400) {
 			localStorage.setItem('userUpdateResponse', JSON.stringify(data));
-			location.reload();
+			throwRedirectionEvent('/change-password');
 		}
 	} catch (error) {
 		console.log(error)
