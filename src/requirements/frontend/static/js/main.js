@@ -34,6 +34,15 @@ function router() {
     }
 };
 
+function handleDynamicURL() {
+    const path = window.location.pathname;
+    const segments = path.split('/');
+    if (segments.length > 2 && segments[1] === 'users') {
+        const username = segments[2];
+        displayUserProfile(username);
+    }
+}
+
 // Handle navigation
 window.addEventListener("click", e => {
     if (e.target.matches("[data-link]")) {

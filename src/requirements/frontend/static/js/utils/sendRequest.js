@@ -10,6 +10,7 @@ export async function sendRequest(type, url, payload) {
             throw new Error(data.message);
         return data
     } catch (error) {
+        console.log('error: ', error);
         throw new Error(error);
     }
 }

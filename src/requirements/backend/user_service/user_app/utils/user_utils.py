@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
+from django.db.models import Q
 from django.views import View
 from ..models import User
 import json
@@ -57,3 +58,42 @@ def send_post_request(request, url, payload):
 
             message = response_data.get('message')
             return JsonResponse({'message': message}, status=400)
+        
+class searchUsers(View):
+    def __init__(self):
+        super().__init__
+        
+    def get(self, request):
+        search_input = request.GET.get('q', '')
+        if search_input == '':
+            return JsonResponse({'status': 'empty', 'message': 'No input provided'}, status=200)
+        users = User.objects.filter(Q(username__startswith=search_input)) # Filter users who username contains the search input
+        if users.exists(): # Create a list of users in dictionary format
+            users_list = [{
+                'username': user.username,
+                'profile_image': user.profile_image.url if user.profile_image else None,
+                'profile_image_link': user.profile_image_link
+                }
+                for user in users
+            ]
+            return JsonResponse({'status': 'success', 'message': users_list}, safe=False, status=200)
+        else:
+            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+
+class getUserInfos(View):
+    def __init__(self):
+        super().__init__
+    
+    def get(self, request):
+        try:
+            username = request.GET.get('q', '')
+            users = User.objects.get(username=username)
+            users_data = {
+                'username': users.username,
+                'email': users.email,
+                'profile_image': users.profile_image.url if users.profile_image else None,
+                'profile_image_link': users.profile_image_link,
+            }
+            return JsonResponse({'status': 'success', 'message': users_data}, safe=False, status=200)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)

@@ -23,12 +23,12 @@ class SearchBarComponent extends HTMLDivElement {
         this.classList.add('component');
         this.searchInput = this.querySelector('#searchBarInput');
         this.searchResults = this.querySelector('#searchResults');
+        this.searchResults.style.display = 'none';
         this.searchInput.addEventListener('input', () => this.handleSearch());
     }
 
     async handleSearch() {
         const value = this.searchInput.value;
-        console.log('search values: ', value);
         const usersList = await this.getUsersList(value);
         if (usersList !== null)
             this.displaySearchResult(usersList);
@@ -41,23 +41,29 @@ class SearchBarComponent extends HTMLDivElement {
         const url = `http://localhost:8000/user/search_users/?q=${encodeURIComponent(this.searchInput.value)}`
         try {
             const data = await sendRequest('GET', url, null);
-            return data.message;
+            if (data.status === 'success') {
+                return data.message;
+            } else {
+                console.log(data.message);
+                return null
+            }
         } catch (error) {
-            console.log(error.message)
+            console.log(error);
             return null;
         }
     }
 
     displaySearchResult(usersList) {
         this.clearSearchResult();
-        for (user in usersList) {
+        usersList.forEach(user => {
+            console.log('username: ', user.username)
             const li = document.createElement('li');
             const a = document.createElement('a');
-            a.href = `/users/$q=${encodeURIComponent(user.username)}`
+            a.href = `/users/${encodeURIComponent(user.username)}`
             a.textContent = user.username;
             li.appendChild(a);
             this.searchResults.appendChild(li);
-        }
+        });
         this.searchResults.style.display = 'block';
     }
 
