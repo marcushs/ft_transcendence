@@ -1,5 +1,5 @@
 // import formWave from "../anim/formWave.js";
-import "../components/ButtonComponent.js"
+import "../components/ButtonComponent.js";
 import rotatingGradient from "../anim/rotatingGradient.js";
 import { getCookie } from "../utils/cookie.js";
 import validateSignupInputs from "../utils/signupFormValidation.js";
@@ -39,11 +39,14 @@ export default () => {
 
 	setTimeout(() =>{
 		const signupBtn = document.querySelector('#signupBtn');
+		const oauthSignupBtn = document.getElementById('oauthSignupBtn');
 
 		signupBtn.addEventListener('click', event => {
 			if (signupBtn.className === 'generic-auth-btn')
 				postData(event, signupBtn);
 		});
+
+		oauthSignupBtn.addEventListener('click', oauth)
 
 		rotatingGradient('.signup-form-container-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.signup-form-container', '#FF16C6', '#00D0FF');
@@ -106,5 +109,16 @@ async function postData(event, signupBtn) {
 		}
 	} else {
 		console.error('No form found!');
+	}
+}
+
+async function oauth() {
+	try {
+		const res = await fetch(`http://localhost:8003/oauth/signup/`);
+		const data = await res.json();
+		console.log(data);
+		window.location.replace(data.url);
+	} catch (error) {
+		console.log(error);
 	}
 }

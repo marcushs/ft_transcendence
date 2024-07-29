@@ -11,7 +11,7 @@ import json
 import re #regular expression
 import environ
 import os
-# import requests
+import requests
 
 User = get_user_model()
 
@@ -24,6 +24,7 @@ class oauthSignupView(View):
         super().__init__
     
     def get(self, request):
+        print(env("API_UID_42"))
         url = self.authorization()
         response = JsonResponse({'url': url})
         
@@ -34,7 +35,7 @@ class oauthSignupView(View):
         return response
     
     def authorization(self):
-        client_id = env("42_API_UID")
+        client_id = env("API_UID_42")
         authorization_url = "https://api.intra.42.fr/oauth/authorize"
         client = WebApplicationClient(client_id)
         

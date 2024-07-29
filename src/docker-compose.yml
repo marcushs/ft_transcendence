@@ -102,7 +102,7 @@ services:
           python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./requirements/backend/twofactor_service:/app
+      - ./requirements/backend/oauth_service:/app
     ports:
       - "8003:8000"
     depends_on:
