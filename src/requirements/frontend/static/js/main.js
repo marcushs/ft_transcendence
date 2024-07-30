@@ -24,6 +24,9 @@ generateCsrfToken();
 function router() {
     let view = routes[location.pathname];
 
+    console.log('test');
+    if (handleDynamicURL())
+        return;
     if (view) {
         // console.log(view);
         document.title = view.title;
@@ -39,8 +42,12 @@ function handleDynamicURL() {
     const segments = path.split('/');
     if (segments.length > 2 && segments[1] === 'users') {
         const username = segments[2];
+        document.title = view.title;
+        app.innerHTML = profile;
         displayUserProfile(username);
+        return true;
     }
+    return false;
 }
 
 // Handle navigation

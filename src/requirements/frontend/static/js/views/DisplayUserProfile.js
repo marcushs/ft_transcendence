@@ -7,10 +7,10 @@ export class UserProfile {
         this.target = username;
         this.usernameInput = this.querySelector('input[name="username"]');
 		this.emailInput = this.querySelector('input[name="email"]');
-        this.element = document.createElement('div');
-        this.element.className = 'user-profile';
-
+        this.element = document.querySelector('.profile-main-section')
         this.render();
+
+
         this.displayUserProfile();
     }
     
