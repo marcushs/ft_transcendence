@@ -1,47 +1,51 @@
 import { sendRequest } from "../utils/sendRequest.js";
-import getProfileImage from "../../utils/getProfileImage.js";
+import getProfileImage from "../utils/getProfileImage.js";
+import rotatingGradient from "../anim/rotatingGradient.js";
 
 
-export class UserProfile {
+export class DisplayUserProfile {
     constructor(username) {
         this.target = username;
-        this.usernameInput = this.querySelector('input[name="username"]');
-		this.emailInput = this.querySelector('input[name="email"]');
         this.element = document.querySelector('.profile-main-section')
         this.render();
+        this.usernameInput = document.querySelector('input[name="username"]');
 
 
-        this.displayUserProfile();
+        this.displayInformation();
+        setTimeout(() => {
+            rotatingGradient('.users-profile-page', '#FF16C6', '#00D0FF');
+            rotatingGradient('.users-profile-container-background', '#FF16C6', '#00D0FF');
+            rotatingGradient('.users-profile-container', '#1c0015', '#001519');
+        }, 0)
     }
     
     render() {
         this.element.innerHTML = `
-            <div class="user-info user-info-image">
-                <img id="profileImage" src="" alt="">
-                <input type="file" accept="image/*" name="profile-image">
-                <span id="profileImageFeedback" class="input-feedback"></span>
-            </div>
-            <div class="user-info">
-                <p id="username">Username</p>
-                <input type="text" name="username" maxlength="12" disabled>
-            </div>
-            <div class="user-info">
-                <p id="email">Email</p>
-                <input type="email" name="email" disabled>
-            </div>
+            <section class="users-profile-page">
+                <div class="users-profile-container-background"></div>
+			    <div class="users-profile-container">
+                    <div class="user-info user-info-image">
+                        <img id="profileImage" src="" alt="">
+                    </div>
+                    <div class="user-info">
+                        <p id="username">Username</p>
+                        <input type="text" name="username" maxlength="12" disabled>
+                    </div>
+                </div>
+            </section>
         `;
     }
-    async displayUserProfile() {
+    async displayInformation() {
         if (this.target === null)
             return;
-        infoList = await getInformation();
+        const infoList = await this.getInformation();
         if (!infoList) {
             console.log('this user cannot be found..')
             return;
         }
-        const userImage = this.querySelector('.user-info > img');
-        this.usernameInput = infoList.username
-        this.emailInput = infoList.email
+        console.log('Username Input:', this.usernameInput); // Debugging line
+        const userImage = document.querySelector('.user-info > img');
+        this.usernameInput.value = infoList.username
         userImage.src = getProfileImage(infoList);
     }
     

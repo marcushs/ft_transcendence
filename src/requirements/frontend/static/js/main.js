@@ -3,10 +3,12 @@ import login from "./views/login.js";
 import signup from "./views/signup.js";
 import logout from "./views/logout.js"
 import profile from "./views/profile.js";
+import userProfile from "./views/user-profile.js";
 import changePassword from "./views/change-password.js";
 import { generateCsrfToken } from "./utils/cookie.js";
 import enableTwoFactor from './views/two_factor/TwoFactorAuthEnable.js';
 import disableTwoFactor from './views/two_factor/TwoFactorAuthDisable.js';
+import { DisplayUserProfile } from './views/DisplayUserProfile.js'
 
 const routes = {
     "/": { title: "Home", render: home },
@@ -28,7 +30,6 @@ function router() {
     if (handleDynamicURL())
         return;
     if (view) {
-        // console.log(view);
         document.title = view.title;
         app.innerHTML = view.render();
     } else {
@@ -42,9 +43,9 @@ function handleDynamicURL() {
     const segments = path.split('/');
     if (segments.length > 2 && segments[1] === 'users') {
         const username = segments[2];
-        document.title = view.title;
-        app.innerHTML = profile;
-        displayUserProfile(username);
+        document.title = username + '-profile';
+        app.innerHTML = userProfile();
+        new DisplayUserProfile(username);
         return true;
     }
     return false;

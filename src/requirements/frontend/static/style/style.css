@@ -5,6 +5,7 @@
 @import './views/signup.css';
 @import './views/profile.css';
 @import './views/change-password.css';
+@import './views/users-profile.css';
 @import './_variables.css';
 
 :root {
