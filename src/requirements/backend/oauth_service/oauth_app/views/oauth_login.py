@@ -44,7 +44,7 @@ class oauthLoginView(View):
         # Prepare the authorization URL with the state parameter
         url = client.prepare_request_uri(
             authorization_url,
-            redirect_uri="https://localhost:3000/home",
+            redirect_uri="https://localhost:3000/oauth-redirect",
             scope=['public'],
             state=self.state
         )

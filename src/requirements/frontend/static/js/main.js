@@ -7,6 +7,7 @@ import changePassword from "./views/change-password.js";
 import { generateCsrfToken } from "./utils/cookie.js";
 import enableTwoFactor from './views/two_factor/TwoFactorAuthEnable.js';
 import disableTwoFactor from './views/two_factor/TwoFactorAuthDisable.js';
+import oauthRedirect from './views/oauthRedirect.js';
 
 const routes = {
     "/": { title: "Home", render: home },
@@ -17,6 +18,7 @@ const routes = {
     "/profile": { title: "Profile", render: profile },
     "/twofactor/enable": { title: "EnableTwoFactor", render: enableTwoFactor },
     "/twofactor/disable": { title: "DisableTwoFactor", render: disableTwoFactor },
+    "/oauth-redirect": { title: "OauthRedirect", render: oauthRedirect },
 };
 
 // create the csrf token if it does not already exist
