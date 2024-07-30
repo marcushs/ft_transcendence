@@ -1,28 +1,44 @@
 .users-profile-page {
-	position: relative;
-	width: 40%;
-	height: 40%;
+	width: 100%;
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 }
 
-
-.users-profile-page .users-profile-container-background {
-	z-index: 0;
+.users-profile-page nav-bar-component {
 	position: absolute;
-	background: var(--neon-gradiant);
-	filter: blur(15px);
-	height: 100%;
+	top: 0;
+	left: 0;
 	width: 100%;
 }
 
+
+.users-profile-page .users-profile-container-background {
+	/* z-index: 0; */
+	position: absolute;
+	background: var(--neon-gradiant);
+	filter: blur(15px);
+	height: 40%;
+	width: 40%;
+}
+
+.users-profile-content {
+	height: 100%;
+	width: 100%;
+	border-radius: 7px;
+}
+
 .users-profile-page .users-profile-container {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	padding: 3px;
 	border-radius: 10px;
-	width: 100%;
-	height: 100%;
+	width: 40%;
+	height: 40%;
 }
 
 .users-profile-page .user-info {

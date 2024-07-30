@@ -8,7 +8,6 @@ import changePassword from "./views/change-password.js";
 import { generateCsrfToken } from "./utils/cookie.js";
 import enableTwoFactor from './views/two_factor/TwoFactorAuthEnable.js';
 import disableTwoFactor from './views/two_factor/TwoFactorAuthDisable.js';
-import { DisplayUserProfile } from './views/DisplayUserProfile.js'
 
 const routes = {
     "/": { title: "Home", render: home },
@@ -18,7 +17,7 @@ const routes = {
     "/change-password": { title: "Change password", render: changePassword },
     "/profile": { title: "Profile", render: profile },
     "/twofactor/enable": { title: "EnableTwoFactor", render: enableTwoFactor },
-    "/twofactor/disable": { title: "DisableTwoFactor", render: disableTwoFactor },
+    "/twofactor/disable": { title: "DisableTwoFactor", render: disableTwoFactor }
 };
 
 // create the csrf token if it does not already exist
@@ -45,7 +44,9 @@ function handleDynamicURL() {
         const username = segments[2];
         document.title = username + '-profile';
         app.innerHTML = userProfile();
-        new DisplayUserProfile(username);
+        localStorage.setItem('users-profile-target-username', username);
+        // userProfile();
+        // new DisplayUserProfile(username);
         return true;
     }
     return false;
