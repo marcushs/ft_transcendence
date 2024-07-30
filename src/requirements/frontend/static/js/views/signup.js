@@ -30,8 +30,6 @@ export default () => {
 						<span id="confirmPasswordFeedback" class="input-feedback"></span>
 					</div>
 					<button-component id="signupBtn" label="Signup" class="generic-auth-btn-disabled"></button-component>
-					<button-component id="oauthSignupBtn" label="Signup with 42" class="generic-auth-btn" icon="true">
-					</button-component>
 					<p>Already have an account? <a href="/login">Login</a></p>
 				</form>
 			</div>
@@ -39,14 +37,11 @@ export default () => {
 
 	setTimeout(() =>{
 		const signupBtn = document.querySelector('#signupBtn');
-		const oauthSignupBtn = document.getElementById('oauthSignupBtn');
 
 		signupBtn.addEventListener('click', event => {
 			if (signupBtn.className === 'generic-auth-btn')
 				postData(event, signupBtn);
 		});
-
-		oauthSignupBtn.addEventListener('click', oauth)
 
 		rotatingGradient('.signup-form-container-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.signup-form-container', '#FF16C6', '#00D0FF');
@@ -109,16 +104,5 @@ async function postData(event, signupBtn) {
 		}
 	} else {
 		console.error('No form found!');
-	}
-}
-
-async function oauth() {
-	try {
-		const res = await fetch(`http://localhost:8003/oauth/signup/`);
-		const data = await res.json();
-		console.log(data);
-		window.location.replace(data.url);
-	} catch (error) {
-		console.log(error);
 	}
 }

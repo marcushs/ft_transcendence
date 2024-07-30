@@ -19,18 +19,17 @@ env = environ.Env()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-class oauthSignupView(View):
+class oauthLoginView(View):
     def __init__(self):
         super().__init__
     
     def get(self, request):
-        print(env("API_UID_42"))
         url = self.authorization()
         response = JsonResponse({'url': url})
         
         # Set the state parameter as an HttpOnly cookie
         state = self.state
-        response.set_cookie('oauth2_state', state, httponly=True, secure=True, samesite='Strict')
+        response.set_cookie('oauth2_state', state, secure=True, samesite='None')
         
         return response
     
@@ -45,29 +44,11 @@ class oauthSignupView(View):
         # Prepare the authorization URL with the state parameter
         url = client.prepare_request_uri(
             authorization_url,
-            redirect_uri="https://localhost:3000/login",
+            redirect_uri="https://localhost:3000/home",
             scope=['public'],
             state=self.state
         )
 
         return url
 
-class oauthRedirectView(View):
-    def get(self, request):
-        state = request.GET.get('state')
-        code = request.GET.get('code')
-        
-        cookie_state = request.COOKIES.get('oauth2_state')
-        
-        if state != cookie_state:
-            return JsonResponse({'error': 'Invalid state parameter'}, status=400)
-        
-        response_data = {
-            'code': code,
-            'state': state
-        }
-        
-        response = JsonResponse(response_data)
-        response.delete_cookie('oauth2_state')
-        
-        return response
+

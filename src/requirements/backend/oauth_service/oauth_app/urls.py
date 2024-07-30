@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .views import oauth_signup
+from .views import oauth_login
 
 urlpatterns = [
-    path('signup/',oauth_signup.oauthSignupView.as_view(), name='oauthSignup'),
+    path('login/',oauth_login.oauthLoginView.as_view(), name='oauthLogin'),
 ]
