@@ -85,6 +85,30 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
+ # --> FRIENDS SERVICE <-- #
+  friends:
+    container_name: friends
+    restart: always
+    build:
+      context: ./requirements/backend/friends_service
+      dockerfile: docker/Dockerfile
+    image: friends
+    env_file: ./requirements/backend/.env
+    command: >
+      sh -c "
+        python3 manage.py makemigrations &&
+        python3 manage.py migrate &&
+        python3 manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./requirements/backend/friends_service:/app
+    ports:
+      - "8003:8000"
+    depends_on:
+      friends_db:
+        condition: service_healthy
+    networks:
+      - transcendence-network
   # --> DATABASE TWOFACTOR <-- #
   twofactor_db:
     container_name: twofactor_db
@@ -151,6 +175,28 @@ services:
       interval: 4s
       timeout: 3s
       retries: 5
+  # --> DATABASE FRIENDS <-- #
+  friends_db:
+    container_name: friends_db
+    image: postgres
+    restart: always
+    env_file: ./requirements/backend/.env
+    environment:
+      - POSTGRES_USER=${FRIENDS_DB_USER}
+      - POSTGRES_DB=${FRIENDS_DB_NAME}
+      - POSTGRES_PASSWORD=${FRIENDS_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - friends_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+     - "5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${USER_DB_USER} -d ${USER_DB_NAME}"]
+      interval: 4s
+      timeout: 3s
+      retries: 5
 
 volumes:
   user_pgdata:
@@ -158,7 +204,9 @@ volumes:
   auth_pgdata:
     name: auth_data
   twofactor_pgdata:
-    name: twofactor_pgdata
+    name: twofactor_data
+  friends_pgdata:
+    name: friends_data
 
 networks:
   transcendence-network:

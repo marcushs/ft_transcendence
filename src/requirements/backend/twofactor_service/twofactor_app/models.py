@@ -36,9 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def to_dict(self):
         return {
             'username': self.username,
-            'email': self.email,
             'two_factor_method': self.two_factor_method,
-            'score': self.score,
             'is_verified': self.is_verified,
         }
     
