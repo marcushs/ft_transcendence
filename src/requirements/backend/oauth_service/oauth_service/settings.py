@@ -107,13 +107,13 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
+    'https://localhost:3000',
 	'http://frontend',
 	'http://oauth'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-	'http://localhost:3000',
+	'https://localhost:3000',
 	'http://frontend',
 	'http://oauth'
 ]
@@ -131,6 +131,8 @@ DATABASES = {
         'PORT': env('OAUTH_DB_PORT'),
     }
 }
+
+COOKIE_DOMAIN = 'localhost' if DEBUG else '.yourdomain.com'
 
 AUTH_USER_MODEL = "oauth_app.User"
 

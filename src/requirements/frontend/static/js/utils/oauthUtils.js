@@ -1,6 +1,17 @@
+import { getCookie } from "./cookie.js";
+
+const config = {
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json',
+			'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
+		},
+		credentials: 'include', // Needed for send cookie
+	};
+
 export async function redirectToOauth() {
 	try {
-		const res = await fetch(`http://localhost:8003/oauth/login/`);
+		const res = await fetch(`http://localhost:8003/oauth/login/`, config);
 		const data = await res.json();
 		console.log(data);
 		window.location.replace(data.url);
@@ -9,16 +20,15 @@ export async function redirectToOauth() {
 	}
 }
 
-export async function handleOauthCallback() {
-	const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    const state = urlParams.get('state');
-
+export async function handleOauthCallback(code, state) {
 	try {
-		const res = await fetch(`http://localhost:8003/oauth/redirect?code=${code}&state=${state}/`);
+		const res = await fetch(`http://localhost:8003/oauth/redirect?code=${code}&state=${state}/`, config);
 		const data = await res.json();
 		console.log(data);
+		return true;
 	} catch (error) {
+		console.log("not successful")
 		console.log(error);
+		return false;
 	}
 }

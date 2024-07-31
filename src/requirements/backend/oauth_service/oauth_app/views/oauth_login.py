@@ -5,6 +5,7 @@ from ..models import User
 from django.contrib.auth import get_user_model
 from oauthlib.oauth2 import WebApplicationClient
 import secrets
+from django.conf import settings
 
 # --- UTILS --- #
 import json
@@ -24,12 +25,18 @@ class oauthLoginView(View):
         super().__init__
     
     def get(self, request):
-        url = self.authorization()
+        url = self.authorization() 
         response = JsonResponse({'url': url})
         
         # Set the state parameter as an HttpOnly cookie
         state = self.state
-        response.set_cookie('oauth2_state', state, secure=True, samesite='None')
+        response.set_cookie(
+            'oauth2_state', 
+            state,
+            httponly=True,
+            secure=True,
+            samesite='None'
+        )
         
         return response
     
@@ -44,7 +51,7 @@ class oauthLoginView(View):
         # Prepare the authorization URL with the state parameter
         url = client.prepare_request_uri(
             authorization_url,
-            redirect_uri="https://localhost:3000/oauth-redirect",
+            redirect_uri="http://localhost:8003/oauth/redirect", 
             scope=['public'],
             state=self.state
         )
