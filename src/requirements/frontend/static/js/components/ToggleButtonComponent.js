@@ -11,7 +11,6 @@ class ToggleButtonComponent extends HTMLElement {
 		this.enabledRoute = null;
 		this.disabledRoute = null;
 		this.twoFactorMethod = null;
-		this.isTwoFactorActivated = localStorage.getItem('isTwoFactorActivated').toLowerCase() === 'true';
 		this.initializeComponent();
 	}
 
@@ -26,6 +25,7 @@ class ToggleButtonComponent extends HTMLElement {
 
 
 	async connectedCallback() {
+		this.isTwoFactorActivated = localStorage.getItem('isTwoFactorActivated').toLowerCase() === 'true';
 		if (this.isTwoFactorActivated) {
 			const twoFactorMethod = localStorage.getItem('twoFactorMethod');
 			const toggleButton = this.querySelector('.toggle-button');
@@ -66,7 +66,6 @@ class ToggleButtonComponent extends HTMLElement {
 			if (!this.isTwoFactorActivated) {
 				toggleButton.style.animation = 'change-color-to-enabled 0.5s ease forwards';
 				toggleCircle.style.animation = 'move-circle-to-enabled 0.5s ease forwards';
-				alert('test')
 				throwRedirectionEvent(this.enabledRoute);
 			} else {
 				toggleButton.style.animation = 'change-color-to-disabled 0.5s ease forwards';

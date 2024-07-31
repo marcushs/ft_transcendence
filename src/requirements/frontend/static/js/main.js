@@ -5,21 +5,21 @@ import logout from "./views/logout.js"
 import profile from "./views/profile.js";
 import changePassword from "./views/change-password.js";
 import { generateCsrfToken } from "./utils/cookie.js";
-import enableTwoFactor from './views/two_factor/TwoFactorAuthEnable.js';
 import twoFactorApp from "./views/two-factor-app.js";
 import twoFactorEmail from "./views/two-factor-email.js";
 import checkAuthentication from "./utils/checkAuthentication.js";
 import twoFactorDeactivation from "./views/two-factor-deactivation.js";
+import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
 
-// (async () => {
-//     if (await isTwoFactorActivated()) {
-//         localStorage.setItem('isTwoFactorActivated', 'true');
-//         localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
-//     } else {
-//         localStorage.setItem('isTwoFactorActivated', 'false');
-//         localStorage.removeItem('twoFactorMethod');
-//     }
-// })();
+(async () => {
+    if (await isTwoFactorActivated()) {
+        localStorage.setItem('isTwoFactorActivated', 'true');
+        localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
+    } else {
+        localStorage.setItem('isTwoFactorActivated', 'false');
+        localStorage.removeItem('twoFactorMethod');
+    }
+})();
 
 const routes = {
     "/": { title: "Home", render: home },

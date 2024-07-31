@@ -97,9 +97,10 @@ async function VerifyTwoFactorRequest(verificationCode) {
 		throw new Error('Access Denied')
 	const data = await res.json();
 	if (res.status === 200) {
-		throwRedirectionEvent('/profile');
+		localStorage.setItem('twoFactorFeedback', data.message);
+		await setTwoFactorLocalStorage();
 		localStorage.setItem('state', 'security');
-		setTwoFactorLocalStorage();
+		throwRedirectionEvent('/profile');
 	} else
 		document.querySelector('.feedbackInformation').innerHTML = data.message;
 }

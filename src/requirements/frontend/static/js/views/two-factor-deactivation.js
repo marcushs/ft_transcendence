@@ -113,11 +113,11 @@ async function DeactivateTwoFactorRequest(verificationCode) {
 			else
 				throwRedirectionEvent('/two-factor-email');
 		} else {
+			localStorage.setItem('twoFactorFeedback', data.message);
 			localStorage.setItem('state', 'security');
 			throwRedirectionEvent('/profile');
 		}
 		removeTwoFactorLocalStorage();
 	} else
-		console.log(data)
 		document.querySelector('.feedbackInformation').innerHTML = data.message;
 }

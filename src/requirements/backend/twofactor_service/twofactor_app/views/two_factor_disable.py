@@ -38,4 +38,4 @@ class twofactor_disable_view(View):
         if response.status_code != 200:
             return response
         request.user.save()
-        return JsonResponse({'message': 'Two factor authentification disabled'}, status=200)
+        return JsonResponse({'message': 'Two factor authentication successfully disabled'}, status=200)

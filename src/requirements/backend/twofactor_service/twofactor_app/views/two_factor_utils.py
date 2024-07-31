@@ -54,7 +54,7 @@ def twofactor_verify_view(request, two_factor_code, two_factor_method):
             return JsonResponse({'message': 'Expired Twofactor code'}, status=400)
     else:
         return JsonResponse({'message': 'We\'ve encountered an issue with the TwoFactor method.'}, status=400)
-    return JsonResponse({'message': 'successful two-factor authentication'}, status=200)
+    return JsonResponse({'message': 'Two factor authentication successfully enabled'}, status=200)
 
 class twofactor_get_status_view(View):
     def __init__(self):

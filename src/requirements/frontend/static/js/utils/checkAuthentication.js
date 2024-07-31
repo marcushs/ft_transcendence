@@ -22,8 +22,6 @@ export default async function checkAuthentication() {
 		const data = await res.json();
 
 		if (res.status === 403 || res.status === 401) {
-			alert(res.status)
-			throw new Error('TEST')
 			return false;
 		}
 		if (data.error) {
