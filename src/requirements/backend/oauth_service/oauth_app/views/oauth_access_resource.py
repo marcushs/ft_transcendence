@@ -20,25 +20,29 @@ env = environ.Env()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-class oauthAccessResourceView(View):
+class oauthAccessResourceView(View): 
     def __init__(self):
         super().__init__
     
     def get(self, request):
-        token = request.COOKIES.get('access_token')
+        token = request.COOKIES.get('access_token') 
         resource_url = 'https://api.intra.42.fr/v2/me'
 
         headers = {
             'Authorization': f'Bearer {token}' 
         }
 
-        # print(f'from access_resources: {token}')
         response = requests.get(resource_url, headers=headers)
 
         # Check if the response contains JSON data and handle errors
         try:
-            print('here???') 
             response_data = response.json()
+            if 'error' in response_data:
+                return JsonResponse({'message': response_data['error'],
+                                     'status': 'Error'}, 
+                                     status=400)
             return JsonResponse(response_data, safe=False)
         except ValueError:
-            return JsonResponse({'error': 'Invalid JSON response'}, status=500)
+            return JsonResponse({'message': 'Invalid JSON response',
+                                 'status': 'Error'}, 
+                                 status=500)

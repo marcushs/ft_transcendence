@@ -25,7 +25,7 @@ class oauthRedirectView(View):
 
         if 'error' in token_data:
             return JsonResponse({'message': token_data['error_description'],
-                                 'status': token_data['error']}, 
+                                 'status': 'Error'}, 
                                  status=400)
 
         access_token = token_data['access_token']
@@ -58,22 +58,3 @@ class oauthRedirectView(View):
 
         response = requests.post(token_url, data=data)
         return response.json()
-    
-    def access_resources(self, token):
-        headers = {
-            'Authorization': f'Bearer {token}'
-        }
-
-        print(f'from access_resources: {token}')
-        response_data = requests.get('https://api.intra.42.fr/v2/me', headers=headers)
-
-        # Check if the response contains JSON data and handle errors
-        try:
-            print('here???')
-            
-            response = JsonResponse(response_data, safe=False)
-        except ValueError:
-            return JsonResponse({'error': 'Invalid JSON response'}, status=500)
-        
-        # Return the JSON response
-        return response

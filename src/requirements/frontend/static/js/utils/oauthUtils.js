@@ -24,10 +24,20 @@ export async function handleOauthCallback(code, state) {
 	try {
 		const res = await fetch(`http://localhost:8003/oauth/redirect/?code=${code}&state=${state}`, config);
 		const data = await res.json();
-		console.log(data);
-		return (data.status === 'Success') ? true : false;
+		return data;
 	} catch (error) {
 		console.log(error);
-		return false;
+		return null;
+	}
+}
+
+export async function accessResource() {
+	try {
+		const res = await fetch(`http://localhost:8003/oauth/access_resource/`, config);
+		const data = await res.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+		return null;
 	}
 }
