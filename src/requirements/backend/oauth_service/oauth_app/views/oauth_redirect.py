@@ -16,6 +16,10 @@ class oauthRedirectView(View):
         
         cookie_state = request.COOKIES.get('oauth2_state')
 
+        print(code)
+        print(state)
+        print(cookie_state)
+
         if state != cookie_state:
             return JsonResponse({'error': 'Invalid state parameter'}, status=400)
         
@@ -27,8 +31,11 @@ class oauthRedirectView(View):
                                  status=400)
 
         access_token = token_data['access_token']
+
+        # Create a dictionary with the access token
+        response_data = {'status': 'success', 'access_token': access_token}
         
-        response = self.access_resources(access_token)
+        response = JsonResponse(response_data)
         response.delete_cookie('oauth2_state')
 
         return response
@@ -40,7 +47,7 @@ class oauthRedirectView(View):
 
         data = client.prepare_request_body(
             code = code,
-            redirect_uri = "http://localhost:8003/oauth/redirect",
+            redirect_uri = "https://localhost:3000/oauth-redirect",
             client_id = client_id,
             client_secret = env("API_SECRET_42")
         )
