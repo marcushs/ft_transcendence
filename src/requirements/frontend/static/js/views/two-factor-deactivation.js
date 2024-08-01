@@ -54,7 +54,9 @@ function renderViewByMethod(authenticationMethod, changeTwoFactorMethod=false) {
 	const title = `<h1>Disable 2fa by ${(authenticationMethod === 'email') ? 'email' : 'app'}</h1>`;
 	let message;
 
-	console.log(changeTwoFactorMethod, localStorage.getItem('changeTwoFactorMethod'));
+	if (authenticationMethod === 'email') {
+		sendTwoFactorCode();
+	}
 	if (changeTwoFactorMethod) {
 		message = `
 			<p>
@@ -86,6 +88,28 @@ async function removeTwoFactorLocalStorage() {
 	localStorage.setItem('isTwoFactorActivated', 'false');
 	localStorage.removeItem('twoFactorMethod');
 	localStorage.setItem('changeTwoFactorMethod', 'false');
+}
+
+async function sendTwoFactorCode() {
+	const config = {
+		method: 'GET',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json',
+			'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
+		},
+		credentials: 'include', // Needed for send cookie
+	};
+	try {
+		const res = await fetch(`http://localhost:8002/twofactor/get_2fa_code/`, config);
+		if (res.status === 403)
+			throw new Error('Access Denied')
+		const data = await res.json();
+		if (res.status !== 200)
+			throw new Error(data.message);
+	} catch (error) {
+		alert(`Error: ${error.message}`);
+	}
 }
 
 async function DeactivateTwoFactorRequest(verificationCode) {

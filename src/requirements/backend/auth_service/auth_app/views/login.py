@@ -25,7 +25,7 @@ class login_view(View):
             user = User.objects.get(username=data['username'])
             if check_password(data['password'], user.password):
                 if user.is_verified is True:
-                    return JsonResponse({'message': '2FA activated on this account, need to verify before log', 'is_verified': user.is_verified}, status=200)
+                    return JsonResponse({'message': '2FA activated on this account, need to verify before log', 'is_verified': user.is_verified, 'two_factor_method': user.two_factor_method, 'email': user.email}, status=200)
                 response = self._create_user_session(user=user)
             else:
                 response = JsonResponse({'message': 'Invalid password, please try again'}, status=400)
@@ -55,6 +55,7 @@ class login_view(View):
     def _send_twofactor_request(self, data, csrf_token):
         try:
             user = User.objects.get(username=data['username'])
+            print('------->>>>', user )
             response = send_post_request(url='http://twofactor:8000/twofactor/twofactor_login/', payload=data, csrf_token=csrf_token)
             if response.status_code != 200:
                 return response

@@ -44,7 +44,7 @@ async function router() {
     }
 
     document.title = view.title;
-    app.innerHTML = view.render();
+    app.innerHTML = await view.render();
 }
 
 

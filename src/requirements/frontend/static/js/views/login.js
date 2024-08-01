@@ -73,7 +73,7 @@ async function postData(event, loginBtn) {
 			const data = await res.json();
 			if (res.status === 200) {
 				if (data.is_verified === true)
-					new TwoFactorVerify(JSON.parse(json));
+					new TwoFactorVerify(JSON.parse(json), data);
 					// new TwoFactorVerify(json);
 				else
 					throwRedirectionEvent('/');

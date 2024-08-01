@@ -6,7 +6,9 @@ import '../components/two_factor_auth/TwoFactorInputComponent.js';
 import { setTwoFactorLocalStorage } from "../utils/setTwoFactorLocalStorage.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 
-export default () => {
+export default async () => {
+	await enableTwoFactorRequest();
+
 	const html = `
 		<section class="two-factor-app-page">
 			<div class="two-factor-app-form-container-background"></div>
@@ -30,12 +32,11 @@ export default () => {
 		</section>
 	`;
 
-	setTimeout(async () => {
+	setTimeout(() => {
+		console.log(document.querySelector('#app'));
 		rotatingGradient('.two-factor-app-form-container-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.two-factor-app-form-container', '#FF16C6', '#00D0FF');
 		rotatingGradient('.two-factor-app-form-container > form', '#1c0015', '#001519');
-		
-		await enableTwoFactorRequest();
 
 		document.querySelector('form').addEventListener('submit', (event) => {
 			event.preventDefault();

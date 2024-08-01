@@ -8,15 +8,17 @@ import { setTwoFactorLocalStorage } from "../utils/setTwoFactorLocalStorage.js";
 
 export class TwoFactorVerify {
 	// enableTwoFactorRequest();
-	constructor(userInfos) {
-		this.userInfos = userInfos;
+	constructor(userCredentials, userData) {
+		this.userCredentials = userCredentials;
 
+		console.log(userCredentials)
+		console.log(userData);
 		app.innerHTML = `
 			<section class="two-factor-verify-page">
 				<div class="two-factor-verify-form-container-background"></div>
 				<div class="two-factor-verify-form-container">
 					<form>
-						${this.renderViewByMethod(localStorage.getItem('twoFactorMethod'))}
+						${this.renderViewByMethod(userData.two_factor_method)}
 				        <div class="form-fields">
 				        <two-factor-input-component></two-factor-input-component>
 						</div>
@@ -28,13 +30,13 @@ export class TwoFactorVerify {
 		`;
 
 		setTimeout(async () => {
-			const userData = await getUserData();
-
 			this.attachEventListeners();
 
 			const userEmail = document.querySelector('p > strong');
-			if (userEmail)
+			if (userEmail) {
+				sendTwoFactorCode(this.userCredentials);
 				userEmail.innerHTML = userData.email;
+			}
 
 			rotatingGradient('.two-factor-verify-form-container-background', '#FF16C6', '#00D0FF');
 			rotatingGradient('.two-factor-verify-form-container', '#FF16C6', '#00D0FF');
@@ -52,7 +54,7 @@ export class TwoFactorVerify {
 		event.preventDefault();
 		const inputs = [...event.target.querySelectorAll('input')];
 		const verificationCode = inputs.reduce((acc, input) => acc += input.value, '');
-		VerifyTwoFactorRequest(verificationCode, this.userInfos);
+		VerifyTwoFactorRequest(verificationCode, this.userCredentials);
 	}
 
 
@@ -77,7 +79,30 @@ export class TwoFactorVerify {
 
 }
 
-async function VerifyTwoFactorRequest(verificationCode, userInfos) {
+async function sendTwoFactorCode(userCredentials) {
+	const config = {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json',
+			'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
+		},
+		credentials: 'include', // Needed for send cookie
+		body: JSON.stringify(userCredentials)
+	};
+	try {
+		const res = await fetch(`http://localhost:8002/twofactor/get_2fa_code/`, config);
+		if (res.status === 403)
+			throw new Error('Access Denied')
+		const data = await res.json();
+		if (res.status !== 200)
+			throw new Error(data.message);
+	} catch (error) {
+		alert(`Error: ${error.message}`);
+	}
+}
+
+async function VerifyTwoFactorRequest(verificationCode, userCredentials) {
 	const config = {
 		method: 'POST',
 		headers: {
@@ -88,7 +113,7 @@ async function VerifyTwoFactorRequest(verificationCode, userInfos) {
 		credentials: 'include', // Needed for send cookie
 		body: JSON.stringify({
 			twofactor: verificationCode,
-			...userInfos,
+			...userCredentials,
 		})
 	}
 	const res = await fetch('http://localhost:8001/auth/login/', config);

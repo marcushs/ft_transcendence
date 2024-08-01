@@ -19,7 +19,6 @@ class twofactor_disable_view(View):
             return JsonResponse({'message': 'Two factor authentification not set on your account'}, status=400)
         data = json.loads(request.body.decode('utf-8'))
         code = data.get('twofactor')
-        print('-------------------------> ', data)
         if not code:
                 return JsonResponse({'message': 'Verification code missing'}, status=400)
         if request.user.two_factor_method == 'authenticator':
