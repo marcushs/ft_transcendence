@@ -1,8 +1,7 @@
+import os
 from django.db import models
 from django.conf import settings
-from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
-import os
 
 class FriendList(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user")
@@ -13,10 +12,12 @@ class FriendList(models.Model):
     
     def add_friend(self, target_user):
         if not target_user in self.friends.all():
+            self.friends.add(target_user)
             self.save()
             
     def remove_friend(self, target_user):
         if target_user in self.friends.all():
+            self.friends.remove(target_user)
             self.save()
             
     def unfriend(self, target_user):
@@ -27,15 +28,9 @@ class FriendList(models.Model):
     def is_mutual_friend(self, friend):
         if friend in self.friends.all():
             return True
-        return False    
+        return False
     
 class FriendRequest(models.Model):
-    # FriendRequest consist on Two main parts:
-    #   1. SENDER:
-    #       - Person initiating the friend request
-    #   2. RECEIVER:
-    #       - Person receiving the friend request
-    
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sender")
     receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="receiver")
     is_active = models.BooleanField(blank=True, null=False, default=True)
@@ -66,7 +61,7 @@ class UserManager(BaseUserManager):
     def create_user(self, username, user_id):
         if not username:
             raise ValueError('The username field must be set')
-        user = self.model(email=None, username=username, id=user_id)
+        user = self.model(username=username, id=user_id)
         user.set_unusable_password()
         user.save(using=self._db)
         return user
@@ -83,6 +78,9 @@ class User(AbstractBaseUser, PermissionsMixin):
       return self.username
 
   
+    def save(self, *args, **kwargs):
+        super(User, self).save(*args, **kwargs)
+    
     def to_dict(self):
         return {
             'username': self.username,

@@ -2,19 +2,22 @@ import { getCookie } from "./cookie.js";
 
 export async function sendRequest(type, url, payload) {
     try {
+        console.log('payload: ', payload)
+        console.log('type: ', type)
+        console.log('url: ', url)
         isValidInput(type, url, payload)
-        const config = setConfigRequest(type, url, payload)
+        const config = setConfigRequest(type, payload)
+        console.log(config)
         const res = await fetch(url, config);
         const data = await res.json();
         if (res.status !== 200)
             throw new Error(data.message);
         return data
     } catch (error) {
-        console.log('error: ', error);
         throw new Error(error);
     }
 }
-
+ 
 function setConfigRequest(type, payload=null) {
     const config = {
         method: type,
@@ -25,8 +28,9 @@ function setConfigRequest(type, payload=null) {
         },
         credentials: 'include' // Needed for send cookie
     };
-    if (payload)
+    if (payload !== null)
         config.body = JSON.stringify(payload)
+    return config
 }
 
 function isValidInput(type, url, payload) {

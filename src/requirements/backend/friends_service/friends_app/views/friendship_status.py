@@ -1,17 +1,9 @@
-from typing import Any
-from django.http import JsonResponse
+from ..utils.friends_utils import get_friend_request
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+from ..models import FriendList
 from django.views import View
-from .models import FriendList, FriendRequest
-from enum import Enum
-import json
-
-class FriendRequestStatus(Enum):
-    NO_REQUEST_SENT = -1
-    THEM_SENT_TO_YOU = 0
-    YOU_SENT_TO_THEM = 1
-    
 
 class GetFriendShipStatus(View):
     def __init__(self):
@@ -50,14 +42,8 @@ class GetFriendShipStatus(View):
             return JsonResponse({'status': 'self'}, status=200)
         if self.friend_list.is_mutual_friend(friend=self.target_username):
             return JsonResponse({'status': 'friend'}, status=200)
-        try:
-            FriendRequest.objects.get(sender=user, receiver=self.target_username, is_active=True):
+        if get_friend_request(sender=user, receiver=self.target_username) is not False:
             return JsonResponse({'status': 'pending', 'sender': 'you'}, status=200)
-        except FriendRequest.DoesNotExist:
-            pass
-        try:
-            if FriendRequest.objects.get(sender=self.target_username, receiver=user, is_active=True):
-                return JsonResponse({'status': 'pending', 'sender': 'target'}, status=200)
-        except FriendRequest.DoesNotExist:
-            pass
+        if get_friend_request(sender=self.target_username, receiver=user) is not False:
+            return JsonResponse({'status': 'pending', 'sender': 'target'}, status=200)
         return JsonResponse({'status': 'unknown'}, status=200)

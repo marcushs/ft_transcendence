@@ -41,8 +41,11 @@ class signup_view(View):
         if response.status_code != 200:
             return response
         response = send_post_request(url='http://twofactor:8000/twofactor/add_user/', payload=payload, csrf_token=csrf_token)
+        if response.status_code != 200:
+            return response
+        response = send_post_request(url='http://friends:8000/friends/add_user/', payload=payload, csrf_token=csrf_token)
         return response
-
+ 
     def _check_data(self, request, data):
         if not data['username']:
             return JsonResponse({'message': 'No username provided'}, status=401)

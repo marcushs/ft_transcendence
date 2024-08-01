@@ -1,0 +1,14 @@
+friendship-button-component {
+    display: flex;
+    width: 10rem;
+    height: 3rem;
+    background-color: green;
+}
+
+.addfriend {
+    background: red;
+}
+
+.addfriend p {
+    color: yellow;
+}

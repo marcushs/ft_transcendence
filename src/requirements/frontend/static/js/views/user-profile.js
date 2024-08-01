@@ -1,9 +1,12 @@
 import rotatingGradient from '../anim/rotatingGradient.js';
 import getProfileImage from '../utils/getProfileImage.js';
 import { sendRequest } from '../utils/sendRequest.js';
+import '../components/FriendshipButtonComponent.js';
 import "../components/NavBarComponent.js";
 
-export default () => {
+export default async () => {
+    const friends_status = await checkFriendshipStatus();
+
     const html = `
     <section class="users-profile-page">
         <nav-bar-component></nav-bar-component>
@@ -13,6 +16,7 @@ export default () => {
                     <div class="user-info user-info-image">
                     <img id="profileImage" src="" alt="">
                     </div>
+                    <friendship-button-component button-status=${friends_status}></friendship-button-component>
                     <div class="user-info">
                     <p id="username">Username</p>
                     <input type="text" name="username" maxlength="12" disabled>
@@ -60,5 +64,18 @@ async function getInformation(targetUsername) {
     } catch (error) {
         console.log(error);
         return null;
+    }
+}
+
+async function checkFriendshipStatus() {
+    const targetUsername = localStorage.getItem('users-profile-target-username');
+    const url = `http://localhost:8003/friends/friendship_status/?q=${targetUsername}`
+
+    try {
+        const data = await sendRequest('GET', url, null);
+        return data.status;
+    } catch (error) {
+        console.log(error);
+        return 'self';
     }
 }

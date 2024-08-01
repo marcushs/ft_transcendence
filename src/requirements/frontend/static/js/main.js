@@ -22,11 +22,10 @@ const routes = {
 
 // create the csrf token if it does not already exist
 generateCsrfToken();
-function router() {
+async function router() {
     let view = routes[location.pathname];
-
-    console.log('test');
-    if (handleDynamicURL())
+    
+    if (await handleDynamicURL())
         return;
     if (view) {
         document.title = view.title;
@@ -37,13 +36,13 @@ function router() {
     }
 };
 
-function handleDynamicURL() {
+async function handleDynamicURL() {
     const path = window.location.pathname;
     const segments = path.split('/');
     if (segments.length > 2 && segments[1] === 'users') {
         const username = segments[2];
         document.title = username + '-profile';
-        app.innerHTML = userProfile();
+        app.innerHTML = await userProfile();
         localStorage.setItem('users-profile-target-username', username);
         // userProfile();
         // new DisplayUserProfile(username);

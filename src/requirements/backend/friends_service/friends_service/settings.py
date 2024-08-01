@@ -43,7 +43,7 @@ JWT_REFRESH_EXP_DELTA_SECONDS = 6000 # 1day
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'user']
+ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'friends']
 
 # Application definition
 

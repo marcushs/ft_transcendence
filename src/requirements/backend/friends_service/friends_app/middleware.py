@@ -4,9 +4,8 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.conf import settings
-
+ 
 User = get_user_model()
-
 # Middleware for jwt authentication
 class JWTAuthMiddleware(MiddlewareMixin):
     def process_request(self, request):
