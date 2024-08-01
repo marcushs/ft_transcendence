@@ -7,12 +7,12 @@ class TwoFactorInputComponent extends HTMLElement {
 
 	initializeComponent() {
 		this.innerHTML = `
-	        <input id="0" type="text" maxlength="1" inputmode="numeric" autocomplete="off" required autofocus>
-            <input id="1" type="text" maxlength="1" inputmode="numeric" autocomplete="off" required>
-            <input id="2" type="text" maxlength="1" inputmode="numeric" autocomplete="off" required>
-            <input id="3" type="text" maxlength="1" inputmode="numeric" autocomplete="off" required>
-            <input id="4" type="text" maxlength="1" inputmode="numeric" autocomplete="off" required>
-            <input id="5" type="text" maxlength="1" inputmode="numeric" autocomplete="off" required>
+	        <input id="0" type="text" maxlength="1" autocomplete="off" required autofocus>
+            <input id="1" type="text" maxlength="1" autocomplete="off" required>
+            <input id="2" type="text" maxlength="1" autocomplete="off" required>
+            <input id="3" type="text" maxlength="1" autocomplete="off" required>
+            <input id="4" type="text" maxlength="1" autocomplete="off" required>
+            <input id="5" type="text" maxlength="1" autocomplete="off" required>
 		`;
 	}
 
@@ -25,60 +25,98 @@ class TwoFactorInputComponent extends HTMLElement {
 	attachEventListeners() {
 		const inputs = document.querySelectorAll('input');
 
+		inputs.forEach(input => {
+			input.addEventListener('paste', event => this.handlePasteOnInput(event, inputs));
+		})
+
 		inputs.forEach((input) => {
-			input.addEventListener('input', event => this.handleInputEvent(event, inputs))
+			input.addEventListener('input', event => this.handleInputEvent(event, inputs));
 		});
 
 		inputs.forEach((input) => {
-			input.addEventListener('keydown', event => this.handleInputDeleted(event, inputs))
+			input.addEventListener('keydown', event => this.handleKeydownEvent(event, inputs));
 		});
+	}
+
+
+	handlePasteOnInput(event, inputs) {
+		let pastedValue = event.clipboardData.getData('text');
+		let inputToFocus;
+
+		inputs.forEach(input => {
+			if (input.value === '' && pastedValue !== '') {
+				input.value = pastedValue.at(0);
+				pastedValue = pastedValue.slice(1, pastedValue.length);
+				inputToFocus = input;
+			}
+		});
+
+		if (inputToFocus)
+			inputToFocus.focus();
 	}
 
 
 	handleInputEvent(event, inputs) {
-
-		// To delete the character if isn't a digit
-		if (isNaN(event.target.value)) {
+		if (isNaN(event.target.value))
 			event.target.value = '';
-			return ;
-		}
-
-		if (event.target.value === '')
-			return ;
-
-		const focusedIndex = parseInt(event.target.id);
-		let newFocusedInputIndex = this.getNextInputIndex(inputs, focusedIndex);
-
-		if (newFocusedInputIndex < 6 && newFocusedInputIndex > -1)
-			inputs[newFocusedInputIndex].focus();
 	}
 
 
-	handleInputDeleted(event, inputs) {
+	handleKeydownEvent(event, inputs) {
+		const currentInput = event.target;
+		const currentInputIndex = parseInt(currentInput.id);
 
-		if (event.code !== 'Backspace' || event.target.id === '0')
-			return ;
+		if (event.code === 'Backspace')
+			this.handleBackspaceKeyPressed(currentInput, currentInputIndex - 1, inputs, event.key);
+		else if (event.code.match(/^Digit[1-9]$/))
+			this.handleDigitKeyPressed(currentInput, currentInputIndex + 1, inputs, event.key);
+		else if (event.code === 'ArrowLeft' || event.code === 'ArrowRight')
+			this.handleArrowKeyPressed(currentInputIndex, inputs, event.code);
+	}
 
-		const newFocusedInputIndex = parseInt(event.target.id) - 1;
-		const newFocusedInputValue = inputs[newFocusedInputIndex].value;
 
-		event.target.value = '';
-
-		if (newFocusedInputIndex < 6 && newFocusedInputIndex > -1) {
-			inputs[newFocusedInputIndex].focus();
+	handleDigitKeyPressed(currentInput, nextInputIndex, inputs, key) {
+		if (currentInput.value === '') {
+			currentInput.value = key;
 			setTimeout(() => {
-				inputs[newFocusedInputIndex].value = newFocusedInputValue;
-			}, 0)
+				if (inputs[nextInputIndex])
+					inputs[nextInputIndex].focus();
+			}, 0);
+		}
+		else {
+			if (inputs[nextInputIndex]) {
+				inputs[nextInputIndex].focus();
+				if (inputs[nextInputIndex] === '')
+					inputs[nextInputIndex].value = key;
+			}
 		}
 	}
 
 
-	getNextInputIndex(inputs, focusedIndex) {
-		let slicedInputs = [...inputs].slice(focusedIndex + 1);
+	handleBackspaceKeyPressed(currentInput, previousInputIndex, inputs, key) {
+		if (currentInput.value !== '') {
+			currentInput.value = '';
+			setTimeout(() => {
+				if (inputs[previousInputIndex])
+					inputs[previousInputIndex].focus();
+			}, 0);
+		}
+		else {
+			if (inputs[previousInputIndex]) {
+				inputs[previousInputIndex].value = '';
+				inputs[previousInputIndex].focus();
+			}
+		}
+	}
 
-		for (const input of slicedInputs) {
-			if (input.value === '')
-				return parseInt(input.id);
+
+	handleArrowKeyPressed(currentInputIndex, inputs, arrow) {
+		if (arrow === 'ArrowLeft') {
+			if (inputs[currentInputIndex - 1])
+				inputs[currentInputIndex - 1].focus();
+		} else if (arrow === 'ArrowRight') {
+			if (inputs[currentInputIndex + 1])
+				inputs[currentInputIndex + 1].focus();
 		}
 	}
 
