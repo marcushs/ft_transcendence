@@ -23,6 +23,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     two_factor_code_expiry = models.DateTimeField(null=True, blank=True)
     authenticator_secret = models.CharField(max_length=50, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
+    logged_in_with_42 = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []

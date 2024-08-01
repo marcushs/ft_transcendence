@@ -24,6 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_image_link = models.CharField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
     is_verified = models.BooleanField(default=False)
     two_factor_method = models.CharField(max_length=20, blank=True)
+    logged_in_with_42 = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
