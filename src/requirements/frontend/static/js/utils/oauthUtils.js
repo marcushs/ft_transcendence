@@ -22,16 +22,12 @@ export async function redirectToOauth() {
 
 export async function handleOauthCallback(code, state) {
 	try {
-		// console.log('handleoauthcallback')
-		// console.log(code)
-		// console.log(state)
-		// document.cookie =`code=${code}`; 
-		// document.cookie = `state=${state}`;
 		const res = await fetch(`http://localhost:8003/oauth/redirect/?code=${code}&state=${state}`, config);
 		const data = await res.json();
 		console.log(data);
+		return (data.status === 'Success') ? true : false;
 	} catch (error) {
-		console.log("not successful")
 		console.log(error);
+		return false;
 	}
 }

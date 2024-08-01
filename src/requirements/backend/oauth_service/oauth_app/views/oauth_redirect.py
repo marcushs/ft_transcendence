@@ -16,26 +16,30 @@ class oauthRedirectView(View):
         
         cookie_state = request.COOKIES.get('oauth2_state')
 
-        print(code)
-        print(state)
-        print(cookie_state)
-
         if state != cookie_state:
-            return JsonResponse({'error': 'Invalid state parameter'}, status=400)
+            return JsonResponse({'message': 'Invalid state parameter', 
+                                 'status': 'Error'}, 
+                                 status=400)
         
         token_data = self.exchange_code_for_token(code)
 
         if 'error' in token_data:
-            return JsonResponse({'error': token_data['error'],
-                                 'error_description': token_data['error_description']}, 
+            return JsonResponse({'message': token_data['error_description'],
+                                 'status': token_data['error']}, 
                                  status=400)
 
         access_token = token_data['access_token']
 
         # Create a dictionary with the access token
-        response_data = {'status': 'success', 'access_token': access_token}
+        response_data = {'message': 'Successfully exchange access token',
+                         'status': 'Success'}
         
-        response = JsonResponse(response_data)
+        response = JsonResponse(response_data, status=200)
+        response.set_cookie('access_token', 
+                            access_token,
+                            httponly=True,
+                            secure=True,
+                            samesite='None')
         response.delete_cookie('oauth2_state')
 
         return response
