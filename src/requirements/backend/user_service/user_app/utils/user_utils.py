@@ -18,6 +18,8 @@ class add_new_user(View):
         data = json.loads(request.body.decode('utf-8'))
         if not all(key in data for key in ('email', 'username', 'user_id')):
             return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
+        if User.objects.filter(username=data['username']).exists():
+            return JsonResponse({'message': 'User already exists! Try logging in.'}, status=400)
         User.objects.create_user(email=data['email'], username=data['username'], user_id=data['user_id'])
         return JsonResponse({"message": 'user added with success'}, status=200)
     

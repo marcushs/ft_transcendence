@@ -13,6 +13,7 @@ import re #regular expression
 import environ
 import os
 import requests
+from ..utils.send_post_request import send_post_request
 
 User = get_user_model()
 
@@ -41,8 +42,20 @@ class oauthAccessResourceView(View):
                 return JsonResponse({'message': response_data['error'],
                                      'status': 'Error'}, 
                                      status=400)
-            return JsonResponse(response_data, safe=False)
+            create_user_response = self.create_user(request, response_data)
+            return create_user_response
         except ValueError:
             return JsonResponse({'message': 'Invalid JSON response',
                                  'status': 'Error'}, 
                                  status=500)
+        
+    def create_user(self, request, data):
+        payload = { 
+                'user_id': data['id'],
+                'username': data['login'],
+                'email': data['email'],
+            }
+        post_response = send_post_request(url='http://user:8000/user/add_user/', payload=payload, csrf_token=request.headers.get('X-CSRFToken'))
+        return post_response
+
+        
