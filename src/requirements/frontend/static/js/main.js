@@ -39,8 +39,15 @@ async function router() {
     let view = routes[location.pathname];
 
     if (!view || !await isViewAccessible(location.pathname)) {
-        history.replaceState("", "", localStorage.getItem('lastAuthorizedPage'));
-        view = routes[localStorage.getItem('lastAuthorizedPage')];
+        const lastAuthorizedPage = localStorage.getItem('lastAuthorizedPage');
+
+        if (isViewAccessible(lastAuthorizedPage)) {
+            history.replaceState("", "", lastAuthorizedPage);
+            view = routes[lastAuthorizedPage];
+        } else {
+            history.replaceState("", "", '/');
+            view = routes['/'];
+        }
     }
 
     document.title = view.title;

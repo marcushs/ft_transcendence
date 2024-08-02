@@ -30,7 +30,7 @@ class login_view(View):
             else:
                 response = JsonResponse({'message': 'Invalid password, please try again'}, status=400)
         except User.DoesNotExist:
-            response = JsonResponse({'message': 'Invalid username, please try again'}, status=400)
+            response = JsonResponse({'message': 'This username does not exist, please try again'}, status=400)
         return response
     
     

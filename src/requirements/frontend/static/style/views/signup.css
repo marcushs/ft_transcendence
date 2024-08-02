@@ -24,6 +24,13 @@
 	filter: blur(15px);
 }
 
+.signup-page #errorFeedback {
+	position: absolute;
+	top: 92%;
+	font-size: 1.5rem;
+	color: red;
+}
+
 .signup-page form {
 	height: 100%;
 	width: 100%;

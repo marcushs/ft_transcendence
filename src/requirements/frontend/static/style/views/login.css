@@ -24,6 +24,13 @@
 	filter: blur(15px);
 }
 
+.login-page #errorFeedback {
+	position: absolute;
+	top: 82%;
+	font-size: 1.5rem;
+	color: red;
+}
+
 .login-page form {
 	height: 100%;
 	width: 100%;

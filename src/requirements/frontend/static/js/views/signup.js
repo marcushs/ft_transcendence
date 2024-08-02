@@ -32,6 +32,7 @@ export default () => {
 					</div>
 					<button-component id="signupBtn" label="Signup" class="generic-auth-btn-disabled"></button-component>
 					<p>Already have an account? <a href="/login">Login</a></p>
+					<span id="errorFeedback" class="input-feedback"></span>
 				</form>
 			</div>
 		</section>`;
@@ -40,9 +41,17 @@ export default () => {
 		const signupBtn = document.querySelector('#signupBtn');
 
 		signupBtn.addEventListener('click', event => {
-			if (signupBtn.className === 'generic-auth-btn')
+			event.preventDefault();
+			if (signupBtn.className === 'generic-auth-btn') {
 				postData(event, signupBtn);
+			}
 		});
+
+		document.addEventListener('input', event => {
+			document.querySelector('#errorFeedback').innerHTML = '';
+		});
+
+		displayErrorFeedback();
 
 		rotatingGradient('.signup-form-container-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.signup-form-container', '#FF16C6', '#00D0FF');
@@ -55,13 +64,17 @@ export default () => {
 	return html;
 }
 
-function showAlreadyExistsData(message) {
-	alert(message);
+function displayErrorFeedback() {
+	const errorMessage = localStorage.getItem('errorFeedback');
+
+	if (errorMessage) {
+		document.querySelector('#errorFeedback').innerHTML = errorMessage;
+		localStorage.removeItem('errorFeedback');
+	}
 }
 
 async function postData(event, signupBtn) {
 	// Prevent form submission
-	event.preventDefault();
 	// Get the closest form element of the button
 	const form = signupBtn.closest('form');
 	if (form) {
@@ -85,20 +98,19 @@ async function postData(event, signupBtn) {
 		};
 
 		try {
-			console.log(config)
 			const res = await fetch(`http://localhost:8001/auth/signup/`, config);
 			if (res.status == 403)
 				throw new Error('Access Denied')
 			const data = await res.json();
-			if (data.error)
-				alert(data.error)
-			else
+			if (data.error) {
+				alert(data.error);
+			} else {
+				localStorage.setItem('errorFeedback', data.message);
 				throwRedirectionEvent(data.redirect_url);
-			// Why data.redirect_url ????
+			}
 		} catch (error) {
 			if (error.data && error.data.status === 'jwt_failed')
 				throwRedirectionEvent('/');
-			showAlreadyExistsData(error.message);
 		}
 	} else {
 		console.error('No form found!');

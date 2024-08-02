@@ -25,6 +25,7 @@ export default () => {
 					</div>
 					<button-component id="loginBtn" label="Login" class="generic-auth-btn-disabled"></button-component>
 					<p>Don't have an account? <a href="/signup">Signup</a></p>
+					<span id="errorFeedback" class="input-feedback"></span>
 				</form>
 			</div>
 		</section>`;
@@ -33,9 +34,16 @@ export default () => {
 		const loginBtn = document.querySelector('#loginBtn');
 
 		loginBtn.addEventListener('click', event => {
+			event.preventDefault();
 			if (loginBtn.className === 'generic-auth-btn')
 				postData(event, loginBtn);
 		});
+
+		document.addEventListener('input', event => {
+			document.querySelector('#errorFeedback').innerHTML = '';
+		});
+
+		displayErrorFeedback();
 
 		rotatingGradient('.login-form-container-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.login-form-container', '#FF16C6', '#00D0FF');
@@ -47,8 +55,16 @@ export default () => {
 	return html;
 }
 
+function displayErrorFeedback() {
+	const errorMessage = localStorage.getItem('errorFeedback');
+
+	if (errorMessage) {
+		document.querySelector('#errorFeedback').innerHTML = errorMessage;
+		localStorage.removeItem('errorFeedback');
+	}
+}
+
 async function postData(event, loginBtn) {
-	event.preventDefault();
 	const form = loginBtn.closest('form');
 	if (form) {
 		const formData = new FormData(form);
@@ -78,7 +94,8 @@ async function postData(event, loginBtn) {
 				else
 					throwRedirectionEvent('/');
 			} else {
-				console.log(data.message)
+				localStorage.setItem('errorFeedback', data.message);
+				throwRedirectionEvent(data.redirect_url);
 			}
 		} catch (error) {
 			if (error.data && error.data.status === 'jwt_failed')

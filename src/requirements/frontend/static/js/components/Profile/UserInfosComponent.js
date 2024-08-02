@@ -19,30 +19,32 @@ class UserInfosComponent extends HTMLElement {
 
 	initializeComponent() {
 		this.innerHTML = `
-			<div class="user-info user-info-image">
-				<div class="change-profile-image">
-					<p id="imageLink">Use image link <i class="fa-solid fa-link"></i></p>
-					<p id="uploadImage">Upload image <i class="fa-solid fa-upload"></i></p>
-					<p id="image42">Use 42 image <img src="../../assets/42_Logo.png" alt="42 logo"></p>
-					<i class="fa-solid fa-pen profile-picture-pen"></i>
+			<form>
+				<div class="user-info user-info-image">
+					<div class="change-profile-image">
+						<p id="imageLink">Use image link <i class="fa-solid fa-link"></i></p>
+						<p id="uploadImage">Upload image <i class="fa-solid fa-upload"></i></p>
+						<p id="image42">Use 42 image <img src="../../assets/42_Logo.png" alt="42 logo"></p>
+						<i class="fa-solid fa-pen profile-picture-pen"></i>
+					</div>
+					<img id="profileImage" src="" alt="">
+					<input type="file" accept="image/*" name="profile-image">
+					<span id="profileImageFeedback" class="input-feedback"></span>
 				</div>
-				<img id="profileImage" src="" alt="">
-				<input type="file" accept="image/*" name="profile-image">
-				<span id="profileImageFeedback" class="input-feedback"></span>
-			</div>
-			<div class="user-info">
-				<p id="username">Username</p>
-				<input type="text" name="username" maxlength="12" disabled>
-				<i class="fa-solid fa-pen classic-pen"></i>
-				<span id="usernameFeedback" class="input-feedback"></span>
-			</div>
-			<div class="user-info">
-				<p id="email">Email</p>
-				<input type="email" name="email" disabled>
-				<i class="fa-solid fa-pen classic-pen"></i>
-				<span id="emailFeedback" class="input-feedback"></span>
-			</div>
-			<button-component label="Save" class="generic-btn-disabled"></button-component>
+				<div class="user-info">
+					<p id="username">Username</p>
+					<input type="text" name="username" maxlength="12" disabled>
+					<i class="fa-solid fa-pen classic-pen"></i>
+					<span id="usernameFeedback" class="input-feedback"></span>
+				</div>
+				<div class="user-info">
+					<p id="email">Email</p>
+					<input type="email" name="email" disabled>
+					<i class="fa-solid fa-pen classic-pen"></i>
+					<span id="emailFeedback" class="input-feedback"></span>
+				</div>
+				<button-component label="Save" class="generic-btn-disabled"></button-component>
+			</form>
 			<span id="genericErrorFeedback" class="error-feedback"></span>
 		`;
 	}
@@ -113,6 +115,7 @@ class UserInfosComponent extends HTMLElement {
 	// Handle save infos when save button is clicked
 
 	async handleSaveInfos(event) {
+		event.preventDefault();
 		if (event.target.className === 'generic-btn') {
 			let  newUserData = new FormData();
 
