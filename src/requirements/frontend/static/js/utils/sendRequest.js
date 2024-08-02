@@ -2,12 +2,8 @@ import { getCookie } from "./cookie.js";
 
 export async function sendRequest(type, url, payload) {
     try {
-        console.log('payload: ', payload)
-        console.log('type: ', type)
-        console.log('url: ', url)
         isValidInput(type, url, payload)
         const config = setConfigRequest(type, payload)
-        console.log(config)
         const res = await fetch(url, config);
         const data = await res.json();
         if (res.status !== 200)

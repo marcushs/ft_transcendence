@@ -1,7 +1,8 @@
-import os
-from django.db import models
-from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.conf import settings
+from django.db import models
 
 class FriendList(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user")
@@ -85,4 +86,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         return {
             'username': self.username,
         }
-    
+        
+
+@receiver(post_save, sender=User)
+def create_friend_list(sender, instance, created, **kwargs):
+    if created:
+        FriendList.objects.create(user=instance)

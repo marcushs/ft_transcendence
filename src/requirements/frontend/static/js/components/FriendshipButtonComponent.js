@@ -1,4 +1,4 @@
-import { getCookie } from "../utils/cookie.js";
+import { sendRequest } from "../utils/sendRequest.js";
 
 class FriendshipButtonComponent extends HTMLElement {
     static get observedAttributes() {
@@ -8,12 +8,7 @@ class FriendshipButtonComponent extends HTMLElement {
     constructor() {
         super();
         this.buttonStatus = null;
-        this.statusList = {
-            self: {class: 'self', request: self, text: '', imgLink: ''},
-            pending: {class: 'css', request: null},
-            friend: {class: 'css', request: null},
-            notfriend: {class: 'addfriend', request: null},
-        }
+        this.createStatusList();
         this.innerHTML = `
             <p></p>
             <img src="" alt="">
@@ -21,22 +16,21 @@ class FriendshipButtonComponent extends HTMLElement {
         this.attachEventListener();
     }
 
-    // test() {
-    //     this.statusList[this.buttonStatus].request();
-    //     this.className = this.statusList[this.buttonStatus].class;
-    // }
-
     connectedCallback() {
+        this.requestUrl = 'http://friends:8000/friends/manage-friendship/'
         this.querySelector('p').innerHTML = this.statusList[this.buttonStatus].text;
         this.querySelector('img').src = this.statusList[this.buttonStatus].imgLink;
+        console.log('button-status: ', this.buttonStatus);
+        console.log('class: ', this.className);
         this.className = this.statusList[this.buttonStatus].class;
-        console.log(this.buttonStatus, this.className);
         this.attachEventListener();
     }
-
-    async attachEventListener() {
-        this.addEventListener('click', (event) => {
-            this.statusList[this.buttonStatus].request()
+ 
+    attachEventListener() {
+        this.addEventListener('click', async (event) => {
+            if (this.buttonStatus !== 'own_profile') {
+                response = await this.sendFriendshipRequest(this.statusList[this.buttonStatus].payload);
+            }
         });
     }
 
@@ -44,12 +38,60 @@ class FriendshipButtonComponent extends HTMLElement {
         if (name === 'button-status') {
             this.buttonStatus = newValue;
             this.className = this.statusList[this.buttonStatus].class;
-            this.style.background = "yellow"
         }
     }
 
     setClass(newState) {
         this.currentState = newState;
+    }
+
+    async sendFriendshipRequest(payload) {
+        try {
+            const data = await sendRequest(type='POST', url=this.requestUrl, payload=payload);
+            if (data.status === 'success') {
+                return data.message;
+            } else {
+                console.log(data.message);
+                return null
+            }
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
+
+    createStatusList() {
+        this.statusList = {
+            own_profile: {
+                class: 'hide-button',
+                buttons: '',
+            },
+            pending_sent: {
+                class: 'pending-sent-button',
+                buttons: [
+                    { payload: {status: 'cancel'}, text: 'Cancel', imgLink: '' }
+                ]
+            },
+            pending_received: {
+                class: 'pending-received-button',
+                buttons: [
+                    { payload: {status: 'accept'}, text: 'Accept', imgLink: '' },
+                    { payload: {status: 'decline'}, text: 'Decline', imgLink: '' },
+                ]
+            },
+            mutual_friend: {
+                class: 'remove-friend-button',
+                buttons: [
+                    { payload: {status: 'remove'}, text: 'Remove', imgLink: '' }
+                ]
+            },
+            not_friend: {
+                class: 'add-friend-button',
+                buttons: [
+                { payload: {status: 'add'}, text: 'Add', imgLink: '' }
+                ]
+            },
+        }
     }
 }
 

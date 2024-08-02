@@ -75,7 +75,7 @@ async function checkFriendshipStatus() {
         const data = await sendRequest('GET', url, null);
         return data.status;
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return 'self';
     }
 }
