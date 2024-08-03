@@ -11,7 +11,7 @@ class GetFriendShipStatus(View):
         
     def get(self, request):
         if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'message': 'You are not logged in'}, status=400)
+            return JsonResponse({'status': 'error', 'message': 'unregistered'}, status=200)
         self.init(request=request)
         response = self.check_data(user=request.user)
         if response['status'] != 200:

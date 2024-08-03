@@ -1,4 +1,8 @@
-@import '../components/FriendshipButtonComponent.css';
+@import '../components/Friendship/AddFriendButton.css';
+@import '../components/Friendship/CancelFriendButton.css';
+@import '../components/Friendship/AcceptFriendButton.css';
+@import '../components/Friendship/DeclineFriendButton.css';
+@import '../components/Friendship/RemoveFriendButton.css';
 
 .users-profile-page {
 	width: 100%;
@@ -22,8 +26,8 @@
 	position: absolute;
 	background: var(--neon-gradiant);
 	filter: blur(15px);
-	height: 40%;
-	width: 40%;
+	height: 70rem;
+	width: 90rem;
 }
 
 .users-profile-content {
@@ -34,13 +38,13 @@
 
 .users-profile-page .users-profile-container {
 	position: relative;
+	height: 70rem;
+	width: 90rem;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	padding: 3px;
 	border-radius: 10px;
-	width: 40%;
-	height: 40%;
 }
 
 .users-profile-page .user-info {
@@ -56,22 +60,20 @@
 .users-profile-page .user-info p {
 	font-weight: 700;
 	color: var(--text-primary-color);
-	font-size: 1.2rem;
+	font-size: 2rem;
 	letter-spacing: 0.2px;
 	margin-bottom: 0.2rem;
+	padding-left: 10rem;
 }
 
-.users-profile-page .user-info input[type="text"],
-.users-profile-page .user-info input[type="email"] {
+.users-profile-page .user-info input[type="text"] {
 	width: 100%;
-	height: 70%;
+	height: 100%;
 	font-size: 1.7rem;
 	border-radius: 5px;
-	border: 1px solid var(--light-grey);
+	/* border: 1px solid var(--light-grey); */
 	color: var(--text-primary-color);
-	padding-left: 1rem;
-	padding-right: 3.5rem;
-	padding-top: 0.1rem;
+	padding-left: 12.5rem
 }
 
 .users-profile-page .user-info i {

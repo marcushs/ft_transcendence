@@ -41,11 +41,9 @@ async function handleDynamicURL() {
     const segments = path.split('/');
     if (segments.length > 2 && segments[1] === 'users') {
         const username = segments[2];
+        localStorage.setItem('users-profile-target-username', username);
         document.title = username + '-profile';
         app.innerHTML = await userProfile();
-        localStorage.setItem('users-profile-target-username', username);
-        // userProfile();
-        // new DisplayUserProfile(username);
         return true;
     }
     return false;

@@ -7,30 +7,30 @@ from django.db import models
 class FriendList(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user")
     friends = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="friends")
-    
+
     def __str__(self):
         return self.user.username
-    
+
     def add_friend(self, target_user):
         if not target_user in self.friends.all():
             self.friends.add(target_user)
             self.save()
-            
+
     def remove_friend(self, target_user):
         if target_user in self.friends.all():
             self.friends.remove(target_user)
             self.save()
-            
+
     def unfriend(self, target_user):
         self.remove_friend(target_user)
         friend_list = FriendList.objects.get(user=target_user)
         friend_list.remove_friend(self.user)
-        
+
     def is_mutual_friend(self, friend):
         if friend in self.friends.all():
             return True
         return False
-    
+
 class FriendRequest(models.Model):
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sender")
     receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="receiver")

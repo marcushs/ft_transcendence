@@ -6,6 +6,10 @@ import "../components/NavBarComponent.js";
 
 export default async () => {
     const friends_status = await checkFriendshipStatus();
+    if (!friends_status) {
+        console.error('!debug message! redirect here');
+        return;
+    }
 
     const html = `
     <section class="users-profile-page">
@@ -59,7 +63,7 @@ async function getInformation(targetUsername) {
             return data.message;
         } else {
             console.log(data.message);
-            return null
+            return null;
         }
     } catch (error) {
         console.log(error);
@@ -69,13 +73,14 @@ async function getInformation(targetUsername) {
 
 async function checkFriendshipStatus() {
     const targetUsername = localStorage.getItem('users-profile-target-username');
+    console.log('username: ', targetUsername)
     const url = `http://localhost:8003/friends/friendship_status/?q=${targetUsername}`
 
     try {
         const data = await sendRequest('GET', url, null);
         return data.status;
     } catch (error) {
-        console.error(error);
-        return 'self';
+        console.error(error.message);
+        return null;
     }
 }
