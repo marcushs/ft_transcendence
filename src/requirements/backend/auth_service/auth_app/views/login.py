@@ -12,8 +12,8 @@ User = get_user_model()
 class login_view(View):
     def __init__(self):
         super().__init__
-    
-    
+
+
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
         if 'twofactor' in data:

@@ -76,19 +76,12 @@ async function postData(event, loginBtn) {
 			if (res.status == 403)
 				throw new Error('Access Denied')
 			const data = await res.json();
+			console.log(data.message)
 			if (res.status === 200) {
 				if (data.is_verified === true)
 					new TwoFactorVerify(json);
-				alert(data.message)
 			}
-			if (data.error)
-				alert(data.error)
 		} catch (error) {
-			if (error.data && error.data.status === 'jwt_failed') {
-				history.replaceState("", "", "/");
-				document.title = "Index";
-				app.innerHTML = index();
-			}
 			console.log('Catch error :', error);
 			alert(`Error: ${error.message}`)
 		}

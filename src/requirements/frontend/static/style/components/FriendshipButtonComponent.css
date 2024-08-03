@@ -2,13 +2,12 @@ friendship-button-component {
     display: flex;
     width: 10rem;
     height: 3rem;
-    background-color: green;
 }
 
-.addfriend {
-    background: red;
+.add-friend-button {
+    background: green;
 }
 
-.addfriend p {
-    color: yellow;
+.add-friend-button p {
+    color: white;
 }

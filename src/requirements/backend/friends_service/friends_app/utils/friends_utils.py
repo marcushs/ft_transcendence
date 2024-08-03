@@ -11,44 +11,43 @@ def get_friend_request(sender, receiver):
         return FriendRequest.objects.get(sender=sender, receiver=receiver, is_active=True)
     except FriendRequest.DoesNotExist:
         return False
-
+ 
 class friendshipManager(View):
     def __init__(self):
         super()
-        
+
     def post(self, request):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'You are not logged in'}, status=400)
         data = json.loads(request.body.decode('utf-8'))
+        status = 'unknown'
         if 'status' in data:
             status = data['status']
-        else:
-            status = 'unknown'
         match status:
             case "accept":
-                self.accept_friendship(request)
-            case "send":
-                self.send_friendship(request)
+                return self.accept_friendship(request)
+            case "add":
+                return self.send_friendship(request)
             case "cancel":
-                self.cancel_friendship(request)
+                return self.cancel_friendship(request)
             case "decline":
-                self.decline_friendship(request)
+                return self.decline_friendship(request)
             case "remove":
-                self.remove_friendship(request)
+                return self.remove_friendship(request)
             case _:
-                return JsonResponse({'message': 'Unknown friendship status'}, status=400)
+                return JsonResponse({'message': 'Unknown friendship status request'}, status=400)
+ 
+    def accept_friendship(self, request):
+        return JsonResponse({'status': 'success', 'message': 'accept_method reached'}, status=200)
 
-    def accept_friendship(request):
-        pass
+    def send_friendship(self, request):
+        return JsonResponse({'status': 'success', 'message': 'send_method reached'}, status=200)
 
-    def send_friendship(request):
-        pass
+    def cancel_friendship(self, request):
+        return JsonResponse({'status': 'success', 'message': 'cancel_method reached'}, status=200)
 
-    def cancel_friendship(request):
-        pass
+    def decline_friendship(self, request):
+        return JsonResponse({'status': 'success', 'message': 'decline_method reached'}, status=200)
 
-    def decline_friendship(request):
-        pass
-
-    def remove_friendship(request):
-        pass
+    def remove_friendship(self, request):
+        return JsonResponse({'status': 'success', 'message': 'remove_method reached'}, status=200)

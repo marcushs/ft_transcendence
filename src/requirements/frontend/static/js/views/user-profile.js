@@ -1,7 +1,7 @@
 import rotatingGradient from '../anim/rotatingGradient.js';
 import getProfileImage from '../utils/getProfileImage.js';
 import { sendRequest } from '../utils/sendRequest.js';
-import '../components/FriendshipButtonComponent.js';
+import '../components/Friendship/FriendshipButtonComponent.js';
 import "../components/NavBarComponent.js";
 
 export default async () => {
