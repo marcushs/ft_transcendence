@@ -18,6 +18,7 @@ class UserManager(BaseUserManager):
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):
+    language = models.CharField(max_length=4, null=True, default=None)
     username = models.CharField(max_length=12, unique=True, default='default')
     email = models.EmailField(unique=True)
     profile_image = models.ImageField(upload_to=user_directory_path, null=True)

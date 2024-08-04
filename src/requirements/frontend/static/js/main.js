@@ -10,8 +10,11 @@ import twoFactorEmail from "./views/two-factor-email.js";
 import checkAuthentication from "./utils/checkAuthentication.js";
 import twoFactorDeactivation from "./views/two-factor-deactivation.js";
 import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
+import {loadLanguagesJson, getStringByLanguage} from "./utils/getStringByLanguage.js";
 
 (async () => {
+
+    await loadLanguagesJson();
     if (await isTwoFactorActivated()) {
         localStorage.setItem('isTwoFactorActivated', 'true');
         localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
@@ -19,6 +22,7 @@ import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
         localStorage.setItem('isTwoFactorActivated', 'false');
         localStorage.removeItem('twoFactorMethod');
     }
+    // getStringByLanguage('test')
 })();
 
 const routes = {
