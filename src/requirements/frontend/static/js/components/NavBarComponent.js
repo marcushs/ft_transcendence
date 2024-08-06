@@ -1,5 +1,6 @@
-import "./SearchBar.js"
-import checkAuthentication from '../utils/checkAuthentication.js'
+import "./SearchBar.js";
+import './ChooseLanguageComponent.js';
+import checkAuthentication from '../utils/checkAuthentication.js';
 import getProfileImage from "../utils/getProfileImage.js";
 import getUserData from "../utils/getUserData.js";
 import signup from "../views/signup.js";
@@ -24,9 +25,7 @@ class NavBarComponent extends HTMLElement {
                     <a class="nav-bar-link">Home</a>
                     <div is="search-bar-component"></div>
                 </div>
-                <div class="nav-bar-section nav-bar-right-section">
-                
-                </div>
+                <div class="nav-bar-section nav-bar-right-section"></div>
             </nav>
         `;
         this.classList.add('component');
@@ -73,6 +72,7 @@ class NavBarComponent extends HTMLElement {
         profilePicture.src = getProfileImage(userData);
 
         return `
+            <choose-language-component></choose-language-component>
             <img src="../../assets/bell.svg" alt="notifs-bell">
             <div class="account-infos" id="loggedUser">
                 <p>${userData.username}</p>
@@ -84,6 +84,7 @@ class NavBarComponent extends HTMLElement {
 
     generateUnloggedUserInfos() {
         return `
+            <choose-language-component></choose-language-component>
             <div class="account-infos">
                 <button-component label="Login" class="login-nav-bar-btn"></button-component>
                 <button-component label="Signup" class="signup-nav-bar-btn"></button-component>

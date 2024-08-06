@@ -1,0 +1,118 @@
+choose-language-component {
+	position: relative;
+	height: 8vh;
+	width: 10rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+choose-language-component .flag {
+	cursor: pointer;
+	width: 6rem;
+	height: 4rem;
+	border: 1px solid var(--text-primary-color);
+	border-radius: 5px;
+}
+
+choose-language-component .chosen-language {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	cursor: pointer;
+}
+
+choose-language-component .chosen-language i {
+	margin-left: 1rem;
+	font-size: 3rem;
+}
+
+choose-language-component .language-list {
+	display: none;
+	z-index: 3;
+	position: absolute;
+	top: calc(100% + 0.5px);
+	left: -2.85rem;
+	width: 13rem;
+	/*height: 16rem;*/
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	padding: 0 1px 1px 1px;
+	background: linear-gradient(0deg, var(--neon-pink), var(--neon-blue));
+}
+
+choose-language-component .language-list ul {
+	background: var(--component-background-color);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-evenly;
+	width: 100%;
+	height: 100%;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+choose-language-component .language-list ul li {
+	list-style-type: none;
+	opacity: 0;
+}
+
+choose-language-component .language-list ul li .flag:hover {
+	box-shadow: 1px 1px 3px var(--text-primary-color), -1px -1px 3px var(--text-primary-color), 1px -1px 3px var(--text-primary-color), -1px 1px 3px var(--text-primary-color);
+}
+
+@keyframes animate-caret-up {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(180deg);
+	}
+}
+
+@keyframes animate-caret-down {
+	0% {
+		transform: rotate(180deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes animate-list-open {
+	0% {
+		height: 0;
+	}
+	100% {
+		height: 16rem;
+	}
+}
+
+@keyframes animate-list-close {
+	0% {
+		height: 16rem;
+	}
+	100% {
+		height: 0;
+	}
+}
+
+@keyframes animate-flag-appearance {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes animate-flag-disappearance {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}

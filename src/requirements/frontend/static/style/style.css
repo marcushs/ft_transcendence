@@ -5,10 +5,10 @@
 @import './views/signup.css';
 @import './views/profile.css';
 @import './views/change-password.css';
-@import 'views/two-factor-app.css';
-@import 'views/two-factor-email.css';
-@import 'views/two-factor-verify.css';
-@import 'views/two-factor-deactivation.css';
+@import './views/two-factor-app.css';
+@import './views/two-factor-email.css';
+@import './views/two-factor-verify.css';
+@import './views/two-factor-deactivation.css';
 @import './_variables.css';
 
 :root {
