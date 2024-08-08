@@ -1,20 +1,28 @@
 import { getCookie } from "./cookie.js";
-
-'../utils/cookie.js'
+import checkAuthentication from "./checkAuthentication.js";
 
 let languages = null;
 
-// function setUserLanguage() {
-//
-// }
-async function getUserLanguage() {
-	let userLanguage = await getUserLanguageFromDb();
+export async function getUserLanguage() {
+	let userLanguage;
+
+	userLanguage = localStorage.getItem("userLanguage");
 
 	if (userLanguage)
 		return userLanguage;
 
+	if (await checkAuthentication()) {
+		userLanguage = await getUserLanguageFromDb();
+
+		if (userLanguage) {
+			localStorage.setItem('userLanguage', userLanguage);
+			return userLanguage;
+		}
+	}
+
 	userLanguage = navigator.language.split('-')[0];
 	await setUserLanguageInDb(userLanguage);
+	localStorage.setItem('userLanguage', userLanguage);
 
 	return userLanguage;
 }
@@ -24,16 +32,23 @@ export async function loadLanguagesJson() {
 		const response = await fetch('./languages.json');
 		const json = await response.json();
 		languages = json[await getUserLanguage()];
+
+		return languages;
 	} catch (e) {
 		console.log(e);
 	}
 }
 
-export function getStringByLanguage(key) {
-	console.log(languages[key])
+export function getString(key) {
+	const keys = key.split('/');
+
+	if (keys.length === 2)
+		return languages[keys[0]][keys[1]];
+
+	return languages[key];
 }
 
-async function setUserLanguageInDb(language) {
+export async function setUserLanguageInDb(language) {
 	const config = {
 		method: 'POST',
 		headers: {
@@ -47,9 +62,7 @@ async function setUserLanguageInDb(language) {
 
 	try {
 		const res = await fetch('http://localhost:8000/user/language/', config);
-		console.log('setter')
 	} catch (error) {
-		console.log('setter error')
 		console.log(error);
 	}
 }

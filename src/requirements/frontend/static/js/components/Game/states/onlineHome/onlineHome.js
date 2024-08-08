@@ -1,6 +1,7 @@
 import './RankedComponent.js'
 import './UnrankedComponent.js'
 import './PrivateMatchComponent.js'
+import {getString} from "../../../../utils/languageManagement.js";
 
 class onlineHome {
 
@@ -12,7 +13,7 @@ class onlineHome {
 	render() {
 		return `
 			<div class="online-home-container">
-				<h3>Online</h3>
+				<h3>${getString('gameComponent/online')}</h3>
 				<div class="online-components-container">
 					<div class="left-section">				
 						<ranked-component></ranked-component>

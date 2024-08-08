@@ -1,8 +1,16 @@
+import {loadLanguagesJson, getUserLanguage, setUserLanguageInDb} from "../utils/languageManagement.js";
+import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
+
 class ChooseLanguageComponent extends HTMLElement {
 	constructor() {
 		super();
 
 		this.initializeComponent();
+		this.languages = {
+			fr: false,
+			en: false,
+			zh: false
+		}
 		this.isAnimabled = true;
 		this.isOpen = false;
 	}
@@ -12,18 +20,10 @@ class ChooseLanguageComponent extends HTMLElement {
 		this.innerHTML = `
 			<div class="language-selector">
 				<div class="chosen-language language">
-					<img src="../../assets/french-flag.png" alt="french flag" class="flag">
 					<i class="fa-solid fa-caret-down"></i>
 				</div>
 				<div class="language-list">				
-					<ul>
-						<li class="language">
-							<img src="../../assets/uk-flag.png" alt="uk flag" class="flag">
-						</li>
-						<li class="language">
-							<img src="../../assets/chinese-flag.png" alt="chinese flag" class="flag">
-						</li>
-					</ul>
+					<ul></ul>
 				</div>
 				
 			</div>
@@ -31,28 +31,99 @@ class ChooseLanguageComponent extends HTMLElement {
 	}
 
 
-	connectedCallback() {
+	async connectedCallback() {
+		await this.setCurrentLanguage();
+		this.generateCurrentLanguageElement();
+		this.generateOtherLanguagesElements();
 		this.attachEventListener();
+	}
+
+
+	async setCurrentLanguage() {
+		this.languages[await getUserLanguage()] = true;
+	}
+
+	getCurrentLanguage() {
+		if (this.languages.en === true)
+			return 'en';
+		else if (this.languages.fr === true)
+			return 'fr';
+		else if (this.languages.zh === true)
+			return 'zh';
+	}
+
+
+	getOtherLanguages() {
+		const otherLanguages = [];
+
+		console.log(this.languages);
+		if (this.languages.en === false)
+			otherLanguages.push('en');
+		if (this.languages.fr === false)
+			otherLanguages.push('fr');
+		if (this.languages.zh === false)
+			otherLanguages.push('zh');
+
+		return otherLanguages;
+	}
+
+	generateFlagImgElement(language) {
+		const imgElement = document.createElement("img");
+
+		imgElement.id = language;
+		imgElement.className = 'flag';
+
+		if (language === 'en') {
+			imgElement.src = '"../../assets/uk-flag.png';
+			imgElement.alt = 'uk flag';
+		} else if (language === 'fr') {
+			imgElement.src = '"../../assets/french-flag.png';
+			imgElement.alt = 'french flag';
+		} else if (language === 'zh') {
+			imgElement.src = '"../../assets/chinese-flag.png';
+			imgElement.alt = 'chinese flag';
+		}
+
+		return imgElement;
+	}
+
+	generateCurrentLanguageElement() {
+		const chosenLanguage = this.querySelector('.chosen-language');
+		const currentLanguageFlag = this.generateFlagImgElement(this.getCurrentLanguage());
+
+		chosenLanguage.insertBefore(currentLanguageFlag, chosenLanguage.firstChild);
+	}
+
+
+	generateOtherLanguagesElements() {
+		const otherLanguages = this.getOtherLanguages();
+		const ulElement = this.querySelector('ul');
+
+		otherLanguages.forEach(language => {
+			const liElement = document.createElement("li");
+			const imgFlag = this.generateFlagImgElement(language);
+
+			liElement.className = 'language';
+			liElement.appendChild(imgFlag);
+			ulElement.appendChild(liElement);
+		});
+		console.log(otherLanguages)
+		console.log(ulElement);
 	}
 
 
 	attachEventListener() {
 		const chosenLanguageElement = this.querySelector('.chosen-language');
-		// const languagesInList = this.querySelectorAll('.language-list .language');
+		const languagesInList = this.querySelectorAll('.language-list .language');
 
-		// languagesInList.forEach(elem => {
-		// 	elem.addEventListener('click', (event) => {
-		// 		const chosenLanguageImg = this.querySelector('.chosen-language > img');
-		// 		const newChosenLanguageImg = elem.querySelector('img');
-		//
-		// 		elem.removeChild(newChosenLanguageImg);
-		// 		elem.appendChild(chosenLanguageImg);
-		//
-		// 		// this.querySelector('.chosen-language').removeChild(chosenLanguageImg);
-		// 		const chosenLanguageElement = this.querySelector('.chosen-language');
-		// 		chosenLanguageElement.insertBefore(newChosenLanguageImg, chosenLanguageElement.firstChild);
-		// 	});
-		// })
+		this.querySelector('.language-list').addEventListener('click', async (event) => {
+			if (event.target.classList.contains('flag')) {
+				localStorage.setItem('userLanguage', event.target.id);
+				await setUserLanguageInDb(event.target.id);
+				await loadLanguagesJson();
+				throwRedirectionEvent('/')
+			}
+		})
 
 		this.addEventListener('click', event => event.stopPropagation())
 
@@ -68,11 +139,11 @@ class ChooseLanguageComponent extends HTMLElement {
 
 		if (this.isAnimabled === false) // To not throw animation if one is already in progress
 			return ;
-		if (getComputedStyle(list).display === 'none') {
+
+		if (getComputedStyle(list).display === 'none')
 			this.openListAnimation(list, chosenLanguageCaret);
-		} else {
+		else
 			this.closeListAnimation(list, chosenLanguageCaret);
-		}
 	}
 
 

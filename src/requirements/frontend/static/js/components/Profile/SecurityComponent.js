@@ -1,5 +1,6 @@
 import '../ToggleButtonComponent.js'
 import {throwRedirectionEvent} from "../../utils/throwRedirectionEvent.js";
+import {getString} from "../../utils/languageManagement.js";
 
 class SecurityComponent extends HTMLElement {
 	constructor() {
@@ -12,32 +13,27 @@ class SecurityComponent extends HTMLElement {
 		this.innerHTML = `
 			<div class="two-factor-container">
 				<div class="title">
-					<p>Two-factor authentication</p>
+					<p>${getString('profileComponent/twoFactorTitle')}</p>
 				</div>
-				<p class="information-sentence">
-					Help protect your account from unauthorized access by requiring a second authentication method
-					in addition to your password.
-				</p>
+				<p class="information-sentence">${getString('profileComponent/twoFactorInformation')}</p>
 				<hr>
 				<div class="two-factor-type">
-					<p>2fa by email</p>
+					<p>${getString('profileComponent/twoFactorByEmail')}</p>
 					<toggle-button-component enabled-route="/two-factor-email" disabled-route="/two-factor-deactivation"></toggle-button-component>
 				</div>
 				<hr>
 				<div class="two-factor-type">
-					<p>2fa by app</p>
+					<p>${getString('profileComponent/twoFactorByAuthenticator')}</p>
 					<toggle-button-component enabled-route="/two-factor-app" disabled-route="/two-factor-deactivation"></toggle-button-component>
 				</div>
 			</div>
 			<span class="feedbackInformation" id="twoFactorFeedback"></span>
 			<div class="change-password-container">
 				<div class="title">
-					<p>Change password</p>
+					<p>${getString('profileComponent/changePasswordTitle')}</p>
 				</div>
-				<p class="information-sentence">
-					Change your password regularly to keep your account secure.
-				</p>
-				<button-component label="Change" class="generic-btn"></button-component>
+				<p class="information-sentence">${getString('profileComponent/changePasswordInformation')}</p>
+				<button-component label="change" class="generic-btn"></button-component>
 			</div>
 			<span class="feedbackInformation" id="passwordFeedback"></span>
 		`;

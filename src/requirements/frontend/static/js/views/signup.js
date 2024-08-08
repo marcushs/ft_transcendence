@@ -5,6 +5,7 @@ import { getCookie } from "../utils/cookie.js";
 import validateSignupInputs from "../utils/signupFormValidation.js";
 import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
+import {getString} from "../utils/languageManagement.js";
 
 export default () => {
 	const html = `
@@ -12,26 +13,26 @@ export default () => {
 			<div class="signup-form-container-background"></div>
 			<div class="signup-form-container">
 				<form>
-					<h1>Signup</h1>
+					<h1>${getString('signupView/signupTitle')}</h1>
 					<div class="form-fields">
-						<input type="text" placeholder="Username" name="username" required>
+						<input type="text" placeholder="${getString('signupView/username')}" name="username" required>
 					</div>
 					<div class="form-fields">
-						<input type="text" placeholder="Email" name="email" autofocus required>
+						<input type="text" placeholder="${getString('signupView/email')}" name="email" autofocus required>
 						<span id="emailFeedback" class="input-feedback"></span>
 					</div>
 					<div class="form-fields">
-						<input type="password" placeholder="Password" name="password" required>
+						<input type="password" placeholder="${getString('signupView/password')}" name="password" required>
 						<i class="fa-solid fa-eye" id="password-eye"></i>
 						<span id="passwordFeedback" class="input-feedback"></span>
 					</div>
 					<div class="form-fields">
-						<input type="password" placeholder="Confirm password" name="confirm_password" required>
+						<input type="password" placeholder="${getString('signupView/confirmPassword')}" name="confirm_password" required>
 						<i class="fa-solid fa-eye" id="confirm-password-eye"></i>
 						<span id="confirmPasswordFeedback" class="input-feedback"></span>
 					</div>
-					<button-component id="signupBtn" label="Signup" class="generic-auth-btn-disabled"></button-component>
-					<p>Already have an account? <a href="/login">Login</a></p>
+					<button-component id="signupBtn" label="signup" class="generic-auth-btn-disabled"></button-component>
+					<p>${getString('signupView/existingAccountSentence')} <a href="/login">${getString('signupView/login')}</a></p>
 					<span id="errorFeedback" class="input-feedback"></span>
 				</form>
 			</div>

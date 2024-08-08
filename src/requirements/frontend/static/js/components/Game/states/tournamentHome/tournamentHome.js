@@ -1,6 +1,7 @@
 import '../../../ButtonComponent.js';
 import './JoinComponent.js';
 import './CreateComponent.js'
+import {getString} from "../../../../utils/languageManagement.js";
 
 class tournamentHome {
 
@@ -12,7 +13,7 @@ class tournamentHome {
 	render() {
 		return `
 			<div class="tournament-home-container">
-				<h3 state-redirect bracket>Tournament</h3>
+				<h3 state-redirect bracket>${getString('gameComponent/tournaments')}</h3>
 				<div class="tournament-components-container">
 					<create-component></create-component>
 					<join-component></join-component>

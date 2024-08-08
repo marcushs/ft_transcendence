@@ -3,7 +3,7 @@ import getUserData from "../../utils/getUserData.js";
 import { isAlphanumeric } from "../../utils/utils.js";
 import {getCookie} from "../../utils/cookie.js";
 import '../PopUpComponent.js'
-import {throwRedirectionEvent} from "../../utils/throwRedirectionEvent.js";
+import {getString} from "../../utils/languageManagement.js";
 
 class UserInfosComponent extends HTMLElement {
 
@@ -22,28 +22,28 @@ class UserInfosComponent extends HTMLElement {
 			<form>
 				<div class="user-info user-info-image">
 					<div class="change-profile-image">
-						<p id="imageLink">Use image link <i class="fa-solid fa-link"></i></p>
-						<p id="uploadImage">Upload image <i class="fa-solid fa-upload"></i></p>
-						<p id="image42">Use 42 image <img src="../../assets/42_Logo.png" alt="42 logo"></p>
+						<p id="imageLink">${getString('profileComponent/imageLink')} <i class="fa-solid fa-link"></i></p>
+						<p id="uploadImage">${getString('profileComponent/importImage')} <i class="fa-solid fa-upload"></i></p>
+						<p id="image42">${getString('profileComponent/image42')} <img src="../../assets/42_Logo.png" alt="42 logo"></p>
 						<i class="fa-solid fa-pen profile-picture-pen"></i>
 					</div>
-					<img id="profileImage" src="" alt="">
+					<img id="profileImage" src="" alt="profile picture">
 					<input type="file" accept="image/*" name="profile-image">
 					<span id="profileImageFeedback" class="input-feedback"></span>
 				</div>
 				<div class="user-info">
-					<p id="username">Username</p>
+					<p id="username">${getString('profileComponent/username')}</p>
 					<input type="text" name="username" maxlength="12" disabled>
 					<i class="fa-solid fa-pen classic-pen"></i>
 					<span id="usernameFeedback" class="input-feedback"></span>
 				</div>
 				<div class="user-info">
-					<p id="email">Email</p>
+					<p id="email">${getString('profileComponent/email')}</p>
 					<input type="email" name="email" disabled>
 					<i class="fa-solid fa-pen classic-pen"></i>
 					<span id="emailFeedback" class="input-feedback"></span>
 				</div>
-				<button-component label="Save" class="generic-btn-disabled"></button-component>
+				<button-component label="save" class="generic-btn-disabled"></button-component>
 			</form>
 			<span id="genericErrorFeedback" class="error-feedback"></span>
 		`;

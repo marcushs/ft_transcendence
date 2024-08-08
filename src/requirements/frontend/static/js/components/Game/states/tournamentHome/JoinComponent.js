@@ -1,3 +1,5 @@
+import {getString} from "../../../../utils/languageManagement.js";
+
 class JoinComponent extends HTMLElement {
 
 	constructor() {
@@ -14,7 +16,7 @@ class JoinComponent extends HTMLElement {
 
 		this.innerHTML = `
 			<div class="join-component-content">
-				<h4>Join</h4>
+				<h4>${getString('buttonComponent/join')}</h4>
 				<div class="tournaments-list">
 					${this.createTournamentList()}
 				</div>
@@ -54,7 +56,7 @@ class JoinComponent extends HTMLElement {
 					</div>
 					<div class="tournament-right-infos">
 						<p>${tournamentInfo.score}</p>
-						<button-component label="Join" class="generic-btn"></button-component>
+						<button-component label="${getString('buttonComponent/join')}" class="generic-btn"></button-component>
 					</div>
 				</div>
 			`;

@@ -1,16 +1,18 @@
+import {getString} from "../../../../utils/languageManagement.js";
+
 class CreateComponent extends HTMLElement {
 	constructor() {
 		super();
 
 		this.innerHTML = `
 			<div class="create-component-content">
-				<h4>Create</h4>
+				<h4>${getString('buttonComponent/create')}</h4>
 				<div class="create-component-infos-container">
 					<div class="tournament-name-container">
-						<input type="text" placeholder="Tournament name" maxlength="30">
+						<input type="text" placeholder="${getString('gameComponent/tournamentName')}" maxlength="30">
 					</div>
 					<div class="number-of-players-container">
-						<p>Number of player</p>
+						<p>${getString('gameComponent/numberOfPlayers')}</p>
 						<div class="buttons-container">
 							<button-component id="4-players-tournament" label="4" class="player-number-inactive"></button-component>
 							<button-component id="8-players-tournament" label="8" class="player-number-active"></button-component>
@@ -18,7 +20,7 @@ class CreateComponent extends HTMLElement {
 						</div>
 					</div>
 				</div>
-				<button-component id="createTournament" label="Create" class="generic-btn"></button-component>
+				<button-component id="createTournament" label="${getString('buttonComponent/create')}" class="generic-btn"></button-component>
 			</div>
 		`;
 

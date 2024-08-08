@@ -1,3 +1,6 @@
+import typeAndReplaceWords from "../anim/typeAndReplaceWords.js";
+import {getString} from "../utils/languageManagement.js";
+
 class SearchBarComponent extends HTMLDivElement {
     static get observedAttributes() {
         return ['value'];
@@ -11,13 +14,18 @@ class SearchBarComponent extends HTMLDivElement {
                 <form action="#" autocomplete="off">
                     <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
                     <div class="search-bar-input-container">
-                        <input type="text" placeholder="Search" id="searchBarInput"/>
+                        <input type="text" placeholder="${getString('searchBarComponent/search')} " id="searchBarInput"/>
                     </div>
                 </form>
              </div>
         `;
 
         this.classList.add('component');
+    }
+
+
+    connectedCallback() {
+        typeAndReplaceWords();
     }
 }
 

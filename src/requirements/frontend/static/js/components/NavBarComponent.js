@@ -5,8 +5,8 @@ import getProfileImage from "../utils/getProfileImage.js";
 import getUserData from "../utils/getUserData.js";
 import signup from "../views/signup.js";
 import login from "../views/login.js";
-import typeAndReplaceWords from "../anim/typeAndReplaceWords.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
+import {getString} from "../utils/languageManagement.js";
 
 class NavBarComponent extends HTMLElement {
 
@@ -22,7 +22,7 @@ class NavBarComponent extends HTMLElement {
             <nav>
                 <div class="nav-bar-section nav-bar-left-section">
                     <div class="logo"></div>
-                    <a class="nav-bar-link">Home</a>
+                    <a class="nav-bar-link">${getString('navBarComponent/home')}</a>
                     <div is="search-bar-component"></div>
                 </div>
                 <div class="nav-bar-section nav-bar-right-section"></div>
@@ -34,7 +34,6 @@ class NavBarComponent extends HTMLElement {
 
     async connectedCallback() {
         await this.generateNavBarRightSection();
-        typeAndReplaceWords();
         this.attachEventsListener();
     }
 
@@ -49,8 +48,8 @@ class NavBarComponent extends HTMLElement {
         if (profileElement)
             profileElement.addEventListener('click', (event) => throwRedirectionEvent('/profile'));
         else {
-            this.querySelector('button-component[label="Login"]').addEventListener('click', (event) => throwRedirectionEvent('/login'));
-            this.querySelector('button-component[label="Signup"]').addEventListener('click', (event) => throwRedirectionEvent('/signup'));
+            this.querySelector('button-component[label="login"]').addEventListener('click', (event) => throwRedirectionEvent('/login'));
+            this.querySelector('button-component[label="signup"]').addEventListener('click', (event) => throwRedirectionEvent('/signup'));
         }
     }
 
@@ -86,8 +85,8 @@ class NavBarComponent extends HTMLElement {
         return `
             <choose-language-component></choose-language-component>
             <div class="account-infos">
-                <button-component label="Login" class="login-nav-bar-btn"></button-component>
-                <button-component label="Signup" class="signup-nav-bar-btn"></button-component>
+                <button-component label="login" class="login-nav-bar-btn"></button-component>
+                <button-component label="signup" class="signup-nav-bar-btn"></button-component>
             </div>
         `;
     }

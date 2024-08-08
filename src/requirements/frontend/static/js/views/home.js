@@ -1,5 +1,5 @@
 import "../components/NavBarComponent.js"
-import "../components/Game/Game.js"
+import "../components/Game/GameComponent.js"
 import "../components/MatchHistory.js"
 import rotatingGradient from "../anim/rotatingGradient.js";
 

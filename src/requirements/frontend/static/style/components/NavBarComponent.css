@@ -34,7 +34,7 @@ nav .account-infos {
     align-items: center;
 }
 
-nav .account-infos button-component[label='Login'] {
+nav .account-infos button-component[label='login'] {
     margin-right: 3rem;
 }
 

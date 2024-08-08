@@ -71,7 +71,7 @@ security-component .two-factor-type {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	width: 60% ;
+	width: 70% ;
 }
 
 security-component .two-factor-type p {

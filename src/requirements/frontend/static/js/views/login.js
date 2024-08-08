@@ -7,6 +7,7 @@ import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js"
 import {TwoFactorVerify} from './two-factor-verify.js';
 // import {TwoFactorVerify} from "./two_factor/TwoFactorLoginVerify.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
+import {getString} from "../utils/languageManagement.js";
 
 export default () => {
 	const html = `
@@ -14,17 +15,17 @@ export default () => {
 			<div class="login-form-container-background"></div>
 			<div class="login-form-container">
 				<form>
-					<h1>Login</h1>
+					<h1>${getString('loginView/loginTitle')}</h1>
 					<div class="form-fields">
-						<input type="text" placeholder="Username" name="username" autofocus required>
+						<input type="text" placeholder="${getString('loginView/username')}" name="username" autofocus required>
 					</div>
 					<div class="form-fields">
-						<input type="password" placeholder="Password" name="password" required>
+						<input type="password" placeholder="${getString('loginView/password')}" name="password" required>
 						<i class="fa-solid fa-eye" id="password-eye"></i>
-						<a href="/change-password" id="forgotten-password">Forgotten password?</a>
+						<a href="/change-password" id="forgotten-password">${getString('loginView/forgottenPassword')}</a>
 					</div>
-					<button-component id="loginBtn" label="Login" class="generic-auth-btn-disabled"></button-component>
-					<p>Don't have an account? <a href="/signup">Signup</a></p>
+					<button-component id="loginBtn" label="login" class="generic-auth-btn-disabled"></button-component>
+					<p>${getString('loginView/noAccountSentence')} <a href="/signup">${getString('loginView/signup')}</a></p>
 					<span id="errorFeedback" class="input-feedback"></span>
 				</form>
 			</div>

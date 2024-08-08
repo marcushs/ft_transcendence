@@ -1,3 +1,5 @@
+import {getString} from "../../../utils/languageManagement.js";
+
 class matchmakingChoice {
 
 	constructor() {
@@ -8,9 +10,9 @@ class matchmakingChoice {
 
 	render() {
 		return `
-			<p state-redirect tournament-home>Tournament</p>
-			<p state-redirect online-home>Online</p>
-			<p state-redirect local-home>Local</p>
+			<p state-redirect tournament-home>${getString('gameComponent/tournaments')}</p>
+			<p state-redirect online-home>${getString('gameComponent/online')}</p>
+			<p state-redirect local-home>${getString('gameComponent/local')}</p>
 		`;
 	}
 }

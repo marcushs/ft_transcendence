@@ -3,6 +3,7 @@ import validateChangePasswordInputs from "../utils/changePasswordFormValidation.
 import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js";
 import {getCookie} from "../utils/cookie.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
+import {getString} from "../utils/languageManagement.js";
 
 export default () => {
 	const html = `
@@ -10,23 +11,23 @@ export default () => {
 			<div class="change-password-form-container-background"></div>
 			<div class="change-password-form-container">
 				<form>
-					<h1>Change password</h1>
+					<h1>${getString('changePasswordView/changePasswordTitle')}</h1>
 					<div class="form-fields">
-						<input type="password" placeholder="Current password" name="current_password" autofocus required>
+						<input type="password" placeholder="${getString('changePasswordView/currentPassword')}" name="current_password" autofocus required>
 						<i class="fa-solid fa-eye" id="password-eye"></i>
 						<span id="currentPasswordFeedback" class="input-feedback"></span>
 					</div>
 					<div class="form-fields">
-						<input type="password" placeholder="New password" name="new_password" required>
+						<input type="password" placeholder="${getString('changePasswordView/newPassword')}" name="new_password" required>
 						<i class="fa-solid fa-eye" id="password-eye"></i>
 						<span id="newPasswordFeedback" class="input-feedback"></span>
 					</div>
 					<div class="form-fields">
-						<input type="password" placeholder="Confirm password" name="confirm_new_password" required>
+						<input type="password" placeholder="${getString('changePasswordView/confirmPassword')}" name="confirm_new_password" required>
 						<i class="fa-solid fa-eye" id="password-eye"></i>
 						<span id="confirmNewPasswordFeedback" class="input-feedback"></span>
 					</div>
-					<button-component id="saveBtn" label="Save" class="generic-auth-btn-disabled"></button-component>
+					<button-component id="saveBtn" label="save" class="generic-auth-btn-disabled"></button-component>
 				</form>
 			</div>
 		</section>

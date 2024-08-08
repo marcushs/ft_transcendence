@@ -1,3 +1,5 @@
+import {getString} from "../../../../utils/languageManagement.js";
+
 class LocalComponent extends HTMLElement {
 
 	constructor() {
@@ -7,7 +9,7 @@ class LocalComponent extends HTMLElement {
 			<div class="local-component-content">
 				<div class="settings-container">
 					<div class="score-to-win">
-						<p class="setting-name">Score to win</p>
+						<p class="setting-name">${getString('gameComponent/scoreToWin')}</p>
 						<div class="setting-values-container">
 							<button-component label="5" class="score-to-win-inactive"></button-component>
 							<button-component label="10" class="score-to-win-active"></button-component>
@@ -16,21 +18,21 @@ class LocalComponent extends HTMLElement {
 						</div>
 					</div>
 					<div class="paddle-speed">
-						<p class="setting-name">Paddle speed</p>
+						<p class="setting-name">${getString('gameComponent/paddleSpeed')}</p>
 						<div class="setting-values-container">
 							<input id="paddleSpeedInput" type="range" min="1" max="9">
 							<p id="paddleSpeedValue" class="setting-speed-value">5</p>
 						</div>
 					</div>
 					<div class="ball-speed">
-						<p class="setting-name">Ball speed</p>
+						<p class="setting-name">${getString('gameComponent/ballSpeed')}</p>
 						<div class="setting-values-container">
 							<input id="ballSpeedInput" type="range" min="1" max="9">
 							<p id="ballSpeedValue" class="setting-speed-value">5</p>
 						</div>
 					</div>
 				</div>
-				<button-component id="localPlay" label="Play" class="generic-btn"></button-component>
+				<button-component id="localPlay" label="${getString('buttonComponent/play')}" class="generic-btn"></button-component>
 			</div>
 		`;
 

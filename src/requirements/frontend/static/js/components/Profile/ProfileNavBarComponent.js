@@ -1,3 +1,5 @@
+import {getString} from "../../utils/languageManagement.js";
+
 class ProfileNavBarComponent extends HTMLElement {
 
 	constructor() {
@@ -20,13 +22,13 @@ class ProfileNavBarComponent extends HTMLElement {
 		this.innerHTML = `
 		    <ul>
                 <li state-redirect personalInformation>
-                    <p>Personal information</p>
+                    <p>${getString('profileNavBarComponent/personalInformation')}</p>
                 </li>
                 <li state-redirect security>
-                    <p>Security</p>
+                    <p>${getString('profileNavBarComponent/security')}</p>
                 </li>
-                <li state-redirect statsAndRank>
-                    <p>Stats and rank</p>
+                <li state-redirect statistics>
+                    <p>${getString('profileNavBarComponent/statistics')}</p>
                 </li>
             </ul>
 		`;

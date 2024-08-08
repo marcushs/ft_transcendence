@@ -1,3 +1,5 @@
+import {getString} from "../utils/languageManagement.js";
+
 class ButtonComponent extends HTMLElement {
 	static get observedAttributes() {
 		return ['disabled', 'label', 'class', 'href'];
@@ -13,7 +15,7 @@ class ButtonComponent extends HTMLElement {
 	connectedCallback() {
 		this.innerHTML = `
 			<div class="button-background">
-				<button>${this.getAttribute('label')}</button>
+				<button>${getString('buttonComponent/' + this.getAttribute('label')) || this.getAttribute('label')}</button>
 			</div>
 		`;
 
@@ -24,9 +26,9 @@ class ButtonComponent extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name === 'label') {
-			(this.button) ? this.button.label = newValue : this.label = newValue;
+			this.label = newValue;
 		} else if (name === 'class') {
-			(this.button) ? this.button.className = newValue : this.class = newValue;
+			this.class = newValue;
 		} else if (name === 'href') {
 			this.addEventListener('click', () => this.redirectUrl(newValue));
 		}

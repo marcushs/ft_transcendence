@@ -1,3 +1,5 @@
+import {getString} from "../../utils/languageManagement.js";
+
 class GameTopBarComponent extends HTMLElement {
 	constructor() {
 		super();
@@ -6,7 +8,7 @@ class GameTopBarComponent extends HTMLElement {
 			<div class="top-bar-options">			
 				<div class="back-button">
 					<img src="../../../assets/backTopBarButton.svg" alt="back top bar button">
-					<p>Back</p>
+					<p>${getString('gameTopBar/back')}</p>
 				</div>
 				<div class="game-settings">
 					<img src="../../../assets/extendGameButton.svg" alt="extend game button" class="extend-game-button">

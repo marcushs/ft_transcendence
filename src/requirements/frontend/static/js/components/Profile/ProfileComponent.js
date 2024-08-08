@@ -12,7 +12,7 @@ class ProfileComponent extends HTMLElement {
 		this.states = {
 			"personalInformation": { context: "/personalInformation", state: '<user-infos-component></user-infos-component>' },
 			"security": { context: "/security", state: '<security-component></security-component>' },
-			// "statsAndRank": { context: "/statsAndRank", state: new onlineHome() },
+			// "statsAndRank": { context: "/statistics", state: new onlineHome() },
 		}
 
 		this.currentState = "personalInformation";

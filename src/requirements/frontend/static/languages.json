@@ -1,12 +1,179 @@
 {
   "en": {
-	"test": "Good morning",
-	"test2": "Good evening"
+	"loginView": {
+	  "loginTitle": "Login",
+	  "username": "Username",
+	  "password": "Password",
+	  "forgottenPassword": "Forgotten password?",
+	  "noAccountSentence": "Don't have an account?",
+	  "signup": "Signup"
+	},
+	"signupView": {
+	  "signupTitle": "Signup",
+	  "username": "Username",
+	  "email": "Email",
+	  "password": "Password",
+	  "confirmPassword": "Confirm password",
+	  "existingAccountSentence": "Already have an account?",
+	  "login": "Login"
+	},
+	"changePasswordView": {
+	  "changePasswordTitle": "Change password",
+	  "currentPassword": "Current password",
+	  "newPassword": "New password",
+	  "confirmPassword": "Confirm password"
+	},
+	"buttonComponent": {
+	  "login": "Login",
+	  "signup": "Signup",
+	  "create": "Create",
+	  "join": "Join",
+	  "play": "Play",
+	  "change": "Change",
+	  "save": "Save"
+	},
+	"navBarComponent": {
+	  "home": "Home"
+	},
+	"searchBarComponent": {
+	  "search": "Search for",
+	  "users": "users",
+	  "tournaments": "tournaments"
+	},
+	"gameComponent": {
+	  "tournaments": "Tournaments",
+	  "online": "Online",
+	  "local": "Local",
+	  "create": "Create",
+	  "tournamentName" : "Tournament name",
+	  "numberOfPlayers": "Number of players",
+	  "privateMatch": "Private match",
+	  "playerName": "Player name",
+	  "ranked": "Ranked",
+	  "unranked": "Unranked",
+	  "scoreToWin": "Score to win",
+	  "paddleSpeed": "Paddle speed",
+	  "ballSpeed": "Ball speed"
+	},
+	"gameTopBar": {
+	  "back": "Back"
+	},
+	"ranks": {
+	  "master": "Master",
+	  "diamond": "Diamond",
+	  "gold": "Gold",
+	  "silver": "Silver",
+	  "bronze": "Bronze",
+	  "maxRank": "Max rank",
+	  "nextRank": "Next rank"
+	},
+	"profileComponent": {
+	  "imageLink": "Use image link",
+	  "importImage": "Import image",
+	  "image42": "42 image",
+	  "username": "Username",
+	  "email": "Email",
+	  "twoFactorTitle": "2FA authentication",
+	  "twoFactorInformation": "Help protect your account from unauthorized access by requiring a second authentication method in addition to your password.",
+	  "twoFactorByEmail": "2FA by email",
+	  "twoFactorByAuthenticator": "2FA by authenticator",
+	  "changePasswordTitle": "Change password",
+	  "changePasswordInformation": "Change your password regularly to keep your account secure."
+	},
+	"profileNavBarComponent": {
+	  "personalInformation": "Personal information",
+	  "security": "Security",
+	  "statistics": "Statistics"
+	}
   },
+
   "fr": {
-	"test": "Bonjour",
-	"test2": "Bonsoir"
+	"loginView": {
+	  "loginTitle": "Connexion",
+	  "username": "Nom d'utilisateur",
+	  "password": "Mot de passe",
+	  "forgottenPassword": "Mot de passe oublié?",
+	  "noAccountSentence": "Vous n'avez pas de compte?",
+	  "signup": "S'inscrire"
+	},
+	"signupView": {
+	  "signupTitle": "Inscription",
+	  "username": "Nom d'utilisateur",
+	  "email": "Email",
+	  "password": "Mot de passe",
+	  "confirmPassword": "Confirmer le mot de passe",
+	  "existingAccountSentence": "Vous avez déjà un compte?",
+	  "login": "Se connecter"
+	},
+	"changePasswordView": {
+	  "changePasswordTitle": "Changement de mot de passe",
+	  "currentPassword": "Mot de passe actuel",
+	  "newPassword": "Nouveau mot de passe",
+	  "confirmPassword": "Confirmer le mot de passe"
+	},
+	"buttonComponent": {
+	  "login": "Connexion",
+	  "signup": "Inscription",
+	  "create": "Créer",
+	  "join": "Rejoindre",
+	  "play": "Jouer",
+	  "change": "Changer",
+	  "save": "Sauvegarder"
+	},
+	"navBarComponent": {
+	  "home": "Accueil"
+	},
+	"searchBarComponent": {
+	  "search": "Rechercher des",
+	  "users": "utilisateurs",
+	  "tournaments": "tournois"
+	},
+	"gameComponent": {
+	  "tournaments": "Tournois",
+	  "online": "En ligne",
+	  "local": "Local",
+	  "tournamentName" : "Nom du tournoi",
+	  "numberOfPlayers": "Nombre de joueurs",
+	  "privateMatch": "Match privé",
+	  "playerName": "Nom du joueur",
+	  "ranked": "Classé",
+	  "unranked": "Non classé",
+	  "scoreToWin": "Score pour gagner",
+	  "paddleSpeed": "Vitesse de la palette",
+	  "ballSpeed": "Vitesse de la balle"
+	},
+	"gameTopBar": {
+	  "back": "Retour"
+	},
+	"ranks": {
+	  "master": "Maître",
+	  "diamond": "Diamant",
+	  "gold": "Or",
+	  "silver": "Argent",
+	  "bronze": "Bronze",
+	  "maxRank": "Rang max",
+	  "nextRank": "Prochain rang"
+	},
+	"profileComponent": {
+	  "imageLink": "Lien vers image",
+	  "importImage": "Importer image",
+	  "image42": "Image 42",
+	  "username": "Nom d'utilisateur",
+	  "email": "Email",
+	  "twoFactorTitle": "Authentification 2FA",
+	  "twoFactorInformation": "Protégez votre compte contre les accès non autorisés en demandant une deuxième méthode d'authentification en plus de votre mot de passe.",
+	  "twoFactorByEmail": "2FA par email",
+	  "twoFactorByAuthenticator": "2FA par authenticator",
+	  "changePasswordTitle": "Changer de mot de passe",
+	  "changePasswordInformation": "Changez régulièrement votre mot de passe pour assurer la sécurité de votre compte."
+	},
+	"profileNavBarComponent": {
+	  "personalInformation": "Informations personnelles",
+	  "security": "Sécurité",
+	  "statistics": "Statistiques"
+	}
   },
+
   "zh": {
 
   }

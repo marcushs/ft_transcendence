@@ -1,7 +1,8 @@
 import sleep from "../utils/sleep.js";
+import {getString} from "../utils/languageManagement.js";
 
 async function typeAndReplaceWords() {
-	const words = [' users', ' tournaments'];
+	const words = [getString('searchBarComponent/users'), getString('searchBarComponent/tournaments')];
 	const searchBarInput = document.querySelector('#searchBarInput');
 
 	while (true) {

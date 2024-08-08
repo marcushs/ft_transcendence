@@ -10,11 +10,12 @@ import twoFactorEmail from "./views/two-factor-email.js";
 import checkAuthentication from "./utils/checkAuthentication.js";
 import twoFactorDeactivation from "./views/two-factor-deactivation.js";
 import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
-import {loadLanguagesJson, getStringByLanguage} from "./utils/getStringByLanguage.js";
+import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
+
+let languageJson;
 
 (async () => {
 
-    await loadLanguagesJson();
     if (await isTwoFactorActivated()) {
         localStorage.setItem('isTwoFactorActivated', 'true');
         localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
@@ -40,6 +41,9 @@ const routes = {
 // create the csrf token if it does not already exist
 generateCsrfToken();
 async function router() {
+    if (!languageJson)
+        languageJson = await loadLanguagesJson();
+
     let view = routes[location.pathname];
 
     if (!view || !await isViewAccessible(location.pathname)) {

@@ -1,12 +1,14 @@
+import {getString} from "../../../../utils/languageManagement.js";
+
 class RankedComponent extends HTMLElement {
 	constructor() {
 		super();
 
 		this.innerHTML = `
 			<div class="ranked-component-content">
-				<h4>Ranked</h4>
-				${this.createRankContainer('master')}
-				<button-component label="Play" class="generic-btn"></button>
+				<h4>${getString('gameComponent/ranked')}</h4>
+				${this.createRankContainer('silver')}
+				<button-component label="${getString('buttonComponent/play')}" class="generic-btn"></button>
 			</div>
 		`;
 	}
@@ -16,7 +18,7 @@ class RankedComponent extends HTMLElement {
 			<div class="rank-container rank-container-${rank}">
 				<div class="rank-container-content">					
 					<div class="rank-logo rank-${rank}-logo"></div>
-					<p class="rank-name rank-name-${rank}">${rank.at(0).toUpperCase() + rank.slice(1, rank.length)}</p>
+					<p class="rank-name rank-name-${rank}">${getString(`ranks/${rank}`)}</p>
 					<div class="rank-elo-container">
 						<img src="../../../../../assets/rp-logo.svg" alt="rp logo">
 						<p class="elo">10255</p>
@@ -31,10 +33,10 @@ class RankedComponent extends HTMLElement {
 
 	createRankInfos(rank) {
 		if (rank === 'master') {
-			return `<p class="max-rank">Max rank</p>`;
+			return `<p class="max-rank">${getString('ranks/maxRank')}</p>`;
 		}
 		return `
-			<p>Next rank</p>
+			<p>${getString('ranks/nextRank')}</p>
 			<div class="next-rank-percentage-bar">	
 				<div class="inner-bar inner-bar-${rank}"></div>
 			</div>

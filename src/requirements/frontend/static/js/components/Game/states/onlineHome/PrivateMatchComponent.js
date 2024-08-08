@@ -1,12 +1,14 @@
+import {getString} from "../../../../utils/languageManagement.js";
+
 class PrivateMatchComponent extends HTMLElement {
 	constructor() {
 		super();
 
 		this.innerHTML = `
 			<div class="private-match-component-content">
-				<h4>Private match</h4>
-				<input type="text" placeholder="Player name" maxlength="15">
-				<button-component label="Play" class="generic-btn"></button-component>
+				<h4>${getString('gameComponent/privateMatch')}</h4>
+				<input type="text" placeholder="${getString('gameComponent/playerName')}" maxlength="15">
+				<button-component label="${getString('buttonComponent/play')}" class="generic-btn"></button-component>
 				<img src="../../../../../assets/loading-wheel.svg" alt="loading wheel"> <!-- While waiting for backend implementation -->
 			</div>
 		`;
