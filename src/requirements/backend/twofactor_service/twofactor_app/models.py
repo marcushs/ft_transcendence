@@ -4,13 +4,13 @@ from datetime import timedelta
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, username, user_id):
+    def create_user(self, email, username, user_id, logged_in_with_42):
         if not email:
             raise ValueError('The Email field must be set')
         if not username:
             raise ValueError('The username field must be set')
         email = self.normalize_email(email)
-        user = self.model(email=email, username=username, id=user_id)
+        user = self.model(email=email, username=username, id=user_id, logged_in_with_42=logged_in_with_42)
         user.set_unusable_password()
         user.save(using=self._db)
         return user

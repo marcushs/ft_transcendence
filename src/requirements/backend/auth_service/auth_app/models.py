@@ -19,6 +19,15 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+    
+    def create_oauth_user(self, data):
+        email = data['email']
+        username = data['username']
+        first_name = data['first_name']
+        last_name = data['last_name']
+        user = self.model(email=email, username=username, first_name=first_name, last_name=last_name, logged_in_with_42=True)
+        user.save(using=self._db)
+        return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -46,5 +55,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'is_verified': self.is_verified,
-            'two_factor_method': self.two_factor_method
+            'two_factor_method': self.two_factor_method,
         }
+ 

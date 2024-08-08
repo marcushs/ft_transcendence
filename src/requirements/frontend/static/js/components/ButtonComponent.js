@@ -19,8 +19,8 @@ class ButtonComponent extends HTMLElement {
 			this.innerHTML = `
 			<div class="button-background">
 				<button>
-					<img src="../../assets/42_Logo.png" class="logo42">
 					${this.getAttribute('label')}
+					<img src="../../assets/42_Logo.png" class="logo42">
 				</button>
 			</div>
 			`;

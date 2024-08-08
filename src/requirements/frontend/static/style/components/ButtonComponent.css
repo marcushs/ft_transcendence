@@ -87,7 +87,7 @@ button-component .button-background:hover .login-nav-bar-btn {
 .generic-auth-btn .logo42{
 	width: 8%;
 	display: inline;
-	margin-right: 20px;
+	margin-left: 20px;
 }
 
 .generic-auth-btn-disabled .button-background {

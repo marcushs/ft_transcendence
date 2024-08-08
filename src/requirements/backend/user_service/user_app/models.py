@@ -16,6 +16,14 @@ class UserManager(BaseUserManager):
         user.set_unusable_password()
         user.save(using=self._db)
         return user
+    
+    def create_oauth_user(self, data):
+        email = data['email']
+        username = data['username']
+        profile_image_link = data['profile_image_link']
+        user = self.model(email=email, username=username, profile_image_link=profile_image_link, logged_in_with_42=True)
+        user.save(using=self._db)
+        return user
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=12, unique=True, default='default')

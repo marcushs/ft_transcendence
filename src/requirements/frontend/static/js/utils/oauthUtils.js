@@ -21,24 +21,25 @@ export async function oauthRedirectCallback() {
 		
 		if (data.status === 'Success') {
 			// if handleOauthCallback success
-			const user_data = await accessResource();
-			if (!user_data || user_data.status === 'Error') {
-				status_text.textContent = `Error: ${user_data ? user_data.message : 'Fetch failed'}`
-				// setTimeout(() => window.location.href = '/login', 2000);
+			const login_res = await accessResource();
+			if (!login_res || login_res.status === 'Error') {
+				status_text.textContent = `Error: ${login_res ? login_res.message : 'Fetch failed'}`
+				setTimeout(() => window.location.href = '/login', 2000);
 				return ;
 			}
 			console.log('oauth redirect page:')
-			console.log(user_data);
+			console.log(login_res);
 			status_text.textContent = 'Successfully logged in';
+			window.location.href = '/home'
 		} else {
 			// if handleOauthCallback error
 			status_text.textContent = `Error: ${data.message}`;
-			// setTimeout(() => window.location.href = '/login', 2000);
+			setTimeout(() => window.location.href = '/login', 2000);
 		}
 	} else {
 		// No query params, not from 42 oauth
 		status_text.textContent = 'Error: Invalid request';
-		// setTimeout(() => window.location.href = '/login', 2000);
+		setTimeout(() => window.location.href = '/login', 2000);
 	}
 }
 
@@ -57,6 +58,7 @@ async function handleOauthCallback(code, state) {
 	try {
 		const res = await fetch(`http://localhost:8003/oauth/redirect/?code=${code}&state=${state}`, config);
 		const data = await res.json();
+		console.log(data)
 		return data;
 	} catch (error) {
 		console.log(error);

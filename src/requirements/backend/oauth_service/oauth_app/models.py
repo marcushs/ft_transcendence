@@ -7,16 +7,13 @@ def user_directory_path(instance, filename):
     return f'profile_images/{instance.id}/{filename}'
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, username, password, **extra_fields):
-        if not email:
-            raise ValueError('The Email field must be set')
-        if not username:
-            raise ValueError('The username field must be set')
-        if not password:
-            raise ValueError('The password field must be set')
+    def create_user(self, email, username, first_name, last_name, profile_image_link):
         email = self.normalize_email(email)
-        user = self.model(email=email, username=username, **extra_fields)
-        user.set_password(password)
+        user = self.model(email=email, 
+                          username=username, 
+                          first_name=first_name, 
+                          last_name=last_name, 
+                          profile_image_link=profile_image_link)
         user.save(using=self._db)
         return user
 
@@ -26,9 +23,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
+    profile_image_link = models.CharField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
     is_verified = models.BooleanField(default=False)
-    two_factor_method = models.CharField(max_length=20,  choices=[('email', 'Email'), ('authenticator', 'Authenticator App')], blank=True)
-    logged_in_with_42 = models.BooleanField(default=False)
+    logged_in_with_42 = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -45,6 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             'email': self.email,
             'first_name': self.first_name,
             'last_name': self.last_name,
+            'profile_image_link': self.profile_image_link,
             'is_verified': self.is_verified,
-            'two_factor_method': self.two_factor_method
+            'logged_in_with_42': self.logged_in_with_42
         }
