@@ -4,13 +4,7 @@ import { sendRequest } from '../utils/sendRequest.js';
 import '../components/Friendship/FriendshipButtonComponent.js';
 import "../components/NavBarComponent.js";
 
-export default async () => {
-    const friends_status = await checkFriendshipStatus();
-    if (!friends_status) {
-        console.error('!debug message! redirect here');
-        return;
-    }
-
+export default () => {
     const html = `
     <section class="users-profile-page">
         <nav-bar-component></nav-bar-component>
@@ -20,7 +14,6 @@ export default async () => {
                     <div class="user-info user-info-image">
                     <img id="profileImage" src="" alt="">
                     </div>
-                    <friendship-button-component button-status=${friends_status}></friendship-button-component>
                     <div class="user-info">
                     <p id="username">Username</p>
                     <input type="text" name="username" maxlength="12" disabled>
@@ -30,10 +23,15 @@ export default async () => {
         </section>
     `;
 
-    setTimeout(() => {
+    setTimeout( async () => {
         rotatingGradient('.users-profile-container', '#FF16C6', '#00D0FF');
         rotatingGradient('.users-profile-container-background', '#FF16C6', '#00D0FF');
         rotatingGradient('.users-profile-content', '#1c0015', '#001519');
+        const friends_status = await checkFriendshipStatus();
+        if (friends_status) {
+            const divUserContent = document.querySelector('.users-profile-content');
+            divUserContent.innerHTML += `<friendship-button-component button-status=${friends_status}></friendship-button-component>`
+        }
         displayInformation();
     }, 0)
 
@@ -46,10 +44,8 @@ async function displayInformation() {
     if (targetUsername === null)
         return;
     const infoList = await getInformation(targetUsername);
-    if (!infoList) {
-        console.log('this user cannot be found..')
+    if (!infoList)
         return;
-    }
     document.querySelector('.user-info > img').src = getProfileImage(infoList);
     document.querySelector('input[name="username"]').value = infoList.username;
 }
@@ -62,7 +58,6 @@ async function getInformation(targetUsername) {
         if (data.status === 'success') {
             return data.message;
         } else {
-            console.log(data.message);
             return null;
         }
     } catch (error) {
@@ -73,12 +68,13 @@ async function getInformation(targetUsername) {
 
 async function checkFriendshipStatus() {
     const targetUsername = localStorage.getItem('users-profile-target-username');
-    console.log('username: ', targetUsername)
     const url = `http://localhost:8003/friends/friendship_status/?q=${targetUsername}`
 
     try {
         const data = await sendRequest('GET', url, null);
-        return data.status;
+        if (data.status === 'success')
+            return data.friend_status;
+        return null;
     } catch (error) {
         console.error(error.message);
         return null;

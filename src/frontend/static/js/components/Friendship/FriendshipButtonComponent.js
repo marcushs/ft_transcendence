@@ -12,16 +12,18 @@ class FriendshipButtonComponent extends HTMLElement {
         this.statusList = createButtonStatusList();
         this.buttonStatus = null;
     }
-    
-    connectedCallback() {     
-        this.createHtmlButton();
-        this.attachEventListener();
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'button-status' && oldValue !== newValue) {
+            this.buttonStatus = newValue;
+            this.createHtmlButton();
+            this.attachEventListener();
+        }
     }
 
     createHtmlButton() {
         this.innerHTML = '';
 
-        console.log('state: ', this.statusList[this.buttonStatus])
         const buttons = Array.isArray(this.statusList[this.buttonStatus].buttons) ? this.statusList[this.buttonStatus].buttons : [];
         buttons.forEach(buttonConfig => {
             this.innerHTML += `
@@ -30,7 +32,6 @@ class FriendshipButtonComponent extends HTMLElement {
                     <img data-payload='${JSON.stringify(buttonConfig.payload)}' src=${buttonConfig.img} alt='${buttonConfig.alt}'></img>
                 </div>
             `
-            console.log('img: ', buttonConfig.text)
         });
     }
  
@@ -53,18 +54,15 @@ class FriendshipButtonComponent extends HTMLElement {
 
     async sendFriendshipRequest(payload) {
         try {
-            console.log('data: ', payload);
             const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
+            if (data.status === 'success') {
+                // this.buttonStatus = data.friendship_status;
+                this.setAttribute('button-status', data.friendship_status);
+            }
             console.log(data.message);
             // handleRedirection('users-profile', localStorage.getItem('users-profile-target-username'));
         } catch (error) {
             console.error('catch: ', error);
-        }
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (name === 'button-status') {
-            this.buttonStatus = newValue;
         }
     }
 

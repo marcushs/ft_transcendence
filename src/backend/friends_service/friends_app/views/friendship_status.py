@@ -39,11 +39,11 @@ class GetFriendShipStatus(View):
  
     def get_friend_request_status(self, user):
         if self.is_self == True:
-            return JsonResponse({'status': 'own_profile'}, status=200)
+            return JsonResponse({'status': 'success', 'friend_status': 'own_profile'}, status=200)
         if self.friend_list.is_mutual_friend(friend=self.target_user):
-            return JsonResponse({'status': 'mutual_friend'}, status=200)
+            return JsonResponse({'status': 'success', 'friend_status': 'mutual_friend'}, status=200)
         if get_friend_request(sender=user, receiver=self.target_user) is not False:
-            return JsonResponse({'status': 'pending_sent'}, status=200)
+            return JsonResponse({'status': 'success', 'friend_status': 'pending_sent'}, status=200)
         if get_friend_request(sender=self.target_user, receiver=user) is not False:
-            return JsonResponse({'status': 'pending_received'}, status=200)
-        return JsonResponse({'status': 'not_friend'}, status=200)
+            return JsonResponse({'status': 'success', 'friend_status': 'pending_received'}, status=200)
+        return JsonResponse({'status': 'success', 'friend_status': 'not_friend'}, status=200)
