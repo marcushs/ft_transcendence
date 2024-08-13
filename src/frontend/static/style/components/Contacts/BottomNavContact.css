@@ -1,0 +1,16 @@
+.bottom-nav-contacts {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.bottom-nav-contacts p {
+    font-size: medium;
+    margin-right: 1rem;
+    color: white;
+}
+
+.bottom-nav-contacts img {
+    width: 3.5rem;
+	height: 3.5rem;
+}

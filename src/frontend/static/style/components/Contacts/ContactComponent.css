@@ -1,0 +1,6 @@
+@import './BottomNavContact.css';
+
+contact-menu-component {
+    display: flex;
+    position: relative;
+}
