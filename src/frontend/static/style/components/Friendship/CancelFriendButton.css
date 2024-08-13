@@ -1,11 +1,3 @@
-friendship-button-component {
-    display: flex;
-    position: relative;
-    width: 100%;
-    margin-left: 5rem;
-    top: -12.5rem;
-}
-
 .cancel-friend-button {
     display: flex;
     flex-direction: row;

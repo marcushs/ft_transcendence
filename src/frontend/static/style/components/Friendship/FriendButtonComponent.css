@@ -1,0 +1,11 @@
+friendship-button-component {
+    display: flex;
+    position: relative;
+    width: 100%;
+    top: -12.5rem;
+    left: 61rem;
+}
+
+friendship-button-component:has(.accept-friend-button):has(.decline-friend-button) {
+    left: 54rem;
+}

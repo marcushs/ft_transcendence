@@ -1,8 +1,9 @@
+@import '../components/Friendship/FriendButtonComponent.css';
 @import '../components/Friendship/AddFriendButton.css';
+@import '../components/Friendship/RemoveFriendButton.css';
 @import '../components/Friendship/CancelFriendButton.css';
 @import '../components/Friendship/AcceptFriendButton.css';
 @import '../components/Friendship/DeclineFriendButton.css';
-@import '../components/Friendship/RemoveFriendButton.css';
 
 .users-profile-page {
 	width: 100%;

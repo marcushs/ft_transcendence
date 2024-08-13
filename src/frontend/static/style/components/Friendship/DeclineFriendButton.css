@@ -1,24 +1,17 @@
-friendship-button-component {
-    display: flex;
-    position: relative;
-    width: 100%;
-    margin-left: 5rem;
-    top: -12.5rem;
-}
-
 .decline-friend-button {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding: 5px 10px;
+    padding: 5px 5px;
     background-color: rgb(172, 26, 164);
     color: white;
     border: none;
     border-radius: 25px;
     cursor: pointer;
+    margin-left: -1rem;
     transition: background-color 0.3s;
-    margin-left: 2rem;
+    transform: scale(0.8);
 }
 
 .decline-friend-button p {

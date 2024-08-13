@@ -1,4 +1,3 @@
-import { handleRedirection } from "../../utils/handleRedirection.js";
 import { sendRequest } from "../../utils/sendRequest.js";
 import { createButtonStatusList } from "./friendshipUtils.js";
 
@@ -28,8 +27,8 @@ class FriendshipButtonComponent extends HTMLElement {
         buttons.forEach(buttonConfig => {
             this.innerHTML += `
                 <div data-payload='${JSON.stringify(buttonConfig.payload)}' class="${buttonConfig.class}">
-                    <p data-payload='${JSON.stringify(buttonConfig.payload)}'>${buttonConfig.text}</p>
-                    <img data-payload='${JSON.stringify(buttonConfig.payload)}' src=${buttonConfig.img} alt='${buttonConfig.alt}'></img>
+                    <p>${buttonConfig.text}</p>
+                    <img src='${buttonConfig.img}' alt='${buttonConfig.alt}'></img>
                 </div>
             `
         });
@@ -46,7 +45,7 @@ class FriendshipButtonComponent extends HTMLElement {
     handleEventListener(event) {
         const targetUsername = localStorage.getItem('users-profile-target-username');
         const payload = {
-            ...JSON.parse(event.target.dataset.payload),
+            ...JSON.parse(event.currentTarget.dataset.payload),
             target_username: targetUsername,
         }
         this.sendFriendshipRequest(payload);
@@ -56,11 +55,9 @@ class FriendshipButtonComponent extends HTMLElement {
         try {
             const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
             if (data.status === 'success') {
-                // this.buttonStatus = data.friendship_status;
                 this.setAttribute('button-status', data.friendship_status);
             }
             console.log(data.message);
-            // handleRedirection('users-profile', localStorage.getItem('users-profile-target-username'));
         } catch (error) {
             console.error('catch: ', error);
         }
