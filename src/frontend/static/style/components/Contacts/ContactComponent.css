@@ -1,6 +1,11 @@
 @import './BottomNavContact.css';
+@import './ContactMenu.css';
 
 contact-menu-component {
-    display: flex;
-    position: relative;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 50rem;
+    width: 30rem;
+    margin-right: 1rem;
 }

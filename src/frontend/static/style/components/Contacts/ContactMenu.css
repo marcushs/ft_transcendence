@@ -1,0 +1,10 @@
+@import './ContactList.css';
+@import './TopBarContact.css';
+
+.contact-menu {
+    position: absolute;
+    height: 90%;
+    border: 1px solid aliceblue;
+    border-radius: 10px;
+    background-color: var(--background-color);
+}

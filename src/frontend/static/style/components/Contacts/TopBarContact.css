@@ -1,0 +1,36 @@
+.top-bar-contacts-menu {
+    position: relative;
+    align-items: center;
+    display: flex;
+    height: 4rem;
+    border-bottom: 1px solid aliceblue;
+}
+
+.top-bar-contacts-menu .add-contact {
+    display: flex;
+	height: 3rem;
+    cursor: pointer;
+    order: 2;
+}
+
+.top-bar-contacts-menu form {
+    display: flex;
+    align-items: center;
+    margin-left: 1rem;
+    height: 100%;
+    width: 80%;
+    margin-right: 1rem;
+}
+
+.top-bar-contacts-menu form img {
+    display: flex;
+    left: 15px;
+    top: 25%;
+	height: 1.5rem;
+    margin-right: 1rem;
+}
+
+.top-bar-contacts-menu form input {
+    color: var(--text-primary-color);
+    width: 95%;
+}
