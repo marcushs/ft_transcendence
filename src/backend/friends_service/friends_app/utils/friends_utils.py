@@ -10,7 +10,7 @@ def get_friend_request(sender, receiver):
         return FriendRequest.objects.get(sender=sender, receiver=receiver, is_active=True)
     except FriendRequest.DoesNotExist:
         return False
- 
+
 class friendshipManager(View):
     def __init__(self):
         super()

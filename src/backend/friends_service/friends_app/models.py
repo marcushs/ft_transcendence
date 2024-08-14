@@ -30,6 +30,9 @@ class FriendList(models.Model):
         if friend in self.friends.all():
             return True
         return False
+    
+    def to_dict(self):
+        return [{'username': friend.username} for friend in self.friends.all()]
 
 class FriendRequest(models.Model):
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sender")

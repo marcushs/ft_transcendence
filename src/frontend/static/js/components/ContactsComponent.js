@@ -62,35 +62,59 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     async displayContactList() {
-        // const contacts = await this.getContacts();
-        const contacts = null;
+        const contacts = await this.getContacts();
         if (!contacts) {
             this.contactSummary.innerHTML = `<p>Contacts  -  0/0</p>`;
             this.contactList.innerHTML = `No contacts found...`
             this.pendingContactSummary.innerHTML = `<p>Pending  -  0</p>`;
             this.pendingContactList.innerHTML = `No pending request...`
         } else {
-            this.contactSummary.innerHTML = `<p>Friends - ${contacts.onlineContactCount}/${contacts.contactCount}</p>`;
-            contacts.forEach(user => {
-                console.log('username: ', user.username)
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <p>${user.username}</p>
-                    <img src='' alt='' class='search-contact-picture'></img>
-                `
-                li.onclick(event => {
-                    // redirect to user profile here
-                })
-                this.contactList.appendChild(li);
-            });
+            this.contactSummary.innerHTML = `<p>Friends - ${contacts.friends_count}/${contacts.friends_count}</p>`;
+            if (contacts.friends_count === 0)
+                this.contactList.innerHTML = `No contacts found...`
+            else {
+                contacts.friends.forEach(user => {
+                    console.log('username friend: ', user.username)
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <p>${user.username}</p>
+                        <img src='' alt='' class='search-contact-picture'></img>
+                    `
+                    this.contactList.appendChild(li);
+                });
+            }
+            this.pendingContactSummary.innerHTML = `<p> Pending - ${contacts.requests_count}</p>`;
+            if (contacts.requests_count === 0)
+                this.pendingContactList.innerHTML = `No pending request...`
+            else {
+                contacts.sent_requests.forEach(user => {
+                    console.log('username sent: ', user.username)
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <p>${user.username}</p>
+                        <img src='' alt='' class='search-contact-picture'></img>
+                    `
+                    this.pendingContactList.appendChild(li);
+                });
+                contacts.received_requests.forEach(user => {
+                    console.log('username received: ', user.username)
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <p>${user.username}</p>
+                        <img src='' alt='' class='search-contact-picture'></img>
+                    `
+                    this.pendingContactList.appendChild(li);
+                });
+            }
         }
     }
 
     async getContacts() {
-        const url = `http://localhost:8003/friends/search_contact/?q=${encodeURIComponent(this.searchInput.value)}`
+        const url = `http://localhost:8003/friends/search_contacts/`
         try {
             const data = await sendRequest('GET', url, null);
             if (data.status === 'success') {
+                console.log(data.message);
                 return data.message;
             } else {
                 console.log(data.message);
