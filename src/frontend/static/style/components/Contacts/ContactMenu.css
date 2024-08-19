@@ -4,7 +4,7 @@
 .contact-menu {
     position: absolute;
     height: 90%;
-    border: 1px solid aliceblue;
+    border: 1px solid var(--light-grey);
     border-radius: 10px;
     background-color: var(--background-color);
 }

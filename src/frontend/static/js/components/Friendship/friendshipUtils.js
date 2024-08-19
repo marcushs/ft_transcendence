@@ -7,7 +7,7 @@ export function createButtonStatusList() {
             buttons: [{
                 payload: {status: 'cancel'},
                 text: 'cancel request',
-                img: '../../../assets/cancel_icon.png',
+                img: '../../../assets/cancel_icon.svg',
                 alt: 'cancel_friend_logo',
                 class: 'cancel-friend-button',
             }]
@@ -16,14 +16,14 @@ export function createButtonStatusList() {
             buttons: [{
                 payload: {status: 'accept'},
                 text: 'accept invitation',
-                img: '../../../assets/accept_icon.png',
+                img: '../../../assets/accept_icon.svg',
                 alt: 'accept_friend_logo',
                 class: 'accept-friend-button',
             },
             {
                 payload: {status: 'decline'},
                 text: 'decline invitation',
-                img: '../../../assets/cancel_icon.png',
+                img: '../../../assets/cancel_icon.svg',
                 alt: 'decline_friend_logo',
                 class: 'decline-friend-button',
             }]
@@ -32,7 +32,7 @@ export function createButtonStatusList() {
             buttons: [{ 
                 payload: {status: 'remove'},
                 text: 'remove contact',
-                img: '../../../assets/cancel_icon.png',
+                img: '../../../assets/cancel_icon.svg',
                 alt: 'remove_friend_logo',
                 class: 'remove-friend-button',
             }]
@@ -41,7 +41,7 @@ export function createButtonStatusList() {
             buttons: [{
                 payload: {status: 'add'},
                 text: 'add contact',
-                img: '../../../assets/add_friend.png',
+                img: '../../../assets/add_friend.svg',
                 alt: 'add_friend_logo',
                 class: 'add-friend-button',
             }]

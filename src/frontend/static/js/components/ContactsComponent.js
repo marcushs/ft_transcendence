@@ -1,4 +1,6 @@
 import { sendRequest } from "../utils/sendRequest.js";
+import getProfileImage from "../utils/getProfileImage.js";
+import './Friendship/FriendshipButtonComponent.js';
 
 class FriendsMenuComponent extends HTMLElement {
     constructor() {
@@ -15,7 +17,7 @@ class FriendsMenuComponent extends HTMLElement {
             <div class='contact-menu'>
                 <div class='top-bar-contacts-menu'>
                     <div class='add-contact'>
-                        <img src='../../assets/add_friend.svg' alt='add-friend-icon'></img>
+                        <img src='../../assets/add_friend_white.svg' alt='add-friend-icon'></img>
                     </div>
                     <form action="#" autocomplete="off">
                         <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
@@ -65,47 +67,93 @@ class FriendsMenuComponent extends HTMLElement {
         const contacts = await this.getContacts();
         if (!contacts) {
             this.contactSummary.innerHTML = `<p>Contacts  -  0/0</p>`;
-            this.contactList.innerHTML = `No contacts found...`
+            this.contactList.innerHTML = `No contacts found...`;
+            this.contactList.classList.add('no-contacts');
             this.pendingContactSummary.innerHTML = `<p>Pending  -  0</p>`;
             this.pendingContactList.innerHTML = `No pending request...`
+            this.pendingcontactList.classList.add('no-contacts');
         } else {
             this.contactSummary.innerHTML = `<p>Friends - ${contacts.friends_count}/${contacts.friends_count}</p>`;
-            if (contacts.friends_count === 0)
-                this.contactList.innerHTML = `No contacts found...`
+            if (contacts.friends_count === 0) {
+                this.contactList.innerHTML = `No contacts found...`;
+                this.contactList.classList.add('no-contacts');
+            }
             else {
-                contacts.friends.forEach(user => {
-                    console.log('username friend: ', user.username)
+                contacts.friends.forEach(async user => {
+                    const contactData = await this.getUserData(user.username);
+                    const contactPictureUrl = getProfileImage(contactData);
                     const li = document.createElement('li');
                     li.innerHTML = `
                         <p>${user.username}</p>
-                        <img src='' alt='' class='search-contact-picture'></img>
+                        <img src='${contactPictureUrl}' alt='contact picture' class='contact-menu-picture'></img>
+                        <img src='../../assets/cancel_icon_white.svg' alt='cancel icon' class='contact-menu-request-icon' id='remove'>
                     `
                     this.contactList.appendChild(li);
                 });
             }
             this.pendingContactSummary.innerHTML = `<p> Pending - ${contacts.requests_count}</p>`;
-            if (contacts.requests_count === 0)
+            if (contacts.requests_count === 0) {
                 this.pendingContactList.innerHTML = `No pending request...`
+                this.pendingContactList.classList.add('no-contacts');
+            }
             else {
-                contacts.sent_requests.forEach(user => {
-                    console.log('username sent: ', user.username)
+                contacts.sent_requests.forEach(async user => {
+                    const contactData = await this.getUserData(user.username);
+                    const contactPictureUrl = getProfileImage(contactData);
                     const li = document.createElement('li');
                     li.innerHTML = `
                         <p>${user.username}</p>
-                        <img src='' alt='' class='search-contact-picture'></img>
+                        <img src='${contactPictureUrl}' alt='contact picture' class='contact-menu-picture'></img>
+                        <img src='../../assets/cancel_icon_white.svg' alt='cancel icon' class='contact-menu-request-icon' id='cancel'>
                     `
                     this.pendingContactList.appendChild(li);
                 });
-                contacts.received_requests.forEach(user => {
+                contacts.received_requests.forEach(async user => {
                     console.log('username received: ', user.username)
+                    const contactData = await this.getUserData(user.username);
+                    const contactPictureUrl = getProfileImage(contactData);
                     const li = document.createElement('li');
                     li.innerHTML = `
                         <p>${user.username}</p>
-                        <img src='' alt='' class='search-contact-picture'></img>
+                        <img src='${contactPictureUrl}' alt='contact picture' class='contact-menu-picture'></img>
+                        <img src='../../assets/accept_icon_blue.svg' alt='accept icon' class='contact-menu-request-icon-bis'>
+                        <img src='../../assets/cancel_icon_white.svg' alt='cancel icon' class='contact-menu-request-icon' id='decline'>
                     `
                     this.pendingContactList.appendChild(li);
                 });
             }
+            setTimeout(() => {
+                this.attachRequestIconsListener();
+            }, 1000);
+        }
+    }
+
+    attachRequestIconsListener() {
+        const requestIcons = this.querySelectorAll('.contact-menu-request-icon');
+        console.log('requestIcons: ', requestIcons);
+        requestIcons.forEach(icon => {
+            icon.addEventListener('click', (event) => {
+                const action = event.target.getAttribute('id');
+                console.log('action: ', action);
+                const username = event.target.closest('li').querySelector('p').textContent;
+                this.handleRequestIconClick(username, action);
+            });
+        });
+    }
+
+    async handleRequestIconClick(username, action) {
+        const payload = {
+            status: action,
+            target_username: username,
+        };
+        try {
+            const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
+            if (data.status === 'success') {
+                this.setAttribute('button-status', data.friendship_status);
+            }
+            console.log(data.message);
+        } catch (error) {
+            console.error('catch: ', error);
         }
     }
 
@@ -114,7 +162,7 @@ class FriendsMenuComponent extends HTMLElement {
         try {
             const data = await sendRequest('GET', url, null);
             if (data.status === 'success') {
-                console.log(data.message);
+                console.log('back response: ', data.message);
                 return data.message;
             } else {
                 console.log(data.message);
@@ -126,33 +174,21 @@ class FriendsMenuComponent extends HTMLElement {
         }
     }
 
-    // createComponentHtml() {
-    //     this.innerHTML = `
-    //         <div class='bottom-nav-contacts-button'>
-    //             <p>Contacts</p>
-    //             <img src='../../assets/friend.png' alt='friend-icon'></img>
-    //         </div>
-    //         <div class='contact-menu'>
-    //             <div class='top-bar-contacts-menu'>
-    //                 <div class='add-contact'>
-    //                     <img src='../../assets/add_friend.png' alt='add-friend-icon'></img>
-    //                 </div>
-    //                 <div class='search-contact'>
-    //                     <form action="#" autocomplete="off">
-    //                     <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
-    //                     <div class="search-contact-input-container">
-    //                         <input type="text" placeholder="Search contact" id="search-contact-input"/>
-    //                     </div>
-    //                     </form>
-    //                 </div>
-    //             </div>
-    //             <div class='contact-list-menu'>
-    //                 <p class='contact-summary'></p>
-    //                 <ul class="contact-list-result"></ul>
-    //             </div>
-    //         </div>
-    //     `
-    // }
+    async getUserData(targetUsername) {
+        const url = `http://localhost:8000/user/get_user/?q=${targetUsername}`
+        try {
+            const data = await sendRequest('GET', url, null);
+            if (data.status === 'success') {
+                return data.message;
+            } else {
+                console.log(data.message);
+                return null;
+            }
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
 }
 
 customElements.define("contact-menu-component", FriendsMenuComponent);
