@@ -59,15 +59,16 @@ class FriendsMenuComponent extends HTMLElement {
             return;
         }
         this.contactBottomNavDiv.style.display = 'flex';
-        this.contactSummary.innerHTML = `<p>Friends - ${contacts.friends_count}/${contacts.friends_count}</p>`;
+        this.contactSummary.innerHTML = `<p>Friends - ${contacts.friends_count}/${contacts.friends_count} online</p>`;
         if (contacts.friends_count === 0) {
             this.contactList.innerHTML = `No contacts found...`;
             this.contactList.classList.add('no-contacts');
         }
         else
             this.createContactList(contacts.friends, 'friends');
-        this.pendingContactSummary.innerHTML = `<p> Friends pending - ${contacts.requests_count}</p>`;
+        this.pendingContactSummary.innerHTML = `<p> Friendship Requests - ${contacts.requests_count}</p>`;
         if (contacts.requests_count === 0) {
+            this.pendingContactSummary.innerHTML = `<p> Friendship Requests</p>`;
             this.pendingContactList.innerHTML = `No pending request...`
             this.pendingContactList.classList.add('no-contacts');
         }
@@ -84,7 +85,10 @@ class FriendsMenuComponent extends HTMLElement {
             li.innerHTML = `
                 <contact-component data-user='${JSON.stringify(contactData)}' data-status='${status}'></contact-component>
             `;
-            this.pendingContactList.appendChild(li);
+            if (status === 'friends')
+                this.contactList.appendChild(li);
+            else
+                this.pendingContactList.appendChild(li);
         });
     }
 
@@ -100,11 +104,9 @@ class FriendsMenuComponent extends HTMLElement {
                 console.log('back response: ', data.message);
                 return data.message;
             } else {
-                console.log(data.message);
                 return null;
             }
         } catch (error) {
-            console.log(error);
             return null;
         }
     }

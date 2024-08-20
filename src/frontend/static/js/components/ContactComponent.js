@@ -1,6 +1,7 @@
 import { sendRequest } from "../utils/sendRequest.js";
 import getProfileImage from "../utils/getProfileImage.js";
 import './Friendship/FriendshipButtonComponent.js';
+import userProfile from "../views/user-profile.js";
 
 class ContactComponent extends HTMLElement {
     
@@ -54,21 +55,24 @@ class ContactComponent extends HTMLElement {
 
     attachEventListener() {
         const requestIcons = this.querySelectorAll('i');
-        console.log('requestIcons: ', requestIcons);
         requestIcons.forEach(icon => {
             icon.addEventListener('click', (event) => {
                 const action = event.target.getAttribute('id');
                 console.log('action: ', action);
-                const username = event.target.closest('li').querySelector('p').textContent;
-                this.handleRequestIconClick(username, action);
+                this.handleRequestIconClick(action);
             });
         });
+        this.addEventListener('dblclick', (event) => {
+            document.title = this.userData.username + '-profile';
+            history.replaceState("", "", `/users/${this.userData.username}`);
+            app.innerHTML = userProfile();
+        })
     }
 
-    async handleRequestIconClick(username, action) {
+    async handleRequestIconClick(action) {
         const payload = {
             status: action,
-            target_username: username,
+            target_username: this.userData.username,
         };
         try {
             const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
