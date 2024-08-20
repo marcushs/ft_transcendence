@@ -8,4 +8,5 @@ contact-menu-component {
     height: 50rem;
     width: 30rem;
     margin-right: 1rem;
+    z-index: 3;
 }

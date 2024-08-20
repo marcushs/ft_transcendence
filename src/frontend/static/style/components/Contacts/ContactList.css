@@ -22,9 +22,11 @@
 }
 
 .contact-list-menu li {
+    width: 100%;
+    padding: 0 1rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     height: 7rem;
     border-bottom: 1px solid var(--light-grey);
 }
@@ -37,33 +39,96 @@
     border-bottom: none;
 }
 
+.contact-list-menu .contact-menu-username {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .contact-list-menu ul p {
     font-size: 1.3rem;
-    order: 2;
     text-align: center;
 }
 
 .contact-list-menu .contact-menu-picture {
-    margin-left: 1rem;
+    /* margin-left: 1rem; */
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    width: 25%;
 	height: 5rem;
+}
+
+.contact-list-menu .contact-menu-picture img {
+    width: 5rem;
+    height: 5rem;
     border-radius: 50%;
-    order: 1;
 	border: 1px solid var(--light-grey);
 }
 
 .contact-list-menu .contact-menu-request-icon {
-    margin-right: 1rem;
-	height: 2.5rem;
-    order: 4;
-    border-radius: 50%;
-    transition: stroke 0.15s;
+    /* margin-right: 1rem; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25%;
+    height: 100%;
+}
+
+
+.contact-list-menu .contact-menu-request-icon i {
+    font-size: 3.2rem;
+    text-align: center;
+    width: 50%;
+    transition: shadow 1s;
+}
+
+.contact-list-menu .contact-menu-request-icon i:hover {
     cursor: pointer;
 }
 
-.contact-list-menu .contact-menu-request-icon-bis {
-    margin-left: 12rem;
-	height: 2.5rem;
-    order: 3;
-    border-radius: 50%;
-    cursor: pointer;
+.contact-list-menu .contact-menu-request-icon .fa-xmark {
+    color: #AC1AA4;
+}
+
+.contact-list-menu .contact-menu-request-icon .fa-xmark:hover {
+    animation: change-xmark-color linear 0.12s forwards;
+    color: var(--neon-pink);
+}
+
+.contact-list-menu .contact-menu-request-icon .fa-check {
+    color: #3AA0B7;
+}
+
+.contact-list-menu .contact-menu-request-icon .fa-check:hover {
+    animation: change-check-color linear 0.12s forwards;
+    color: var(--neon-blue);
+}
+
+@keyframes change-xmark-color {
+    from {
+        font-size: 3.2rem;
+        color: #AC1AA4;
+        /* text-shadow: 1px 1px 1px transparent, -1px 1px 1px transparent, 1px -1px 1px transparent, -1px -1px 1px transparent; */
+    }
+    to {
+        font-size: 3.4rem;
+        color: var(--neon-pink);
+        /* text-shadow: 1px 1px 1px var(--light-grey), -1px 1px 1px var(--light-grey), 1px -1px 1px var(--light-grey), -1px -1px 1px var(--light-grey); */
+    }
+}
+
+@keyframes change-check-color {
+    from {
+        font-size: 3.2rem;
+        color: #3AA0B7;
+        /* text-shadow: 1px 1px 1px transparent, -1px 1px 1px transparent, 1px -1px 1px transparent, -1px -1px 1px transparent; */
+    }
+    to {
+        font-size: 3.4rem;
+        color: var(--neon-blue);
+        /* text-shadow: 1px 1px 1px var(--light-grey), -1px 1px 1px var(--light-grey), 1px -1px 1px var(--light-grey), -1px -1px 1px var(--light-grey); */
+    }
 }
