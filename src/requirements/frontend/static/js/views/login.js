@@ -23,7 +23,11 @@ export default () => {
 						<a href="/change-password" id="forgotten-password">Forgotten password?</a>
 					</div>
 					<button-component id="loginBtn" label="Login" class="generic-auth-btn-disabled"></button-component>
-					<button-component id="oauthLoginBtn" label="Login with " class="generic-auth-btn" icon="true">
+					<button-component id="oauthLoginBtn" label="Login with " class="generic-auth-btn" icon="logo_42">
+					</button-component>
+					<button-component id="oauthLoginBtn" label="Login with " class="generic-auth-btn" icon="logo_google">
+					</button-component>
+					<button-component id="oauthLoginBtn" label="Login with " class="generic-auth-btn" icon="logo_github">
 					</button-component>
 					<p>Don't have an account? <a href="/signup">Signup</a></p>
 				</form>

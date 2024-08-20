@@ -84,8 +84,10 @@ button-component .button-background:hover .login-nav-bar-btn {
 }
 
 /* style for oauth button */
-.generic-auth-btn .logo42{
-	width: 8%;
+.generic-auth-btn .logo_42,
+.generic-auth-btn .logo_google,
+.generic-auth-btn .logo_github {
+	width: 13%;
 	display: inline;
 	margin-left: 20px;
 }

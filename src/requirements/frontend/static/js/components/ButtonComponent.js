@@ -20,7 +20,7 @@ class ButtonComponent extends HTMLElement {
 			<div class="button-background">
 				<button>
 					${this.getAttribute('label')}
-					<img src="../../assets/42_Logo.png" class="logo42">
+					<img src="../../assets/${this.icon}.png" class="${this.icon} ">
 				</button>
 			</div>
 			`;
@@ -34,6 +34,7 @@ class ButtonComponent extends HTMLElement {
 
 		this.button = this.querySelector('button');
 		if (this.icon) {
+			this.style.width = '40%';
 			this.button.style.display = 'flex';
 			this.button.style.alignItems = 'center';
 			this.button.style.justifyContent = 'center';
