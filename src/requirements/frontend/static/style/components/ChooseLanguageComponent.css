@@ -9,8 +9,8 @@ choose-language-component {
 
 choose-language-component .flag {
 	cursor: pointer;
-	width: 6rem;
-	height: 4rem;
+	width: 4.5rem;
+	height: 3rem;
 	border: 1px solid var(--text-primary-color);
 	border-radius: 5px;
 }
@@ -25,7 +25,7 @@ choose-language-component .chosen-language {
 
 choose-language-component .chosen-language i {
 	margin-left: 1rem;
-	font-size: 3rem;
+	font-size: 2.5rem;
 }
 
 choose-language-component .language-list {
@@ -33,9 +33,8 @@ choose-language-component .language-list {
 	z-index: 3;
 	position: absolute;
 	top: calc(100% + 0.5px);
-	left: -2.85rem;
-	width: 13rem;
-	/*height: 16rem;*/
+	left: -1.25rem;
+	width: 10rem;
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
 	padding: 0 1px 1px 1px;

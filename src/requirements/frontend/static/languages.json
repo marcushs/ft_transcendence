@@ -175,7 +175,91 @@
   },
 
   "zh": {
-
+	"loginView": {
+	  "loginTitle": "登录",
+	  "username": "用户名",
+	  "password": "密码",
+	  "forgottenPassword": "忘记密码？",
+	  "noAccountSentence": "还没有账号？",
+	  "signup": "注册"
+	},
+	"signupView": {
+	  "signupTitle": "注册",
+	  "username": "用户名",
+	  "email": "电子邮箱",
+	  "password": "密码",
+	  "confirmPassword": "确认密码",
+	  "existingAccountSentence": "已有账号？",
+	  "login": "登录"
+	},
+	"changePasswordView": {
+	  "changePasswordTitle": "修改密码",
+	  "currentPassword": "当前密码",
+	  "newPassword": "新密码",
+	  "confirmPassword": "确认密码"
+	},
+	"buttonComponent": {
+	  "login": "登录",
+	  "signup": "注册",
+	  "create": "创建",
+	  "join": "加入",
+	  "play": "开始游戏",
+	  "change": "修改",
+	  "save": "保存"
+	},
+	"navBarComponent": {
+	  "home": "首页"
+	},
+	"searchBarComponent": {
+	  "search": "搜索",
+	  "users": "用户",
+	  "tournaments": "比赛"
+	},
+	"gameComponent": {
+	  "tournaments": "比赛",
+	  "online": "在线",
+	  "local": "本地",
+	  "create": "创建",
+	  "tournamentName": "比赛名称",
+	  "numberOfPlayers": "玩家数量",
+	  "privateMatch": "私人对局",
+	  "playerName": "玩家名称",
+	  "ranked": "排位赛",
+	  "unranked": "非排位赛",
+	  "scoreToWin": "获胜分数",
+	  "paddleSpeed": "球拍速度",
+	  "ballSpeed": "球速"
+	},
+	"gameTopBar": {
+	  "back": "返回"
+	},
+	"ranks": {
+	  "master": "大师",
+	  "diamond": "钻石",
+	  "gold": "黄金",
+	  "silver": "白银",
+	  "bronze": "青铜",
+	  "maxRank": "最高段位",
+	  "nextRank": "下一段位"
+	},
+	"profileComponent": {
+	  "imageLink": "使用图片链接",
+	  "importImage": "导入图片",
+	  "image42": "42图片",
+	  "username": "用户名",
+	  "email": "电子邮箱",
+	  "twoFactorTitle": "双重认证",
+	  "twoFactorInformation": "通过要求密码之外的第二种认证方法来帮助保护您的账户免受未经授权的访问。",
+	  "twoFactorByEmail": "邮箱双重认证",
+	  "twoFactorByAuthenticator": "认证器双重认证",
+	  "changePasswordTitle": "修改密码",
+	  "changePasswordInformation": "定期更改密码以保持账户安全。"
+	},
+	"profileNavBarComponent": {
+	  "personalInformation": "个人信息",
+	  "security": "安全",
+	  "statistics": "统计"
+	}
   }
 
 }

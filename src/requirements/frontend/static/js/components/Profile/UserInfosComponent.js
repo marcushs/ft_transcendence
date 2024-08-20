@@ -4,6 +4,7 @@ import { isAlphanumeric } from "../../utils/utils.js";
 import {getCookie} from "../../utils/cookie.js";
 import '../PopUpComponent.js'
 import {getString} from "../../utils/languageManagement.js";
+import { throwRedirectionEvent } from "../../utils/throwRedirectionEvent.js";
 
 class UserInfosComponent extends HTMLElement {
 
