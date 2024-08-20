@@ -8,15 +8,9 @@ class ContactComponent extends HTMLElement {
         return ["data-user", "data-status"];
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        console.log('changedccccc');
-        
-        if (name === 'data-user') {
-            console.log(newValue);
-            console.log(JSON.parse(newValue));
-            
+    attributeChangedCallback(name, oldValue, newValue) {    
+        if (name === 'data-user')
             this.userData = JSON.parse(newValue);
-        }
         if (name === 'data-status')
             this.status = newValue;
     }
@@ -42,6 +36,7 @@ class ContactComponent extends HTMLElement {
                 ${this.generateIcons()}
             </div>
         `;
+        this.attachEventListener();
     }
     
     generateIcons() {
@@ -51,9 +46,38 @@ class ContactComponent extends HTMLElement {
             return `<i class="fa-solid fa-xmark" id='cancel'></i>`
         } else if (this.status === 'received_requests') {
             return `
-                <i class="fa-solid fa-check"></i>
+                <i class="fa-solid fa-check" id='accept'></i>
                 <i class="fa-solid fa-xmark" id="decline"></i>
             `;
+        }
+    }
+
+    attachEventListener() {
+        const requestIcons = this.querySelectorAll('i');
+        console.log('requestIcons: ', requestIcons);
+        requestIcons.forEach(icon => {
+            icon.addEventListener('click', (event) => {
+                const action = event.target.getAttribute('id');
+                console.log('action: ', action);
+                const username = event.target.closest('li').querySelector('p').textContent;
+                this.handleRequestIconClick(username, action);
+            });
+        });
+    }
+
+    async handleRequestIconClick(username, action) {
+        const payload = {
+            status: action,
+            target_username: username,
+        };
+        try {
+            const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
+            if (data.status === 'success') {
+                this.setAttribute('button-status', data.friendship_status);
+            }
+            console.log(data.message);
+        } catch (error) {
+            console.error('catch: ', error);
         }
     }
 

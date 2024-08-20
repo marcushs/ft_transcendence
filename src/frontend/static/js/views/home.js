@@ -1,7 +1,7 @@
 import "../components/NavBarComponent.js"
 import "../components/Game/Game.js"
 import "../components/MatchHistory.js"
-import "../components/ContactsComponent.js"
+import "../components/ContactsMenuComponent.js"
 import rotatingGradient from "../anim/rotatingGradient.js";
 
 export default () => {
