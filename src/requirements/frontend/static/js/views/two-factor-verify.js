@@ -5,14 +5,13 @@ import '../components/two_factor_auth/TwoFactorInputComponent.js';
 import getUserData from "../utils/getUserData.js";
 import { throwRedirectionEvent } from "../utils/throwRedirectionEvent.js";
 import { setTwoFactorLocalStorage } from "../utils/setTwoFactorLocalStorage.js";
+import {loadLanguagesJson} from '../utils/languageManagement.js';
 
 export class TwoFactorVerify {
 	// enableTwoFactorRequest();
 	constructor(userCredentials, userData) {
 		this.userCredentials = userCredentials;
 
-		console.log(userCredentials)
-		console.log(userData);
 		app.innerHTML = `
 			<section class="two-factor-verify-page">
 				<div class="two-factor-verify-form-container-background"></div>
@@ -121,6 +120,7 @@ async function VerifyTwoFactorRequest(verificationCode, userCredentials) {
 		throw new Error('Access Denied')
 	const data = await res.json();
 	if (res.status === 200) {
+		await loadLanguagesJson();
 		throwRedirectionEvent('/');
 		setTwoFactorLocalStorage();
 	} else

@@ -40,7 +40,7 @@ class ChooseLanguageComponent extends HTMLElement {
 
 
 	async setCurrentLanguage() {
-		this.languages[await getUserLanguage()] = true;
+		this.languages[localStorage.getItem("userLanguage")] = true;
 	}
 
 	getCurrentLanguage() {
@@ -56,7 +56,6 @@ class ChooseLanguageComponent extends HTMLElement {
 	getOtherLanguages() {
 		const otherLanguages = [];
 
-		console.log(this.languages);
 		if (this.languages.en === false)
 			otherLanguages.push('en');
 		if (this.languages.fr === false)

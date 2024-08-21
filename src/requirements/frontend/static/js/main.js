@@ -15,7 +15,6 @@ import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
 let languageJson;
 
 (async () => {
-
     if (await isTwoFactorActivated()) {
         localStorage.setItem('isTwoFactorActivated', 'true');
         localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
@@ -23,7 +22,6 @@ let languageJson;
         localStorage.setItem('isTwoFactorActivated', 'false');
         localStorage.removeItem('twoFactorMethod');
     }
-    // getStringByLanguage('test')
 })();
 
 const routes = {

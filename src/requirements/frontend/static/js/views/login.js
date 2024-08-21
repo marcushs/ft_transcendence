@@ -6,6 +6,7 @@ import loginFormValidation from "../utils/loginFormValidation.js";
 import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js";
 import {TwoFactorVerify} from './two-factor-verify.js';
 // import {TwoFactorVerify} from "./two_factor/TwoFactorLoginVerify.js";
+import {loadLanguagesJson} from '../utils/languageManagement.js';
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {getString} from "../utils/languageManagement.js";
 
@@ -92,8 +93,10 @@ async function postData(event, loginBtn) {
 				if (data.is_verified === true)
 					new TwoFactorVerify(JSON.parse(json), data);
 					// new TwoFactorVerify(json);
-				else
+				else {
+					await loadLanguagesJson();
 					throwRedirectionEvent('/');
+				}
 			} else {
 				localStorage.setItem('errorFeedback', data.message);
 				throwRedirectionEvent(data.redirect_url);
