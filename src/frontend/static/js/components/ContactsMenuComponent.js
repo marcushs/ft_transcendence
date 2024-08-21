@@ -1,6 +1,7 @@
 import './ContactComponent.js';
 import { sendRequest } from "../utils/sendRequest.js";
 import './Friendship/FriendshipButtonComponent.js';
+import './Profile/PopUpComponent.js'
 
 class FriendsMenuComponent extends HTMLElement {
     constructor() {
@@ -121,6 +122,9 @@ class FriendsMenuComponent extends HTMLElement {
         this.contactSummary.addEventListener('click', () => {
             this.contactList.style.display = this.contactList.style.display === 'none' ? 'block' : 'none';
         });
+        this.addContact.addEventListener('click', () => {
+            app.querySelector('section').innerHTML += '<pop-up-component class="add-new-contact-pop-up"></pop-up-component>' 
+        })
     }
 }
 

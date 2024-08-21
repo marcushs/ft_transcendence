@@ -62,7 +62,7 @@ class ContactComponent extends HTMLElement {
                 this.handleRequestIconClick(action);
             });
         });
-        this.addEventListener('dblclick', (event) => {
+        this.addEventListener('dblclick', () => {
             document.title = this.userData.username + '-profile';
             history.replaceState("", "", `/users/${this.userData.username}`);
             app.innerHTML = userProfile();

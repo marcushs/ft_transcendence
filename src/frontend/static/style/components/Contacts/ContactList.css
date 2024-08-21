@@ -29,6 +29,7 @@
     justify-content: center;
     height: 7rem;
     border-bottom: 1px solid var(--light-grey);
+    cursor: pointer;
 }
 
 .contact-list-menu li:hover {

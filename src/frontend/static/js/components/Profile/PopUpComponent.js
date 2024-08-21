@@ -1,6 +1,6 @@
 class PopUpComponent extends HTMLElement {
 	static get observedAttributes() {
-		return ['image-42-pop-up', 'image-link-pop-up'];
+		return ['image-42-pop-up', 'image-link-pop-up', 'add-new-contact-pop-up'];
 	}
 
 	constructor() {
@@ -25,6 +25,23 @@ class PopUpComponent extends HTMLElement {
 					<button-component label="Save" class="generic-btn-disabled"></button-component>
 				</div>
 			`;
+		} else if (this.className === 'add-new-contact-pop-up') {
+			this.innerHTML = `
+				<div class="pop-up-content">
+					<i class="fa-solid fa-xmark"></i>
+					<h2>Add new contact</h2>
+					<div class="add-contact-search-bar">
+                		<form action="#" autocomplete="off">
+                		    <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
+                		    <div class="add-friend-search-bar-input-container">
+                		        <input type="text" placeholder="Search contacts" id="searchBarInput"/>
+                		        <ul id="searchResults" class="search-results">
+								</ul>
+                		    </div>
+                		</form>
+             		</div>
+				</div>
+			`
 		}
 	}
 
@@ -32,28 +49,26 @@ class PopUpComponent extends HTMLElement {
 	connectedCallback() {
 		this.className = this.getAttribute('class');
 		this.initializeComponent();
-		this.attachEventsListener();
+		if (this.className.match('image'))
+			this.attachProfileEventsListener();
+		else
+			this.attachAddFriendsEventsListener();
 	}
 
 
-	attachEventsListener() {
+	attachProfileEventsListener() {
 		const input = this.querySelector('input');
 		const buttonComponent = this.querySelector('button-component');
 
-		this.querySelector('i').addEventListener('click', (event) => this.throwClosePopUpEvent(event));
-		document.addEventListener('keydown', (event) => this.throwClosePopUpEvent(event));
+		this.querySelector('i').addEventListener('click', (event) => this.remove());
+		document.addEventListener('keydown', (event) => {if (event.key === 'Escape') this.remove()});
 		this.querySelector('button-component').addEventListener('click', () => this.throwImageLinkSaved(input));
 		input.addEventListener('input', () => this.updateSaveButtonState(input));
 	}
 
-
-	throwClosePopUpEvent(event) {
-		if (event && event.type === 'keydown' && event.code !== 'Escape')
-			return ;
-
-		document.dispatchEvent(new CustomEvent('closePopUp', {
-			bubbles: true
-		}));
+	attachAddFriendsEventsListener() {
+		this.querySelector('i').addEventListener('click', (event) => this.remove());
+		document.addEventListener('keydown', (event) => {if (event.key === 'Escape') this.remove()});
 	}
 
 
