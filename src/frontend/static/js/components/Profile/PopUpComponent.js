@@ -1,4 +1,5 @@
 import { sendRequest } from "../../utils/sendRequest.js";
+import getProfileImage from "../../utils/getProfileImage.js";
 
 class PopUpComponent extends HTMLElement {
 	static get observedAttributes() {
@@ -85,6 +86,7 @@ class PopUpComponent extends HTMLElement {
         const usersList = await this.getSearchResult('search_users');
         const contactsList = await this.getSearchResult('search_contacts');
         if (usersList !== null && contactsList !== null) {
+			this.querySelector('ul').classList.remove('no-add-contacts');
 			const friendsUsername = contactsList.friends.map(user => user.username);
 			const sentUsername = contactsList.sent_requests.map(user => user.username);
 			const receivedUsername = contactsList.received_requests.map(user => user.username);
@@ -93,24 +95,62 @@ class PopUpComponent extends HTMLElement {
 					acc.push(user);
 				return acc;
 			}, []);
-            this.displaySearchResult(resultList);
+            this.displaySearchResult(resultList);			
+			this.addContactButtonEventListener();
 		}
         else {
             this.clearSearchResult();
 			this.querySelector('ul').innerHTML = 'No contacts found...';
-			// this.querySelector('ul').classList.add('no-contacts');
+			this.querySelector('ul').classList.add('no-add-contacts');
 		}
 	}
+
+	addContactButtonEventListener() {
+		const addContactButtons = this.querySelectorAll('.add-friend-pop-up-button');
+			addContactButtons.forEach(addButton => {
+				addButton.addEventListener('click', async (event) => {
+					const username = event.target.closest('li').querySelector('p').textContent;
+					if (await this.handleAddContactRequest(username) === true)
+						event.target.closest('li').remove();
+				});
+			});
+	}
+
+	async handleAddContactRequest(username) {
+        const payload = {
+            status: 'add',
+            target_username: username,
+        };
+        try {
+            const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
+            console.log(data.message);
+            if (data.status === 'success') {
+				return true;
+            }
+			return false;
+        } catch (error) {
+            console.error('catch: ', error);
+			return false;
+        }
+    }
 
 	displaySearchResult(usersList) {
         this.clearSearchResult();
         usersList.forEach(user => {
-            console.log('username: ', user.username)
+			const contactPictureUrl = getProfileImage(user);
             const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = `/users/${encodeURIComponent(user.username)}`
-            a.textContent = user.username;
-            li.appendChild(a);
+			li.innerHTML = `
+            	<div class="add-friend-pop-up-picture">
+            	    <img src='${contactPictureUrl}' alt='contact picture'></img>
+            	</div>
+            	<div class="add-friend-pop-up-username">
+            	    <p>${user.username}</p>
+            	</div>
+				<div class="add-friend-pop-up-button">
+                	<p>Add</p>
+					<img src='../../../assets/add_friend.svg' alt='add_contact'></img>
+            	</div>
+        	`;
             this.searchResults.appendChild(li);
         });
     }
@@ -128,7 +168,6 @@ class PopUpComponent extends HTMLElement {
         try {
             const data = await sendRequest('GET', url, null);
             if (data.status === 'success') {
-                console.log('back response: ', data.message);
                 return data.message;
             } else {
                 return null;

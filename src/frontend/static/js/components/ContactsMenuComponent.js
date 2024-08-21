@@ -102,7 +102,6 @@ class FriendsMenuComponent extends HTMLElement {
         try {
             const data = await sendRequest('GET', url, null);
             if (data.status === 'success') {
-                console.log('back response: ', data.message);
                 return data.message;
             } else {
                 return null;
