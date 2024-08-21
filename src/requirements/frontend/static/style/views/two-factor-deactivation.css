@@ -25,6 +25,7 @@
 }
 
 .two-factor-deactivation-page h1 {
+	text-align: center;
 	font-size: 5rem;
 	font-weight: 400;
 	letter-spacing: 1px;

@@ -1,10 +1,11 @@
 import rotatingGradient from "../anim/rotatingGradient.js";
 import {getCookie} from "../utils/cookie.js";
 import '../components/ButtonComponent.js';
-import '../components/two_factor_auth/TwoFactorInputComponent.js';
+import '../components/TwoFactorInputComponent.js';
 import getUserData from "../utils/getUserData.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {isTwoFactorActivated} from "../utils/isTwoFactorActivated.js";
+import {getString} from "../utils/languageManagement.js";
 
 export default () => {
 	const html  = `
@@ -17,7 +18,7 @@ export default () => {
 			        <two-factor-input-component></two-factor-input-component>
 					</div>
 					<p class="feedbackInformation"></p>
-					<button-component label="Verify" class="generic-auth-btn"></button-component>
+					<button-component label="verify" class="generic-auth-btn"></button-component>
 				</form>
 			</div>
 		</section>
@@ -50,8 +51,10 @@ function handleSubmit(event) {
 
 
 function renderViewByMethod(authenticationMethod, changeTwoFactorMethod=false) {
-	let disableMessage = (authenticationMethod === 'email') ? 'at the following email:' : 'on your authenticator application.';
-	const title = `<h1>Disable 2fa by ${(authenticationMethod === 'email') ? 'email' : 'app'}</h1>`;
+	const emailStr = getString('twoFactorDeactivationView/email');
+	const authenticatorStr = getString('twoFactorDeactivationView/authenticator');
+	const title = `<h1>${getString('twoFactorDeactivationView/title')} ${(authenticationMethod === 'email') ? emailStr : authenticatorStr}</h1>`;
+	let disableMessage = (authenticationMethod === 'email') ? getString('twoFactorDeactivationView/disableEmail') : getString('twoFactorDeactivationView/disableAuthenticator');
 	let message;
 
 	if (authenticationMethod === 'email') {
@@ -60,8 +63,8 @@ function renderViewByMethod(authenticationMethod, changeTwoFactorMethod=false) {
 	if (changeTwoFactorMethod) {
 		message = `
 			<p>
-				To enable 2fa by ${(authenticationMethod === 'email') ? 'app' : 'email'}, you have to disable 2fa by ${(authenticationMethod === 'email') ? 'email' : 'app'}.
-				To disable 2fa, please enter the code you received ${disableMessage}
+				${getString('twoFactorDeactivationView/disableDisclaimerPrefix')} ${(authenticationMethod === 'email') ? authenticatorStr : emailStr}, ${getString('twoFactorDeactivationView/disableDisclaimerSuffix')} ${(authenticationMethod === 'email') ? emailStr : authenticatorStr}.
+				${getString('twoFactorDeactivationView/disableExplication')} ${disableMessage}
 			</p>
 		`;
 		if (authenticationMethod === 'email')
@@ -69,14 +72,14 @@ function renderViewByMethod(authenticationMethod, changeTwoFactorMethod=false) {
 	} else if (authenticationMethod === 'email') {
 		message = `
 			<p>
-				To disable 2fa, please enter the code you received ${disableMessage}
+				${getString('twoFactorDeactivationView/disableExplication')} ${disableMessage}
 			</p>
 			<p><strong></strong></p>
 		`;
 	} else {
 		message = `
 			<p>
-				To disable 2fa, please enter the code you received ${disableMessage}
+				${getString('twoFactorDeactivationView/disableExplication')} ${disableMessage}
 			</p>
 		`;
 	}

@@ -1,4 +1,3 @@
-// import formWave from "../anim/formWave.js";
 import "../components/ButtonComponent.js"
 import rotatingGradient from "../anim/rotatingGradient.js";
 import { getCookie } from "../utils/cookie.js";

@@ -51,6 +51,10 @@
 	padding: 2rem 0 4.5rem 0;
 }
 
+.two-factor-app-page form #qrcode img {
+	width: 25rem;
+}
+
 .two-factor-app-page form #qrcode-token {
 	padding: 1rem 0 4.5rem 0;
 }

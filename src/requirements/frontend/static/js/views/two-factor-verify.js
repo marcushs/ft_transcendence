@@ -1,11 +1,12 @@
 import rotatingGradient from "../anim/rotatingGradient.js";
 import { getCookie } from "../utils/cookie.js";
 import '../components/ButtonComponent.js';
-import '../components/two_factor_auth/TwoFactorInputComponent.js';
+import '../components/TwoFactorInputComponent.js';
 import getUserData from "../utils/getUserData.js";
 import { throwRedirectionEvent } from "../utils/throwRedirectionEvent.js";
 import { setTwoFactorLocalStorage } from "../utils/setTwoFactorLocalStorage.js";
 import {loadLanguagesJson} from '../utils/languageManagement.js';
+import {getString} from "../utils/languageManagement.js";
 
 export class TwoFactorVerify {
 	// enableTwoFactorRequest();
@@ -60,18 +61,14 @@ export class TwoFactorVerify {
 	renderViewByMethod(authenticationMethod) {
 		if (authenticationMethod === 'email') {
 			return `
-				<h1>Verify 2fa by email</h1>
-				<p>
-					To verify 2fa, please enter the code you received at the following email:
-				</p>
+				<h1>${getString('twoFactorVerifyView/emailTitle')}</h1>
+				<p>${getString('twoFactorVerifyView/emailParagraph')}</p>
 				<p><strong></strong></p>
 			`;
 		} else {
 			return `
-				<h1>Verify 2fa by app</h1>
-				<p>
-					To verify 2fa, please enter the code you received on your authenticator application.
-				</p>
+				<h1>${getString('twoFactorVerifyView/authenticatorTitle')}</h1>
+				<p>${getString('twoFactorVerifyView/authenticatorParagraph')}</p>
 			`;
 		}
 	}

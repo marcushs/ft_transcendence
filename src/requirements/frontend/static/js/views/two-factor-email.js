@@ -1,11 +1,12 @@
-import '../components/two_factor_auth/TwoFactorEnableComponent.js';
+// import '../components/two_factor_auth/TwoFactorEnableComponent.js';
 import rotatingGradient from "../anim/rotatingGradient.js";
 import {getCookie} from "../utils/cookie.js";
 import '../components/ButtonComponent.js';
-import '../components/two_factor_auth/TwoFactorInputComponent.js';
+import '../components/TwoFactorInputComponent.js';
 import getUserData from "../utils/getUserData.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {setTwoFactorLocalStorage} from "../utils/setTwoFactorLocalStorage.js";
+import {getString} from "../utils/languageManagement.js";
 
 export default () => {
 	enableTwoFactorRequest();
@@ -15,16 +16,14 @@ export default () => {
 			<div class="two-factor-email-form-container-background"></div>
 			<div class="two-factor-email-form-container">
 				<form>
-					<h1>Enable 2fa by email</h1>
-					<p>
-						To enable 2fa, please enter the code you received at the following email:
-					</p>
+					<h1>${getString('twoFactorEmailView/title')}</h1>
+					<p>${getString('twoFactorEmailView/paragraph')}:</p>
 					<p><strong></strong></p>
 		            <div class="form-fields">
 		            	<two-factor-input-component></two-factor-input-component>
 					</div>
 					<p class="feedbackInformation"></p>
-					<button-component label="Verify" class="generic-auth-btn"></button-component>
+					<button-component label="verify" class="generic-auth-btn"></button-component>
 				</form>
 			</div>
 		</section>

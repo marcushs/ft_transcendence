@@ -23,6 +23,31 @@
 	  "newPassword": "New password",
 	  "confirmPassword": "Confirm password"
 	},
+	"twoFactorAppView": {
+	  "title": "Enable 2fa by authenticator",
+	  "paragraph": "To enable 2fa, please use your smartphone to scan the QR code below, or enter the key in your authentication application. For example, use Google Authenticator or Authy.",
+	  "key": "Key"
+	},
+	"twoFactorEmailView": {
+	  "title": "Enable 2fa by email",
+	  "paragraph": "To enable 2fa, please enter the code you received at the following email"
+	},
+	"twoFactorDeactivationView": {
+	  "title": "Disable 2fa by",
+	  "email": "email",
+	  "authenticator": "authenticator",
+	  "disableDisclaimerPrefix": "To enable 2fa by",
+	  "disableDisclaimerSuffix": "you have to disable 2fa by",
+	  "disableExplication": "To disable 2fa, please enter the code you received",
+	  "disableEmail": "at the following email:",
+	  "disableAuthenticator": "on your authenticator application."
+	},
+	"twoFactorVerifyView": {
+	  "emailTitle": "Verify 2FA by email",
+	  "emailParagraph": "To verify 2FA, please enter the code you received at the following email:",
+	  "authenticatorTitle": "Verify 2FA by authenticator",
+	  "authenticatorParagraph": "To verify 2FA, please enter the code you received on your authenticator application."
+	},
 	"buttonComponent": {
 	  "login": "Login",
 	  "signup": "Signup",
@@ -30,7 +55,8 @@
 	  "join": "Join",
 	  "play": "Play",
 	  "change": "Change",
-	  "save": "Save"
+	  "save": "Save",
+	  "verify": "Verify"
 	},
 	"navBarComponent": {
 	  "home": "Home"
@@ -111,6 +137,31 @@
 	  "newPassword": "Nouveau mot de passe",
 	  "confirmPassword": "Confirmer le mot de passe"
 	},
+	"twoFactorAppView": {
+	  "title": "Activer la 2FA par authenticator",
+	  "paragraph": "Pour activer 2FA, veuillez utiliser votre smartphone pour scanner le code QR ci-dessous, ou saisissez la clé dans votre application d'authentification. Par exemple, utilisez Google Authenticator ou Authy.",
+	  "key": "Clé"
+	},
+	"twoFactorEmailView": {
+	  "title": "Activer la 2FA par email",
+	  "paragraph": "Pour activer 2fa, veuillez saisir le code que vous avez reçu à l'email suivante"
+	},
+	"twoFactorDeactivationView": {
+	  "title": "Désactiver la 2FA par",
+	  "email": "email",
+	  "authenticator": "authenticator",
+	  "disableDisclaimerPrefix": "Pour activer la 2FA par",
+	  "disableDisclaimerSuffix": "vous devez désactiver la 2FA par",
+	  "disableExplication": "Pour désactiver la 2FA, veuillez saisir le code que vous avez reçu",
+	  "disableEmail": "à l'email suivante:",
+	  "disableAuthenticator": "sur votre application d'authentification."
+	},
+	"twoFactorVerifyView": {
+	  "emailTitle": "Vérifier la 2FA par email",
+	  "emailParagraph": "Pour vérifier la 2FA, veuillez saisir le code que vous avez reçu à l'adresse électronique suivante :",
+	  "authenticatorTitle": "Vérifier la 2FA par authenticator",
+	  "authenticatorParagraph": "Pour vérifier la 2FA, veuillez saisir le code que vous avez reçu sur votre application authenticator."
+	},
 	"buttonComponent": {
 	  "login": "Connexion",
 	  "signup": "Inscription",
@@ -118,7 +169,8 @@
 	  "join": "Rejoindre",
 	  "play": "Jouer",
 	  "change": "Changer",
-	  "save": "Sauvegarder"
+	  "save": "Sauvegarder",
+	  "verify": "Vérifier"
 	},
 	"navBarComponent": {
 	  "home": "Accueil"

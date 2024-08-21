@@ -11,8 +11,19 @@ import checkAuthentication from "./utils/checkAuthentication.js";
 import twoFactorDeactivation from "./views/two-factor-deactivation.js";
 import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
 import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
+import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
 
 let languageJson;
+
+const first = [1, 2, 3, 4, 5];
+const second = [2, 5, 6, 7, 8];
+
+const res = first.reduce((acc, number) => {
+    if (!second.includes(number))
+        acc.push(number);
+    return acc;
+} , [])
+console.log(res);
 
 (async () => {
     if (await isTwoFactorActivated()) {

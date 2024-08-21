@@ -1,10 +1,10 @@
-import '../components/two_factor_auth/TwoFactorEnableComponent.js';
 import rotatingGradient from "../anim/rotatingGradient.js";
 import {getCookie} from "../utils/cookie.js";
 import '../components/ButtonComponent.js';
-import '../components/two_factor_auth/TwoFactorInputComponent.js';
+import '../components/TwoFactorInputComponent.js';
 import { setTwoFactorLocalStorage } from "../utils/setTwoFactorLocalStorage.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
+import {getString} from "../utils/languageManagement.js";
 
 export default async () => {
 	await enableTwoFactorRequest();
@@ -14,19 +14,17 @@ export default async () => {
 			<div class="two-factor-app-form-container-background"></div>
 			<div class="two-factor-app-form-container">
 				<form>
-					<h1>Enable 2fa by app</h1>
-					<p>
-						To enable 2fa, please use your smartphone to scan the QR code below, or enter the key in your authentication app. For example, use Google Authenticator or Authy.
-					</p>
+					<h1>${getString('twoFactorAppView/title')}</h1>
+					<p>${getString('twoFactorAppView/paragraph')}</p>
 		            <div id="qrcode"></div>
 		            <div id="qrcode-token">
-		                <p><strong>Key:</strong> ${sessionStorage.getItem('qrcode_token')}</p>
+		                <p><strong>${getString('twoFactorAppView/key')}:</strong> ${sessionStorage.getItem('qrcode_token')}</p>
 					</div>
 		            <div class="form-fields">
 		            	<two-factor-input-component></two-factor-input-component>
 					</div>
 					<p class="feedbackInformation"></p>
-					<button-component label="Verify" class="generic-auth-btn"></button-component>
+					<button-component label="verify" class="generic-auth-btn"></button-component>
 				</form>
 			</div>
 		</section>
