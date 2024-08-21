@@ -1,3 +1,5 @@
+import { sendRequest } from "../../utils/sendRequest.js";
+
 class PopUpComponent extends HTMLElement {
 	static get observedAttributes() {
 		return ['image-42-pop-up', 'image-link-pop-up', 'add-new-contact-pop-up'];
@@ -51,8 +53,11 @@ class PopUpComponent extends HTMLElement {
 		this.initializeComponent();
 		if (this.className.match('image'))
 			this.attachProfileEventsListener();
-		else
+		else {
+			this.searchInput = this.querySelector('#searchBarInput');
+			this.searchResults = this.querySelector('#searchResults');
 			this.attachAddFriendsEventsListener();
+		}
 	}
 
 
@@ -69,8 +74,69 @@ class PopUpComponent extends HTMLElement {
 	attachAddFriendsEventsListener() {
 		this.querySelector('i').addEventListener('click', (event) => this.remove());
 		document.addEventListener('keydown', (event) => {if (event.key === 'Escape') this.remove()});
+		this.searchInput.addEventListener('input', () => this.handleSearchContacts());
 	}
 
+	async handleSearchContacts() {
+		if (!this.searchInput.value) {
+            this.clearSearchResult();
+			return ;
+		}
+        const usersList = await this.getSearchResult('search_users');
+        const contactsList = await this.getSearchResult('search_contacts');
+        if (usersList !== null && contactsList !== null) {
+			const friendsUsername = contactsList.friends.map(user => user.username);
+			const sentUsername = contactsList.sent_requests.map(user => user.username);
+			const receivedUsername = contactsList.received_requests.map(user => user.username);
+			const resultList = usersList.reduce((acc, user) => {
+				if (!friendsUsername.includes(user.username) && !sentUsername.includes(user.username) && !receivedUsername.includes(user.username))
+					acc.push(user);
+				return acc;
+			}, []);
+            this.displaySearchResult(resultList);
+		}
+        else {
+            this.clearSearchResult();
+			this.querySelector('ul').innerHTML = 'No contacts found...';
+			// this.querySelector('ul').classList.add('no-contacts');
+		}
+	}
+
+	displaySearchResult(usersList) {
+        this.clearSearchResult();
+        usersList.forEach(user => {
+            console.log('username: ', user.username)
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `/users/${encodeURIComponent(user.username)}`
+            a.textContent = user.username;
+            li.appendChild(a);
+            this.searchResults.appendChild(li);
+        });
+    }
+
+	clearSearchResult() {
+        this.searchResults.innerHTML = '';
+    }
+
+	async getSearchResult(requestType, ) {
+        let url = null;
+        if (requestType === 'search_contacts')
+            url = `http://localhost:8003/friends/search_contacts/`;
+        else if (requestType === 'search_users')
+            url = `http://localhost:8000/user/search_users/?q=${encodeURIComponent(this.searchInput.value)}`;
+        try {
+            const data = await sendRequest('GET', url, null);
+            if (data.status === 'success') {
+                console.log('back response: ', data.message);
+                return data.message;
+            } else {
+                return null;
+            }
+        } catch (error) {
+            return null;
+        }
+    }
 
 	throwImageLinkSaved(input) {
 		if (input.value !== '') {
