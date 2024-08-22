@@ -1,6 +1,9 @@
 .contact-list-menu {
     position: relative;
     margin-top: 1rem;
+    height: calc(5 * 7rem + 2 * 2.5rem);
+    overflow-y: auto;
+    scrollbar-gutter: stable;
 }
 
 .no-contacts {
