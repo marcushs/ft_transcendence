@@ -1,24 +1,13 @@
-import { getCookie } from "./cookie.js";
+import {sendRequest} from "./sendRequest.js";
 
 export default async function getUserData() {
-	const config = {
-		method: 'GET',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken'), // Protect from csrf attack
-		},
-		credentials: 'include' // Needed for send cookie
-	};
+	const url = `http://localhost:8000/user/user_info/`;
 
 	try {
-		const res = await fetch(`http://localhost:8000/user/user_info/`, config);
-		if (res.status == 403) {
-			throw new Error('Access Denied');
-		}
-		const data = await res.json();
+		const data = await sendRequest('GET', url, null);
+
 		return data.user;
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 }

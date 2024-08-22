@@ -31,7 +31,6 @@ class update_user(View):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'User not found'}, status=400)
         data = json.loads(request.body.decode('utf-8'))
-        print('------------------------->>>>>>>>>>>>::::::::::: ', data)
         for field in ['username', 'email']:
             if field in data:
                 setattr(request.user, field, data[field])

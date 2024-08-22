@@ -1,5 +1,6 @@
 import { getCookie } from "./cookie.js";
 import checkAuthentication from "./checkAuthentication.js";
+import {sendRequest} from "./sendRequest.js";
 
 let languages = null;
 
@@ -48,21 +49,12 @@ export function getString(key) {
 }
 
 export async function setUserLanguageInDb(language) {
-	const config = {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken'), // Protect from csrf attack
-		},
-		body: JSON.stringify({'language': language}),
-		credentials: 'include' // Needed for send cookie
-	};
+	const url = `http://localhost:8000/user/language/`;
 
 	try {
-		const res = await fetch('http://localhost:8000/user/language/', config);
+		await sendRequest('POST', url, {'language': language});
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 }
 

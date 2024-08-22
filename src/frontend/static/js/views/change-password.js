@@ -1,9 +1,10 @@
 import rotatingGradient from "../anim/rotatingGradient.js";
 import validateChangePasswordInputs from "../utils/changePasswordFormValidation.js";
 import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js";
-import {getCookie} from "../utils/cookie.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {getString} from "../utils/languageManagement.js";
+import {sendRequest} from "../utils/sendRequest.js";
+import {getCookie} from "../utils/cookie.js";
 
 export default () => {
 	const html = `
@@ -100,34 +101,24 @@ function showFeedback(response) {
 	if (response['new_password'])
 		newPasswordFeedbackElement.textContent = response['new_password'];
 	if (response['confirm_new_password'])
-		confirmNewPasswordFeedbackElement.textContent = response['confirm_new_password']
+		confirmNewPasswordFeedbackElement.textContent = response['confirm_new_password'];
 }
 
 async function postNewPassword(formData) {
-	const config = {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
-		},
-		body: formData,
-		credentials: 'include', // Needed for send cookie
-	};
+	const url = `http://localhost:8001/auth/change-password/`;
 
 	try {
-		const res = await fetch(`http://localhost:8001/auth/change-password/`, config);
-		if (res.status == 403)
-			throw new Error('Access Denied')
-		const data = await res.json();
-		if (res.status === 200) {
+		const data = await sendRequest('POST', url, formData, true);
+
+		if (data.status === 'success') {
 			localStorage.setItem('state', 'security');
 			localStorage.setItem('passwordFeedback', 'Password has been successfully changed');
 			throwRedirectionEvent('/profile');
-		} else if (res.status === 400) {
+		} else {
 			localStorage.setItem('userUpdateResponse', JSON.stringify(data));
 			throwRedirectionEvent('/change-password');
 		}
 	} catch (error) {
-		console.log(error)
+		console.error(error);
 	}
 }

@@ -31,13 +31,7 @@ class ButtonComponent extends HTMLElement {
 			this.class = newValue;
 			if (this.button)
 				this.button.className = this.class;
-		} else if (name === 'href') {
-			this.addEventListener('click', () => this.redirectUrl(newValue));
 		}
-	}
-
-	redirectUrl(url) {
-		location.href = url;
 	}
 
 }

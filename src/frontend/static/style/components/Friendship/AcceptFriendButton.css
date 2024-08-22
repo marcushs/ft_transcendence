@@ -1,0 +1,31 @@
+.accept-friend-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 5px;
+    background-color: rgb(58, 160, 183);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-right: -1rem;
+    transition: background-color 0.3s;
+    transform: scale(0.8);
+}
+
+.accept-friend-button p {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: black;
+    margin-right: 1rem;
+}
+
+.accept-friend-button img {
+	width: 3.5rem;
+	height: 3.5rem;
+}
+
+.accept-friend-button:hover {
+    background-color: var(--neon-blue);
+}

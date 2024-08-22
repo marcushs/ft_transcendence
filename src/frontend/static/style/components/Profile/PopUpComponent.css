@@ -7,8 +7,9 @@ pop-up-component {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: rgba(0, 0, 0, 0.2);
+	background: rgba(0, 0, 0, 0.45);
 	animation: pop-up-apparition 0.2s linear forwards;
+	z-index: 2;
 }
 
 @keyframes pop-up-apparition {
@@ -36,8 +37,8 @@ pop-up-component {
 .image-link-pop-up .pop-up-content i {
 	position: absolute;
 	font-size: 3rem;
-	top: 2rem;
-	left: 2rem;
+	top: 1.5rem;
+	right: 2rem;
 	cursor: pointer;
 }
 
@@ -54,6 +55,163 @@ pop-up-component {
 	border-radius: 5px;
 	border: 1px solid var(--light-grey);
 	color: var(--text-primary-color);
+	background-color: var(--background-color);
 	padding-left: 1rem;
 	margin-bottom: 3rem;
+}
+
+/* Add friend pop up style */
+
+.add-new-contact-pop-up .pop-up-content {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 22.5%;
+	height: 38.5%;
+	background: var(--component-background-color);
+	border-radius: 1rem;
+	border: 1px solid #333;
+}
+
+.add-new-contact-pop-up .pop-up-content i {
+	position: absolute;
+	font-size: 3rem;
+	top: 2rem;
+	right: 2rem;
+	cursor: pointer;
+}
+
+.add-new-contact-pop-up .pop-up-content h2 {
+	position: absolute;
+	top: 2rem;
+	font-weight: 500;
+	font-size: 2rem;
+}
+
+.add-contact-search-bar {
+    position: absolute;
+	top: 7rem;
+	width: 90%;
+	height: 3rem;
+}
+
+.add-contact-search-bar form .search-bar-icon {
+    position: absolute;
+    left: 1rem;
+    top: 30%;
+    height: 1.5rem;
+}
+
+.add-contact-search-bar form .search-results {
+    width: 100%;
+	margin-top: 1rem;
+    height: calc(7.185rem * 4 + 6px);
+    overflow-y: auto;
+}
+
+.add-friend-search-bar-input-container {
+    height: 3.5rem;
+    width: 100%;
+    background: #333;
+    padding: 1px;
+    border-radius: 10px;
+}
+
+.add-friend-search-bar-input-container input {
+    color: white;
+    font-size: 1.6rem;
+    padding-left: 50px;
+    height: 100%;
+    width: 100%;
+    background: var(--background-color);
+    border-radius: 10px;
+}
+
+.add-friend-search-bar-input-container li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 7rem;
+    width: 100%;
+    background: var(--background-color);
+    margin-bottom: 3px;
+}
+
+.add-friend-search-bar-input-container li:hover {
+    background: #333;
+}
+
+.add-friend-search-bar-input-container li:first-child {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.add-friend-search-bar-input-container li:last-child {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.add-friend-pop-up-picture {
+	display: flex;
+    justify-content: center;
+    height: 100%;
+    width: 25%;
+	height: 5rem;
+}
+
+.add-friend-pop-up-picture img {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+	border: 1px solid var(--light-grey);
+}
+
+.add-friend-pop-up-username {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-friend-pop-up-username p {
+    font-size: 1.7rem;
+    text-align: center;
+}
+
+.add-friend-pop-up-button {
+	width: 25%;
+    height: 50%;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(58, 160, 183);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+	margin-right: 1rem;
+}
+
+.add-friend-pop-up-button p {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: black;
+    margin-right: 1rem;
+}
+
+.add-friend-pop-up-button img {
+	width: 2.5rem;
+	height: 2.5rem;
+}
+
+.add-friend-pop-up-button:hover {
+    background-color: var(--neon-blue);
+}
+
+.no-add-contacts {
+    color: var(--light-grey);
+    font-size: 1.5rem;
+    margin-left: 2rem;
 }

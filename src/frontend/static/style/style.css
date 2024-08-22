@@ -4,6 +4,7 @@
 @import './views/login.css';
 @import './views/signup.css';
 @import './views/profile.css';
+@import './views/users-profile.css';
 @import './views/change-password.css';
 @import './views/two-factor-app.css';
 @import './views/two-factor-email.css';

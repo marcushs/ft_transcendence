@@ -189,19 +189,9 @@ class UserInfosComponent extends HTMLElement {
 
 	handleDisplaySetImageLinkPopUp() {
 		const popUp = document.createElement('pop-up-component');
-		const closePopUpHandler = () => this.handleClosePopUp(closePopUpHandler);
 
 		popUp.classList.add('image-link-pop-up');
 		document.querySelector('.profile-page').appendChild(popUp);
-		document.addEventListener('closePopUp', closePopUpHandler);
-	}
-
-
-	handleClosePopUp(handler) {
-		const popUp = document.querySelector('pop-up-component');
-
-		popUp.remove();
-		document.removeEventListener('closePopUp', handler);
 	}
 
 

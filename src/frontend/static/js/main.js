@@ -3,6 +3,7 @@ import login from "./views/login.js";
 import signup from "./views/signup.js";
 import logout from "./views/logout.js"
 import profile from "./views/profile.js";
+import userProfile from "./views/user-profile.js";
 import changePassword from "./views/change-password.js";
 import { generateCsrfToken } from "./utils/cookie.js";
 import twoFactorApp from "./views/two-factor-app.js";
@@ -14,16 +15,6 @@ import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
 import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
 
 let languageJson;
-
-const first = [1, 2, 3, 4, 5];
-const second = [2, 5, 6, 7, 8];
-
-const res = first.reduce((acc, number) => {
-    if (!second.includes(number))
-        acc.push(number);
-    return acc;
-} , [])
-console.log(res);
 
 (async () => {
     if (await isTwoFactorActivated()) {
@@ -55,6 +46,9 @@ async function router() {
 
     let view = routes[location.pathname];
 
+	if (handleDynamicURL())
+		return;
+
     if (!view || !await isViewAccessible(location.pathname)) {
         const lastAuthorizedPage = localStorage.getItem('lastAuthorizedPage');
 
@@ -71,7 +65,18 @@ async function router() {
     app.innerHTML = await view.render();
 }
 
-
+function handleDynamicURL() {
+    const path = window.location.pathname;
+    const segments = path.split('/');
+    if (segments.length > 2 && segments[1] === 'users') {
+	    const username = segments[2];
+	    localStorage.setItem('users-profile-target-username', username);
+	    document.title = username + '-profile';
+	    app.innerHTML = userProfile();
+	    return true;
+    }
+	return false;
+}
 async function isViewAccessible(view) {
     const isUserConnected = await checkAuthentication();
     const loggedOutViews = ['/login', '/signup'];

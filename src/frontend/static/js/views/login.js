@@ -5,10 +5,9 @@ import { getCookie } from "../utils/cookie.js";
 import loginFormValidation from "../utils/loginFormValidation.js";
 import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js";
 import {TwoFactorVerify} from './two-factor-verify.js';
-// import {TwoFactorVerify} from "./two_factor/TwoFactorLoginVerify.js";
-import {loadLanguagesJson} from '../utils/languageManagement.js';
+import {getString, loadLanguagesJson} from '../utils/languageManagement.js';
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
-import {getString} from "../utils/languageManagement.js";
+import {sendRequest} from "../utils/sendRequest.js";
 
 export default () => {
 	const html = `
@@ -32,7 +31,7 @@ export default () => {
 			</div>
 		</section>`;
 
-	setTimeout(async () => {
+	setTimeout(() => {
 		const loginBtn = document.querySelector('#loginBtn');
 
 		loginBtn.addEventListener('click', event => {
@@ -67,46 +66,24 @@ function displayErrorFeedback() {
 }
 
 async function postData(event, loginBtn) {
+	event.preventDefault();
+
 	const form = loginBtn.closest('form');
-	if (form) {
-		const formData = new FormData(form);
+	const formData = new FormData(form);
+	const formValues = Object.fromEntries(formData.entries());
+	const url = `http://localhost:8001/auth/login/`;
 
-		const formValues = Object.fromEntries(formData.entries());
-		const json = JSON.stringify(formValues);
-		const config = {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
-			},
-			credentials: 'include', // Needed for send cookie
-			body: json, // Send form values as JSON
-		};
+	try {
+		const data = await sendRequest('POST', url, formValues);
 
-		try {
-			const res = await fetch(`http://localhost:8001/auth/login/`, config);
-			if (res.status == 403)
-				throw new Error('Access Denied')
-			const data = await res.json();
-			if (res.status === 200) {
-				if (data.is_verified === true)
-					new TwoFactorVerify(JSON.parse(json), data);
-					// new TwoFactorVerify(json);
-				else {
-					await loadLanguagesJson();
-					throwRedirectionEvent('/');
-				}
-			} else {
-				localStorage.setItem('errorFeedback', data.message);
-				throwRedirectionEvent(data.redirect_url);
-			}
-		} catch (error) {
-			if (error.data && error.data.status === 'jwt_failed')
-				throwRedirectionEvent('/')
-			console.log('Catch error :', error);
+		if (data.is_verified === true)
+			new TwoFactorVerify(formValues, data);
+		else {
+			await loadLanguagesJson();
+			throwRedirectionEvent('/');
 		}
-	} else {
-		console.error('No form found!');
+	} catch (error) {
+		localStorage.setItem('errorFeedback', error.message);
+		throwRedirectionEvent('/login');
 	}
 }

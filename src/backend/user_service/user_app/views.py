@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from .utils.csrf_utils import generate_csrf_token
-from django.contrib.auth.models import AnonymousUser 
+from django.contrib.auth.models import AnonymousUser
 
 def index(request):
     csrf_token = request.COOKIES.get('csrftoken')
@@ -11,7 +11,7 @@ def index(request):
     else:
         response = JsonResponse({"message": 'csrf token already generated'})
     return response
-
+ 
 def get_information_view(request):
     if isinstance(request.user, AnonymousUser):
         return JsonResponse({'message': 'you are not logged in'}, status=401)

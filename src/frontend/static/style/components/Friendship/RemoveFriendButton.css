@@ -1,0 +1,30 @@
+.remove-friend-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    background-color: rgb(172, 26, 164);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-left: 2rem;
+}
+
+.remove-friend-button p {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: black;
+    margin-right: 1rem;
+}
+
+.remove-friend-button img {
+	width: 2rem;
+	height: 2rem;
+}
+
+.remove-friend-button:hover {
+    background-color: var(--neon-pink);
+}

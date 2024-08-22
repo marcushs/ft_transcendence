@@ -1,0 +1,138 @@
+.contact-list-menu {
+    position: relative;
+    margin-top: 1rem;
+    height: calc(5 * 7rem + 2 * 2.5rem);
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+}
+
+.no-contacts {
+    color: var(--light-grey);
+    margin-left: 2rem;
+}
+
+.contact-list-menu p:not(ul p) {
+    margin-left: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+}
+
+.contact-list-menu ul {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.contact-list-menu li {
+    width: 100%;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 7rem;
+    border-bottom: 1px solid var(--light-grey);
+    cursor: pointer;
+}
+
+.contact-list-menu li:hover {
+    box-shadow: 0 0 5px var(--light-grey);
+}
+
+.contact-list-menu li:last-child {
+    border-bottom: none;
+}
+
+.contact-list-menu .contact-menu-username {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contact-list-menu ul p {
+    font-size: 1.3rem;
+    text-align: center;
+}
+
+.contact-list-menu .contact-menu-picture {
+    /* margin-left: 1rem; */
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    width: 25%;
+	height: 5rem;
+}
+
+.contact-list-menu .contact-menu-picture img {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+	border: 1px solid var(--light-grey);
+}
+
+.contact-list-menu .contact-menu-request-icon {
+    /* margin-right: 1rem; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25%;
+    height: 100%;
+}
+
+
+.contact-list-menu .contact-menu-request-icon i {
+    font-size: 3.2rem;
+    text-align: center;
+    width: 50%;
+    transition: shadow 1s;
+}
+
+.contact-list-menu .contact-menu-request-icon i:hover {
+    cursor: pointer;
+}
+
+.contact-list-menu .contact-menu-request-icon .fa-xmark {
+    color: #AC1AA4;
+}
+
+.contact-list-menu .contact-menu-request-icon .fa-xmark:hover {
+    animation: change-xmark-color linear 0.12s forwards;
+    color: var(--neon-pink);
+}
+
+.contact-list-menu .contact-menu-request-icon .fa-check {
+    color: #3AA0B7;
+}
+
+.contact-list-menu .contact-menu-request-icon .fa-check:hover {
+    animation: change-check-color linear 0.12s forwards;
+    color: var(--neon-blue);
+}
+
+@keyframes change-xmark-color {
+    from {
+        font-size: 3.2rem;
+        color: #AC1AA4;
+        /* text-shadow: 1px 1px 1px transparent, -1px 1px 1px transparent, 1px -1px 1px transparent, -1px -1px 1px transparent; */
+    }
+    to {
+        font-size: 3.4rem;
+        color: var(--neon-pink);
+        /* text-shadow: 1px 1px 1px var(--light-grey), -1px 1px 1px var(--light-grey), 1px -1px 1px var(--light-grey), -1px -1px 1px var(--light-grey); */
+    }
+}
+
+@keyframes change-check-color {
+    from {
+        font-size: 3.2rem;
+        color: #3AA0B7;
+        /* text-shadow: 1px 1px 1px transparent, -1px 1px 1px transparent, 1px -1px 1px transparent, -1px -1px 1px transparent; */
+    }
+    to {
+        font-size: 3.4rem;
+        color: var(--neon-blue);
+        /* text-shadow: 1px 1px 1px var(--light-grey), -1px 1px 1px var(--light-grey), 1px -1px 1px var(--light-grey), -1px -1px 1px var(--light-grey); */
+    }
+}

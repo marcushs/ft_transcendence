@@ -4,7 +4,6 @@ import os
 
 def user_directory_path(instance, filename):
     return f'profile_images/{instance.id}/{filename}'
-
 class UserManager(BaseUserManager):
     def create_user(self, email, username, user_id):
         if not email:

@@ -1,0 +1,26 @@
+@import './BottomNavContact.css';
+@import './ContactMenu.css';
+
+contact-menu-component {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 52rem;
+    width: 30rem;
+    margin-right: 1rem;
+    z-index: 3;
+}
+
+contact-component {
+    position: relative;
+}
+
+/* contact-component hr {
+    position: absolute;
+    border: none;
+    top: 100%;
+    width: 100%;
+    color: var(--light-grey);
+    background-color: var(--light-grey);
+    height: 1px;
+} */
