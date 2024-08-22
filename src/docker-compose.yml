@@ -86,11 +86,11 @@ services:
     networks:
       - transcendence-network
   # --> OAUTH SERVICE <-- #
-  oauth:
-    container_name: oauth
+  oauth_42:
+    container_name: oauth_42
     restart: always
     build:
-      context: ./requirements/backend/oauth_service
+      context: ./requirements/backend/oauth_42_service
       dockerfile: docker/Dockerfile
     image: oauth
     env_file:
@@ -102,11 +102,11 @@ services:
           python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./requirements/backend/oauth_service:/app
+      - ./requirements/backend/oauth_42_service:/app
     ports:
       - "8003:8000"
     depends_on:
-      oauth_db:
+      oauth_42_db:
         condition: service_healthy
     networks:
       - transcendence-network
@@ -177,24 +177,24 @@ services:
       timeout: 3s
       retries: 5
   # --> DATABASE OAUTH <-- #
-  oauth_db:
-    container_name: oauth_db
+  oauth_42_db:
+    container_name: oauth_42_db
     image: postgres
     restart: always
     env_file: ./requirements/backend/.env
     environment:
-      - POSTGRES_USER=${OAUTH_DB_USER}
-      - POSTGRES_DB=${OAUTH_DB_NAME}
-      - POSTGRES_PASSWORD=${OAUTH_DB_PASSWORD}
+      - POSTGRES_USER=${OAUTH_42_DB_USER}
+      - POSTGRES_DB=${OAUTH_42_DB_NAME}
+      - POSTGRES_PASSWORD=${OAUTH_42_DB_PASSWORD}
     shm_size: 128mb
     volumes:
-      - oauth_pgdata:/var/lib/postgresql/data
+      - oauth_42_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
     ports:
      - "5435:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${OAUTH_DB_USER} -d ${OAUTH_DB_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${OAUTH_42_DB_USER} -d ${OAUTH_42_DB_NAME}"]
       interval: 4s
       timeout: 3s
       retries: 5
@@ -206,8 +206,8 @@ volumes:
     name: auth_data
   twofactor_pgdata:
     name: twofactor_pgdata
-  oauth_pgdata:
-    name: oauth_pgdata
+  oauth_42_pgdata:
+    name: oauth_42_pgdata
 
 networks:
   transcendence-network:

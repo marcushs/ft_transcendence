@@ -23,11 +23,11 @@ export default () => {
 						<a href="/change-password" id="forgotten-password">Forgotten password?</a>
 					</div>
 					<button-component id="loginBtn" label="Login" class="generic-auth-btn-disabled"></button-component>
-					<button-component id="oauthLoginBtn" label="Login with " class="generic-auth-btn" icon="logo_42">
+					<button-component id="oauth42LoginBtn" label="Login with " class="generic-auth-btn" icon="logo_42">
 					</button-component>
-					<button-component id="oauthLoginBtn" label="Login with " class="generic-auth-btn" icon="logo_google">
+					<button-component id="oauthGoogleLoginBtn" label="Login with " class="generic-auth-btn" icon="logo_google">
 					</button-component>
-					<button-component id="oauthLoginBtn" label="Login with " class="generic-auth-btn" icon="logo_github">
+					<button-component id="oauthGithubLoginBtn" label="Login with " class="generic-auth-btn" icon="logo_github">
 					</button-component>
 					<p>Don't have an account? <a href="/signup">Signup</a></p>
 				</form>
@@ -36,13 +36,17 @@ export default () => {
 
 	setTimeout(() => {
 		const loginBtn = document.querySelector('#loginBtn');
-		const oauthLoginBtn = document.getElementById('oauthLoginBtn');
+		const oauth42LoginBtn = document.getElementById('oauth42LoginBtn');
+		const oauthGoogleLoginBtn = document.getElementById('oauthGoogleLoginBtn');
+		const oauthGithubLoginBtn = document.getElementById('oauthGithubLoginBtn');
 
 		loginBtn.addEventListener('click', event => {
 			if (loginBtn.className === 'generic-auth-btn')
 				postData(event, loginBtn);
 		});
-		oauthLoginBtn.addEventListener('click', redirectToOauth);
+		oauth42LoginBtn.addEventListener('click', () => redirectToOauth("oauth_42"));
+		oauthGoogleLoginBtn.addEventListener('click', () => redirectToOauth("oauth_google"));
+		oauthGithubLoginBtn.addEventListener('click', () => redirectToOauth("oauth_github"));
 
 		rotatingGradient('.login-form-container-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.login-form-container', '#FF16C6', '#00D0FF');

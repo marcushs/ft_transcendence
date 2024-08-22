@@ -11,7 +11,7 @@ env = environ.Env()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-class oauthRedirectView(View):
+class oauth42RedirectView(View):
     def get(self, request):
         state = request.GET.get('state')
         code = request.GET.get('code')
