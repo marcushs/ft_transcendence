@@ -26,15 +26,25 @@ class oauthGoogleAccessResourceView(View):
         super().__init__
     
     def get(self, request):
-        token = request.COOKIES.get('42_access_token') 
-        resource_url = 'https://api.intra.42.fr/v2/me'
+        token = request.COOKIES.get('google_access_token') 
+        resource_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
 
         headers = {
             'Authorization': f'Bearer {token}'
         }
 
         response = requests.get(resource_url, headers=headers)
-
+        try:
+            response_data = response.json()
+            if 'error' in response_data:
+                return JsonResponse({'message': response_data['error'],
+                                     'status': 'Error'}, 
+                                     status=400)
+            return JsonResponse(response_data, safe=False)
+        except ValueError:
+            return JsonResponse({'message': 'Invalid JSON response',
+                                 'status': 'Error'}, 
+                                 status=500)
         # Check if the response contains JSON data and handle errors
         try:
             response_data = response.json()

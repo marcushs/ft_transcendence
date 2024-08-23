@@ -21,23 +21,23 @@ export async function oauthRedirectCallback() {
 	if (code && state) {
 		const data = await handleOauthCallback(oauthProvider, code, state);
 		
-		// if (data.status === 'Success') {
-		// 	// if handleOauthCallback success
-		// 	const login_res = await accessResource(oauthProvider);
-		// 	if (!login_res || login_res.status === 'Error') {
-		// 		status_text.textContent = `Error: ${login_res ? login_res.message : 'Fetch failed'}`
-		// 		// setTimeout(() => window.location.href = '/login', 2000);
-		// 		return ;
-		// 	}
-		// 	console.log('oauth redirect page:')
-		// 	console.log(login_res);
-		// 	status_text.textContent = 'Successfully logged in';
-		// 	window.location.href = '/home'
-		// } else {
-		// 	// if handleOauthCallback error
-		// 	status_text.textContent = `Error: ${data.message}`;
-		// 	// setTimeout(() => window.location.href = '/login', 2000);
-		// }
+		if (data.status === 'Success') {
+			// if handleOauthCallback success
+			const login_res = await accessResource(oauthProvider);
+			if (!login_res || login_res.status === 'Error') {
+				status_text.textContent = `Error: ${login_res ? login_res.message : 'Fetch failed'}`
+				// setTimeout(() => window.location.href = '/login', 2000);
+				return ;
+			}
+			console.log('oauth redirect page:')
+			console.log(login_res);
+			status_text.textContent = 'Successfully logged in';
+			window.location.href = '/home'
+		} else {
+			// if handleOauthCallback error
+			status_text.textContent = `Error: ${data.message}`;
+			// setTimeout(() => window.location.href = '/login', 2000);
+		}
 	} else {
 		// No query params, not from 42 oauth
 		status_text.textContent = 'Error: Invalid request';
