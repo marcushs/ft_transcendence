@@ -55,7 +55,7 @@ class oauthGoogleLoginView(View):
             scope=['https://www.googleapis.com/auth/userinfo.profile'],
             state=self.state,
             access_type="offline",
-            
+            include_granted_scopes="true"
         )
 
         return url

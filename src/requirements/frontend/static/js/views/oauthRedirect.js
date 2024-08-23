@@ -9,7 +9,7 @@ export default () => {
 
 	setTimeout(() => {
 		console.log(oauthProvider);
-		// oauthRedirectCallback(oauthProvider);
+		oauthRedirectCallback(oauthProvider);
 	}, 0);
 
 	return html;

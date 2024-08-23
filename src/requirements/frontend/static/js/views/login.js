@@ -44,9 +44,9 @@ export default () => {
 			if (loginBtn.className === 'generic-auth-btn')
 				postData(event, loginBtn);
 		});
-		oauth42LoginBtn.addEventListener('click', () => redirectToOauth("oauth_42", "8003"));
-		oauthGoogleLoginBtn.addEventListener('click', () => redirectToOauth("oauth_google", "8004"));
-		oauthGithubLoginBtn.addEventListener('click', () => redirectToOauth("oauth_github", "8005"));
+		oauth42LoginBtn.addEventListener('click', () => redirectToOauth("oauth_42"));
+		oauthGoogleLoginBtn.addEventListener('click', () => redirectToOauth("oauth_google"));
+		oauthGithubLoginBtn.addEventListener('click', () => redirectToOauth("oauth_github"));
 
 		rotatingGradient('.login-form-container-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.login-form-container', '#FF16C6', '#00D0FF');
