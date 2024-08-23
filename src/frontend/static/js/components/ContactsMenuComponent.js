@@ -60,17 +60,17 @@ class FriendsMenuComponent extends HTMLElement {
             return;
         }
         this.contactBottomNavDiv.style.display = 'flex';
-        this.contactSummary.innerHTML = `<p>Friends - ${contacts.friends_count}/${contacts.friends_count} online</p>`;
+        this.contactSummary.innerHTML = `<p>Contacts - ${contacts.friends_count}/${contacts.friends_count} online</p>`;
         if (contacts.friends_count === 0) {
             this.contactList.innerHTML = `No contacts found...`;
             this.contactList.classList.add('no-contacts');
         }
         else
             this.createContactList(contacts.friends, 'friends');
-        this.pendingContactSummary.innerHTML = `<p> Friendship Requests - ${contacts.requests_count}</p>`;
+        this.pendingContactSummary.innerHTML = `<p>Contacts Requests - ${contacts.requests_count}</p>`;
         if (contacts.requests_count === 0) {
-            this.pendingContactSummary.innerHTML = `<p> Friendship Requests</p>`;
-            this.pendingContactList.innerHTML = `No pending request...`
+            this.pendingContactSummary.innerHTML = `<p>Contacts Requests</p>`;
+            this.pendingContactList.innerHTML = `No contacts request...`
             this.pendingContactList.classList.add('no-contacts');
         }
         else {

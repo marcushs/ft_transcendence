@@ -106,8 +106,8 @@ class ChooseLanguageComponent extends HTMLElement {
 			liElement.appendChild(imgFlag);
 			ulElement.appendChild(liElement);
 		});
-		console.log(otherLanguages)
-		console.log(ulElement);
+		// console.log(otherLanguages);
+		// console.log(ulElement);
 	}
 
 

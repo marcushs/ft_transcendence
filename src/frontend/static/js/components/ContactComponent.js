@@ -66,7 +66,6 @@ class ContactComponent extends HTMLElement {
         this.addEventListener('dblclick', () => {
             document.title = this.userData.username + '-profile';
             throwRedirectionEvent(`/users/${this.userData.username}`);
-            app.innerHTML = userProfile();
         })
     }
 
@@ -78,7 +77,10 @@ class ContactComponent extends HTMLElement {
         try {
             const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
             if (data.status === 'success') {
-                this.setAttribute('button-status', data.friendship_status);
+                if (this.closest('ul').className === 'pending-contact-list-result')
+                    this.manageChangePendingContact();
+                else
+                    console.log('in friends list here');
             }
             console.log(data.message);
         } catch (error) {
@@ -86,6 +88,23 @@ class ContactComponent extends HTMLElement {
         }
     }
 
+    manageChangePendingContact() {
+        const pendingSummary = document.querySelector('.pending-contact-summary');
+        const pendingCountMatch = pendingSummary.textContent.match(/\d+/);
+        const newPendingCount = parseInt(pendingCountMatch[0], 10) - 1;
+        this.classList.add('shrink');
+        setTimeout(() => this.closest('li').remove(), 200);
+        let newPendingSummary = null;
+        if (newPendingCount === 0) {
+            const segment = pendingSummary.textContent.split(' -');
+            newPendingSummary = segment[0];
+            const pendingContactList = document.querySelector('.pending-contact-list-result')
+            pendingContactList.innerHTML = 'No contacts request...';
+            pendingContactList.classList.add('no-contacts');
+        } else
+            newPendingSummary = pendingSummary.textContent.replace(pendingCountMatch[0], newPendingCount);
+        pendingSummary.textContent = newPendingSummary;
+    }
 }
 
 customElements.define("contact-component", ContactComponent);

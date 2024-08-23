@@ -111,6 +111,21 @@
     color: var(--neon-blue);
 }
 
+.shrink {
+    animation: shrink 0.2s forwards;
+}
+
+@keyframes shrink {
+    from {
+        height: 100%;
+        opacity: 1;
+    }
+    to {
+        height: 0;
+        opacity: 0;
+    }
+}
+
 @keyframes change-xmark-color {
     from {
         font-size: 3.2rem;
