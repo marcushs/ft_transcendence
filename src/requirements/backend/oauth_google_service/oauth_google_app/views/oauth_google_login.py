@@ -20,7 +20,7 @@ env = environ.Env()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-class oauth42LoginView(View):
+class oauthGoogleLoginView(View):
     def __init__(self):
         super().__init__
     
@@ -41,19 +41,21 @@ class oauth42LoginView(View):
         return response
     
     def authorization(self):
-        client_id = env("API_UID_42")
-        authorization_url = "https://api.intra.42.fr/oauth/authorize"
+        client_id = env("API_UID_GOOGLE")
+        authorization_url = "https://accounts.google.com/o/oauth2/v2/auth"
         client = WebApplicationClient(client_id)
         
         # Generate a secure random state parameter
-        self.state = "oauth_42-" + secrets.token_urlsafe(16)
+        self.state = "oauth_google-" + secrets.token_urlsafe(16)
         
         # Prepare the authorization URL with the state parameter
         url = client.prepare_request_uri(
             authorization_url,
             redirect_uri="https://localhost:3000/oauth-redirect", 
-            scope=['public'],
-            state=self.state
+            scope=['https://www.googleapis.com/auth/userinfo.profile'],
+            state=self.state,
+            access_type="offline",
+            
         )
 
         return url

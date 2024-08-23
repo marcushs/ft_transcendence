@@ -85,14 +85,14 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
-  # --> OAUTH SERVICE <-- #
+  # --> OAUTH 42 SERVICE <-- #
   oauth_42:
     container_name: oauth_42
     restart: always
     build:
       context: ./requirements/backend/oauth_42_service
       dockerfile: docker/Dockerfile
-    image: oauth
+    image: oauth_42
     env_file:
       - ./requirements/backend/.env
     command: >
@@ -105,6 +105,32 @@ services:
       - ./requirements/backend/oauth_42_service:/app
     ports:
       - "8003:8000"
+    depends_on:
+      oauth_42_db:
+        condition: service_healthy
+    networks:
+      - transcendence-network
+
+  # --> OAUTH GOOGLE SERVICE <-- #
+  oauth_google:
+    container_name: oauth_google
+    restart: always
+    build:
+      context: ./requirements/backend/oauth_google_service
+      dockerfile: docker/Dockerfile
+    image: oauth_google
+    env_file:
+      - ./requirements/backend/.env
+    command: >
+      sh -c "
+          python3 manage.py makemigrations &&
+          python3 manage.py migrate &&
+          python3 manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./requirements/backend/oauth_google_service:/app
+    ports:
+      - "8004:8000"
     depends_on:
       oauth_42_db:
         condition: service_healthy
@@ -176,7 +202,7 @@ services:
       interval: 4s
       timeout: 3s
       retries: 5
-  # --> DATABASE OAUTH <-- #
+  # --> DATABASE OAUTH_42 <-- #
   oauth_42_db:
     container_name: oauth_42_db
     image: postgres
@@ -199,6 +225,29 @@ services:
       timeout: 3s
       retries: 5
 
+  # --> DATABASE OAUTH_GOOGLE <-- #
+  oauth_google_db:
+    container_name: oauth_google_db
+    image: postgres
+    restart: always
+    env_file: ./requirements/backend/.env
+    environment:
+      - POSTGRES_USER=${OAUTH_GOOGLE_DB_USER}
+      - POSTGRES_DB=${OAUTH_GOOGLE_DB_NAME}
+      - POSTGRES_PASSWORD=${OAUTH_GOOGLE_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - oauth_google_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+     - "5436:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${OAUTH_GOOGLE_DB_USER} -d ${OAUTH_GOOGLE_DB_NAME}"]
+      interval: 4s
+      timeout: 3s
+      retries: 5
+
 volumes:
   user_pgdata:
     name: user_data
@@ -208,6 +257,8 @@ volumes:
     name: twofactor_pgdata
   oauth_42_pgdata:
     name: oauth_42_pgdata
+  oauth_google_pgdata:
+    name: oauth_google_pgdata
 
 networks:
   transcendence-network:
