@@ -158,7 +158,7 @@
 	},
 	"twoFactorVerifyView": {
 	  "emailTitle": "Vérifier la 2FA par email",
-	  "emailParagraph": "Pour vérifier la 2FA, veuillez saisir le code que vous avez reçu à l'adresse électronique suivante :",
+	  "emailParagraph": "Pour vérifier la 2FA, veuillez saisir le code que vous avez reçu à l'adresse email suivante :",
 	  "authenticatorTitle": "Vérifier la 2FA par authenticator",
 	  "authenticatorParagraph": "Pour vérifier la 2FA, veuillez saisir le code que vous avez reçu sur votre application authenticator."
 	},

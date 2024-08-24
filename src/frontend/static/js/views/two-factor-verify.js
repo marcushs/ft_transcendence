@@ -7,6 +7,7 @@ import { throwRedirectionEvent } from "../utils/throwRedirectionEvent.js";
 import { setTwoFactorLocalStorage } from "../utils/setTwoFactorLocalStorage.js";
 import {loadLanguagesJson} from '../utils/languageManagement.js';
 import {getString} from "../utils/languageManagement.js";
+import {sendRequest} from "../utils/sendRequest.js";
 
 export class TwoFactorVerify {
 	// enableTwoFactorRequest();
@@ -76,50 +77,28 @@ export class TwoFactorVerify {
 }
 
 async function sendTwoFactorCode(userCredentials) {
-	const config = {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
-		},
-		credentials: 'include', // Needed for send cookie
-		body: JSON.stringify(userCredentials)
-	};
+	const url = 'http://localhost:8002/twofactor/get_2fa_code/';
+
 	try {
-		const res = await fetch(`http://localhost:8002/twofactor/get_2fa_code/`, config);
-		if (res.status === 403)
-			throw new Error('Access Denied')
-		const data = await res.json();
-		if (res.status !== 200)
-			throw new Error(data.message);
+		await sendRequest('POST', url, userCredentials );
 	} catch (error) {
-		alert(`Error: ${error.message}`);
+		console.error(error);
 	}
 }
 
 async function VerifyTwoFactorRequest(verificationCode, userCredentials) {
-	const config = {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
-		},
-		credentials: 'include', // Needed for send cookie
-		body: JSON.stringify({
+	const url = 'http://localhost:8001/auth/login/';
+
+	try {
+		const data = await sendRequest('POST', url, {
 			twofactor: verificationCode,
 			...userCredentials,
-		})
-	}
-	const res = await fetch('http://localhost:8001/auth/login/', config);
-	if (res.status === 403)
-		throw new Error('Access Denied')
-	const data = await res.json();
-	if (res.status === 200) {
+		});
+
 		await loadLanguagesJson();
 		throwRedirectionEvent('/');
 		setTwoFactorLocalStorage();
-	} else
-		document.querySelector('.feedbackInformation').innerHTML = data.message;
+	} catch (error) {
+		document.querySelector('.feedbackInformation').innerHTML = error.message;
+	}
 }

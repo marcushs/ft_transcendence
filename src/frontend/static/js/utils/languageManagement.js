@@ -59,22 +59,13 @@ export async function setUserLanguageInDb(language) {
 }
 
 async function getUserLanguageFromDb() {
-	const config = {
-		method: 'GET',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken'), // Protect from csrf attack
-		},
-		credentials: 'include' // Needed for send cookie
-	};
+	const url = 'http://localhost:8000/user/language/';
 
 	try {
-		const res = await fetch('http://localhost:8000/user/language/', config);
-		const data = await res.json();
+		const data = await sendRequest('GET', url, null);
 
 		return data['language'];
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 }

@@ -24,7 +24,7 @@
 	filter: blur(15px);
 }
 
-.login-page #errorFeedback {
+.login-page #feedbackElement {
 	position: absolute;
 	top: 82%;
 	font-size: 1.5rem;

@@ -1,10 +1,10 @@
 import getProfileImage from "../../utils/getProfileImage.js";
 import getUserData from "../../utils/getUserData.js";
 import { isAlphanumeric } from "../../utils/utils.js";
-import {getCookie} from "../../utils/cookie.js";
 import '../PopUpComponent.js'
 import {getString} from "../../utils/languageManagement.js";
 import { throwRedirectionEvent } from "../../utils/throwRedirectionEvent.js";
+import {sendRequest} from "../../utils/sendRequest.js";
 
 class UserInfosComponent extends HTMLElement {
 
@@ -127,10 +127,7 @@ class UserInfosComponent extends HTMLElement {
 			if (this.newProfileImageLink)
 				newUserData.append('profile_image_link', this.newProfileImageLink);
 
-			const requestResponse = await postNewUserInfos(newUserData);
-
-			localStorage.setItem('userUpdateResponse', JSON.stringify(requestResponse));
-			throwRedirectionEvent('/profile');
+			await postNewUserInfos(newUserData);
 		}
 	}
 
@@ -395,24 +392,14 @@ class UserInfosComponent extends HTMLElement {
 customElements.define('user-infos-component', UserInfosComponent);
 
 async function postNewUserInfos(newUserInfos) {
-	const config = {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			// 'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken'), // Protect from csrf attack
-		},
-		body: newUserInfos,
-		credentials: 'include' // Needed for send cookie
-	};
+	const url = `http://localhost:8000/user/change-user-infos/`;
 
 	try {
-		const res = await fetch(`http://localhost:8000/user/change-user-infos/`, config);
-		if (res.status == 403) {
-			throw new Error('Access Denied');
-		}
-		return await res.json();
+		const data = await sendRequest('POST', url, newUserInfos, true);
+
+		localStorage.setItem('userUpdateResponse', JSON.stringify(data));
+		throwRedirectionEvent('/profile');
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 }

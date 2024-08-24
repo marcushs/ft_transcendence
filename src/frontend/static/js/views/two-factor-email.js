@@ -7,6 +7,7 @@ import getUserData from "../utils/getUserData.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {setTwoFactorLocalStorage} from "../utils/setTwoFactorLocalStorage.js";
 import {getString} from "../utils/languageManagement.js";
+import {sendRequest} from "../utils/sendRequest.js";
 
 export default () => {
 	enableTwoFactorRequest();
@@ -51,55 +52,26 @@ export default () => {
 }
 
 async function enableTwoFactorRequest() {
-	const config = {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken')
-		},
-		credentials: 'include',
-		body: JSON.stringify({ method: 'email' })
-	};
+	const url = `http://localhost:8002/twofactor/enable/`;
 
-	const res = await fetch(`http://localhost:8002/twofactor/enable/`, config);
-
-	if (res.status === 403)
-		return res.status;
-
-	const data = await res.json();
-
-	if (res.status === 200) {
-
-		//redirect
-	} else {
-		throw new Error(data.message);
+	try {
+		await sendRequest('POST', url, { method: 'email' });
+	} catch (error) {
+		console.error(error);
 	}
 }
 
 async function VerifyTwoFactorRequest(verificationCode) {
-	const config = {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
-		},
-		credentials: 'include', // Needed for send cookie
-		body: JSON.stringify({
-			twofactor: verificationCode,
-			method: 'email',
-		})
-	}
-	const res = await fetch(`http://localhost:8002/twofactor/enable/`, config);
-	if (res.status === 403)
-		throw new Error('Access Denied')
-	const data = await res.json();
-	if (res.status === 200) {
+	const url = `http://localhost:8002/twofactor/enable/`;
+
+	try {
+		const data = await sendRequest('POST', url, { twofactor: verificationCode, method: 'email' });
+
 		localStorage.setItem('twoFactorFeedback', data.message);
 		await setTwoFactorLocalStorage();
 		localStorage.setItem('state', 'security');
 		throwRedirectionEvent('/profile');
-	} else
-		document.querySelector('.feedbackInformation').innerHTML = data.message;
+	} catch (error) {
+		document.querySelector('.feedbackInformation').innerHTML = error.message;
+	}
 }

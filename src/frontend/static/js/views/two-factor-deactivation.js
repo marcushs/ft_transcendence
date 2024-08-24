@@ -6,6 +6,7 @@ import getUserData from "../utils/getUserData.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {isTwoFactorActivated} from "../utils/isTwoFactorActivated.js";
 import {getString} from "../utils/languageManagement.js";
+import {sendRequest} from "../utils/sendRequest.js";
 
 export default () => {
 	const html  = `
@@ -94,46 +95,21 @@ async function removeTwoFactorLocalStorage() {
 }
 
 async function sendTwoFactorCode() {
-	const config = {
-		method: 'GET',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
-		},
-		credentials: 'include', // Needed for send cookie
-	};
+	const url = `http://localhost:8002/twofactor/get_2fa_code/`;
+
 	try {
-		const res = await fetch(`http://localhost:8002/twofactor/get_2fa_code/`, config);
-		if (res.status === 403)
-			throw new Error('Access Denied')
-		const data = await res.json();
-		if (res.status !== 200)
-			throw new Error(data.message);
+		await sendRequest('GET', url, null);
 	} catch (error) {
-		alert(`Error: ${error.message}`);
+		console.error(error);
 	}
 }
 
 async function DeactivateTwoFactorRequest(verificationCode) {
-	const config = {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
-		},
-		credentials: 'include', // Needed for send cookie
-		body: JSON.stringify({
-			twofactor: verificationCode
-		})
-	}
-	console.log(config)
-	const res = await fetch('http://localhost:8002/twofactor/disable/', config);
-	if (res.status === 403)
-		throw new Error('Access Denied')
-	const data = await res.json();
-	if (res.status === 200) {
+	const url = `http://localhost:8002/twofactor/disable/`;
+
+	try {
+		const data = await sendRequest('POST', url, { twofactor: verificationCode });
+
 		if (localStorage.getItem('changeTwoFactorMethod') === 'true') {
 			if (localStorage.getItem('twoFactorMethod') === 'email')
 				throwRedirectionEvent('/two-factor-app');
@@ -145,6 +121,7 @@ async function DeactivateTwoFactorRequest(verificationCode) {
 			throwRedirectionEvent('/profile');
 		}
 		removeTwoFactorLocalStorage();
-	} else
-		document.querySelector('.feedbackInformation').innerHTML = data.message;
+	} catch (error) {
+		document.querySelector('.feedbackInformation').innerHTML = error.message;
+	}
 }

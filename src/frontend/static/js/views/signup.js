@@ -4,7 +4,8 @@ import { getCookie } from "../utils/cookie.js";
 import validateSignupInputs from "../utils/signupFormValidation.js";
 import { managePasswordToggle } from "../utils/managePasswordInputVisibility.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
-import {getString} from "../utils/languageManagement.js";
+import {getString, loadLanguagesJson} from "../utils/languageManagement.js";
+import {sendRequest} from "../utils/sendRequest.js";
 
 export default () => {
 	const html = `
@@ -74,45 +75,18 @@ function displayErrorFeedback() {
 }
 
 async function postData(event, signupBtn) {
-	// Prevent form submission
-	// Get the closest form element of the button
 	const form = signupBtn.closest('form');
-	if (form) {
-		// Construct a FormData object, a set of key/value pairs
-		const formData = new FormData(form);
-		// formData.entries() return an iterator that traverse all the key/value pairs
-		// Object.fromEntries() transforms a list of key-value pairs into an object
+	const formData = new FormData(form);
+	const formValues = Object.fromEntries(formData.entries());
+	const url = `http://localhost:8001/auth/signup/`;
 
-		const formValues = Object.fromEntries(formData.entries());
-		const json = JSON.stringify(formValues);
-		console.log(json)
-		const config = {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
-			},
-			credentials: 'include', // Needed for send cookie
-			body: json, // Send form values as JSON
-		};
+	try {
+		const data = await sendRequest('POST', url, formValues);
 
-		try {
-			const res = await fetch(`http://localhost:8001/auth/signup/`, config);
-			if (res.status == 403)
-				throw new Error('Access Denied')
-			const data = await res.json();
-			if (data.error) {
-				alert(data.error);
-			} else {
-				localStorage.setItem('errorFeedback', data.message);
-				throwRedirectionEvent(data.redirect_url);
-			}
-		} catch (error) {
-			if (error.data && error.data.status === 'jwt_failed')
-				throwRedirectionEvent('/');
-		}
-	} else {
-		console.error('No form found!');
+		localStorage.setItem('successFeedback', 'The account has been successfully created');
+		throwRedirectionEvent('/login');
+	} catch (error) {
+		localStorage.setItem('errorFeedback', error.message);
+		throwRedirectionEvent('/signup');
 	}
 }

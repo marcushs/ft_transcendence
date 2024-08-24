@@ -26,7 +26,7 @@ export default () => {
 					</div>
 					<button-component id="loginBtn" label="login" class="generic-auth-btn-disabled"></button-component>
 					<p>${getString('loginView/noAccountSentence')} <a href="/signup">${getString('loginView/signup')}</a></p>
-					<span id="errorFeedback" class="input-feedback"></span>
+					<span id="feedbackElement" class="input-feedback"></span>
 				</form>
 			</div>
 		</section>`;
@@ -41,10 +41,10 @@ export default () => {
 		});
 
 		document.addEventListener('input', event => {
-			document.querySelector('#errorFeedback').innerHTML = '';
+			document.querySelector('#feedbackElement').innerHTML = '';
 		});
 
-		displayErrorFeedback();
+		displayFeedback();
 
 		rotatingGradient('.login-form-container-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.login-form-container', '#FF16C6', '#00D0FF');
@@ -56,12 +56,20 @@ export default () => {
 	return html;
 }
 
-function displayErrorFeedback() {
+function displayFeedback() {
+	const feedbackElement = document.querySelector('#feedbackElement');
 	const errorMessage = localStorage.getItem('errorFeedback');
+	const successMessage = localStorage.getItem('successFeedback');
 
 	if (errorMessage) {
-		document.querySelector('#errorFeedback').innerHTML = errorMessage;
+		feedbackElement.style.color = 'red';
+		feedbackElement.innerHTML = errorMessage;
 		localStorage.removeItem('errorFeedback');
+	}
+	if (successMessage) {
+		feedbackElement.style.color = '#32CD32';
+		feedbackElement.innerHTML = successMessage;
+		localStorage.removeItem('successFeedback');
 	}
 }
 
