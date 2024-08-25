@@ -60,14 +60,14 @@ class FriendsMenuComponent extends HTMLElement {
             return;
         }
         this.contactBottomNavDiv.style.display = 'flex';
-        this.contactSummary.innerHTML = `<p>Contacts - ${contacts.friends_count}/${contacts.friends_count} online</p>`;
+        this.contactSummary.innerHTML = `<p>Contacts-${contacts.friends_count}/${contacts.friends_count} online</p>`;
         if (contacts.friends_count === 0) {
             this.contactList.innerHTML = `No contacts found...`;
             this.contactList.classList.add('no-contacts');
         }
         else
             this.createContactList(contacts.friends, 'friends');
-        this.pendingContactSummary.innerHTML = `<p>Contacts Requests - ${contacts.requests_count}</p>`;
+        this.pendingContactSummary.innerHTML = `<p>Contacts Requests-${contacts.requests_count}</p>`;
         if (contacts.requests_count === 0) {
             this.pendingContactSummary.innerHTML = `<p>Contacts Requests</p>`;
             this.pendingContactList.innerHTML = `No contacts request...`
@@ -124,7 +124,71 @@ class FriendsMenuComponent extends HTMLElement {
         this.addContact.addEventListener('click', () => {
             app.querySelector('section').innerHTML += '<pop-up-component class="add-new-contact-pop-up"></pop-up-component>' 
         })
+        this.searchContactInput.addEventListener('input', () => this.updateContactList());
     }
-}
 
+    async updateContactList() {
+        const contactsList = await this.getDataRequest('search_contacts');
+        const searchValue = this.searchContactInput.value.toLowerCase();
+		if (!searchValue) {
+            const displayedUsername = this.getCurrentDisplayedContactUsername();
+            const contactListUsername = contactsList.friends.map(contact => contact.username);
+            if (!contactListUsername.every(username => displayedUsername.includes(username))) {
+                this.contactList.innerHTML = '';
+                this.createContactList(contactsList.friends, 'friends');
+            }
+			return ;
+		}
+        if (contactsList.friends.length !== 0) {
+            const filteredContacts = contactsList.friends.filter(contact => contact.username.toLowerCase().includes(searchValue));
+            if (filteredContacts.length !== 0) {
+                const filteredUsername = filteredContacts.map(contact => contact.username.toLowerCase());
+                const displayedUsername = this.getCurrentDisplayedContactUsername();
+                if (filteredContacts.length === contactsList.friends_count && filteredUsername.every(username => displayedUsername.includes(username)))
+                    return;
+                this.contactList.innerHTML = '';
+                this.contactList.classList.remove('no-contacts');
+                this.contactSummary.innerHTML = `<p>Contacts-${filteredContacts.length}/${filteredContacts.length} online</p>`;
+                this.createContactList(filteredContacts, 'friends');
+            } else {
+                this.contactList.innerHTML = '';
+                this.contactSummary.innerHTML = `<p>Contacts-0/0 online</p>`;
+                this.contactList.innerHTML = `No contacts found...`;
+                this.contactList.classList.add('no-contacts');
+            }
+        }
+	}
+
+    getCurrentDisplayedContactUsername() {
+        const currentContacts = this.contactList.querySelectorAll('contact-component');
+        return Array.from(currentContacts).map(contact => contact.userData.username.toLowerCase());    
+    }
+
+    // getContactToDisplay(contactsList, searchValue) {
+        // const currentContactUsernames = Array.from(this.contactList.querySelectorAll('contact-component'))
+        //     .map(contact => contact.userData.username.toLowerCase());
+    
+    //     const filteredContacts = contactsList.friends.filter(contact => 
+    //         contact.username.toLowerCase().includes(searchValue) &&
+    //         !currentContactUsernames.includes(contact.username.toLowerCase())
+    //     );
+    
+    //     console.log('actual contact list research: ', contactsList.friends);
+    //     console.log('actual display: ', currentContactUsernames);
+    //     console.log('new contact list filtered: ', filteredContacts);
+    //     return filteredContacts;
+    // }
+
+    // deleteObsoleteContact(searchValue) {
+    //     const currentContactDisplay = this.contactList.querySelectorAll('li');
+    //     currentContactDisplay.forEach(contactComponent => {
+    //         const contact = contactComponent.querySelector('contact-component')
+    //         const username = contact.userData.username.toLowerCase();
+    //         if (!username.includes(searchValue)) {
+    //             console.log('deleted display contact: ', username);
+    //             contactComponent.remove();
+    //         }
+    //     })
+    // }
+}
 customElements.define("contact-menu-component", FriendsMenuComponent);

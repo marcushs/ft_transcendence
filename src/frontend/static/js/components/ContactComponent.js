@@ -92,7 +92,6 @@ class ContactComponent extends HTMLElement {
         const pendingSummary = document.querySelector('.pending-contact-summary');
         const pendingCountMatch = pendingSummary.textContent.match(/\d+/);
         const newPendingCount = parseInt(pendingCountMatch[0], 10) - 1;
-        this.classList.add('shrink');
         setTimeout(() => this.closest('li').remove(), 200);
         let newPendingSummary = null;
         if (newPendingCount === 0) {
