@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
+from datetime import datetime
 from django.db.models import Q
 from django.views import View
 from ..models import User
@@ -33,11 +34,15 @@ class update_user(View):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'User not found'}, status=400)
         data = json.loads(request.body.decode('utf-8'))
-        for field in ['username', 'email', 'is_verified', 'two_factor_method']:
+        for field in ['username', 'email', 'is_verified', 'two_factor_method', 'status', 'last_active']:
             if field in data:
-                setattr(request.user, field, data[field])
+                if field is 'last_active':
+                    setattr(request.user, field, datetime.now())
+                else:
+                    setattr(request.user, field, data[field])
         request.user.save()
         return JsonResponse({'message': 'User updated successfully'}, status=200)
+
 
 def send_post_request(request, url, payload):
         headers = {

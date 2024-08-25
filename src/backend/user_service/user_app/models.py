@@ -22,8 +22,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     profile_image = models.ImageField(upload_to=user_directory_path, null=True)
     profile_image_link = models.CharField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
-    is_verified = models.BooleanField(default=False)
-    two_factor_method = models.CharField(max_length=20, blank=True)
+    status = models.CharField(max_length=10, choices=[('online', 'Online'), ('ingame', 'In Game'), ('offline', 'Offline')], default='offline')
+    last_active = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -52,7 +52,11 @@ class User(AbstractBaseUser, PermissionsMixin):
             'email': self.email,
             'profile_image': self.profile_image.url if self.profile_image else None,
             'profile_image_link': self.profile_image_link,
-            'is_verified': self.is_verified,
-            'two_factor_method': self.two_factor_method
+        }
+        
+    def get_status(self):
+        return {
+            'status': self.status,
+            'last_active': self.last_active
         }
     
