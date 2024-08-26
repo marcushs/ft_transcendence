@@ -1,0 +1,79 @@
+notification-component {
+	position: relative;
+	z-index: 2;
+}
+
+notification-component p:not(.bell > p) {
+	cursor: auto !important;
+}
+
+notification-component i {
+	font-size: 4.5rem;
+	color: var(--text-primary-color);
+	cursor: pointer;
+}
+
+notification-component .bell {
+	cursor: pointer;
+}
+
+notification-component .bell:hover > i {
+	color: var(--light-grey);
+}
+
+notification-component .number-of-notifications {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: absolute;
+	top: -20%;
+	left: 40%;
+	background: #ff3030;
+	border-radius: 50%;
+	height: 2.5rem;
+	width: 2.5rem;
+	color: var(--text-primary-color);
+	font-size: 1.8rem;
+}
+
+notification-component .notifications-container {
+	overflow-y: auto;
+	background: linear-gradient(0deg, var(--neon-pink), var(--neon-blue));
+	position: absolute;
+	width: 35rem;
+	max-height: 30rem;
+	top: 162%;
+	left: -300%;
+	padding: 0 1px 1px 1px;
+}
+
+notification-component .notifications-container ul {
+	list-style-type: none;
+	background: var(--component-background-color);
+}
+
+
+notification-component .notifications-container ul li {
+	display: flex;
+	align-items: center;
+	max-width: 100%;
+	/*margin: 2rem 1rem;*/
+	padding: 2rem 1rem;
+}
+
+notification-component .notifications-container ul li p {
+	font-size: 1.5rem;
+}
+
+notification-component .notifications-container ul li i {
+	font-size: 3.5rem;
+	margin-left: 0.8rem;
+}
+
+notification-component .notifications-container ul li .fa-check {
+	color: #32CD32;
+}
+
+notification-component .notifications-container ul li .fa-xmark {
+	color: #ff3030;
+}
