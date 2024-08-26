@@ -1,4 +1,4 @@
-import {getString} from "../../../../utils/languageManagement.js";
+import {getString, getUserLanguage} from "../../../../utils/languageManagement.js";
 
 class JoinComponent extends HTMLElement {
 
@@ -25,7 +25,9 @@ class JoinComponent extends HTMLElement {
 
 	}
 
-	connectedCallback() {
+	async connectedCallback() {
+		if (await getUserLanguage() === 'fr')
+			this.className = 'join-component-french';
 		this.createTournamentsNameTooltip();
 		this.attachEventsListener();
 	}

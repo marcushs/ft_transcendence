@@ -31,6 +31,7 @@ export default () => {
 	`;
 
 	setTimeout(async () => {
+		localStorage.setItem('state', 'security');
 		const userData = await getUserData();
 
 		document.querySelector('form').addEventListener('submit', (event) => {
@@ -69,7 +70,7 @@ async function VerifyTwoFactorRequest(verificationCode) {
 
 		localStorage.setItem('twoFactorFeedback', data.message);
 		await setTwoFactorLocalStorage();
-		localStorage.setItem('state', 'security');
+		// localStorage.setItem('state', 'security');
 		throwRedirectionEvent('/profile');
 	} catch (error) {
 		document.querySelector('.feedbackInformation').innerHTML = error.message;

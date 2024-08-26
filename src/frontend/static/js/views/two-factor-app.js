@@ -31,7 +31,7 @@ export default async () => {
 	`;
 
 	setTimeout(() => {
-		console.log(document.querySelector('#app'));
+		localStorage.setItem('state', 'security');
 		rotatingGradient('.two-factor-app-form-container-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.two-factor-app-form-container', '#FF16C6', '#00D0FF');
 		rotatingGradient('.two-factor-app-form-container > form', '#1c0015', '#001519');
@@ -107,7 +107,7 @@ async function VerifyTwoFactorRequest(verificationCode) {
 	if (res.status === 200) {
 		localStorage.setItem('twoFactorFeedback', data.message);
 		await setTwoFactorLocalStorage();
-		localStorage.setItem('state', 'security');
+		// localStorage.setItem('state', 'security');
 		throwRedirectionEvent('/profile');
 	} else
 		document.querySelector('.feedbackInformation').innerHTML = data.message;

@@ -8,6 +8,10 @@ local-component {
 	animation: component-apparition 1s 0.3s forwards;
 }
 
+.local-component-french {
+	width: 50rem;
+}
+
 .local-component-content {
 	display: flex;
 	flex-direction: column;

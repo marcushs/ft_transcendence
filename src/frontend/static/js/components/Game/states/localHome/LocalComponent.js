@@ -1,4 +1,4 @@
-import {getString} from "../../../../utils/languageManagement.js";
+import {getString, getUserLanguage} from "../../../../utils/languageManagement.js";
 
 class LocalComponent extends HTMLElement {
 
@@ -42,7 +42,9 @@ class LocalComponent extends HTMLElement {
 	}
 
 
-	connectedCallback() {
+	async connectedCallback() {
+		if (await getUserLanguage() === 'fr')
+			this.className = 'local-component-french';
 		this.attachEventsListener();
 	}
 

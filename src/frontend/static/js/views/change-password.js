@@ -35,6 +35,7 @@ export default () => {
 	`;
 
 	setTimeout(() => {
+		localStorage.setItem('state', 'security');
 		const saveBtn = document.querySelector('#saveBtn');
 
 		saveBtn.addEventListener('click', (event) => {

@@ -68,7 +68,7 @@ class TwoFactorInputComponent extends HTMLElement {
 
 		if (event.code === 'Backspace')
 			this.handleBackspaceKeyPressed(currentInput, currentInputIndex - 1, inputs, event.key);
-		else if (event.code.match(/^Digit[1-9]$/))
+		else if (event.code.match(/^Digit[0-9]$/) || event.code.match(/^Numpad[0-9]$/))
 			this.handleDigitKeyPressed(currentInput, currentInputIndex + 1, inputs, event.key);
 		else if (event.code === 'ArrowLeft' || event.code === 'ArrowRight')
 			this.handleArrowKeyPressed(currentInputIndex, inputs, event.code);
@@ -90,6 +90,10 @@ class TwoFactorInputComponent extends HTMLElement {
 					inputs[nextInputIndex].value = key;
 			}
 		}
+		setTimeout(() => {
+			if (this.isAllInputsFilled())
+				this.throwSubmitEvent();
+		}, 0);
 	}
 
 
@@ -120,6 +124,28 @@ class TwoFactorInputComponent extends HTMLElement {
 		}
 	}
 
+
+	isAllInputsFilled() {
+		const inputs = this.querySelectorAll('input');
+
+		for (let input of inputs) {
+			console.log(input.value)
+			if (input.value === '')
+				return false;
+		}
+		return true;
+	}
+
+
+	throwSubmitEvent() {
+		const form = document.querySelector('form');
+
+		const event = new CustomEvent('submit', {
+			bubbles: true
+		});
+
+		form.dispatchEvent(event);
+	}
 }
 
 customElements.define('two-factor-input-component', TwoFactorInputComponent);

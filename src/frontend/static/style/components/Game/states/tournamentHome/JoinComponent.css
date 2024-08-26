@@ -1,6 +1,7 @@
 join-component {
 	height: 33rem;
 	width: 45rem;
+	/*width: 58rem;*/
 	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
 	border-radius: 5px;
 	padding: 1px;
@@ -93,4 +94,15 @@ join-component {
 
 .join-component-content .tournaments-list .joinable-tournament .tournament-right-infos button-component {
 	margin-left: 1rem;
+}
+
+/* French ui version */
+
+.join-component-french .join-component-content .tournaments-list .joinable-tournament {
+	margin: 1.3rem 0;
+}
+
+.join-component-french .tournament-right-infos button {
+	font-size: 1.2rem;
+	padding: 0.4rem 1rem;
 }
