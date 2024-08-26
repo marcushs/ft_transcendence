@@ -16,6 +16,8 @@ import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
 
 let languageJson;
 
+localStorage.setItem('lastAuthorizedPage', '/');
+
 (async () => {
     if (await isTwoFactorActivated()) {
         localStorage.setItem('isTwoFactorActivated', 'true');
