@@ -124,7 +124,7 @@ class ChooseLanguageComponent extends HTMLElement {
 			}
 		})
 
-		this.addEventListener('click', event => event.stopPropagation())
+		this.addEventListener('click', event => event.stopPropagation());
 
 		document.addEventListener('click', () => this.handleClickOutOfComponent())
 

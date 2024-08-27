@@ -5,6 +5,7 @@ class NotificationComponent extends HTMLElement {
 		this.initializeComponent();
 		this.notifications = [];
 		this.notificationsUlElement = null;
+		this.isNotificationsOpen = false;
 	}
 
 
@@ -14,8 +15,10 @@ class NotificationComponent extends HTMLElement {
 				<p class="number-of-notifications"></p>
 				<i class="fa-regular fa-bell"></i>
 			</div>
-			<div class="notifications-container">
-				<ul></ul>
+			<div class="notifications-container-background">			
+				<div class="notifications-container">
+					<ul></ul>
+				</div>
 			</div>
 		`;
 	}
@@ -23,10 +26,11 @@ class NotificationComponent extends HTMLElement {
 
 	connectedCallback() {
 		// to wait for fetch
-		this.notifications[0] = { type: 'friend-request-pending', user: 'Alex', timestamp: '---------' };
+		this.notifications[0] = { type: 'friend-request-pending', user: 'Alex', timestamp: '---------'  };
 		this.notifications[1] = { type: 'friend-request-accepted', user: 'Marcus', timestamp: '---------' };
 		this.notifications[2] = { type: 'private-match-invitation', user: 'Shellks', timestamp: '---------' };
 		this.notifications[3] = { type: 'tournament-invitation', user: 'Sowoo', timestamp: '---------' };
+		this.notifications[4] = { type: 'tournament-invitation', user: 'Sowoo', timestamp: '---------' };
 		// fetch db to get notification
 
 		this.notificationsUlElement = this.querySelector('ul');
@@ -35,11 +39,42 @@ class NotificationComponent extends HTMLElement {
 		this.attachEventsListener();
 	}
 
+	// need refactorisation
+
+	async increaseHeightOfNotificationsContainerAnimation() {
+
+	}
 
 	attachEventsListener() {
-		this.addEventListener('click', () => {
-
+		this.querySelector('.bell').addEventListener('click', () => {
+			if (this.isNotificationsOpen) {
+				this.querySelector('.notifications-container-background').style.display = 'none';
+			} else {
+				this.querySelector('.notifications-container-background').style.display = 'block';
+				this.setNotificationListHeight();
+			}
+			console.log(this)
+			this.isNotificationsOpen = !this.isNotificationsOpen;
 		});
+
+		this.addEventListener('click', event => event.stopPropagation());
+
+		document.addEventListener('click', event => {
+			if (this.isNotificationsOpen) {
+				this.querySelector('.notifications-container-background').style.display = 'none';
+				this.isNotificationsOpen = !this.isNotificationsOpen;
+			}
+		});
+	}
+
+
+	setNotificationListHeight() {
+		const notificationsBackgroundContainer = this.querySelector('.notifications-container-background');
+		const notificationsList = this.querySelector('.notifications-container > ul');
+
+		// console.log(notificationsContainer.clientHeight)
+		notificationsList.style.height = notificationsBackgroundContainer.clientHeight - 1 + 'px';
+
 	}
 
 
@@ -48,7 +83,7 @@ class NotificationComponent extends HTMLElement {
 
 		if (this.notifications.length > 9) {
 			numberOfNotificationsElement.textContent = '9+';
-			numberOfNotificationsElement.style.letterSpacing = '-1px';
+			numberOfNotificationsElement.style.letterSpacing = '-3px';
 		} else {
 			numberOfNotificationsElement.textContent = this.notifications.length.toString();
 		}

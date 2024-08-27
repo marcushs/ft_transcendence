@@ -36,18 +36,47 @@ notification-component .number-of-notifications {
 	font-size: 1.8rem;
 }
 
-notification-component .notifications-container {
-	overflow-y: auto;
+
+@keyframes test {
+	from {
+		max-height: 0;
+	}
+	to {
+		max-height: 30rem;
+	}
+}
+
+@keyframes test2 {
+	from {
+		max-height: 0;
+	}
+	to {
+		max-height: calc(30rem - 1px);
+	}
+}
+
+notification-component .notifications-container-background {
+	display: none;
 	background: linear-gradient(0deg, var(--neon-pink), var(--neon-blue));
 	position: absolute;
 	width: 35rem;
-	max-height: 30rem;
-	top: 162%;
+	top: 165%;
 	left: -300%;
 	padding: 0 1px 1px 1px;
+	animation: test 0.6s ease forwards;
+}
+
+notification-component .notifications-container {
+	overflow-y: auto;
+	height: 100%;
+	width: 100%;
 }
 
 notification-component .notifications-container ul {
+	overflow-y: auto;
+	width: 100%;
+	animation: test2 0.6s ease forwards;
+	max-height: calc(30rem - 1px);
 	list-style-type: none;
 	background: var(--component-background-color);
 }
