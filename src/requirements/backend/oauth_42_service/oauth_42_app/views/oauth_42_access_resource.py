@@ -61,7 +61,7 @@ class oauth42AccessResourceView(View):
 
         try:
             user = User.objects.get(username=self.username)
-            # self.payload['user_id'] = user.id
+            self.payload['user_id'] = str(user.id)
             return self.login(user=user, request=request)
         except User.DoesNotExist:
             user = User.objects.create_user(id=uuid.uuid4(),
@@ -70,7 +70,7 @@ class oauth42AccessResourceView(View):
                                             first_name=self.first_name,
                                             last_name=self.last_name,
                                             profile_image_link=self.profile_image_link)
-            # self.payload['user_id'] = user.id
+            self.payload['user_id'] = str(user.id)
             self.send_create_user_request_to_endpoints()
             return self.login(user=user, request=request)
     

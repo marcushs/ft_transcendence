@@ -22,7 +22,8 @@ class UserManager(BaseUserManager):
         email = data['email']
         username = data['username']
         profile_image_link = data['profile_image_link']
-        user = self.model(email=email, username=username, profile_image_link=profile_image_link, logged_in_with_42=True)
+        user_id = data['user_id']
+        user = self.model(id=user_id, email=email, username=username, profile_image_link=profile_image_link, logged_in_with_42=True)
         user.save(using=self._db)
         return user
 
