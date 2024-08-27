@@ -16,4 +16,7 @@ def send_post_request(url, payload, csrf_token):
         return JsonResponse(response_data)
     else:
         print('status != 200')
-        return JsonResponse(response_data)
+        response_data = json.loads(response.text) 
+
+        message = response_data.get('message')
+        return JsonResponse({'message': message}, status=400)

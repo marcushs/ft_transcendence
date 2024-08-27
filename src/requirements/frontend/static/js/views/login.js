@@ -93,6 +93,7 @@ async function postData(event, loginBtn) {
 				if (data.is_verified === true)
 					new TwoFactorVerify(json);
 				alert(data.message)
+				window.location.href = '/home'
 			}
 			if (data.error)
 				alert(data.error)

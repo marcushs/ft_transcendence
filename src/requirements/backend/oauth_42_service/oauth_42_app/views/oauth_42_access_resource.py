@@ -71,17 +71,33 @@ class oauth42AccessResourceView(View):
                                             last_name=self.last_name,
                                             profile_image_link=self.profile_image_link)
             self.payload['user_id'] = str(user.id)
-            self.send_create_user_request_to_endpoints()
-            return self.login(user=user, request=request)
+            response = self.send_create_user_request_to_endpoints()
+            if response is not None and response.status_code != 200:
+                if response.get('message') == "Username already taken! Try another one.":
+                    print("oauth-username")
+                    response['url'] = '/oauth-username'
+                    return response
+                elif response.get('message') == "Email address already registered! Try logging in.":
+                    print("email already registered")
+                    response['url'] = '/login' 
+                    return response
+            return self.login(user=user, request=request) 
     
     def send_create_user_request_to_endpoints(self):
         post_response = send_post_request(url='http://auth:8000/auth/add_oauth_user/', payload=self.payload, csrf_token=self.csrf_token)
+        if post_response.status_code == 400:
+            print('return1?')
+            return post_response
 
         post_response = send_post_request(url='http://twofactor:8000/twofactor/add_user/', payload=self.payload, csrf_token=self.csrf_token)
+        if post_response.status_code != 200:
+            print('return2?')
+            return post_response
 
         post_response = send_post_request(url='http://user:8000/user/add_user/', payload=self.payload, csrf_token=self.csrf_token)
-        print(f'post response: {post_response}')
-        return post_response
+        if post_response.status_code != 200:
+            print('return?3')
+            return post_response
 
     def init_payload(self):
         self.payload = {
@@ -122,3 +138,4 @@ class oauth42AccessResourceView(View):
             return self._create_user_session(user=user)
         except ObjectDoesNotExist:
             return JsonResponse({'error': 'User not found'}, status=404)
+ 
