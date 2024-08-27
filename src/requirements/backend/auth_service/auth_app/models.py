@@ -2,8 +2,9 @@ import os
 
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
+import uuid
 
-def user_directory_path(instance, filename):
+def user_directory_path(instance, filename):# uu
     return f'profile_images/{instance.id}/{filename}'
 
 class UserManager(BaseUserManager):
@@ -21,16 +22,18 @@ class UserManager(BaseUserManager):
         return user
     
     def create_oauth_user(self, data):
+        id = data['user_id']
         email = data['email']
         username = data['username']
         first_name = data['first_name']
         last_name = data['last_name']
-        user = self.model(email=email, username=username, first_name=first_name, last_name=last_name, logged_in_with_42=True)
+        user = self.model(id=id, email=email, username=username, first_name=first_name, last_name=last_name, logged_in_with_42=True)
         user.save(using=self._db)
         return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=12, unique=True, default='default')
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
@@ -50,6 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
   
     def to_dict(self):
         return {
+            'user_id': self.id,
             'username': self.username,
             'email': self.email,
             'first_name': self.first_name,

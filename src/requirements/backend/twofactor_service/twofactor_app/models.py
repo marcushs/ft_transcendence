@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
+import uuid
 
 class UserManager(BaseUserManager):
     def create_user(self, email, username, user_id, logged_in_with_42):
@@ -16,6 +17,7 @@ class UserManager(BaseUserManager):
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=12, unique=True, default='default')
     email = models.EmailField(unique=True)
     two_factor_method = models.CharField(max_length=20,  choices=[('email', 'Email'), ('authenticator', 'Authenticator App')], blank=True)

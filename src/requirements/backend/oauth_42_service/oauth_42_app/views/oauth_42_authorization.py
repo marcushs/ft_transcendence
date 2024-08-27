@@ -20,7 +20,7 @@ env = environ.Env()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-class oauth42LoginView(View):
+class oauth42AuthorizationView(View):
     def __init__(self):
         super().__init__
     

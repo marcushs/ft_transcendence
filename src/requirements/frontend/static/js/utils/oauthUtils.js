@@ -48,7 +48,7 @@ export async function oauthRedirectCallback() {
 // Callback function for login view
 export async function redirectToOauth(oauthProvider) {
 	try {
-	const res = await fetch(`http://localhost:${getPortNumber(oauthProvider)}/${oauthProvider}/login/`, config);
+	const res = await fetch(`http://localhost:${getPortNumber(oauthProvider)}/${oauthProvider}/auth/`, config);
 	const data = await res.json();
 	console.log(data);
 	window.location.replace(data.url);

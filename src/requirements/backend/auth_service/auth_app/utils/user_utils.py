@@ -32,6 +32,8 @@ class add_oauth_user(View):
             return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
         if User.objects.filter(username=data['username']).exists():
             return JsonResponse({'message': 'User already exists! Try logging in.'}, status=400)
-        User.objects.create_oauth_user(data)
-        return JsonResponse({"message": 'user added with success'}, status=200)
- 
+        if User.objects.filter(email=data['email']).exists():
+            return JsonResponse({'message': 'Email address already registered! Try logging in.'}, status=400)
+        user = User.objects.create_oauth_user(data)
+        return JsonResponse({"message": 'user added with success', "user_id": user.id}, status=200)
+

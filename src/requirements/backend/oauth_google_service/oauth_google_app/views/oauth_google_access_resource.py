@@ -62,9 +62,9 @@ class oauthGoogleAccessResourceView(View):
         self.csrf_token = request.headers.get('X-CSRFToken')
         self.username = data['login']
         self.email = data['email']
-        self.first_name = data['first_name']
-        self.last_name = data['last_name']
-        self.profile_image_link = data['image']['link']
+        self.first_name = data['given_name']
+        self.last_name = data['family_name']
+        self.profile_image_link = data['picture']
         self.init_payload()
 
         try:
@@ -96,7 +96,7 @@ class oauthGoogleAccessResourceView(View):
             'email': self.email,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'logged_in_with_42': True,
+            'logged_in_with_google': True,
             'profile_image_link': self.profile_image_link,
         }
 
@@ -118,3 +118,4 @@ class oauthGoogleAccessResourceView(View):
             return response
         else:
             return JsonResponse(response_data)
+         

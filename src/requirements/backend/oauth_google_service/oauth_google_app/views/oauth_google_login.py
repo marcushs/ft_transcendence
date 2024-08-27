@@ -52,7 +52,8 @@ class oauthGoogleLoginView(View):
         url = client.prepare_request_uri(
             authorization_url,
             redirect_uri="https://localhost:3000/oauth-redirect", 
-            scope=['https://www.googleapis.com/auth/userinfo.profile'],
+            scope=['https://www.googleapis.com/auth/userinfo.profile',
+                   'https://www.googleapis.com/auth/userinfo.email'],
             state=self.state,
             access_type="offline",
             include_granted_scopes="true"
