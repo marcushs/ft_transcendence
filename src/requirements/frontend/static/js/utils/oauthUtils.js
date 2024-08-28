@@ -82,7 +82,7 @@ async function accessResource(oauthProvider) {
 	}
 }
 
-function getPortNumber(oauthProvider) {
+export function getPortNumber(oauthProvider) {
 	if (oauthProvider === "oauth_42") return "8003"; 
 	if (oauthProvider === "oauth_google") return "8004"; 
 	if (oauthProvider === "oauth_github") return "8005"; 
