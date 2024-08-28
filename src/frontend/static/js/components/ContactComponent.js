@@ -24,8 +24,8 @@ class ContactComponent extends HTMLElement {
         this.status = null;
     }
 
-    connectedCallback() {
-        const contactPictureUrl = getProfileImage(this.userData);
+    async connectedCallback() {        
+        const contactPictureUrl = await getProfileImage(this.userData);
 
         this.innerHTML = `
             <div class="contact-menu-picture">
@@ -33,6 +33,9 @@ class ContactComponent extends HTMLElement {
             </div>
             <div class="contact-menu-username">
                 <p>${this.userData.username}</p>
+                </div>
+            <div class="contact-menu-status">
+                <p>${this.userData.status}</p>
             </div>
             <div class="contact-menu-request-icon">
                 ${this.generateIcons()}
@@ -42,7 +45,7 @@ class ContactComponent extends HTMLElement {
     }
     
     generateIcons() {
-        if (this.status === 'friends') {
+        if (this.status === 'contacts-online' || this.status === 'contacts-offline') {
             return `<i class="fa-solid fa-xmark" id='remove'></i>`;
         } else if (this.status === 'sent_requests') {
             return `<i class="fa-solid fa-xmark" id='cancel'></i>`

@@ -59,58 +59,74 @@ class FriendsMenuComponent extends HTMLElement {
             this.remove();
             return;
         }
+        const contactsData = await this.getDataRequest('users_status', contacts.friends);
+        const contactsCount = contactsData.online.length + contactsData.offline.length;
         this.contactBottomNavDiv.style.display = 'flex';
-        this.contactSummary.innerHTML = `<p>Contacts-${contacts.friends_count}/${contacts.friends_count} online</p>`;
-        if (contacts.friends_count === 0) {
+        this.contactSummary.innerHTML = `<p>Contacts</p>`;
+        if (contactsCount === 0) {
             this.contactList.innerHTML = `No contacts found...`;
             this.contactList.classList.add('no-contacts');
         }
-        else
-            this.createContactList(contacts.friends, 'friends');
-        this.pendingContactSummary.innerHTML = `<p>Contacts Requests-${contacts.requests_count}</p>`;
-        if (contacts.requests_count === 0) {
+        else {
+            this.createContactList(contactsData.online, 'contacts-online');
+            this.createContactList(contactsData.offline, 'contacts-offline');
+        }
+        const receivedRequestUsersData = await this.getDataRequest('users_data', contacts.received_requests);
+        const sentRequestUsersData = await this.getDataRequest('users_data', contacts.sent_requests);
+        const requestsCount = contacts.received_requests.length + contacts.sent_requests.length; 
+        this.pendingContactSummary.innerHTML = `<p>Contacts Requests-${requestsCount}</p>`;
+        if (requestsCount === 0) {
             this.pendingContactSummary.innerHTML = `<p>Contacts Requests</p>`;
             this.pendingContactList.innerHTML = `No contacts request...`
             this.pendingContactList.classList.add('no-contacts');
         }
         else {
-            this.createContactList(contacts.sent_requests, 'sent_requests');
-            this.createContactList(contacts.received_requests, 'received_requests');
+            this.createContactList(sentRequestUsersData, 'sent_requests');
+            this.createContactList(receivedRequestUsersData, 'received_requests');
         }
     }
 
     createContactList(contacts, status) {
-        contacts.forEach(async user => {
-            const contactData = await this.getDataRequest('user_data', user.username);
+        contacts.forEach(contact => {     
             const li = document.createElement('li');
             li.innerHTML = `
-                <contact-component data-user='${JSON.stringify(contactData)}' data-status='${status}'></contact-component>
+                <contact-component data-user='${JSON.stringify(contact)}' data-status='${status}'></contact-component>
             `;
-            if (status === 'friends')
+            if (status === 'contacts-online') {
+                li.classList.add('online-contact-status')
                 this.contactList.appendChild(li);
-            else
+            } else if (status === 'contacts-offline') {
+                li.classList.add('offline-contact-status')
+                this.contactList.appendChild(li);
+            } else
                 this.pendingContactList.appendChild(li);
         });
     }
 
-    async getDataRequest(requestType, targetUsername=null) {
+    async getDataRequest(requestType, payload) {
         let url = null;
         if (requestType === 'search_contacts')
             url = `http://localhost:8003/friends/search_contacts/`;
-        else if (requestType === 'user_data')
-            url = `http://localhost:8000/user/get_user/?q=${targetUsername}`
+        else if (requestType === 'users_status') {            
+            const encodedList = encodeURIComponent(JSON.stringify(payload));
+            url = `http://localhost:8000/user/get_users_status/?q=${encodedList}`
+        }
+        else if (requestType === 'users_data') {            
+            const encodedList = encodeURIComponent(JSON.stringify(payload));
+            url = `http://localhost:8000/user/get_users_info/?q=${encodedList}`
+        }
         try {
             const data = await sendRequest('GET', url, null);
             if (data.status === 'success') {
                 return data.message;
             } else {
                 return null;
-            }
+            }   
         } catch (error) {
             return null;
         }
     }
-
+ 
     attachEventListener() {
         this.contactBottomNavDiv.addEventListener('click', () => {
             this.contactMenuDiv.style.display = this.contactMenuDiv.style.display === 'none' ? 'block' : 'none';
@@ -128,31 +144,34 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     async updateContactList() {
-        const contactsList = await this.getDataRequest('search_contacts');
+        const contacts = await this.getDataRequest('search_contacts');
+        const contactsData = await this.getDataRequest('users_status', contacts.friends);
         const searchValue = this.searchContactInput.value.toLowerCase();
+        let displayedUsername = this.getCurrentDisplayedContactUsername();
 		if (!searchValue) {
-            const displayedUsername = this.getCurrentDisplayedContactUsername();
-            const contactListUsername = contactsList.friends.map(contact => contact.username);
-            if (!contactListUsername.every(username => displayedUsername.includes(username))) {
+            const contactsUsername = contacts.friends.map(contact => contact.username);
+            if (!contactsUsername.every(username => displayedUsername.includes(username))) {   
                 this.contactList.innerHTML = '';
-                this.createContactList(contactsList.friends, 'friends');
+                this.contactList.classList.remove('no-contacts');
+                this.createContactList(contactsData.online, 'contacts-online');
+                this.createContactList(contactsData.offline, 'contacts-offline');
             }
 			return ;
 		}
-        if (contactsList.friends.length !== 0) {
-            const filteredContacts = contactsList.friends.filter(contact => contact.username.toLowerCase().includes(searchValue));
-            if (filteredContacts.length !== 0) {
-                const filteredUsername = filteredContacts.map(contact => contact.username.toLowerCase());
-                const displayedUsername = this.getCurrentDisplayedContactUsername();
-                if (filteredContacts.length === contactsList.friends_count && filteredUsername.every(username => displayedUsername.includes(username)))
-                    return;
+        this.deleteObsoleteContact(searchValue);
+        const newContactsToDisplay = this.getContactsToDisplay(contacts.friends, searchValue);
+        if (newContactsToDisplay.length !== 0) {
+            if (this.contactList.innerHTML === 'No contacts found...') {
                 this.contactList.innerHTML = '';
                 this.contactList.classList.remove('no-contacts');
-                this.contactSummary.innerHTML = `<p>Contacts-${filteredContacts.length}/${filteredContacts.length} online</p>`;
-                this.createContactList(filteredContacts, 'friends');
-            } else {
+            }
+            const newContactsToDisplayData = await this.getDataRequest('users_status', newContactsToDisplay);
+            this.createContactList(newContactsToDisplayData.online, 'contacts-online');
+            this.createContactList(newContactsToDisplayData.offline, 'contacts-offline');
+        } else {
+            let displayedUsername = this.getCurrentDisplayedContactUsername();
+            if (displayedUsername.length === 0) {
                 this.contactList.innerHTML = '';
-                this.contactSummary.innerHTML = `<p>Contacts-0/0 online</p>`;
                 this.contactList.innerHTML = `No contacts found...`;
                 this.contactList.classList.add('no-contacts');
             }
@@ -164,31 +183,25 @@ class FriendsMenuComponent extends HTMLElement {
         return Array.from(currentContacts).map(contact => contact.userData.username.toLowerCase());    
     }
 
-    // getContactToDisplay(contactsList, searchValue) {
-        // const currentContactUsernames = Array.from(this.contactList.querySelectorAll('contact-component'))
-        //     .map(contact => contact.userData.username.toLowerCase());
+    getContactsToDisplay(contacts, searchValue) {
+        const currentContactUsernames = Array.from(this.contactList.querySelectorAll('contact-component'))
+            .map(contact => contact.userData.username.toLowerCase());
     
-    //     const filteredContacts = contactsList.friends.filter(contact => 
-    //         contact.username.toLowerCase().includes(searchValue) &&
-    //         !currentContactUsernames.includes(contact.username.toLowerCase())
-    //     );
-    
-    //     console.log('actual contact list research: ', contactsList.friends);
-    //     console.log('actual display: ', currentContactUsernames);
-    //     console.log('new contact list filtered: ', filteredContacts);
-    //     return filteredContacts;
-    // }
+        const filteredContacts = contacts.filter(contact => 
+            contact.username.toLowerCase().includes(searchValue) &&
+            !currentContactUsernames.includes(contact.username.toLowerCase())
+        );
+        return filteredContacts;
+    }
 
-    // deleteObsoleteContact(searchValue) {
-    //     const currentContactDisplay = this.contactList.querySelectorAll('li');
-    //     currentContactDisplay.forEach(contactComponent => {
-    //         const contact = contactComponent.querySelector('contact-component')
-    //         const username = contact.userData.username.toLowerCase();
-    //         if (!username.includes(searchValue)) {
-    //             console.log('deleted display contact: ', username);
-    //             contactComponent.remove();
-    //         }
-    //     })
-    // }
+    deleteObsoleteContact(searchValue) {
+        const currentContactDisplay = this.contactList.querySelectorAll('li');
+        currentContactDisplay.forEach(contactComponent => {
+            const contact = contactComponent.querySelector('contact-component')
+            const username = contact.userData.username.toLowerCase();
+            if (!username.includes(searchValue))
+                contactComponent.remove();
+        })
+    }
 }
 customElements.define("contact-menu-component", FriendsMenuComponent);
