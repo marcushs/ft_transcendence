@@ -93,16 +93,6 @@ class NavBarComponent extends HTMLElement {
         `;
     }
 
-
-    handleAuthenticationRedirection(redirection) {
-        history.replaceState('', '', `/${redirection}`);
-        if (redirection === 'signup') {
-            app.innerHTML = signup();
-        } else {
-            app.innerHTML = login();
-        }
-    }
-
 }
 
 customElements.define('nav-bar-component', NavBarComponent);

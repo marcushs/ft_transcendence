@@ -30,7 +30,7 @@ choose-language-component .chosen-language i {
 
 choose-language-component .language-list {
 	display: none;
-	z-index: 3;
+	z-index: 2;
 	position: absolute;
 	top: calc(100% + 0.5px);
 	left: -1.25rem;

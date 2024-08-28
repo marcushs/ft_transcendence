@@ -6,6 +6,7 @@ class NotificationComponent extends HTMLElement {
 		this.notifications = [];
 		this.notificationsUlElement = null;
 		this.isNotificationsOpen = false;
+		this.isChooseLanguageComponentOpen = false;
 	}
 
 
@@ -39,44 +40,94 @@ class NotificationComponent extends HTMLElement {
 		this.attachEventsListener();
 	}
 
-	// need refactorisation
-
-	async increaseHeightOfNotificationsContainerAnimation() {
-
-	}
 
 	attachEventsListener() {
-		this.querySelector('.bell').addEventListener('click', () => {
-			if (this.isNotificationsOpen) {
-				this.querySelector('.notifications-container-background').style.display = 'none';
-			} else {
-				this.querySelector('.notifications-container-background').style.display = 'block';
-				this.setNotificationListHeight();
-			}
-			console.log(this)
-			this.isNotificationsOpen = !this.isNotificationsOpen;
-		});
+		this.querySelector('.bell').addEventListener('click', () => this.handleClickOnBell());
+
+		this.querySelector('.notifications-container-background').addEventListener('animationend', event => this.handleCloseNotificationsContainerAnimationEnd(event));
+
+		document.addEventListener('chooseLanguageComponentStateChange', event => this.handleChooseLanguageComponentStateChange(event))
+
+		document.addEventListener('closeNotificationsContainer', () => this.closeNotificationsComponent());
 
 		this.addEventListener('click', event => event.stopPropagation());
+		document.addEventListener('click', () => this.handleClickOutOfComponent());
+	}
 
-		document.addEventListener('click', event => {
-			if (this.isNotificationsOpen) {
-				this.querySelector('.notifications-container-background').style.display = 'none';
-				this.isNotificationsOpen = !this.isNotificationsOpen;
+
+	// Handle events
+
+	handleClickOnBell() {
+		if (this.isNotificationsOpen) {
+			this.closeNotificationsComponent();
+		} else {
+			if (this.isChooseLanguageComponentOpen)
+				this.throwCloseChooseLanguageComponentEvent();
+			this.openNotificationsComponent();
+			this.querySelector('.notifications-container-background').style.display = 'block';
+		}
+	}
+
+
+	handleClickOutOfComponent() {
+		if (this.isNotificationsOpen)
+			this.closeNotificationsComponent();
+	}
+
+
+	handleChooseLanguageComponentStateChange(event) {
+		this.isChooseLanguageComponentOpen = event.detail.isOpen;
+	}
+
+
+	handleCloseNotificationsContainerAnimationEnd(event) {
+		if (event.animationName === 'decreaseNotificationsContainerBackgroundHeight')
+			this.querySelector('.notifications-container-background').style.display = 'none';
+	}
+
+
+	// Animations
+
+	openNotificationsComponent() {
+		this.style.zIndex = '3';
+		document.querySelector('choose-language-component').style.zIndex = '2';
+		this.querySelector('.notifications-container-background').style.animation = 'increaseNotificationsContainerBackgroundHeight 0.3s ease forwards';
+		this.querySelector('.notifications-container-background ul').style.animation = 'increaseNotificationsContainerListHeight 0.3s ease forwards';
+		this.throwNotificationsComponentStateEvent(true);
+		this.isNotificationsOpen = !this.isNotificationsOpen;
+	}
+
+
+	closeNotificationsComponent() {
+		this.querySelector('.notifications-container-background').style.animation = 'decreaseNotificationsContainerBackgroundHeight 0.3s ease forwards';
+		this.querySelector('.notifications-container-background ul').style.animation = 'decreaseNotificationsContainerListHeight 0.3s ease forwards';
+		this.throwNotificationsComponentStateEvent(false);
+		this.isNotificationsOpen = !this.isNotificationsOpen;
+	}
+
+	// Throw events
+
+	throwNotificationsComponentStateEvent(isOpen) {
+		const event = new CustomEvent('notificationComponentStateChange', {
+			bubbles: true,
+			detail: {
+				isOpen: isOpen
 			}
 		});
+
+		document.dispatchEvent(event);
+	}
+
+	throwCloseChooseLanguageComponentEvent() {
+		const event = new CustomEvent('closeChooseLanguageComponent', {
+			bubbles: true
+		});
+
+		document.dispatchEvent(event);
 	}
 
 
-	setNotificationListHeight() {
-		const notificationsBackgroundContainer = this.querySelector('.notifications-container-background');
-		const notificationsList = this.querySelector('.notifications-container > ul');
-
-		// console.log(notificationsContainer.clientHeight)
-		notificationsList.style.height = notificationsBackgroundContainer.clientHeight - 1 + 'px';
-
-	}
-
+	// Fill containers
 
 	fillNumberOfNotifications() {
 		const numberOfNotificationsElement = this.querySelector('.number-of-notifications');
@@ -109,6 +160,8 @@ class NotificationComponent extends HTMLElement {
 		});
 	}
 
+
+	// Create notification element as li
 
 	createPendingFriendRequestNotification(notification) {
 		const li = document.createElement('li');
