@@ -132,7 +132,7 @@ services:
     ports:
       - "8004:8000"
     depends_on:
-      oauth_42_db:
+      oauth_google_db:
         condition: service_healthy
     networks:
       - transcendence-network

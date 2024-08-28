@@ -28,7 +28,7 @@ export async function oauthRedirectCallback() {
 				status_text.textContent = `Error: ${login_res ? login_res.message : 'Fetch failed'}`
 				// setTimeout(() => window.location.href = '/login', 2000);
 				if (login_res.url)
-					setTimeout(() => window.location.href = login_res.url, 5000);
+					setTimeout(() => window.location.href = login_res.url, 2000);
 				return ;
 			}
 			console.log('oauth redirect page:')

@@ -70,35 +70,26 @@ class oauth42AccessResourceView(View):
                                             first_name=self.first_name,
                                             last_name=self.last_name,
                                             profile_image_link=self.profile_image_link)
-            self.payload['user_id'] = str(user.id)
             response = self.send_create_user_request_to_endpoints()
-            if response is not None and response.status_code != 200:
-                if response.get('message') == "Username already taken! Try another one.":
-                    print("oauth-username")
-                    response['url'] = '/oauth-username'
-                    return response
-                elif response.get('message') == "Email address already registered! Try logging in.":
-                    print("email already registered")
-                    response['url'] = '/login' 
-                    return response
+            self.payload['user_id'] = str(user.id)
+            if response is not None and response.status_code == 400:
+                data = json.loads(response.content)
+                if data['message'] == "Username already taken! Try another one.":
+                    data['url'] = '/oauth-username'
+                elif data['message'] == "Email address already registered! Try logging in.":
+                    data['url'] = '/login'
+                response = JsonResponse(data, status=400)
+                return response
             return self.login(user=user, request=request) 
     
     def send_create_user_request_to_endpoints(self):
-        post_response = send_post_request(url='http://auth:8000/auth/add_oauth_user/', payload=self.payload, csrf_token=self.csrf_token)
-        if post_response.status_code == 400:
-            print('return1?')
-            return post_response
-
-        post_response = send_post_request(url='http://twofactor:8000/twofactor/add_user/', payload=self.payload, csrf_token=self.csrf_token)
-        if post_response.status_code != 200:
-            print('return2?')
-            return post_response
-
-        post_response = send_post_request(url='http://user:8000/user/add_user/', payload=self.payload, csrf_token=self.csrf_token)
-        if post_response.status_code != 200:
-            print('return?3')
-            return post_response
-
+        urls = ['http://auth:8000/auth/add_oauth_user/', 'http://twofactor:8000/twofactor/add_user/', 'http://user:8000/user/add_user/']
+        for url in urls:
+            response = send_post_request(url=url, payload=self.payload, csrf_token=self.csrf_token)
+            if response.status_code == 400:
+                print("return")
+                return response  
+ 
     def init_payload(self):
         self.payload = {
             'username': self.username,
@@ -119,7 +110,7 @@ class oauth42AccessResourceView(View):
                 return JsonResponse({'message': '2FA activated on this account, need to verify before log', 'is_verified': user.is_verified}, status=200)
             response = self._create_user_session(user=user)
         except User.DoesNotExist:
-            response = JsonResponse({'message': 'Invalid username, please try again'}, status=400)
+            response = JsonResponse({'message': 'Invalid username, please try again'}, status=400) 
         return response
     
     def _create_user_session(self, user):
