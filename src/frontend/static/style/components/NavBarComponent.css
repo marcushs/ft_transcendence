@@ -1,6 +1,7 @@
 @import './ChooseLanguageComponent.css';
 @import './NotificationComponent.css';
 @import './SearchBar.css';
+@import './AccountInfosComponent.css';
 
 nav-bar-component {
     height: 8vh;
@@ -41,9 +42,11 @@ nav .nav-bar-section choose-language-component {
 }
 
 nav .account-infos {
+    position: relative;
     display: flex;
     align-items: center;
     margin-left: 10px;
+    cursor: pointer;
 }
 
 nav .account-infos button-component[label='login'] {
@@ -57,12 +60,10 @@ nav .nav-bar-left-section .logo {
     border-radius: 50%;
     height: 7rem;
     width: 7rem;
-    cursor: pointer;
 }
 
 nav .nav-bar-right-section p {
     font-size: 2rem;
-    cursor: pointer;
 }
 
 nav .nav-bar-right-section .profile-picture {
