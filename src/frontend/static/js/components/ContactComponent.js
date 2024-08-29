@@ -24,8 +24,8 @@ class ContactComponent extends HTMLElement {
         this.status = null;
     }
 
-    connectedCallback() {
-        const contactPictureUrl = getProfileImage(this.userData);
+    async connectedCallback() {        
+        const contactPictureUrl = await getProfileImage(this.userData);
 
         this.innerHTML = `
             <div class="contact-menu-picture">
@@ -33,6 +33,7 @@ class ContactComponent extends HTMLElement {
             </div>
             <div class="contact-menu-username">
                 <p>${this.userData.username}</p>
+                <p>${this.userData.status}</p>
             </div>
             <div class="contact-menu-request-icon">
                 ${this.generateIcons()}
@@ -42,7 +43,7 @@ class ContactComponent extends HTMLElement {
     }
     
     generateIcons() {
-        if (this.status === 'friends') {
+        if (this.status === 'contacts-online' || this.status === 'contacts-offline') {
             return `<i class="fa-solid fa-xmark" id='remove'></i>`;
         } else if (this.status === 'sent_requests') {
             return `<i class="fa-solid fa-xmark" id='cancel'></i>`
@@ -66,7 +67,6 @@ class ContactComponent extends HTMLElement {
         this.addEventListener('dblclick', () => {
             document.title = this.userData.username + '-profile';
             throwRedirectionEvent(`/users/${this.userData.username}`);
-            app.innerHTML = userProfile();
         })
     }
 
@@ -78,7 +78,10 @@ class ContactComponent extends HTMLElement {
         try {
             const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
             if (data.status === 'success') {
-                this.setAttribute('button-status', data.friendship_status);
+                if (this.closest('ul').className === 'pending-contact-list-result')
+                    this.manageChangePendingContact();
+                else
+                    console.log('in friends list here');
             }
             console.log(data.message);
         } catch (error) {
@@ -86,6 +89,22 @@ class ContactComponent extends HTMLElement {
         }
     }
 
+    manageChangePendingContact() {
+        const pendingSummary = document.querySelector('.pending-contact-summary');
+        const pendingCountMatch = pendingSummary.textContent.match(/\d+/);
+        const newPendingCount = parseInt(pendingCountMatch[0], 10) - 1;
+        setTimeout(() => this.closest('li').remove(), 200);
+        let newPendingSummary = null;
+        if (newPendingCount === 0) {
+            const segment = pendingSummary.textContent.split(' -');
+            newPendingSummary = segment[0];
+            const pendingContactList = document.querySelector('.pending-contact-list-result')
+            pendingContactList.innerHTML = 'No contacts request...';
+            pendingContactList.classList.add('no-contacts');
+        } else
+            newPendingSummary = pendingSummary.textContent.replace(pendingCountMatch[0], newPendingCount);
+        pendingSummary.textContent = newPendingSummary;
+    }
 }
 
 customElements.define("contact-component", ContactComponent);

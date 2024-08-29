@@ -1,0 +1,43 @@
+@import './BottomNavContact.css';
+@import 'ContactComponent.css';
+
+contact-menu-component {
+    position: static;
+    bottom: 0;
+    right: 0;
+    height: 52rem;
+    width: 30rem;
+    z-index: 2;
+}
+
+.full-border {
+    border: 1px solid var(--light-grey);
+    border-radius: 10px;
+}
+
+.partial-border {
+    border-left: 1px solid var(--light-grey);
+    border-top: 1px solid var(--light-grey);
+    border-bottom: 1px solid var(--light-grey);
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.contact-menu {
+    position: absolute;
+    height: 46.8rem;
+    width: 30rem;
+    right: 0;
+    bottom: 5.4rem;
+    background-color: var(--background-color);
+}
+
+/* contact-component hr {
+    position: absolute;
+    border: none;
+    top: 100%;
+    width: 100%;
+    color: var(--light-grey);
+    background-color: var(--light-grey);
+    height: 1px;
+} */

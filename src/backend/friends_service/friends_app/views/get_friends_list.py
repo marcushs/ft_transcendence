@@ -18,10 +18,9 @@ class GetFriendsList(View):
             'status': 'success',
             'message': {
                 'friends': self.friend_list.to_dict(),
-                'friends_count': self.friend_list.friends.count(),
                 'received_requests': pending_requests['received'],
-                'sent_requests': pending_requests['sent'],
-                'requests_count': pending_requests['count']}
+                'sent_requests': pending_requests['sent']
+                }
             }, status=200)
  
     def get_pending_requests(self, user):

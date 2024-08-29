@@ -3,7 +3,7 @@
 @import '../components/MatchHistory.css';
 @import '../components/ButtonComponent.css';
 @import '../components/Game/Game.css';
-@import '../components/Contacts/ContactComponent.css';
+@import '../components/Contacts/ContactMenuComponent.css';
 
 input {
     border: none;

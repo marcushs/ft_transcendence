@@ -13,6 +13,8 @@ urlpatterns = [
     path('update_user/', user_utils.update_user.as_view(), name='update_user'),
 	path('change-user-infos/', change_user_infos.ChangeUserInfosView.as_view(), name='change-user-infos'),
     path('search_users/', user_utils.searchUsers.as_view(), name='search_users'),
-    path('get_user/', user_utils.getUserInfos.as_view(), name='get_user')
+    path('get_user/', user_utils.getUserInfos.as_view(), name='get_user'),
+    path('get_users_info/', user_utils.getUsersInfo.as_view(), name='get_users_info'),
+    path('get_users_status/', user_utils.getUsersByStatus.as_view(), name='get_users_status')
 ]
  
