@@ -48,12 +48,19 @@
     height: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    flex-direction: column;
 }
 
-.contact-list-menu ul p {
-    font-size: 1.3rem;
-    text-align: center;
+.contact-list-menu .contact-menu-username p:first-child{
+    font-weight:600;
+    font-size: 1.5rem;
+}
+
+.contact-list-menu .contact-menu-username p:last-child{
+    color: #3AA0B7;
+    font-style: italic;
+    font-size: 1rem;
 }
 
 .contact-list-menu .contact-menu-picture {

@@ -33,8 +33,6 @@ class ContactComponent extends HTMLElement {
             </div>
             <div class="contact-menu-username">
                 <p>${this.userData.username}</p>
-                </div>
-            <div class="contact-menu-status">
                 <p>${this.userData.status}</p>
             </div>
             <div class="contact-menu-request-icon">
