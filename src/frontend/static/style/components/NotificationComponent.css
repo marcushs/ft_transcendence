@@ -1,5 +1,9 @@
 notification-component {
 	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 8vh;
 	z-index: 2;
 }
 
@@ -26,7 +30,7 @@ notification-component .number-of-notifications {
 	justify-content: center;
 	align-items: center;
 	position: absolute;
-	top: -20%;
+	top: 20%;
 	left: 40%;
 	background: #ff3030;
 	border-radius: 50%;
@@ -42,8 +46,7 @@ notification-component .notifications-container-background {
 	position: absolute;
 	width: 35rem;
 	max-height: 0;
-	top: 165%;
-	left: -365%;
+	top: 100%;
 	padding: 0 1px 1px 1px;
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
@@ -94,7 +97,7 @@ notification-component .notifications-container ul li .fa-xmark {
 		max-height: 0;
 	}
 	to {
-		max-height: 30rem;
+		max-height: 29.5rem;
 	}
 }
 
@@ -103,13 +106,13 @@ notification-component .notifications-container ul li .fa-xmark {
 		max-height: 0;
 	}
 	to {
-		max-height: calc(30rem - 1px);
+		max-height: calc(29.5rem - 1px);
 	}
 }
 
 @keyframes decreaseNotificationsContainerBackgroundHeight {
 	from {
-		max-height: 30rem;
+		max-height: 29.5rem;
 	}
 	to {
 		max-height: 0;
@@ -118,7 +121,7 @@ notification-component .notifications-container ul li .fa-xmark {
 
 @keyframes decreaseNotificationsContainerListHeight {
 	from {
-		max-height: calc(30rem - 1px);
+		max-height: calc(29.5rem - 1px);
 	}
 	to {
 		max-height: 0;

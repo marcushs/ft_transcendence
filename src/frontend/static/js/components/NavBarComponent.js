@@ -3,8 +3,6 @@ import './ChooseLanguageComponent.js';
 import checkAuthentication from '../utils/checkAuthentication.js';
 import getProfileImage from "../utils/getProfileImage.js";
 import getUserData from "../utils/getUserData.js";
-import signup from "../views/signup.js";
-import login from "../views/login.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {getString} from "../utils/languageManagement.js";
 import './NotificationComponent.js';
@@ -47,11 +45,7 @@ class NavBarComponent extends HTMLElement {
 
         logo.addEventListener('click', (event) => throwRedirectionEvent('/'))
         homeLink.addEventListener('click', (event) => throwRedirectionEvent('/'));
-        if (profileElement) {
-
-        }
-            // profileElement.addEventListener('click', (event) => throwRedirectionEvent('/profile'));
-        else {
+        if (!profileElement) {
             this.querySelector('button-component[label="login"]').addEventListener('click', (event) => throwRedirectionEvent('/login'));
             this.querySelector('button-component[label="signup"]').addEventListener('click', (event) => throwRedirectionEvent('/signup'));
         }
@@ -69,10 +63,7 @@ class NavBarComponent extends HTMLElement {
 
     async generateLoggedUserInfos() {
         const userData = await getUserData();
-        const profilePicture = document.createElement('img');
 
-        profilePicture.className = 'profile-picture';
-        // profilePicture.src = ;
         return `
             <choose-language-component></choose-language-component>
             <notification-component></notification-component>

@@ -10,7 +10,7 @@ game-top-bar {
 	top: 3px;
 	background: linear-gradient(180deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4), transparent);
 	border-radius: 7px 7px 0 0;
-	z-index: 2;
+	z-index: 1;
 }
 
 game-top-bar .top-bar-options {
@@ -22,7 +22,6 @@ game-top-bar .top-bar-options {
 }
 
 game-top-bar img {
-	/*margin-top: 3.5rem;*/
 	height: 2.5rem;
 }
 

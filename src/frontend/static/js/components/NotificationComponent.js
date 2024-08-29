@@ -5,8 +5,7 @@ class NotificationComponent extends HTMLElement {
 		this.initializeComponent();
 		this.notifications = [];
 		this.notificationsUlElement = null;
-		this.isNotificationsOpen = false;
-		this.isChooseLanguageComponentOpen = false;
+		this.isOpen = false;
 	}
 
 
@@ -46,85 +45,12 @@ class NotificationComponent extends HTMLElement {
 
 		this.querySelector('.notifications-container-background').addEventListener('animationend', event => this.handleCloseNotificationsContainerAnimationEnd(event));
 
-		document.addEventListener('chooseLanguageComponentStateChange', event => this.handleChooseLanguageComponentStateChange(event))
-
 		document.addEventListener('closeNotificationsContainer', () => this.closeNotificationsComponent());
 
 		this.addEventListener('click', event => event.stopPropagation());
 		document.addEventListener('click', () => this.handleClickOutOfComponent());
 	}
 
-
-	// Handle events
-
-	handleClickOnBell() {
-		if (this.isNotificationsOpen) {
-			this.closeNotificationsComponent();
-		} else {
-			if (this.isChooseLanguageComponentOpen)
-				this.throwCloseChooseLanguageComponentEvent();
-			this.openNotificationsComponent();
-			this.querySelector('.notifications-container-background').style.display = 'block';
-		}
-	}
-
-
-	handleClickOutOfComponent() {
-		if (this.isNotificationsOpen)
-			this.closeNotificationsComponent();
-	}
-
-
-	handleChooseLanguageComponentStateChange(event) {
-		this.isChooseLanguageComponentOpen = event.detail.isOpen;
-	}
-
-
-	handleCloseNotificationsContainerAnimationEnd(event) {
-		if (event.animationName === 'decreaseNotificationsContainerBackgroundHeight')
-			this.querySelector('.notifications-container-background').style.display = 'none';
-	}
-
-
-	// Animations
-
-	openNotificationsComponent() {
-		this.style.zIndex = '3';
-		document.querySelector('choose-language-component').style.zIndex = '2';
-		this.querySelector('.notifications-container-background').style.animation = 'increaseNotificationsContainerBackgroundHeight 0.3s ease forwards';
-		this.querySelector('.notifications-container-background ul').style.animation = 'increaseNotificationsContainerListHeight 0.3s ease forwards';
-		this.throwNotificationsComponentStateEvent(true);
-		this.isNotificationsOpen = !this.isNotificationsOpen;
-	}
-
-
-	closeNotificationsComponent() {
-		this.querySelector('.notifications-container-background').style.animation = 'decreaseNotificationsContainerBackgroundHeight 0.3s ease forwards';
-		this.querySelector('.notifications-container-background ul').style.animation = 'decreaseNotificationsContainerListHeight 0.3s ease forwards';
-		this.throwNotificationsComponentStateEvent(false);
-		this.isNotificationsOpen = !this.isNotificationsOpen;
-	}
-
-	// Throw events
-
-	throwNotificationsComponentStateEvent(isOpen) {
-		const event = new CustomEvent('notificationComponentStateChange', {
-			bubbles: true,
-			detail: {
-				isOpen: isOpen
-			}
-		});
-
-		document.dispatchEvent(event);
-	}
-
-	throwCloseChooseLanguageComponentEvent() {
-		const event = new CustomEvent('closeChooseLanguageComponent', {
-			bubbles: true
-		});
-
-		document.dispatchEvent(event);
-	}
 
 
 	// Fill containers
@@ -206,6 +132,86 @@ class NotificationComponent extends HTMLElement {
 			<i class="fa-solid fa-xmark"></i>
 		`;
 		this.notificationsUlElement.append(li);
+	}
+
+
+	// Handle events
+
+	handleClickOnBell() {
+		if (this.isOpen) {
+			this.closeNotificationsComponent();
+		} else {
+			this.closeOtherNavBarComponent();
+			this.openNotificationsComponent();
+			this.querySelector('.notifications-container-background').style.display = 'block';
+		}
+	}
+
+
+	handleClickOutOfComponent() {
+		if (this.isOpen)
+			this.closeNotificationsComponent();
+	}
+
+
+	handleCloseNotificationsContainerAnimationEnd(event) {
+		if (event.animationName === 'decreaseNotificationsContainerBackgroundHeight')
+			this.querySelector('.notifications-container-background').style.display = 'none';
+	}
+
+
+	// Throw events
+
+	throwCloseChooseLanguageComponentEvent() {
+		const event = new CustomEvent('closeChooseLanguageComponent', {
+			bubbles: true
+		});
+
+		document.dispatchEvent(event);
+	}
+
+
+	throwCloseAccountInfosComponentEvent() {
+		const event = new CustomEvent('closeAccountInfosComponent', {
+			bubbles: true
+		});
+
+		document.dispatchEvent(event);
+	}
+
+	// Animations
+
+	openNotificationsComponent() {
+		const notificationsMenu = this.querySelector('.notifications-container-background');
+
+		notificationsMenu.style.display = 'block';
+		notificationsMenu.style.animation = 'increaseNotificationsContainerBackgroundHeight 0.3s ease forwards';
+		notificationsMenu.querySelector('ul').style.animation = 'increaseNotificationsContainerListHeight 0.3s ease forwards';
+		this.style.zIndex = '3';
+		this.isOpen = !this.isOpen;
+	}
+
+
+	closeNotificationsComponent() {
+		const notificationsMenu = this.querySelector('.notifications-container-background');
+
+		console.log(notificationsMenu)
+		notificationsMenu.style.animation = 'decreaseNotificationsContainerBackgroundHeight 0.3s ease forwards';
+		notificationsMenu.querySelector('ul').style.animation = 'decreaseNotificationsContainerListHeight 0.3s ease forwards';
+		this.style.zIndex = '2';
+		this.isOpen = !this.isOpen;
+	}
+
+
+	closeOtherNavBarComponent() {
+		const languageMenu = document.querySelector('.language-list');
+		const accountInfosMenu = document.querySelector('.account-menu-background');
+
+		console.log(accountInfosMenu)
+		if (getComputedStyle(languageMenu).display !== 'none')
+			this.throwCloseChooseLanguageComponentEvent();
+		if (getComputedStyle(accountInfosMenu).display !== 'none')
+			this.throwCloseAccountInfosComponentEvent();
 	}
 
 }

@@ -1,3 +1,11 @@
+account-infos-component {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 8vh;
+}
+
 account-infos-component .account-infos:hover > p {
 	color: var(--neon-blue);
 }
@@ -5,13 +13,11 @@ account-infos-component .account-infos:hover > p {
 account-infos-component .account-menu-background {
 	display: none;
 	position: absolute;
-	left: 88.65%;
-	/*height: 8rem;*/
 	height: 0;
 	width: 17rem;
 	background: linear-gradient(0deg, var(--neon-pink), var(--neon-blue));
-	top: 8vh;
 	padding: 0 1px 1px 1px;
+	top: 100%;
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
 	z-index: 2;
