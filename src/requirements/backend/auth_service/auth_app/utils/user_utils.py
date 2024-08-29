@@ -42,5 +42,7 @@ class check_username(View):
         super().__init__
 
     def get(self, request):
-        data = json.loads(request.body.decode('utf-8'))
-        if User.objects.filter(username=data['username']):
+        username = request.GET.get('username')
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
+        return JsonResponse({"message": "Username is free", "status": "Success"}, status=200)

@@ -9,6 +9,7 @@ from django.conf import settings
 import json
 import environ
 import os
+import requests
 from ..utils.send_post_request import send_post_request
 
 User = get_user_model()
@@ -35,8 +36,3 @@ class oauth42UpdateUsernameView(View):
             return response
         except User.DoesNotExist:
             return JsonResponse({"message": "User not found", "url":"/login", "status": "Error"}, status=400)
-        
-    def check_new_username_is_used(self, username):
-        urls = ['http://auth:8000/auth/check_username/', 'http://twofactor:8000/twofactor/check_username/', 'http://user:8000/user/check_username/']
-        for url in urls:
-            response = send_post_request(url=url, payload=self.payload, csrf_token=self.csrf_token)
