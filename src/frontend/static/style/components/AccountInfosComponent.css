@@ -1,0 +1,102 @@
+account-infos-component {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 8vh;
+}
+
+account-infos-component .account-infos:hover > p {
+	color: var(--neon-blue);
+}
+
+account-infos-component .account-menu-background {
+	display: none;
+	position: absolute;
+	height: 0;
+	width: 17rem;
+	background: linear-gradient(0deg, var(--neon-pink), var(--neon-blue));
+	padding: 0 1px 1px 1px;
+	top: calc(100% + 0.5px);
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	z-index: 2;
+}
+
+account-infos-component .account-menu-background ul {
+	list-style-type: none;
+	height: 100%;
+	width: 100%;
+	background: var(--component-background-color);
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+account-infos-component .account-menu-background ul li {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 50%;
+	width: 100%;
+	cursor: pointer;
+}
+
+account-infos-component .account-menu-background ul li:first-child:hover {
+	background: #181818;
+	cursor: pointer;
+}
+
+account-infos-component .account-menu-background ul li:last-child {
+	border-top: 1px solid var(--light-grey);
+	background: #ea2b2b;
+}
+
+account-infos-component .account-menu-background ul li:last-child:hover {
+	border-top: 1px solid var(--light-grey);
+	background: #ff0000;
+	cursor: pointer;
+}
+
+account-infos-component .account-menu-background ul li p {
+	font-size: 1.8rem;
+	opacity: 0;
+}
+
+
+@keyframes increaseAccountMenuHeight {
+	from {
+		height: 0;
+	}
+	to {
+		height: 8rem;
+	}
+}
+
+@keyframes decreaseAccountMenuHeight {
+	from {
+		height: 8rem;
+		display: block;
+	}
+	to {
+		height: 0;
+		display: none;
+	}
+}
+
+@keyframes reduceTextOpacity {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes augmentTextOpacity {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
