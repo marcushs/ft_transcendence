@@ -95,6 +95,10 @@ class PopUpComponent extends HTMLElement {
 					acc.push(user);
 				return acc;
 			}, []);
+			const currentUser = document.querySelector('.account-infos p').textContent;
+			const currentUserIndex = resultList.findIndex(user => user.username === currentUser)
+			if (currentUserIndex !== -1)
+				resultList.splice(currentUserIndex, 1);
 			this.displaySearchResult(resultList);
 			this.addContactButtonEventListener();
 		}
