@@ -2,12 +2,12 @@
 @import 'ContactComponent.css';
 
 contact-menu-component {
-    position: static;
+    position: absolute;
     bottom: 0;
     right: 0;
-    height: 52rem;
-    width: 30rem;
-    z-index: 2;
+    height: 100%;
+    width: 100%;
+    /*z-index: -1;*/
 }
 
 .full-border {
@@ -24,20 +24,12 @@ contact-menu-component {
 }
 
 .contact-menu {
+    z-index: 3;
     position: absolute;
     height: 46.8rem;
     width: 30rem;
     right: 0;
     bottom: 5.4rem;
     background-color: var(--background-color);
+    /*background-color: var(--component-background-color);*/
 }
-
-/* contact-component hr {
-    position: absolute;
-    border: none;
-    top: 100%;
-    width: 100%;
-    color: var(--light-grey);
-    background-color: var(--light-grey);
-    height: 1px;
-} */

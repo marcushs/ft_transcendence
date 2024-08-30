@@ -3,6 +3,7 @@
 
 nav-bar-component {
     height: 8vh;
+    z-index: 3;
 }
 
 nav {
