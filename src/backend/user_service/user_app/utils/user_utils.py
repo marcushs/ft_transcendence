@@ -7,6 +7,18 @@ from django.views import View
 from ..models import User
 import json
 import requests
+ 
+class ping_status_user(View):
+    def __init__(self):
+        super().__init__   
+
+    def post(self, request):
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'message': 'User not found'}, status=400)
+        request.user.last_active = datetime.now()
+        request.user.save()
+        return JsonResponse({"message": 'pong'}, status=200)
+    
 
 class add_new_user(View):
     def __init__(self):

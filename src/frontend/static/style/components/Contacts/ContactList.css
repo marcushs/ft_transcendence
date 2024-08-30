@@ -1,3 +1,5 @@
+ /* ------------>>> main menu style section <<<------------*/
+
 .contact-list-menu {
     position: relative;
     margin-top: 1rem;
@@ -6,23 +8,22 @@
     scrollbar-gutter: stable;
 }
 
-.no-contacts {
-    color: var(--light-grey);
-    margin-left: 2rem;
+.contact-list-menu ul {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
 }
 
-.contact-list-menu p:not(ul p) {
+ /* ------------>>> title display section <<<------------*/
+
+ .contact-list-menu p:not(ul p) {
     margin-left: 0.5rem;
-    font-size: 1.5rem;
+    font-size: 1.7rem;
     font-weight: bold;
     cursor: pointer;
     margin-bottom: 0.5rem;
 }
 
-.contact-list-menu ul {
-    font-size: 1.3rem;
-    margin-bottom: 0.5rem;
-}
+ /* ------------>>> contact list display section <<<------------*/
 
 .contact-list-menu li {
     width: 100%;
@@ -31,19 +32,10 @@
     align-items: center;
     justify-content: center;
     height: 7rem;
-    border-bottom: 1px solid var(--light-grey);
     cursor: pointer;
 }
 
-.contact-list-menu li:hover {
-    box-shadow: 0 0 5px var(--light-grey);
-}
-
-.contact-list-menu li:last-child {
-    border-bottom: none;
-}
-
-.contact-list-menu .contact-menu-username {
+.contact-list-menu .contact-menu-info {
     width: 50%;
     height: 100%;
     display: flex;
@@ -52,16 +44,78 @@
     flex-direction: column;
 }
 
-.contact-list-menu .contact-menu-username p:first-child{
+.contact-list-menu .contact-menu-info p:first-child{
     font-weight:600;
-    font-size: 1.5rem;
+    font-size: 1.7rem;
 }
 
-.contact-list-menu .contact-menu-username p:last-child{
+ /* ------------>>> Status circle section <<<------------*/
+
+.status-circle {
+    position: absolute;
+    left: 4.1rem;
+    top: 4.1rem;
+    border-radius: 50%;
+    width: 17px;
+    height: 17px;
+}
+
+.online-status-circle {
+    background-color: #3AA0B7;
+    border: 2px solid #121216;
+}
+
+.offline-status-circle {
+    background-color: gray;
+    border: 2px solid #121216;
+}
+
+ /* ------------>>> Online contact section <<<------------*/
+
+ .contact-list-menu .online-contact-status p:last-child{
     color: #3AA0B7;
     font-style: italic;
-    font-size: 1rem;
+    font-size: 1.3rem;
 }
+
+.contact-list-menu .online-contact-status:hover{
+    box-shadow: 0 0 2px rgba(41, 133, 141, 0.81);
+    background-color: rgba(6, 35, 38, 0.81);
+}
+
+ /* ------------>>> Offline contact section <<<------------*/
+
+/* .contact-list-menu .offline-contact-status p:first-child{
+    color: gray;
+} */
+
+.contact-list-menu .offline-contact-status p:last-child{
+    color: gray;
+    font-style: italic;
+    font-size: 1.3rem;
+}
+
+.contact-list-menu .offline-contact-status:hover{
+    box-shadow: 0 0 2px gray;
+    background-color: rgba(25, 25, 25, 0.81);
+}
+
+.contact-list-menu .contact-menu-picture img {
+    width: 5.5rem;
+    height: 5.5rem;
+    border-radius: 50%;
+	border: 1px solid var(--light-grey);
+}
+
+ /* ------------>>> no contact to display section <<<------------*/
+
+.no-contacts {
+    color: var(--light-grey);
+    margin-left: 2rem;
+}
+
+ /* ------------>>> contact picture <<<------------*/
+
 
 .contact-list-menu .contact-menu-picture {
     /* margin-left: 1rem; */
@@ -78,6 +132,8 @@
     border-radius: 50%;
 	border: 1px solid var(--light-grey);
 }
+
+ /* ------------>>> contact icon <<<------------*/
 
 .contact-list-menu .contact-menu-request-icon {
     /* margin-right: 1rem; */
@@ -122,12 +178,10 @@
     from {
         font-size: 3.2rem;
         color: #AC1AA4;
-        /* text-shadow: 1px 1px 1px transparent, -1px 1px 1px transparent, 1px -1px 1px transparent, -1px -1px 1px transparent; */
     }
     to {
         font-size: 3.4rem;
         color: var(--neon-pink);
-        /* text-shadow: 1px 1px 1px var(--light-grey), -1px 1px 1px var(--light-grey), 1px -1px 1px var(--light-grey), -1px -1px 1px var(--light-grey); */
     }
 }
 
@@ -135,11 +189,9 @@
     from {
         font-size: 3.2rem;
         color: #3AA0B7;
-        /* text-shadow: 1px 1px 1px transparent, -1px 1px 1px transparent, 1px -1px 1px transparent, -1px -1px 1px transparent; */
     }
     to {
         font-size: 3.4rem;
         color: var(--neon-blue);
-        /* text-shadow: 1px 1px 1px var(--light-grey), -1px 1px 1px var(--light-grey), 1px -1px 1px var(--light-grey), -1px -1px 1px var(--light-grey); */
     }
 }

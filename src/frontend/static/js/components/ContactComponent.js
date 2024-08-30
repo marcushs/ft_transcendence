@@ -31,7 +31,9 @@ class ContactComponent extends HTMLElement {
             <div class="contact-menu-picture">
                 <img src='${contactPictureUrl}' alt='contact picture'></img>
             </div>
-            <div class="contact-menu-username">
+            <div class="status-circle">
+            </div>
+            <div class="contact-menu-info">
                 <p>${this.userData.username}</p>
                 <p>${this.userData.status}</p>
             </div>
@@ -39,11 +41,15 @@ class ContactComponent extends HTMLElement {
                 ${this.generateIcons()}
             </div>
         `;
+        if (this.userData.status === 'online')
+            this.querySelector('.status-circle').classList.add('online-status-circle')
+        else if (this.userData.status === 'offline')
+            this.querySelector('.status-circle').classList.add('offline-status-circle')
         this.attachEventListener();
     }
     
     generateIcons() {
-        if (this.status === 'contacts-online' || this.status === 'contacts-offline') {
+        if (this.status === 'contacts') {
             return `<i class="fa-solid fa-xmark" id='remove'></i>`;
         } else if (this.status === 'sent_requests') {
             return `<i class="fa-solid fa-xmark" id='cancel'></i>`

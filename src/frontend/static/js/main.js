@@ -13,8 +13,12 @@ import twoFactorDeactivation from "./views/two-factor-deactivation.js";
 import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
 import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
 import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
+import { sendPingStatus } from "./views/pingStatus.js";
 
 let languageJson;
+
+// ping every minute backend for change status user in backend if needed
+sendPingStatus();
 
 (async () => {
     if (await isTwoFactorActivated()) {
@@ -37,7 +41,6 @@ const routes = {
     "/two-factor-email": { title: "TwoFactorEmail", render: twoFactorEmail },
     "/two-factor-deactivation": { title: "TwoFactorDeactivate", render: twoFactorDeactivation },
 };
-
 // create the csrf token if it does not already exist
 generateCsrfToken();
 async function router() {

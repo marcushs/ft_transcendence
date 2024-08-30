@@ -68,13 +68,13 @@ class FriendsMenuComponent extends HTMLElement {
             this.contactList.classList.add('no-contacts');
         }
         else {
-            this.createContactList(contactsData.online, 'contacts-online');
-            this.createContactList(contactsData.offline, 'contacts-offline');
+            this.createContactList(contactsData.online, 'contacts');
+            this.createContactList(contactsData.offline, 'contacts');
         }
         const receivedRequestUsersData = await this.getDataRequest('users_data', contacts.received_requests);
         const sentRequestUsersData = await this.getDataRequest('users_data', contacts.sent_requests);
         const requestsCount = contacts.received_requests.length + contacts.sent_requests.length; 
-        this.pendingContactSummary.innerHTML = `<p>Contacts Requests-${requestsCount}</p>`;
+        this.pendingContactSummary.innerHTML = `<p>Contacts Requests - ${requestsCount}</p>`;
         if (requestsCount === 0) {
             this.pendingContactSummary.innerHTML = `<p>Contacts Requests</p>`;
             this.pendingContactList.innerHTML = `No contacts request...`
@@ -92,13 +92,13 @@ class FriendsMenuComponent extends HTMLElement {
             li.innerHTML = `
                 <contact-component data-user='${JSON.stringify(contact)}' data-status='${status}'></contact-component>
             `;
-            if (status === 'contacts-online') {
+            if (contact.status === 'online')
                 li.classList.add('online-contact-status')
-                this.contactList.appendChild(li);
-            } else if (status === 'contacts-offline') {
+            else if (contact.status === 'offline')
                 li.classList.add('offline-contact-status')
+            if (status === 'contacts')
                 this.contactList.appendChild(li);
-            } else
+            else
                 this.pendingContactList.appendChild(li);
         });
     }
@@ -153,8 +153,8 @@ class FriendsMenuComponent extends HTMLElement {
             if (!contactsUsername.every(username => displayedUsername.includes(username))) {   
                 this.contactList.innerHTML = '';
                 this.contactList.classList.remove('no-contacts');
-                this.createContactList(contactsData.online, 'contacts-online');
-                this.createContactList(contactsData.offline, 'contacts-offline');
+                this.createContactList(contactsData.online, 'contacts');
+                this.createContactList(contactsData.offline, 'contacts');
             }
 			return ;
 		}
@@ -166,8 +166,8 @@ class FriendsMenuComponent extends HTMLElement {
                 this.contactList.classList.remove('no-contacts');
             }
             const newContactsToDisplayData = await this.getDataRequest('users_status', newContactsToDisplay);
-            this.createContactList(newContactsToDisplayData.online, 'contacts-online');
-            this.createContactList(newContactsToDisplayData.offline, 'contacts-offline');
+            this.createContactList(newContactsToDisplayData.online, 'contacts');
+            this.createContactList(newContactsToDisplayData.offline, 'contacts');
         } else {
             let displayedUsername = this.getCurrentDisplayedContactUsername();
             if (displayedUsername.length === 0) {
