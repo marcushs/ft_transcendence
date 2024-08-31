@@ -11,5 +11,5 @@ export function sendPingStatus(params) {
         } catch (error) {
             console.log(error);
         }
-    }, 6000)
+    }, 120000)
 }

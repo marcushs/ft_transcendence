@@ -96,6 +96,8 @@ class FriendsMenuComponent extends HTMLElement {
                 li.classList.add('online-contact-status')
             else if (contact.status === 'offline')
                 li.classList.add('offline-contact-status')
+            else if (contact.status === 'away')
+                li.classList.add('away-contact-status')
             if (status === 'contacts')
                 this.contactList.appendChild(li);
             else

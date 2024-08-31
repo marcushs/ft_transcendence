@@ -70,6 +70,11 @@
     border: 2px solid #121216;
 }
 
+.away-status-circle {
+    background-color: rgb(184, 151, 60);
+    border: 2px solid #121216;
+}
+
  /* ------------>>> Online contact section <<<------------*/
 
  .contact-list-menu .online-contact-status p:last-child{
@@ -81,6 +86,19 @@
 .contact-list-menu .online-contact-status:hover{
     box-shadow: 0 0 2px rgba(41, 133, 141, 0.81);
     background-color: rgba(6, 35, 38, 0.81);
+}
+
+ /* ------------>>> Away contact section <<<------------*/
+
+ .contact-list-menu .away-contact-status p:last-child{
+    color: rgb(184, 151, 60);
+    font-style: italic;
+    font-size: 1.3rem;
+}
+
+.contact-list-menu .away-contact-status:hover{
+    box-shadow: 0 0 2px rgb(184, 151, 60);
+    background-color: rgba(25, 25, 25, 0.81);
 }
 
  /* ------------>>> Offline contact section <<<------------*/
@@ -100,13 +118,6 @@
     background-color: rgba(25, 25, 25, 0.81);
 }
 
-.contact-list-menu .contact-menu-picture img {
-    width: 5.5rem;
-    height: 5.5rem;
-    border-radius: 50%;
-	border: 1px solid var(--light-grey);
-}
-
  /* ------------>>> no contact to display section <<<------------*/
 
 .no-contacts {
@@ -116,6 +127,12 @@
 
  /* ------------>>> contact picture <<<------------*/
 
+ .contact-list-menu .contact-menu-picture img {
+    width: 5.5rem;
+    height: 5.5rem;
+    border-radius: 50%;
+	border: 1px solid var(--light-grey);
+}
 
 .contact-list-menu .contact-menu-picture {
     /* margin-left: 1rem; */

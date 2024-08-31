@@ -45,6 +45,8 @@ class ContactComponent extends HTMLElement {
             this.querySelector('.status-circle').classList.add('online-status-circle')
         else if (this.userData.status === 'offline')
             this.querySelector('.status-circle').classList.add('offline-status-circle')
+        else if (this.userData.status === 'away')
+            this.querySelector('.status-circle').classList.add('away-status-circle')
         this.attachEventListener();
     }
     
