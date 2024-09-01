@@ -62,9 +62,9 @@ class UserStatusMiddleware(MiddlewareMixin):
     
     def set_new_users_status(self, users, status_change):
         if status_change == 'away':
-            threshold = timezone.now() - timedelta(minutes=2, seconds=30)
+            threshold = timezone.now() - timedelta(minutes=2)
         else:
-            threshold = timezone.now() - timedelta(minutes=10)
+            threshold = timezone.now() - timedelta(minutes=15)
         for user in users:
             if user.last_active < threshold:
                 user.status = status_change

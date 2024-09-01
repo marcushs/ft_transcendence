@@ -13,12 +13,11 @@ import twoFactorDeactivation from "./views/two-factor-deactivation.js";
 import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
 import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
 import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
-import { sendPingStatus } from "./views/pingStatus.js";
+import { PingStatus } from "./views/pingStatus.js";
 
 let languageJson;
 
-// ping every minute backend for change status user in backend if needed
-sendPingStatus();
+new PingStatus();
 
 (async () => {
     if (await isTwoFactorActivated()) {
