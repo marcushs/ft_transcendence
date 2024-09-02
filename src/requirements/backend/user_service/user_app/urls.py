@@ -12,4 +12,5 @@ urlpatterns = [
     path('update_user/', user_utils.update_user.as_view(), name='update_user'),
 	path('change-user-infos/', change_user_infos.ChangeUserInfosView.as_view(), name='change-user-infos'),
 	path('check_username/', user_utils.check_username.as_view(), name='check_username'),
+	path('delete_user/', user_utils.delete_user.as_view(), name='delete_user'),
 ]

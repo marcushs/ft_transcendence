@@ -86,15 +86,10 @@ class oauth42AccessResourceView(View):
     
     def send_create_user_request_to_endpoints(self):
         urls = ['http://auth:8000/auth/add_oauth_user/', 'http://twofactor:8000/twofactor/add_user/', 'http://user:8000/user/add_user/']
-        i = 0
         for url in urls:
             response = send_post_request(url=url, payload=self.payload, csrf_token=self.csrf_token)
             if response.status_code == 400:
-                # while i > 0:
-
-                # need to delete user in all containers accordingly
                 return response
-            i = i + 1
  
     def init_payload(self):
         self.payload = {
