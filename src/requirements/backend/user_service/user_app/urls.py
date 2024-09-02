@@ -10,5 +10,6 @@ urlpatterns = [
     path('user_info/', views.get_information_view, name='user_info'),
     path('add_user/', user_utils.add_new_user.as_view(), name='add_user'),
     path('update_user/', user_utils.update_user.as_view(), name='update_user'),
-	path('change-user-infos/', change_user_infos.ChangeUserInfosView.as_view(), name='change-user-infos')
+	path('change-user-infos/', change_user_infos.ChangeUserInfosView.as_view(), name='change-user-infos'),
+	path('check_username/', user_utils.check_username.as_view(), name='check_username'),
 ]

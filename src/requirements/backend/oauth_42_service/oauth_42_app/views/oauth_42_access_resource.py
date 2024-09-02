@@ -58,7 +58,7 @@ class oauth42AccessResourceView(View):
         self.init_payload()
 
         try:
-            user = User.objects.get(username=self.username)
+            user = User.objects.get(email=self.email)
             self.payload['user_id'] = str(user.id)
             return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
         except User.DoesNotExist:
@@ -86,12 +86,15 @@ class oauth42AccessResourceView(View):
     
     def send_create_user_request_to_endpoints(self):
         urls = ['http://auth:8000/auth/add_oauth_user/', 'http://twofactor:8000/twofactor/add_user/', 'http://user:8000/user/add_user/']
+        i = 0
         for url in urls:
             response = send_post_request(url=url, payload=self.payload, csrf_token=self.csrf_token)
             if response.status_code == 400:
+                # while i > 0:
+
                 # need to delete user in all containers accordingly
-                print("return")
-                return response  
+                return response
+            i = i + 1
  
     def init_payload(self):
         self.payload = {
@@ -102,34 +105,3 @@ class oauth42AccessResourceView(View):
             'logged_in_with_42': True,
             'profile_image_link': self.profile_image_link,
         }
-
-    # def login(self, user, request):
-    #     if user.two_factor_method != '':
-    #         return self._send_twofactor_request(user=user)
-    #     if request.COOKIES.get('jwt'):
-    #         return JsonResponse({'message': 'You are already logged in'}, status=400)
-    #     try:
-    #         if user.is_verified is True:
-    #             return JsonResponse({'message': '2FA activated on this account, need to verify before log', 'is_verified': user.is_verified}, status=200)
-    #         response = self._create_user_session(user=user)
-    #     except User.DoesNotExist:
-    #         response = JsonResponse({'message': 'Invalid username, please try again'}, status=400) 
-    #     return response
-    
-    # def _create_user_session(self, user):
-    #     token = create_jwt_token(user, 'access')
-    #     refresh_token = create_jwt_token(user, 'refresh')
-    #     response = JsonResponse({'message': 'Login successfully'}, status=200)
-    #     response.set_cookie('jwt', token, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
-    #     response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
-    #     return response
-    
-    # def _send_twofactor_request(self, user):
-    #     try:
-    #         response = send_post_request(url='http://twofactor:8000/twofactor/twofactor_login/', payload=self.payload, csrf_token=self.csrf_token)
-    #         if response.status_code != 200:
-    #             return response
-    #         return self._create_user_session(user=user)
-    #     except ObjectDoesNotExist:
-    #         return JsonResponse({'error': 'User not found'}, status=404)
- 

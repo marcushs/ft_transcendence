@@ -43,6 +43,7 @@ class check_username(View):
 
     def get(self, request):
         username = request.GET.get('username')
+        print(username) 
         if User.objects.filter(username=username).exists():
             return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
         return JsonResponse({"message": "Username is free", "status": "Success"}, status=200)

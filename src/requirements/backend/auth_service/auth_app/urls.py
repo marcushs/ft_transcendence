@@ -10,5 +10,6 @@ urlpatterns = [
 	path('signup/', signup.signup_view.as_view(), name='signup'),
     path('update_user/', user_utils.update_user.as_view(), name='update_user'),
   	path('change-password/', change_password.ChangePassword.as_view(), name='change-password'),
-    path('add_oauth_user/', user_utils.add_oauth_user.as_view(), name='add_oauth_user')
+    path('add_oauth_user/', user_utils.add_oauth_user.as_view(), name='add_oauth_user'),
+    path('check_username/', user_utils.check_username.as_view(), name='check_username'),
 ]
