@@ -33,20 +33,7 @@ class oauthGoogleAccessResourceView(View):
         }
 
         response = requests.get(resource_url, headers=headers)
-        # try:
-        #     response_data = response.json()
-        #     if 'error' in response_data:
-        #         return JsonResponse({'message': response_data['error'],
-        #                              'status': 'Error'}, 
-        #                              status=400)
-        #     return JsonResponse(response_data, safe=False)
-        # except ValueError:
-        #     return JsonResponse({'message': 'Invalid JSON response',
-        #                          'status': 'Error'}, 
-        #                          status=500)
-        # Check if the response contains JSON data and handle errors
-        print(response.text) 
-        print(response.headers.get('Content-Type'))
+
         try:
             response_data = response.json()
             if 'error' in response_data:
@@ -55,7 +42,6 @@ class oauthGoogleAccessResourceView(View):
                                      status=400)
             return self.create_or_login_user(request, response_data)
         except ValueError:
-            print("here???")
             return JsonResponse({'message': 'Invalid JSON response',
                                  'status': 'Error'}, 
                                  status=500)
@@ -65,6 +51,8 @@ class oauthGoogleAccessResourceView(View):
         self.first_name = data['given_name']
         self.last_name = data['family_name']
         self.username = self.first_name[0] + self.last_name
+        if self.username.len() > 12:
+            self.username = data['login'][:12]
         self.email = data['email']
         self.profile_image_link = data['picture']
         self.init_payload()
@@ -94,7 +82,6 @@ class oauthGoogleAccessResourceView(View):
                     response = JsonResponse(response_data, status=400)
                     response.set_cookie('id', self.id, httponly=True)
                 return response
-            print("reached here?") 
             return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
     
     def send_create_user_request_to_endpoints(self):

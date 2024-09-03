@@ -22,22 +22,13 @@ class oauth42RedirectView(View):
             return JsonResponse({'message': 'Invalid state parameter', 
                                  'status': 'Error'}, 
                                  status=400)
-        # print('token_data-->')
-        # token_data = self.exchange_code_for_token(code)
-        # refresh_token = token_data['refresh_token']
-        # print(token_data['expires_in'])
-        # print('token_data-->')  
-        # return JsonResponse(token_data)
-        
-        # if token_data['expires_in'] < 6300:
-        #     token_data = self.get_new_token(refresh_token)
+
         token_data = self.exchange_code_for_token(code)
         if 'error' in token_data:
             return JsonResponse({'message': token_data['error_description'],
                                  'status': 'Error'}, 
                                  status=400)
         access_token = token_data['access_token']
-        refresh_token = token_data['refresh_token']
 
         # Create a dictionary with the access token
         response_data = {'message': 'Successfully exchange access token',
@@ -46,11 +37,6 @@ class oauth42RedirectView(View):
         response = JsonResponse(response_data, status=200)
         response.set_cookie('42_access_token', 
                             access_token,
-                            httponly=True,
-                            secure=True,
-                            samesite='None')
-        response.set_cookie('42_refresh_token', 
-                            refresh_token,
                             httponly=True,
                             secure=True,
                             samesite='None')
@@ -72,18 +58,3 @@ class oauth42RedirectView(View):
 
         response = requests.post(token_url, data=data)
         return response.json()
-    
-    # def get_new_token(self, refresh_token):
-    #     client_id = env("API_UID_42") 
-    #     token_url = "https://api.intra.42.fr/oauth/token"
-    #     client = WebApplicationClient(client_id)
-
-    #     data = client.prepare_request_body(
-    #         grant_type = 'refresh_token',
-    #         refresh_token = refresh_token,
-    #         client_id = client_id,
-    #         client_secret = env("API_SECRET_42")
-    #     )
-
-    #     response = requests.post(token_url, data=data)
-    #     return response.json()

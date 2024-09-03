@@ -51,6 +51,8 @@ class oauthGithubAccessResourceView(View):
     def create_or_login_user(self, request, data, token): 
         self.csrf_token = request.headers.get('X-CSRFToken')
         self.username = data['login']
+        if self.username.len() > 12:
+            self.username = data['login'][:12]
         self.profile_image_link = data['avatar_url']
         self.split_fullname(data['name'])
         response = self.get_user_email(token)
