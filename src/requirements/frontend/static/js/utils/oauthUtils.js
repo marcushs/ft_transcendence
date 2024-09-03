@@ -26,7 +26,7 @@ export async function oauthRedirectCallback() {
 			const login_res = await accessResource(oauthProvider);
 			if (!login_res || login_res.status === 'Error') {
 				status_text.textContent = `Error: ${login_res ? login_res.message : 'Fetch failed'}`
-				// setTimeout(() => window.location.href = '/login', 2000);
+				setTimeout(() => window.location.href = '/login', 2000);
 				if (login_res.url)
 					setTimeout(() => window.location.href = login_res.url, 2000);
 				return ;
@@ -38,12 +38,12 @@ export async function oauthRedirectCallback() {
 		} else {
 			// if handleOauthCallback error
 			status_text.textContent = `Error: ${data.message}`;
-			// setTimeout(() => window.location.href = '/login', 2000);
+			setTimeout(() => window.location.href = '/login', 2000);
 		}
 	} else {
 		// No query params, not from 42 oauth
 		status_text.textContent = 'Error: Invalid request';
-		// setTimeout(() => window.location.href = '/login', 2000);
+		setTimeout(() => window.location.href = '/login', 2000);
 	}
 }
 

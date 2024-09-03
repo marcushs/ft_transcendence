@@ -51,7 +51,7 @@ class oauth42AccessResourceView(View):
     def create_or_login_user(self, request, data):
         self.csrf_token = request.headers.get('X-CSRFToken')
         self.username = data['login']
-        if self.username.len() > 12:
+        if len(self.username) > 12:
             self.username = data['login'][:12]
         self.email = data['email']
         self.first_name = data['first_name']

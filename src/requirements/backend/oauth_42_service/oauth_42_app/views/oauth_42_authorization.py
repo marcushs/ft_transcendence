@@ -25,6 +25,8 @@ class oauth42AuthorizationView(View):
         super().__init__
     
     def get(self, request):
+        if request.COOKIES.get('jwt'):
+            return JsonResponse({'message': 'You are already logged in', 'url': '/home','status': 'Error'}, status=400)
         url = self.authorization() 
         response = JsonResponse({'url': url})
         

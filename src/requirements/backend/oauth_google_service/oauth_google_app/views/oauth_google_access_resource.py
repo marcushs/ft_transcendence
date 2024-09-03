@@ -51,7 +51,7 @@ class oauthGoogleAccessResourceView(View):
         self.first_name = data['given_name']
         self.last_name = data['family_name']
         self.username = self.first_name[0] + self.last_name
-        if self.username.len() > 12:
+        if len(self.username) > 12:
             self.username = data['login'][:12]
         self.email = data['email']
         self.profile_image_link = data['picture']
