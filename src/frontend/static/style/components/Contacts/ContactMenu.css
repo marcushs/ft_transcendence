@@ -7,7 +7,7 @@
     width: 100%;
     border: 1px solid var(--light-grey);
     border-radius: 10px;
-    background-color: var(--background-color);
+    background-color: #171820;
 }
 
 contact-component {

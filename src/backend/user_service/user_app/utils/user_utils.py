@@ -7,7 +7,20 @@ from django.views import View
 from ..models import User
 import json
 import requests
- 
+
+class set_offline_user(View):
+    def __init__(self):
+        super().__init__   
+
+    def post(self, request):
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'message': 'User not found'}, status=400)
+        if request.user.status == 'online' or request.user.status == 'away':
+            request.user.status = 'offline'
+        request.user.last_active = timezone.now()
+        request.user.save()
+        return JsonResponse(status=200)
+
 class ping_status_user(View):
     def __init__(self):
         super().__init__   

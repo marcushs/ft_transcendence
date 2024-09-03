@@ -53,11 +53,11 @@
 
 .status-circle {
     position: absolute;
-    left: 4.1rem;
+    left: 4.5rem;
     top: 4.1rem;
     border-radius: 50%;
-    width: 17px;
-    height: 17px;
+    width: 1.7rem;
+    height: 1.7rem;
 }
 
 .online-status-circle {

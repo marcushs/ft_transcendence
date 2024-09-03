@@ -67,9 +67,8 @@ class ContactComponent extends HTMLElement {
         const requestIcons = this.querySelectorAll('i');
         requestIcons.forEach(icon => {
             icon.addEventListener('click', (event) => {
-                const action = event.target.getAttribute('id');
-                console.log('action: ', action);
-                this.handleRequestIconClick(action);
+                // const action = event.target.getAttribute('id');
+                // this.handleRequestIconClick(action);
             });
         });
         this.addEventListener('dblclick', () => {

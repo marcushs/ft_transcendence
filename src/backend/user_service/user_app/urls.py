@@ -16,5 +16,6 @@ urlpatterns = [
     path('get_user/', user_utils.getUserInfos.as_view(), name='get_user'),
     path('get_users_info/', user_utils.getUsersInfo.as_view(), name='get_users_info'),
     path('get_users_status/', user_utils.getUsersByStatus.as_view(), name='get_users_status'),
-    path('ping_status/', user_utils.ping_status_user.as_view(), name='ping_status')
+    path('ping_status/', user_utils.ping_status_user.as_view(), name='ping_status'),
+    path('set_offline/', user_utils.set_offline_user.as_view(), name='set_offline'),
 ]
