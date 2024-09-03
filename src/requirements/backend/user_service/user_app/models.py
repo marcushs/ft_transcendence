@@ -65,6 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             'profile_image': self.profile_image.url if self.profile_image else None,
             'profile_image_link': self.profile_image_link,
             'is_verified': self.is_verified,
-            'two_factor_method': self.two_factor_method
+            'two_factor_method': self.two_factor_method,
+            'logged_in_with_oauth': self.logged_in_with_oauth
         }
     

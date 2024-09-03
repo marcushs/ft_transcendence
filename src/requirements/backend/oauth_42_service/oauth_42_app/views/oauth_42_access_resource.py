@@ -87,8 +87,8 @@ class oauth42AccessResourceView(View):
             return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token) 
     
     def send_create_user_request_to_endpoints(self):
-        urls = ['http://auth:8000/auth/add_oauth_user/', 'http://twofactor:8000/twofactor/add_user/', 'http://user:8000/user/add_user/']
-        for url in urls:
+        urls = ['http://auth:8000/auth/add_oauth_user/', 'http://twofactor:8000/twofactor/add_user/', 'http://user:8000/user/add_user/'] 
+        for url in urls: 
             response = send_post_request(url=url, payload=self.payload, csrf_token=self.csrf_token)
             if response.status_code == 400:
                 return response

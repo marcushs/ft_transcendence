@@ -27,7 +27,7 @@ class UserManager(BaseUserManager):
         username = data['username']
         first_name = data['first_name']
         last_name = data['last_name']
-        user = self.model(id=id, email=email, username=username, first_name=first_name, last_name=last_name, logged_in_with_42=True)
+        user = self.model(id=id, email=email, username=username, first_name=first_name, last_name=last_name, logged_in_with_oauth=True)
         user.save(using=self._db)
         return user
 
@@ -60,5 +60,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             'last_name': self.last_name,
             'is_verified': self.is_verified,
             'two_factor_method': self.two_factor_method,
+            'logged_in_with_oauth': self.logged_in_with_oauth
         }
  
