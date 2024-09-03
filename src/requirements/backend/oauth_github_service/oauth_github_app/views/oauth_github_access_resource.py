@@ -30,33 +30,33 @@ class oauthGithubAccessResourceView(View):
         resource_url = 'https://api.github.com/user'
 
         headers = {
-            'Authorization': f'Bearer {token}' 
+            'Authorization': f'Bearer {token}'  
         }
 
         response = requests.get(resource_url, headers=headers)
-
         print(response.text)
         # Check if the response contains JSON data and handle errors
         try:
             response_data = response.json()
-            if 'status' == '401':
+            if 'status' in response_data and response_data['status'] == '401':
                 return JsonResponse({'message': response_data['message'],
                                      'status': 'Error'}, 
                                      status=401)
-            return self.create_or_login_user(request, response_data)
+            return self.create_or_login_user(request, response_data, token) 
         except ValueError:
             return JsonResponse({'message': 'Invalid JSON response',
                                  'status': 'Error'}, 
                                  status=500)
         
-    def create_or_login_user(self, request, data):
+    def create_or_login_user(self, request, data, token): 
         self.csrf_token = request.headers.get('X-CSRFToken')
         self.username = data['login']
-        self.email = data['email']
-        self.first_name = data['first_name']
-        self.last_name = data['last_name']
-        self.profile_image_link = data['image']['link']
-        self.init_payload()
+        self.profile_image_link = data['avatar_url']
+        self.split_fullname(data['name'])
+        response = self.get_user_email(token)
+        if response.status_code == 401:
+            return response
+        self.init_payload() 
 
         try:
             user = User.objects.get(email=self.email)
@@ -101,3 +101,25 @@ class oauthGithubAccessResourceView(View):
             'logged_in_with_oauth': True,
             'profile_image_link': self.profile_image_link,
         }
+
+    def get_user_email(self, token):
+        resource_url = 'https://api.github.com/user/emails'
+        headers = {
+            'Accept': 'application/json',
+            'Authorization': f'Bearer {token}'
+        }
+        response = requests.get(resource_url, headers=headers)
+        response_data = response.json()
+        if 'status' in response_data and response_data['status'] == '401':
+            return JsonResponse({'message': response_data['message'],
+                                'status': 'Error'}, 
+                                status=401)
+        self.email = response_data[0]['email']
+        return JsonResponse({'message': "Successfully fetched user email", "status": "Success"}, status=200)
+
+    def split_fullname(self, fullname):
+        names = fullname.split(' ') 
+        self.first_name = names[0]
+        self.last_name = names[-1]
+
+        
