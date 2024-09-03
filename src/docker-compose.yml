@@ -111,6 +111,7 @@ services:
     networks:
       - transcendence-network
 
+
   # --> OAUTH GOOGLE SERVICE <-- #
   oauth_google:
     container_name: oauth_google
@@ -136,6 +137,33 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
+
+  # --> OAUTH GITHUB SERVICE <-- #
+  oauth_github:
+    container_name: oauth_github
+    restart: always
+    build:
+      context: ./requirements/backend/oauth_github_service
+      dockerfile: docker/Dockerfile
+    image: oauth_github
+    env_file:
+      - ./requirements/backend/.env
+    command: >
+      sh -c "
+          python3 manage.py makemigrations &&
+          python3 manage.py migrate &&
+          python3 manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./requirements/backend/oauth_github_service:/app
+    ports:
+      - "8005:8000"
+    depends_on:
+      oauth_github_db:
+        condition: service_healthy
+    networks:
+      - transcendence-network
+
   # --> DATABASE TWOFACTOR <-- #
   twofactor_db:
     container_name: twofactor_db
@@ -248,6 +276,29 @@ services:
       timeout: 3s
       retries: 5
 
+  # --> DATABASE OAUTH_GITHUB <-- #
+  oauth_github_db:
+    container_name: oauth_github_db
+    image: postgres
+    restart: always
+    env_file: ./requirements/backend/.env
+    environment:
+      - POSTGRES_USER=${OAUTH_GITHUB_DB_USER}
+      - POSTGRES_DB=${OAUTH_GITHUB_DB_NAME}
+      - POSTGRES_PASSWORD=${OAUTH_GITHUB_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - oauth_github_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+     - "5437:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${OAUTH_GITHUB_DB_USER} -d ${OAUTH_GITHUB_DB_NAME}"]
+      interval: 4s
+      timeout: 3s
+      retries: 5
+
 volumes:
   user_pgdata:
     name: user_data
@@ -259,6 +310,8 @@ volumes:
     name: oauth_42_pgdata
   oauth_google_pgdata:
     name: oauth_google_pgdata
+  oauth_github_pgdata:
+    name: oauth_github_pgdata
 
 networks:
   transcendence-network:

@@ -21,27 +21,28 @@ env = environ.Env()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-class oauth42AccessResourceView(View): 
+class oauthGithubAccessResourceView(View): 
     def __init__(self):
         super().__init__
     
     def get(self, request):
-        token = request.COOKIES.get('42_access_token') 
-        resource_url = 'https://api.intra.42.fr/v2/me'
+        token = request.COOKIES.get('github_access_token') 
+        resource_url = 'https://api.github.com/user'
 
         headers = {
-            'Authorization': f'Bearer {token}'
+            'Authorization': f'Bearer {token}' 
         }
 
         response = requests.get(resource_url, headers=headers)
 
+        print(response.text)
         # Check if the response contains JSON data and handle errors
         try:
             response_data = response.json()
-            if 'error' in response_data:
-                return JsonResponse({'message': response_data['error'],
+            if 'status' == '401':
+                return JsonResponse({'message': response_data['message'],
                                      'status': 'Error'}, 
-                                     status=400)
+                                     status=401)
             return self.create_or_login_user(request, response_data)
         except ValueError:
             return JsonResponse({'message': 'Invalid JSON response',
