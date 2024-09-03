@@ -69,8 +69,10 @@ class oauth42AccessResourceView(View):
                                             last_name=self.last_name,
                                             profile_image_link=self.profile_image_link)
             self.id = str(user.id)
-            self.payload['user_id'] = self.id
+            self.payload['user_id'] = self.id 
+            print("before send endpoints")
             response = self.send_create_user_request_to_endpoints()
+            print("after send endpoints")
             if response is not None and response.status_code == 400:
                 response_data = json.loads(response.content)
                 if response_data['message'] == "Email address already registered! Try logging in.":
@@ -97,6 +99,6 @@ class oauth42AccessResourceView(View):
             'email': self.email,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'logged_in_with_42': True,
+            'logged_in_with_oauth': True,
             'profile_image_link': self.profile_image_link,
         }

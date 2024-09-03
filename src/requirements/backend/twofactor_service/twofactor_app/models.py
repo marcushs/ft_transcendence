@@ -5,13 +5,13 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,Permiss
 import uuid
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, username, user_id, logged_in_with_42):
+    def create_user(self, email, username, user_id, logged_in_with_oauth):
         if not email:
             raise ValueError('The Email field must be set')
         if not username:
             raise ValueError('The username field must be set')
         email = self.normalize_email(email)
-        user = self.model(email=email, username=username, id=user_id, logged_in_with_42=logged_in_with_42)
+        user = self.model(email=email, username=username, id=user_id, logged_in_with_oauth=logged_in_with_oauth)
         user.set_unusable_password()
         user.save(using=self._db)
         return user
@@ -25,7 +25,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     two_factor_code_expiry = models.DateTimeField(null=True, blank=True)
     authenticator_secret = models.CharField(max_length=50, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
-    logged_in_with_42 = models.BooleanField(default=False)
+    logged_in_with_oauth = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -43,6 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             'two_factor_method': self.two_factor_method,
             'score': self.score,
             'is_verified': self.is_verified,
+            'logged_in_with_oauth': self.logged_in_with_oauth,
         }
     
     def set_two_factor_code(self, code, expire_in):

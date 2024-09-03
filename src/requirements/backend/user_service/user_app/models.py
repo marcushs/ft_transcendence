@@ -23,7 +23,7 @@ class UserManager(BaseUserManager):
         username = data['username']
         profile_image_link = data['profile_image_link']
         user_id = data['user_id']
-        user = self.model(id=user_id, email=email, username=username, profile_image_link=profile_image_link, logged_in_with_42=True)
+        user = self.model(id=user_id, email=email, username=username, profile_image_link=profile_image_link, logged_in_with_oauth=True)
         user.save(using=self._db)
         return user
 
@@ -35,7 +35,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_image_link = models.CharField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
     is_verified = models.BooleanField(default=False)
     two_factor_method = models.CharField(max_length=20, blank=True)
-    logged_in_with_42 = models.BooleanField(default=False)
+    logged_in_with_oauth = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []

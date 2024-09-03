@@ -21,7 +21,7 @@ class add_new_user(View):
             return JsonResponse({'message': 'Username already taken! Try another one.', "status": "Error"}, status=400)
         if User.objects.filter(email=data['email']).exists():
             return JsonResponse({'message': 'Email address already registered! Try logging in.', "status": "Error"}, status=400)
-        User.objects.create_user(email=data['email'], username=data['username'], user_id=data['user_id'], logged_in_with_42=data['logged_in_with_42'])
+        User.objects.create_user(email=data['email'], username=data['username'], user_id=data['user_id'], logged_in_with_oauth=data['logged_in_with_oauth'])
         return JsonResponse({"message": 'user added with success', "status": "Success"}, status=200)
     
 class update_user(View):

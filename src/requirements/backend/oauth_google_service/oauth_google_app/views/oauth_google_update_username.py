@@ -19,7 +19,7 @@ env = environ.Env()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-class oauth42UpdateUsernameView(View): 
+class oauthGoogleUpdateUsernameView(View): 
     def __init__(self):
         super().__init__
         
@@ -65,6 +65,5 @@ class oauth42UpdateUsernameView(View):
             'email': user.email,
             'first_name': user.first_name,
             'last_name': user.last_name,
-            'logged_in_with_oauth': True,
             'profile_image_link': user.profile_image_link,
         }

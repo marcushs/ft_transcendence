@@ -1,19 +1,18 @@
 # --- SRC --- #
 from django.views import View
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from ..models import User
 from django.contrib.auth import get_user_model
-from oauthlib.oauth2 import WebApplicationClient
-import secrets
+import uuid
 from django.conf import settings
 
 # --- UTILS --- #
 import json
-import re #regular expression
 import environ
 import os
 import requests
 from ..utils.send_post_request import send_post_request
+from ..utils.login_utils import login
 
 User = get_user_model()
 
@@ -34,18 +33,20 @@ class oauthGoogleAccessResourceView(View):
         }
 
         response = requests.get(resource_url, headers=headers)
-        try:
-            response_data = response.json()
-            if 'error' in response_data:
-                return JsonResponse({'message': response_data['error'],
-                                     'status': 'Error'}, 
-                                     status=400)
-            return JsonResponse(response_data, safe=False)
-        except ValueError:
-            return JsonResponse({'message': 'Invalid JSON response',
-                                 'status': 'Error'}, 
-                                 status=500)
+        # try:
+        #     response_data = response.json()
+        #     if 'error' in response_data:
+        #         return JsonResponse({'message': response_data['error'],
+        #                              'status': 'Error'}, 
+        #                              status=400)
+        #     return JsonResponse(response_data, safe=False)
+        # except ValueError:
+        #     return JsonResponse({'message': 'Invalid JSON response',
+        #                          'status': 'Error'}, 
+        #                          status=500)
         # Check if the response contains JSON data and handle errors
+        print(response.text) 
+        print(response.headers.get('Content-Type'))
         try:
             response_data = response.json()
             if 'error' in response_data:
@@ -54,41 +55,54 @@ class oauthGoogleAccessResourceView(View):
                                      status=400)
             return self.create_or_login_user(request, response_data)
         except ValueError:
+            print("here???")
             return JsonResponse({'message': 'Invalid JSON response',
                                  'status': 'Error'}, 
                                  status=500)
         
     def create_or_login_user(self, request, data):
         self.csrf_token = request.headers.get('X-CSRFToken')
-        self.username = data['login']
-        self.email = data['email']
         self.first_name = data['given_name']
         self.last_name = data['family_name']
+        self.username = self.first_name[0] + self.last_name
+        self.email = data['email']
         self.profile_image_link = data['picture']
         self.init_payload()
 
         try:
-            user = User.objects.get(username=self.username)
-            self.payload['user_id'] = user.id
-            return self.login()
+            user = User.objects.get(email=self.email)
+            self.payload['user_id'] = str(user.id)
+            return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
         except User.DoesNotExist:
-            user = User.objects.create_user(username=self.username,
+            user = User.objects.create_user(id=uuid.uuid4(),
+                                            username=self.username,
                                             email=self.email,
                                             first_name=self.first_name,
                                             last_name=self.last_name,
                                             profile_image_link=self.profile_image_link)
-            self.payload['user_id'] = user.id
-            self.send_create_user_request_to_endpoints()
-            return self.login()
+            self.id = str(user.id)
+            self.payload['user_id'] = self.id
+            response = self.send_create_user_request_to_endpoints()
+            if response is not None and response.status_code == 400:
+                response_data = json.loads(response.content)
+                if response_data['message'] == "Email address already registered! Try logging in.":
+                    user.delete()
+                    response_data['url'] = '/login'
+                    response = JsonResponse(response_data, status=400)
+                elif response_data['message'] == "Username already taken! Try another one.":
+                    response_data['url'] = '/oauth-username?oauth_provider=oauth_42'
+                    response = JsonResponse(response_data, status=400)
+                    response.set_cookie('id', self.id, httponly=True)
+                return response
+            print("reached here?") 
+            return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
     
     def send_create_user_request_to_endpoints(self):
-        post_response = send_post_request(url='http://auth:8000/auth/add_oauth_user/', payload=self.payload, csrf_token=self.csrf_token)
-
-        post_response = send_post_request(url='http://twofactor:8000/twofactor/add_user/', payload=self.payload, csrf_token=self.csrf_token)
-
-        post_response = send_post_request(url='http://user:8000/user/add_user/', payload=self.payload, csrf_token=self.csrf_token)
-        print(f'post response: {post_response}')
-        return post_response
+        urls = ['http://auth:8000/auth/add_oauth_user/', 'http://twofactor:8000/twofactor/add_user/', 'http://user:8000/user/add_user/']
+        for url in urls:
+            response = send_post_request(url=url, payload=self.payload, csrf_token=self.csrf_token)
+            if response.status_code == 400:
+                return response
 
     def init_payload(self):
         self.payload = {
@@ -96,26 +110,6 @@ class oauthGoogleAccessResourceView(View):
             'email': self.email,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'logged_in_with_google': True,
+            'logged_in_with_oauth': True,
             'profile_image_link': self.profile_image_link,
         }
-
-    def login(self):
-        headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRFToken': self.csrf_token
-        }
-        cookies = {'csrftoken': self.csrf_token}
-        response = requests.post(url='http://auth:8000/auth/login/', headers=headers, cookies=cookies ,data=json.dumps(self.payload))
-        response_data = response.json()
-        if response.status_code == 200:
-            token = response.cookies.get('jwt')
-            refresh_token = response.cookies.get('jwt_refresh')
-            response = JsonResponse(response_data)
-            response.set_cookie('jwt', token, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
-            response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
-            return response
-        else:
-            return JsonResponse(response_data)
-         

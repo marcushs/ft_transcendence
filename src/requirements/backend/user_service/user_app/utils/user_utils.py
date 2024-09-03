@@ -22,7 +22,7 @@ class add_new_user(View):
             return JsonResponse({'message': 'Username already taken! Try another one.', "status": "Error"}, status=400)
         if User.objects.filter(email=data['email']).exists():
             return JsonResponse({'message': 'Email address already registered! Try logging in.', "status": "Error"}, status=400)
-        if data['logged_in_with_42'] and data['logged_in_with_42'] is True:
+        if data['logged_in_with_oauth'] and data['logged_in_with_oauth'] is True:
             User.objects.create_oauth_user(data)
         else:
             User.objects.create_user(email=data['email'], username=data['username'], user_id=data['user_id'])

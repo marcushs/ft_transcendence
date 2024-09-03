@@ -29,7 +29,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_image_link = models.CharField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
     is_verified = models.BooleanField(default=False)
     two_factor_method = models.CharField(max_length=20,  choices=[('email', 'Email'), ('authenticator', 'Authenticator App')], blank=True)
-    logged_in_with_42 = models.BooleanField(default=True)
+    logged_in_with_oauth = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -49,5 +49,5 @@ class User(AbstractBaseUser, PermissionsMixin):
             'profile_image_link': self.profile_image_link,
             'is_verified': self.is_verified,
             'two_factor_method': self.two_factor_method,
-            'logged_in_with_42': self.logged_in_with_42
+            'logged_in_with_oauth': self.logged_in_with_oauth
         }

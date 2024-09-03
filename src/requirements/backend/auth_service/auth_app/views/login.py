@@ -15,7 +15,7 @@ class login_view(View):
     
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
-        if 'logged_in_with_42' in data and data['logged_in_with_42'] is True:
+        if 'logged_in_with_oauth' in data and data['logged_in_with_oauth'] is True:
             print('oauth login')
             return self._oauth_login(request, data)
         if 'twofactor' in data:
