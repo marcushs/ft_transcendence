@@ -11,7 +11,6 @@ class ChooseLanguageComponent extends HTMLElement {
 			en: false,
 			zh: false
 		}
-		this.isAnimabled = true;
 		this.isOpen = false;
 	}
 
@@ -39,9 +38,26 @@ class ChooseLanguageComponent extends HTMLElement {
 	}
 
 
+	attachEventListener() {
+		const chosenLanguageElement = this.querySelector('.chosen-language');
+
+		this.querySelector('.language-list').addEventListener('click', event => this.handleClickOnNewLanguage(event));
+
+		document.addEventListener('closeChooseLanguageComponent', () => this.handleCloseChooseLanguageComponentEvent());
+
+		this.addEventListener('click', event => event.stopPropagation());
+		document.addEventListener('click', () => this.handleClickOutOfComponent());
+
+		chosenLanguageElement.addEventListener('click', (event) => this.handleClickOnChosenLanguage(chosenLanguageElement));
+	}
+
+
+	// Setters / getters
+
 	async setCurrentLanguage() {
 		this.languages[localStorage.getItem("userLanguage")] = true;
 	}
+
 
 	getCurrentLanguage() {
 		if (this.languages.en === true)
@@ -66,6 +82,9 @@ class ChooseLanguageComponent extends HTMLElement {
 		return otherLanguages;
 	}
 
+
+	// Generate elements
+
 	generateFlagImgElement(language) {
 		const imgElement = document.createElement("img");
 
@@ -85,6 +104,7 @@ class ChooseLanguageComponent extends HTMLElement {
 
 		return imgElement;
 	}
+
 
 	generateCurrentLanguageElement() {
 		const chosenLanguage = this.querySelector('.chosen-language');
@@ -106,93 +126,107 @@ class ChooseLanguageComponent extends HTMLElement {
 			liElement.appendChild(imgFlag);
 			ulElement.appendChild(liElement);
 		});
-		console.log(otherLanguages)
-		console.log(ulElement);
 	}
 
 
-	attachEventListener() {
-		const chosenLanguageElement = this.querySelector('.chosen-language');
-		const languagesInList = this.querySelectorAll('.language-list .language');
+	// Handle events
 
-		this.querySelector('.language-list').addEventListener('click', async (event) => {
-			if (event.target.classList.contains('flag')) {
-				localStorage.setItem('userLanguage', event.target.id);
-				await setUserLanguageInDb(event.target.id);
-				await loadLanguagesJson();
-				throwRedirectionEvent('/')
-			}
-		})
-
-		this.addEventListener('click', event => event.stopPropagation())
-
-		document.addEventListener('click', () => this.handleClickOutOfComponent())
-
-		chosenLanguageElement.addEventListener('click', (event) => this.handleClickOnChosenLanguage(chosenLanguageElement));
+	async handleClickOnNewLanguage(event) {
+		if (event.target.classList.contains('flag')) {
+			localStorage.setItem('userLanguage', event.target.id);
+			await setUserLanguageInDb(event.target.id);
+			await loadLanguagesJson();
+			throwRedirectionEvent('/');
+		}
 	}
 
 
-	handleClickOnChosenLanguage(chosenLanguageElement) {
+	async handleClickOnChosenLanguage(chosenLanguageElement) {
 		const list = this.querySelector('.language-list');
 		const chosenLanguageCaret = chosenLanguageElement.querySelector('i');
 
-		if (this.isAnimabled === false) // To not throw animation if one is already in progress
-			return ;
-
-		if (getComputedStyle(list).display === 'none')
+		if (getComputedStyle(list).display === 'none') {
+			this.closeOtherNavBarComponent();
 			this.openListAnimation(list, chosenLanguageCaret);
-		else
+		}
+		else {
 			this.closeListAnimation(list, chosenLanguageCaret);
+		}
 	}
 
 
-	openListAnimation(list, chosenLanguageCaret) {
-		this.isOpen = true;
-		this.isAnimabled = false;
-		setTimeout(() => {
-			this.isAnimabled = true;
-		}, 500);
+	closeOtherNavBarComponent() {
+		const notificationsMenu = document.querySelector('.notifications-container-background');
+		const accountInfosMenu = document.querySelector('.account-menu-background');
 
-		chosenLanguageCaret.style.animation = 'animate-caret-up 0.5s ease forwards';
-
-		list.style.display = 'block';
-		list.style.animation = 'animate-list-open 0.5s ease forwards';
-
-		this.querySelector('ul li:nth-child(1)').style.animation = '';
-		this.querySelector('ul li:nth-child(2)').style.animation = '';
-		setTimeout(() => {
-			this.querySelector('ul li:nth-child(1)').style.animation = 'animate-flag-appearance 0.4s ease forwards';
-		}, 200);
-		setTimeout(() => {
-			this.querySelector('ul li:nth-child(2)').style.animation = 'animate-flag-appearance 0.4s ease forwards';
-		}, 400)
-	}
-
-
-	closeListAnimation(list, chosenLanguageCaret) {
-		this.isOpen = false;
-		this.isAnimabled = false;
-		setTimeout(() => {
-			this.isAnimabled = true;
-		}, 500);
-
-		chosenLanguageCaret.style.animation = 'animate-caret-down 0.5s ease forwards';
-
-		list.style.animation = 'animate-list-close 0.5s ease forwards';
-		setTimeout(() => {
-			list.style.display = 'none';
-		}, 500);
-
-		setTimeout(() => {
-			this.querySelector('ul li:nth-child(1)').style.animation = 'animate-flag-disappearance 0.1s ease forwards';
-		}, 100);
-		this.querySelector('ul li:nth-child(2)').style.animation = 'animate-flag-disappearance 0.1s ease forwards';
+		if (getComputedStyle(notificationsMenu).display !== 'none')
+			this.throwCloseNotificationsContainerEvent();
+		if (getComputedStyle(accountInfosMenu).display !== 'none')
+			this.throwCloseAccountInfosComponentEvent();
 	}
 
 
 	handleClickOutOfComponent() {
-		if (this.isAnimabled && this.isOpen)
+		if (this.isOpen)
 			this.closeListAnimation(this.querySelector('.language-list'), this.querySelector('i'));
+	}
+
+
+	handleCloseChooseLanguageComponentEvent() {
+		this.closeListAnimation(this.querySelector('.language-list'), this.querySelector('i'));
+	}
+
+
+	// Throw events
+
+	throwCloseNotificationsContainerEvent() {
+		const event = new CustomEvent('closeNotificationsContainer', {
+			bubbles: true
+		});
+
+		document.dispatchEvent(event);
+	}
+
+
+	throwCloseAccountInfosComponentEvent() {
+		const event = new CustomEvent('closeAccountInfosComponent', {
+			bubbles: true
+		});
+
+		document.dispatchEvent(event);
+	}
+
+
+	// Animations
+
+	openListAnimation(list, chosenLanguageCaret) {
+		this.style.zIndex = '3';
+		this.isOpen = true;
+
+		chosenLanguageCaret.style.animation = 'animate-caret-up 0.3s ease forwards';
+		document.querySelector('notification-component').style.zIndex = '2';
+
+		list.style.display = 'block';
+		list.style.animation = 'animate-list-open 0.3s ease forwards';
+
+		this.querySelector('ul li:nth-child(1)').style.animation = 'animate-flag-appearance 0.2s ease forwards';
+		this.querySelector('ul li:nth-child(2)').style.animation = 'animate-flag-appearance 0.3s ease forwards';
+	}
+
+
+	closeListAnimation(list, chosenLanguageCaret) {
+		this.style.zIndex = '2';
+		this.isOpen = false;
+
+		chosenLanguageCaret.style.animation = 'animate-caret-down 0.3s ease forwards';
+
+		list.style.animation = 'animate-list-close 0.3s ease forwards';
+		setTimeout(() => {
+			list.style.display = 'none';
+		}, 300);
+
+		this.querySelector('ul li:nth-child(1)').style.animation = 'animate-flag-disappearance 0.1s ease forwards';
+		this.querySelector('ul li:nth-child(2)').style.animation = 'animate-flag-disappearance 0.1s ease forwards';
 	}
 
 }

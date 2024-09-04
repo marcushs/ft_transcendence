@@ -32,6 +32,8 @@ class NotificationComponent extends HTMLElement {
 		this.fillNumberOfNotifications();
 		this.fillNotifications();
 		this.attachEventsListener();
+		await this.deleteNotifications();
+		await this.changeIsReadStatus();
 	}
 
 
@@ -47,6 +49,24 @@ class NotificationComponent extends HTMLElement {
 		}
 	}
 
+	async deleteNotifications() {
+		const notifications = this.notifications.filter((notification) => notification.is_read === true && notification.type === 'friend-request-accepted');
+
+		for (const notification of notifications) {
+			console.log(notification)
+			await sendRequest('DELETE', 'http://localhost:8004/notifications/manage_notifications/', { uuid: notification.uuid });
+		}
+	}
+
+	async changeIsReadStatus() {
+		const notifications = this.notifications.filter((notification) => notification.is_read === false);
+		const uuids = notifications.map((notification) => notification.uuid);
+
+		console.log(uuids)
+		for (const notification of notifications) {
+			await sendRequest('PUT', 'http://localhost:8004/notifications/manage_notifications/', { uuids: uuids });
+		}
+	}
 
 	attachEventsListener() {
 		this.querySelector('.bell').addEventListener('click', () => this.handleClickOnBell());
@@ -66,7 +86,6 @@ class NotificationComponent extends HTMLElement {
 	fillNumberOfNotifications() {
 		const numberOfNotificationsElement = this.querySelector('.number-of-notifications');
 
-		console.log(numberOfNotificationsElement)
 		if (this.notifications.length > 9) {
 			numberOfNotificationsElement.textContent = '9+';
 			numberOfNotificationsElement.style.letterSpacing = '-3px';
@@ -101,11 +120,11 @@ class NotificationComponent extends HTMLElement {
 	createPendingFriendRequestNotification(notification) {
 		const li = document.createElement('li');
 
-		if (notification.is_read)
+		if (!notification.is_read)
 			li.className = 'no-viewed-notification';
 
 		li.innerHTML = `
-			<p>You have a new friend request from ${notification.receiver}.</p>
+			<p>${notification.message}</p>
 			<i class="fa-solid fa-check"></i>
 			<i class="fa-solid fa-xmark"></i>
 			<hr>
@@ -117,8 +136,9 @@ class NotificationComponent extends HTMLElement {
 	createAcceptedFriendRequestNotification(notification) {
 		const li = document.createElement('li');
 
-		if (notification.is_read)
-			li.classList.add('no-viewed-notification');
+		if (!notification.is_read) {
+			li.className = 'no-viewed-notification';
+		}
 
 		li.innerHTML = `
 			<p>${notification.message}</p>

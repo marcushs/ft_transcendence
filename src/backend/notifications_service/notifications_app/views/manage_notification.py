@@ -28,14 +28,14 @@ class manage_notification_view(View):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200)
         data = json.loads(request.body.decode('utf-8'))
-        check_response = self.check_post_data(data=data)
+        check_response = self.check_put_data(data=data)
         if check_response != 'Success':
             return JsonResponse({'status': 'error', 'message': check_response}, status=200)
         self.set_notifications_as_read(data=data)
         return JsonResponse({"status": "success"}, status=200)
 
     def set_notifications_as_read(self, data):
-        for notification_id in data['uuid']:
+        for notification_id in data['uuids']:
             try:
                 notification = Notification.objects.get(uuid=notification_id)
                 notification.is_read = True
@@ -97,14 +97,10 @@ class manage_notification_view(View):
         return 'Success'
     
     def check_put_data(self, data):
-        if not data['uuid_list']:
+        if not data['uuids']:
             return 'Missing attributes'
-        if data['uuid_list'] is None:
+        if data['uuids'] is None:
             return 'Notification id is missing'
-        try:
-            self.sender = User.objects.get(username=data['sender'])
-        except User.DoesNotExist:
-            return 'Sender user not found'
         return 'Success'
 
     def check_delete_data(self, data):
@@ -112,8 +108,4 @@ class manage_notification_view(View):
             return 'Missing attributes'
         if data['uuid'] is None:
             return 'Notification id  is missing'
-        try:
-            self.sender = User.objects.get(username=data['sender'])
-        except User.DoesNotExist:
-            return 'Sender user not found'
         return 'Success'

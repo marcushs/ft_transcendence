@@ -8,6 +8,7 @@ import login from "../views/login.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {getString} from "../utils/languageManagement.js";
 import './NotificationComponent.js';
+import './AccountInfosComponent.js';
 
 class NavBarComponent extends HTMLElement {
 
@@ -46,9 +47,7 @@ class NavBarComponent extends HTMLElement {
 
         logo.addEventListener('click', (event) => throwRedirectionEvent('/'))
         homeLink.addEventListener('click', (event) => throwRedirectionEvent('/'));
-        if (profileElement)
-            profileElement.addEventListener('click', (event) => throwRedirectionEvent('/profile'));
-        else {
+        if (!profileElement) {
             this.querySelector('button-component[label="login"]').addEventListener('click', (event) => throwRedirectionEvent('/login'));
             this.querySelector('button-component[label="signup"]').addEventListener('click', (event) => throwRedirectionEvent('/signup'));
         }
@@ -66,19 +65,11 @@ class NavBarComponent extends HTMLElement {
 
     async generateLoggedUserInfos() {
         const userData = await getUserData();
-        const profilePicture = document.createElement('img');
-
-        profilePicture.className = 'profile-picture';
-        profilePicture.src = getProfileImage(userData);
 
         return `
             <choose-language-component></choose-language-component>
             <notification-component></notification-component>
-<!--            <img src="../../assets/bell.svg" alt="notifs-bell">-->
-            <div class="account-infos" id="loggedUser">
-                <p>${userData.username}</p>
-                ${profilePicture.outerHTML}
-            </div>
+            <account-infos-component username="${userData.username}" profile-picture="${getProfileImage(userData)}"></account-infos-component>
         `;
     }
 
