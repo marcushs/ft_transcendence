@@ -41,11 +41,11 @@ notification-component .number-of-notifications {
 }
 
 notification-component .notifications-container-background {
-	display: none;
+	/*display: none;*/
 	background: linear-gradient(0deg, var(--neon-pink), var(--neon-blue));
 	position: absolute;
 	width: 35rem;
-	max-height: 0;
+	/*max-height: 0;*/
 	top: calc(100% + 0.5px);
 	padding: 0 1px 1px 1px;
 	border-bottom-left-radius: 5px;
@@ -61,7 +61,7 @@ notification-component .notifications-container {
 notification-component .notifications-container ul {
 	overflow-y: auto;
 	width: 100%;
-	max-height: 0;
+	/*max-height: 0;*/
 	list-style-type: none;
 	background: var(--component-background-color);
 	border-bottom-left-radius: 5px;

@@ -99,7 +99,6 @@ class ContactComponent extends HTMLElement {
         };
 
         try {
-            alert('test')
             const data = await sendRequest('POST', url, payload);
             if (data.status === 'error')
                 console.error(data.message);

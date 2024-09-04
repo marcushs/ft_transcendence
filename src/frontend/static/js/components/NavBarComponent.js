@@ -7,6 +7,7 @@ import signup from "../views/signup.js";
 import login from "../views/login.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {getString} from "../utils/languageManagement.js";
+import './NotificationComponent.js';
 
 class NavBarComponent extends HTMLElement {
 
@@ -72,7 +73,8 @@ class NavBarComponent extends HTMLElement {
 
         return `
             <choose-language-component></choose-language-component>
-            <img src="../../assets/bell.svg" alt="notifs-bell">
+            <notification-component></notification-component>
+<!--            <img src="../../assets/bell.svg" alt="notifs-bell">-->
             <div class="account-infos" id="loggedUser">
                 <p>${userData.username}</p>
                 ${profilePicture.outerHTML}

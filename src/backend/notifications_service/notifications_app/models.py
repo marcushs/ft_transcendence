@@ -11,7 +11,7 @@ class Notification(models.Model):
     message = models.TextField(null=False, blank=True, default='Error while displaying message')
     type = models.CharField(null=False, blank=True, default='unknown')
     is_read = models.BooleanField(blank=True, null=False, default=False)
-    is_read_at =  models.DateTimeField(default=None)
+    is_read_at =  models.DateTimeField(null=True, default=None)
     uuid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -1,3 +1,5 @@
+import {sendRequest} from "../utils/sendRequest.js";
+
 class NotificationComponent extends HTMLElement {
 	constructor() {
 		super();
@@ -24,19 +26,25 @@ class NotificationComponent extends HTMLElement {
 	}
 
 
-	connectedCallback() {
-		// to wait for fetch
-		this.notifications[0] = { type: 'friend-request-pending', user: 'Alex', isViewed: true , timestamp: '---------'  };
-		this.notifications[1] = { type: 'friend-request-accepted', user: 'Marcus', isViewed: true , timestamp: '---------' };
-		this.notifications[2] = { type: 'private-match-invitation', user: 'Shellks', isViewed: false , timestamp: '---------' };
-		this.notifications[3] = { type: 'tournament-invitation', user: 'Sowoo', isViewed: false , timestamp: '---------' };
-		this.notifications[4] = { type: 'tournament-invitation', user: 'Sowoo', isViewed: false , timestamp: '---------' };
-		// fetch db to get notification
-
+	async connectedCallback() {
+		await this.getNotificationsFromDb();
 		this.notificationsUlElement = this.querySelector('ul');
 		this.fillNumberOfNotifications();
 		this.fillNotifications();
 		this.attachEventsListener();
+	}
+
+
+	async getNotificationsFromDb() {
+		const url = 'http://localhost:8004/notifications/manage_notifications/';
+
+		try {
+			const data = await sendRequest('GET', url, null);
+
+			this.notifications = data.message;
+		} catch (error) {
+			console.error(error.message);
+		}
 	}
 
 
@@ -58,6 +66,7 @@ class NotificationComponent extends HTMLElement {
 	fillNumberOfNotifications() {
 		const numberOfNotificationsElement = this.querySelector('.number-of-notifications');
 
+		console.log(numberOfNotificationsElement)
 		if (this.notifications.length > 9) {
 			numberOfNotificationsElement.textContent = '9+';
 			numberOfNotificationsElement.style.letterSpacing = '-3px';
@@ -92,11 +101,11 @@ class NotificationComponent extends HTMLElement {
 	createPendingFriendRequestNotification(notification) {
 		const li = document.createElement('li');
 
-		if (notification.isViewed)
+		if (notification.is_read)
 			li.className = 'no-viewed-notification';
 
 		li.innerHTML = `
-			<p>You have a new friend request from ${notification.user}.</p>
+			<p>You have a new friend request from ${notification.receiver}.</p>
 			<i class="fa-solid fa-check"></i>
 			<i class="fa-solid fa-xmark"></i>
 			<hr>
@@ -108,11 +117,11 @@ class NotificationComponent extends HTMLElement {
 	createAcceptedFriendRequestNotification(notification) {
 		const li = document.createElement('li');
 
-		if (notification.isViewed)
-			li.className = 'no-viewed-notification';
+		if (notification.is_read)
+			li.classList.add('no-viewed-notification');
 
 		li.innerHTML = `
-			<p>${notification.user} has accepted your friend request.</p>
+			<p>${notification.message}</p>
 			<hr>
 		`;
 		this.notificationsUlElement.append(li);
@@ -122,11 +131,11 @@ class NotificationComponent extends HTMLElement {
 	createPrivateMatchInvitationNotification(notification) {
 		const li = document.createElement('li');
 
-		if (notification.isViewed)
+		if (notification.is_read)
 			li.className = 'no-viewed-notification';
 
 		li.innerHTML = `
-			<p>${notification.user} has invited you to a private game.</p>
+			<p>${notification.receiver} has invited you to a private game.</p>
 			<i class="fa-solid fa-check"></i>
 			<i class="fa-solid fa-xmark"></i>
 			<hr>
@@ -138,11 +147,11 @@ class NotificationComponent extends HTMLElement {
 	createTournamentInvitationNotification(notification) {
 		const li = document.createElement('li');
 
-		if (notification.isViewed)
+		if (notification.is_read)
 			li.className = 'no-viewed-notification';
 
 		li.innerHTML = `
-			<p>${notification.user} has invited you to join a tournament.</p>
+			<p>${notification.receiver} has invited you to join a tournament.</p>
 			<i class="fa-solid fa-check"></i>
 			<i class="fa-solid fa-xmark"></i>
 			<hr>

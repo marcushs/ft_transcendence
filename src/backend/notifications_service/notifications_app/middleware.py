@@ -55,7 +55,7 @@ class NotificationMiddleware(MiddlewareMixin):
         try:
             user_notifications = list(Notification.objects.filter(receiver=request.user, is_read=True))
             for notification in user_notifications:
-                if notification.is_read_at < timezone.now() - timedelta(minutes=1):  #replace by timedelta(days=????)
+                if notification.is_read_at and notification.is_read_at < timezone.now() - timedelta(minutes=1):  #replace by timedelta(days=????)
                     notification.delete()
         except Exception as e:
             pass

@@ -129,6 +129,7 @@ class PopUpComponent extends HTMLElement {
 			const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
 			console.log(data.message);
 			if (data.status === 'success') {
+				await this.sendNotification(username, 'friend-request-pending');
 				return true;
 			}
 			return false;
@@ -204,7 +205,21 @@ class PopUpComponent extends HTMLElement {
 		}
 	}
 
+    async sendNotification(receiver, type){
+        const url = 'http://localhost:8004/notifications/manage_notifications/';
+        const payload = {
+            receiver: receiver,
+            type: type
+        };
 
+        try {
+            const data = await sendRequest('POST', url, payload);
+            if (data.status === 'error')
+                console.error(data.message);
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
 }
 
 customElements.define('pop-up-component', PopUpComponent);

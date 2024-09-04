@@ -1,5 +1,6 @@
 @import './ChooseLanguageComponent.css';
 @import './SearchBar.css';
+@import "./NotificationComponent.css";
 
 nav-bar-component {
     height: 8vh;
