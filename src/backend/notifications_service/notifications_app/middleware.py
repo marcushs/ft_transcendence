@@ -4,6 +4,9 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.conf import settings
+from .models import Notification
+from django.utils import timezone
+from datetime import timedelta
  
 User = get_user_model()
 # Middleware for jwt authentication
@@ -46,3 +49,16 @@ class JWTAuthMiddleware(MiddlewareMixin):
         if hasattr(request, 'new_jwt_refresh'):
             response.set_cookie('jwt_refresh', request.new_jwt_refresh, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
         return response
+ 
+class NotificationMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        try:
+            user_notifications = list(Notification.objects.filter(receiver=request.user, is_read=True))
+            for notification in user_notifications:
+                if notification.is_read_at < timezone.now() - timedelta(minutes=1):  #replace by timedelta(days=????)
+                    notification.delete()
+        except Exception as e:
+            pass
+        response = self.get_response(request)
+        return response
+    

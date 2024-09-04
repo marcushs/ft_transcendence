@@ -1,66 +1,34 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.conf import settings
+import uuid
 from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
 
-class FriendList(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user")
-    friends = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="friends")
+
+class Notification(models.Model):
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sender')
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='receiver')
+    message = models.TextField(null=False, blank=True, default='Error while displaying message')
+    type = models.CharField(null=False, blank=True, default='unknown')
+    is_read = models.BooleanField(blank=True, null=False, default=False)
+    is_read_at =  models.DateTimeField(default=None)
+    uuid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.username
-
-    def add_friend(self, target_user):
-        if not target_user in self.friends.all():
-            self.friends.add(target_user)
-            self.save()
-
-    def remove_friend(self, target_user):
-        if target_user in self.friends.all():
-            self.friends.remove(target_user)
-            self.save()
-
-    def unfriend(self, target_user):
-        self.remove_friend(target_user)
-        friend_list = FriendList.objects.get(user=target_user)
-        friend_list.remove_friend(self.user)
-
-    def is_mutual_friend(self, friend):
-        if friend in self.friends.all():
-            return True
-        return False
+        return self.receiver.username
     
     def to_dict(self):
-        return [{'username': friend.username} for friend in self.friends.all()]
+        return {
+            'sender': self.sender.username,
+            'receiver': self.receiver.username,
+            'message': self.message,
+            'type': self.type,
+            'is_read': self.is_read,
+            'uuid': self.uuid,
+            'created_at': self.created_at
+        }
 
-class FriendRequest(models.Model):
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sender")
-    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="receiver")
-    is_active = models.BooleanField(blank=True, null=False, default=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return self.sender.username
-    
-    def accept(self):
-        receiver_friend_list = FriendList.objects.get(user=self.receiver)
-        if receiver_friend_list:
-            receiver_friend_list.add_friend(self.sender)
-            sender_friend_list = FriendList.objects.get(user=self.sender)
-            if sender_friend_list:
-                sender_friend_list.add_friend(self.receiver)
-                self.is_active = False
-                self.save()
-                
-    def decline(self):
-        self.is_active = False
-        self.save()
-        
-    def cancel(self):
-        self.is_active = False
-        self.save()
-    
 class UserManager(BaseUserManager):
     def create_user(self, username, user_id):
         if not username:
@@ -81,17 +49,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
       return self.username
 
-  
+
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
-    
+
     def to_dict(self):
         return {
             'username': self.username,
         }
-        
-
-@receiver(post_save, sender=User)
-def create_friend_list(sender, instance, created, **kwargs):
-    if created:
-        FriendList.objects.create(user=instance)

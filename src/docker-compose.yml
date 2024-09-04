@@ -109,6 +109,30 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
+  # --> NOTIFICATIONS SERVICE <-- #
+  notifications:
+    container_name: notifications
+    restart: always
+    build:
+      context: ./backend/notifications_service
+      dockerfile: docker/Dockerfile
+    image: notifications
+    env_file: ./backend/.env
+    command: >
+      sh -c "
+        python3 manage.py makemigrations &&
+        python3 manage.py migrate &&
+        python3 manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./backend/notifications_service:/app
+    ports:
+      - "8004:8000"
+    depends_on:
+      notifications_db:
+        condition: service_healthy
+    networks:
+      - transcendence-network
   # --> DATABASE TWOFACTOR <-- #
   twofactor_db:
     container_name: twofactor_db
@@ -197,6 +221,28 @@ services:
       interval: 4s
       timeout: 3s
       retries: 5
+  # --> DATABASE NOTIFICATIONS <-- #
+  notifications_db:
+    container_name: notifications_db
+    image: postgres
+    restart: always
+    env_file: ./backend/.env
+    environment:
+      - POSTGRES_USER=${NOTIFICATIONS_DB_USER}
+      - POSTGRES_DB=${NOTIFICATIONS_DB_NAME}
+      - POSTGRES_PASSWORD=${NOTIFICATIONS_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - notifications_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+     - "5431:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${USER_DB_USER} -d ${USER_DB_NAME}"]
+      interval: 4s
+      timeout: 3s
+      retries: 5
 
 volumes:
   user_pgdata:
@@ -207,6 +253,8 @@ volumes:
     name: twofactor_data
   friends_pgdata:
     name: friends_data
+  notifications_pgdata:
+    name: notifications_data
 
 networks:
   transcendence-network:

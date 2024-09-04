@@ -8,4 +8,4 @@ urlpatterns = [
     path('friendship_status/', friendship_status.GetFriendShipStatus.as_view(), name='friendship_status'),
     path('manage_friendship/', friends_utils.friendshipManager.as_view(), name='manage_friendship'),
     path('search_contacts/', get_friends_list.GetFriendsList.as_view(), name='search_contacts'),
-]
+] 

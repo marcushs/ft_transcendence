@@ -78,6 +78,8 @@ class ContactComponent extends HTMLElement {
         try {
             const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
             if (data.status === 'success') {
+                if (action === 'accept')
+                    this.sendNotification(this.userData.username, 'friend-request-accepted');
                 if (this.closest('ul').className === 'pending-contact-list-result')
                     this.manageChangePendingContact();
                 else
@@ -86,6 +88,23 @@ class ContactComponent extends HTMLElement {
             console.log(data.message);
         } catch (error) {
             console.error('catch: ', error);
+        }
+    }
+
+    async sendNotification(receiver, type){
+        const url = 'http://localhost:8004/notifications/manage_notifications/';
+        const payload = {
+            receiver: receiver,
+            type: type
+        };
+
+        try {
+            alert('test')
+            const data = await sendRequest('POST', url, payload);
+            if (data.status === 'error')
+                console.error(data.message);
+        } catch (error) {
+            console.error(error.message);
         }
     }
 

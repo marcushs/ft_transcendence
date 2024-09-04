@@ -8,4 +8,4 @@ COPY docker/requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ../friends_service /app
+COPY ../notifications_service /app
