@@ -47,6 +47,6 @@ export class PingStatus {
         window.addEventListener('keydown', this.setPingTimeout.bind(this));
         window.addEventListener('scroll', this.setPingTimeout.bind(this));
         window.addEventListener('click', this.setPingTimeout.bind(this));
-        window.addEventListener('beforeunload', this.setOfflineStatus.bind(this))
+        window.addEventListener('beforeunload', this.setOfflineStatus.bind(this));
     }
 }

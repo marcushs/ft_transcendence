@@ -5,10 +5,10 @@
     margin-top: 1rem;
     height: calc(5 * 7rem + 2 * 2.5rem);
     overflow-y: auto;
-    scrollbar-gutter: stable;
+    /* scrollbar-gutter: stable; */
 }
 
-.contact-list-menu ul {
+.contact-list-menu > ul {
     font-size: 1.3rem;
     margin-bottom: 0.5rem;
 }
@@ -27,7 +27,7 @@
 
 .contact-list-menu li {
     width: 100%;
-    padding: 0 1rem;
+    /* padding: 0 1rem; */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -44,7 +44,7 @@
     flex-direction: column;
 }
 
-.contact-list-menu .contact-menu-info p:first-child{
+.contact-list-menu .contact-menu-info p:first-child {
     font-weight:600;
     font-size: 1.7rem;
 }
@@ -77,26 +77,26 @@
 
  /* ------------>>> Online contact section <<<------------*/
 
- .contact-list-menu .online-contact-status p:last-child{
+ .contact-list-menu .online-contact-status p:last-child {
     color: #3AA0B7;
     font-style: italic;
     font-size: 1.3rem;
 }
 
-.contact-list-menu .online-contact-status:hover{
+.contact-list-menu .online-contact-status:hover {
     box-shadow: 0 0 2px rgba(41, 133, 141, 0.81);
     background-color: rgba(6, 35, 38, 0.81);
 }
 
  /* ------------>>> Away contact section <<<------------*/
 
- .contact-list-menu .away-contact-status p:last-child{
+ .contact-list-menu .away-contact-status p:last-child {
     color: rgb(184, 151, 60);
     font-style: italic;
     font-size: 1.3rem;
 }
 
-.contact-list-menu .away-contact-status:hover{
+.contact-list-menu .away-contact-status:hover {
     box-shadow: 0 0 2px rgb(184, 151, 60);
     background-color: rgba(25, 25, 25, 0.81);
 }
@@ -107,13 +107,13 @@
     color: gray;
 } */
 
-.contact-list-menu .offline-contact-status p:last-child{
+.contact-list-menu .offline-contact-status p:last-child {
     color: gray;
     font-style: italic;
     font-size: 1.3rem;
 }
 
-.contact-list-menu .offline-contact-status:hover{
+.contact-list-menu .offline-contact-status:hover {
     box-shadow: 0 0 2px gray;
     background-color: rgba(25, 25, 25, 0.81);
 }
@@ -148,6 +148,53 @@
     height: 5rem;
     border-radius: 50%;
 	border: 1px solid var(--light-grey);
+}
+
+ /* ------------>>> contact action <<<------------*/
+
+.contact-show-action-button {
+    position: relative;
+    flex-direction: column;
+    display: flex;
+    height: 25%;
+    width: 25%;
+}
+
+.contact-action-list {
+	border: 1px solid var(--light-grey);
+    background-color: #171820;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 7rem;
+    right: 0;
+    height: auto;
+    /* height: calc(4 * 3.8rem); */
+    width: 37%;
+    z-index: 3;
+}
+
+.contact-action-list hr {
+    /* border-color: #AC1AA4; */
+    border: none;
+    height: 1px;
+    background-color: var(--light-grey);
+	/* margin: 0.1rem 0; */
+	width: 100%;
+}
+
+.contact-action-list li {
+    height: 3.5rem;
+    padding-left: 0.5rem;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 1.2rem;
+}
+
+.contact-action-list li:hover {
+    box-shadow: 0 0 2px gray;
+    background-color: rgba(67, 67, 67, 0.81);
 }
 
  /* ------------>>> contact icon <<<------------*/

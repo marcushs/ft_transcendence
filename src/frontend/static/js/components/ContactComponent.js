@@ -37,10 +37,36 @@ class ContactComponent extends HTMLElement {
                 <p>${this.userData.username}</p>
                 <p>${this.userData.status}</p>
             </div>
-            <div class="contact-menu-request-icon">
-                ${this.generateIcons()}
-            </div>
-        `;
+            `;
+        if (this.status === 'received_requests') {
+            this.innerHTML += `
+                <div class="contact-menu-request-icon">
+                    <i class="fa-solid fa-check" id='accept'></i>
+                    <i class="fa-solid fa-xmark" id="decline"></i>
+                </div>
+            `
+        } else {
+            this.innerHTML += `
+                <div class='contact-show-action-button'>
+                    yo
+                    <img src='' alt=''></img>
+                </div>
+                <div class='contact-action-list'>
+                    <ul>
+                        <li class='contact-action-send-message'>Send Message</li>
+                        <hr>
+                        <li class='contact-action-invite-play'>Invite to play</li>
+                        <hr>
+                        <li class='contact-action-remove-contact'>Remove contact</li>
+                        <hr>
+                        <li class='contact-action-see-profile'>See profile</li>
+                    </ul>
+                </div>
+            `
+            this.contactActionList = this.querySelector('.contact-action-list');
+            this.contactActionList.style.display = 'none';
+            this.querySelector('.contact-action-list').style.display = 'none'
+        }
         if (this.userData.status === 'online')
             this.querySelector('.status-circle').classList.add('online-status-circle')
         else if (this.userData.status === 'offline')
@@ -49,32 +75,43 @@ class ContactComponent extends HTMLElement {
             this.querySelector('.status-circle').classList.add('away-status-circle')
         this.attachEventListener();
     }
-    
-    generateIcons() {
-        if (this.status === 'contacts') {
-            return `<i class="fa-solid fa-xmark" id='remove'></i>`;
-        } else if (this.status === 'sent_requests') {
-            return `<i class="fa-solid fa-xmark" id='cancel'></i>`
-        } else if (this.status === 'received_requests') {
-            return `
-                <i class="fa-solid fa-check" id='accept'></i>
-                <i class="fa-solid fa-xmark" id="decline"></i>
-            `;
-        }
-    }
 
     attachEventListener() {
-        const requestIcons = this.querySelectorAll('i');
-        requestIcons.forEach(icon => {
-            icon.addEventListener('click', (event) => {
-                // const action = event.target.getAttribute('id');
-                // this.handleRequestIconClick(action);
+        const showActionsButton = this.querySelector('.contact-show-action-button');
+        if (showActionsButton) {
+            showActionsButton.addEventListener('click', (event) => {
+                this.contactActionList.style.display = this.contactActionList.style.display === 'none'  ? 'block' : 'none';
+                this.throwCloseActionsMenuEvent(this);
+                event.stopPropagation();
             });
-        });
-        this.addEventListener('dblclick', () => {
-            document.title = this.userData.username + '-profile';
-            throwRedirectionEvent(`/users/${this.userData.username}`);
+        }
+
+        document.addEventListener('closeActionMenu', (event) => {
+
+            if (event.detail.senderInstance !== this && this.contactActionList.style.display === 'block')
+                this.contactActionList.style.display = 'none';
         })
+        const requestIcons = this.querySelectorAll('i');
+        if (requestIcons) {
+            requestIcons.forEach(icon => {
+                icon.addEventListener('click', (event) => {
+                    const action = event.target.getAttribute('id');
+                    this.handleRequestIconClick(action);
+                });
+            });
+        }
+
+        if (this.contactActionList) {  
+            document.addEventListener('click', () => {
+                if (getComputedStyle(this.contactActionList).display === 'block')
+                    this.contactActionList.style.display = 'none';
+            });
+        }
+
+        // this.addEventListener('dblclick', () => {
+        //     document.title = this.userData.username + '-profile';
+        //     throwRedirectionEvent(`/users/${this.userData.username}`);
+        // })
     }
 
     async handleRequestIconClick(action) {
@@ -111,6 +148,17 @@ class ContactComponent extends HTMLElement {
         } else
             newPendingSummary = pendingSummary.textContent.replace(pendingCountMatch[0], newPendingCount);
         pendingSummary.textContent = newPendingSummary;
+    }
+
+    throwCloseActionsMenuEvent (senderInstance) {
+        const event = new CustomEvent('closeActionMenu', {
+            bubbles: true,
+            detail: {
+                senderInstance: senderInstance
+            }
+        });
+    
+        document.dispatchEvent(event);
     }
 }
 
