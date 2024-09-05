@@ -152,8 +152,8 @@ services:
      - "5434:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${TWOFACTOR_DB_USER} -d ${TWOFACTOR_DB_NAME}"]
-      interval: 4s
-      timeout: 3s
+      interval: 8s
+      timeout: 5s
       retries: 5
   # --> DATABASE AUTH <-- #
   auth_db:
@@ -174,8 +174,8 @@ services:
      - "5433:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${AUTH_DB_USER} -d ${AUTH_DB_NAME}"]
-      interval: 4s
-      timeout: 3s
+      interval: 8s
+      timeout: 5s
       retries: 5
   # --> DATABASE USER <-- #
   user_db:
@@ -196,8 +196,8 @@ services:
      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${USER_DB_USER} -d ${USER_DB_NAME}"]
-      interval: 4s
-      timeout: 3s
+      interval: 8s
+      timeout: 5s
       retries: 5
   # --> DATABASE FRIENDS <-- #
   friends_db:
@@ -217,9 +217,9 @@ services:
     ports:
      - "5435:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${USER_DB_USER} -d ${USER_DB_NAME}"]
-      interval: 4s
-      timeout: 3s
+      test: ["CMD-SHELL", "pg_isready -U ${FRIENDS_DB_USER} -d ${FRIENDS_DB_NAME}"]
+      interval: 8s
+      timeout: 5s
       retries: 5
   # --> DATABASE NOTIFICATIONS <-- #
   notifications_db:
@@ -239,9 +239,9 @@ services:
     ports:
      - "5431:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${USER_DB_USER} -d ${USER_DB_NAME}"]
-      interval: 4s
-      timeout: 3s
+      test: ["CMD-SHELL", "pg_isready -U ${NOTIFICATIONS_DB_USER} -d ${NOTIFICATIONS_DB_NAME}"]
+      interval: 8s
+      timeout: 5s
       retries: 5
 
 volumes:

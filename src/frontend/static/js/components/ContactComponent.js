@@ -3,6 +3,7 @@ import getProfileImage from "../utils/getProfileImage.js";
 import './Friendship/FriendshipButtonComponent.js';
 import userProfile from "../views/user-profile.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
+import {sendNotification} from "../utils/sendNotification.js";
 
 class ContactComponent extends HTMLElement {
     
@@ -79,7 +80,7 @@ class ContactComponent extends HTMLElement {
             const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
             if (data.status === 'success') {
                 if (action === 'accept')
-                    this.sendNotification(this.userData.username, 'friend-request-accepted');
+                    sendNotification(this.userData.username, 'friend-request-accepted');
                 if (this.closest('ul').className === 'pending-contact-list-result')
                     this.manageChangePendingContact();
                 else

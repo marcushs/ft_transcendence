@@ -1,4 +1,8 @@
-import {sendRequest} from "../utils/sendRequest.js";
+import {sendRequest} from "../../utils/sendRequest.js";
+import './AcceptedContactRequestNotificationComponent.js';
+import './PendingContactRequestNotificationComponent.js';
+import './PrivateMatchInvitationNotificationComponent.js';
+import './TournamentMatchInvitationNotificationComponent.js';
 
 class NotificationComponent extends HTMLElement {
 	constructor() {
@@ -17,7 +21,7 @@ class NotificationComponent extends HTMLElement {
 				<p class="number-of-notifications"></p>
 				<i class="fa-regular fa-bell"></i>
 			</div>
-			<div class="notifications-container-background">			
+			<div class="notifications-container-background">
 				<div class="notifications-container">
 					<ul></ul>
 				</div>
@@ -32,8 +36,6 @@ class NotificationComponent extends HTMLElement {
 		this.fillNumberOfNotifications();
 		this.fillNotifications();
 		this.attachEventsListener();
-		await this.deleteNotifications();
-		await this.changeIsReadStatus();
 	}
 
 
@@ -62,7 +64,6 @@ class NotificationComponent extends HTMLElement {
 		const notifications = this.notifications.filter((notification) => notification.is_read === false);
 		const uuids = notifications.map((notification) => notification.uuid);
 
-		console.log(uuids)
 		for (const notification of notifications) {
 			await sendRequest('PUT', 'http://localhost:8004/notifications/manage_notifications/', { uuids: uuids });
 		}
@@ -118,33 +119,24 @@ class NotificationComponent extends HTMLElement {
 	// Create notification element as li
 
 	createPendingFriendRequestNotification(notification) {
-		const li = document.createElement('li');
+		const li = document.createElement('pending-contact-request-notification-component');
 
-		if (!notification.is_read)
-			li.className = 'no-viewed-notification';
-
-		li.innerHTML = `
-			<p>${notification.message}</p>
-			<i class="fa-solid fa-check"></i>
-			<i class="fa-solid fa-xmark"></i>
-			<hr>
-		`;
-		this.notificationsUlElement.append(li);
+		// li.setAttribute('message', notification.message);
+		// li.setAttribute('is_read', notification.is_read);
+		// li.setAttribute('target_username', notification.sender);
+		li.setAttribute('notificationObj', JSON.stringify(notification));
+		this.notificationsUlElement.appendChild(li);
 	}
 
 
 	createAcceptedFriendRequestNotification(notification) {
-		const li = document.createElement('li');
+		const li = document.createElement('accepted-contact-request-notification-component');
 
-		if (!notification.is_read) {
-			li.className = 'no-viewed-notification';
-		}
-
-		li.innerHTML = `
-			<p>${notification.message}</p>
-			<hr>
-		`;
-		this.notificationsUlElement.append(li);
+		// li.setAttribute('message', notification.message);
+		// li.setAttribute('is_read', notification.is_read);
+		// li.setAttribute('target_username', notification.sender);
+		li.setAttribute('notificationObj', JSON.stringify(notification));
+		this.notificationsUlElement.appendChild(li);
 	}
 
 
@@ -245,6 +237,8 @@ class NotificationComponent extends HTMLElement {
 		notificationsMenu.querySelector('ul').style.animation = 'decreaseNotificationsContainerListHeight 0.3s ease forwards';
 		this.style.zIndex = '2';
 		this.isOpen = !this.isOpen;
+		this.deleteNotifications();
+		this.changeIsReadStatus();
 	}
 
 

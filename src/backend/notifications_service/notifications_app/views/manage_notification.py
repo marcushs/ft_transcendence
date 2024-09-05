@@ -70,16 +70,16 @@ class manage_notification_view(View):
             return JsonResponse({'status': 'error', 'message': check_response}, status=200)
         match data['type']:
             case 'friend-request-accepted':
-                message = f'{self.receiver} has accepted your friend request.'
+                message = f'{request.user.username} has accepted your friend request.'
                 Notification.objects.create(sender=request.user, receiver=self.receiver, type=data['type'], message=message)
             case 'friend-request-pending':
-                message = f'You have a new friend request from {self.receiver}.'
+                message = f'You have a new friend request from {request.user.username}.'
                 Notification.objects.create(sender=request.user, receiver=self.receiver, type=data['type'], message=message)
             case 'private-match-invitation':
-                message = f'{self.receiver} has invited you to a private game.'
+                message = f'{request.user.username} has invited you to a private game.'
                 Notification.objects.create(sender=request.user, receiver=self.receiver, type=data['type'], message=message)
             case 'tournament-invitation':
-                message = f'{self.receiver} has invited you to join a tournament.'
+                message = f'{request.user.username} has invited you to join a tournament.'
                 Notification.objects.create(sender=request.user, receiver=self.receiver, type=data['type'], message=message)
             case _:
                 return JsonResponse({'status': 'error', 'message': 'unknown notification type'}, status=200)

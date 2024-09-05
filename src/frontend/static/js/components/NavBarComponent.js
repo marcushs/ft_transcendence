@@ -7,7 +7,7 @@ import signup from "../views/signup.js";
 import login from "../views/login.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {getString} from "../utils/languageManagement.js";
-import './NotificationComponent.js';
+import './Notifications/NotificationComponent.js';
 import './AccountInfosComponent.js';
 
 class NavBarComponent extends HTMLElement {
