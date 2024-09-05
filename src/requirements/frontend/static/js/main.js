@@ -9,6 +9,7 @@ import enableTwoFactor from './views/two_factor/TwoFactorAuthEnable.js';
 import disableTwoFactor from './views/two_factor/TwoFactorAuthDisable.js';
 import oauthRedirect from './views/oauthRedirect.js';
 import oauthUsername from "./views/oauthUsername.js";
+import chat from "./views/chat.js";
 
 const routes = {
     "/": { title: "Home", render: home },
@@ -21,6 +22,7 @@ const routes = {
     "/twofactor/disable": { title: "DisableTwoFactor", render: disableTwoFactor },
     "/oauth-redirect": { title: "OauthRedirect", render: oauthRedirect },
     "/oauth-username": { title: "OauthUsername", render: oauthUsername},
+    "/chat": { title: "chat", render: chat},
 };
 
 // create the csrf token if it does not already exist

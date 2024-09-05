@@ -164,6 +164,32 @@ services:
     networks:
       - transcendence-network
 
+  # --> CHAT SERVICE <-- #
+  chat:
+    container_name: chat
+    restart: always
+    build:
+      context: ./requirements/backend/chat_service
+      dockerfile: docker/Dockerfile
+    image: chat
+    env_file:
+      - ./requirements/backend/.env
+    command: >
+      sh -c "
+          python3 manage.py makemigrations &&
+          python3 manage.py migrate &&
+          python3 manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./requirements/backend/chat_service:/app
+    ports:
+      - "8006:8000"
+    # depends_on:
+    #   oauth_github_db:
+    #     condition: service_healthy
+    networks:
+      - transcendence-network
+
   # --> DATABASE TWOFACTOR <-- #
   twofactor_db:
     container_name: twofactor_db
