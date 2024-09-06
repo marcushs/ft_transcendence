@@ -112,6 +112,14 @@ notification-component .notifications-container ul li .fa-xmark {
 	color: #ff3030;
 }
 
+.notification-date {
+	position: absolute;
+	right: 1%;
+	top: 1%;
+	color: var(--light-grey);
+	font-style: italic;
+}
+
 @keyframes increaseNotificationsContainerBackgroundHeight {
 	from {
 		max-height: 0;
