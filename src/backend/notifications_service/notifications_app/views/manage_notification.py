@@ -3,6 +3,8 @@ from ..models import Notification
 from django.contrib.auth import get_user_model
 from django.views import View
 from django.contrib.auth.models import AnonymousUser
+from django.utils import timezone
+from datetime import timedelta
 import json
 
 User = get_user_model()
@@ -39,6 +41,7 @@ class manage_notification_view(View):
             try:
                 notification = Notification.objects.get(uuid=notification_id)
                 notification.is_read = True
+                notification.is_read_at = timezone.now()
                 notification.save()
             except User.DoesNotExist:
                 pass

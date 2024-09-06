@@ -51,14 +51,6 @@ class NotificationComponent extends HTMLElement {
 		}
 	}
 
-	async deleteNotifications() {
-		const notifications = this.notifications.filter((notification) => notification.is_read === true && notification.type === 'friend-request-accepted');
-
-		for (const notification of notifications) {
-			console.log(notification)
-			await sendRequest('DELETE', 'http://localhost:8004/notifications/manage_notifications/', { uuid: notification.uuid });
-		}
-	}
 
 	async changeIsReadStatus() {
 		const notifications = this.notifications.filter((notification) => notification.is_read === false);
@@ -68,6 +60,7 @@ class NotificationComponent extends HTMLElement {
 			await sendRequest('PUT', 'http://localhost:8004/notifications/manage_notifications/', { uuids: uuids });
 		}
 	}
+
 
 	attachEventsListener() {
 		this.querySelector('.bell').addEventListener('click', () => this.handleClickOnBell());
@@ -237,7 +230,6 @@ class NotificationComponent extends HTMLElement {
 		notificationsMenu.querySelector('ul').style.animation = 'decreaseNotificationsContainerListHeight 0.3s ease forwards';
 		this.style.zIndex = '2';
 		this.isOpen = !this.isOpen;
-		this.deleteNotifications();
 		this.changeIsReadStatus();
 	}
 
