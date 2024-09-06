@@ -3,7 +3,6 @@ import getProfileImage from "../utils/getProfileImage.js";
 import './Friendship/FriendshipButtonComponent.js';
 import userProfile from "../views/user-profile.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
-import {sendNotification} from "../utils/sendNotification.js";
 
 class ContactComponent extends HTMLElement {
     
@@ -25,86 +24,170 @@ class ContactComponent extends HTMLElement {
         this.status = null;
     }
 
-    async connectedCallback() {        
+    async connectedCallback() {
+        await this.setRender();
+        this.attachEventListener();
+    }
+
+    async setRender() {
         const contactPictureUrl = await getProfileImage(this.userData);
 
+        
         this.innerHTML = `
             <div class="contact-menu-picture">
                 <img src='${contactPictureUrl}' alt='contact picture'></img>
             </div>
-            <div class="contact-menu-username">
+            <div class="status-circle">
+            </div>
+            <div class="contact-menu-info">
                 <p>${this.userData.username}</p>
                 <p>${this.userData.status}</p>
             </div>
-            <div class="contact-menu-request-icon">
-                ${this.generateIcons()}
-            </div>
         `;
-        this.attachEventListener();
+        this.setContactActionHTML();
+        this.setContactStatusCircleHTML();
     }
-    
-    generateIcons() {
-        if (this.status === 'contacts-online' || this.status === 'contacts-offline') {
-            return `<i class="fa-solid fa-xmark" id='remove'></i>`;
+
+    setContactActionHTML() {
+        if (this.status === 'received_requests') {
+            this.innerHTML += `
+                <div class="contact-menu-request-icon">
+                    <i class="fa-solid fa-check" id='accept'></i>
+                    <i class="fa-solid fa-xmark" id="decline"></i>
+                </div>
+            `
         } else if (this.status === 'sent_requests') {
-            return `<i class="fa-solid fa-xmark" id='cancel'></i>`
-        } else if (this.status === 'received_requests') {
-            return `
-                <i class="fa-solid fa-check" id='accept'></i>
-                <i class="fa-solid fa-xmark" id="decline"></i>
-            `;
+            this.innerHTML += `
+                <div class="contact-menu-request-icon">
+                    <i class="fa-solid fa-xmark" id="cancel"></i>
+                </div>
+            `
+        } else {
+            this.innerHTML += `
+                <div class='contact-action-menu'>
+                    <i class="fa-solid fa-caret-up"></i>
+                    <div class='contact-action-list'>
+                        <ul>
+                            <li class='contact-action-send-message'>Send Message</li>
+                            <hr>
+                            <li class='contact-action-invite-play'>Invite to play</li>
+                            <hr>
+                            <li class='contact-action-remove-contact'>Remove contact</li>
+                            <hr>
+                            <li class='contact-action-see-profile'>See profile</li>
+                        </ul>
+                    </div>
+                </div>
+                `;
+            this.showActionsList = this.querySelector('.contact-action-menu i');
+            this.contactActionList = this.querySelector('.contact-action-list');
+            this.contactActionList.style.display = 'none';
         }
     }
 
-    attachEventListener() {
-        const requestIcons = this.querySelectorAll('i');
-        requestIcons.forEach(icon => {
-            icon.addEventListener('click', (event) => {
-                const action = event.target.getAttribute('id');
-                console.log('action: ', action);
-                this.handleRequestIconClick(action);
-            });
-        });
-        this.addEventListener('dblclick', () => {
-            document.title = this.userData.username + '-profile';
-            throwRedirectionEvent(`/users/${this.userData.username}`);
-        })
+    setContactStatusCircleHTML() {
+        if (this.userData.status === 'online')
+            this.querySelector('.status-circle').classList.add('online-status-circle')
+        else if (this.userData.status === 'offline')
+            this.querySelector('.status-circle').classList.add('offline-status-circle')
+        else if (this.userData.status === 'away')
+            this.querySelector('.status-circle').classList.add('away-status-circle')
     }
 
+    attachEventListener() {
+        this.handleShowActionMenuEvent();
+        this.handleCloseActionMenuEvent();
+        this.handlePendingRequestEvent();
+        this.handleContactActionsEvent();
+    }
+
+    handleShowActionMenuEvent() {
+        if (this.showActionsList) {
+            this.showActionsList.addEventListener('click', (event) => {
+                this.contactActionList.style.display = this.contactActionList.style.display === 'none'  ? 'block' : 'none';
+                if (this.showActionsList.classList[1] === 'fa-caret-up')
+                    this.showActionsList.classList.replace('fa-caret-up', 'fa-caret-down');
+                else
+                    this.showActionsList.classList.replace('fa-caret-down', 'fa-caret-up');
+                this.throwCloseActionsMenuEvent(this);
+                event.stopPropagation();
+            });
+        }
+    }
+
+    handleCloseActionMenuEvent() {
+        document.addEventListener('closeActionMenu', (event) => {
+            if (event.detail.senderInstance !== this && this.contactActionList.style.display === 'block') {
+                this.contactActionList.style.display = 'none';
+                this.showActionsList.classList.replace('fa-caret-down', 'fa-caret-up');
+            }
+        })
+
+        if (this.contactActionList) {  
+            document.addEventListener('click', () => {
+                if (getComputedStyle(this.contactActionList).display === 'block') {
+                    this.contactActionList.style.display = 'none';
+                    this.showActionsList.classList.replace('fa-caret-down', 'fa-caret-up');
+                }
+            });
+        }
+    }
+
+    handlePendingRequestEvent() {
+        const requestIcons = this.querySelectorAll('i:not(.contact-action-menu i)');
+ 
+        if (requestIcons) {
+            requestIcons.forEach(icon => {
+                icon.addEventListener('click', (event) => {
+                    const action = event.target.getAttribute('id');
+                    this.handleRequestIconClick(action);
+                });
+            });
+        }
+    }
+
+    handleContactActionsEvent() {
+        const contactActions = this.querySelectorAll('.contact-action-list li');
+
+        contactActions.forEach(action => {
+            action.addEventListener('click', () => {
+                switch (action.classList[0]) {
+                    case 'contact-action-send-message':
+                        console.log(`Send message to contact \'${this.userData.username}\' successfully reached`);
+                        break;
+                    case 'contact-action-invite-play':
+                        console.log(`Invite contact \'${this.userData.username}\' to play successfully reached`);
+                        break;
+                    case 'contact-action-remove-contact':
+                        this.handleRequestIconClick('remove');
+                        break;
+                    case 'contact-action-see-profile':
+                        document.title = this.userData.username + '-profile';
+                        throwRedirectionEvent(`/users/${this.userData.username}`);
+                        break;
+                    default:
+                        console.error(`Unknown contact action`);
+                        break;
+                }         
+            })
+        })  
+    }
+ 
     async handleRequestIconClick(action) {
         const payload = {
             status: action,
             target_username: this.userData.username,
         };
         try {
+            console.log(action);
+            
             const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
-            if (data.status === 'success') {
-                if (action === 'accept')
-                    sendNotification(this.userData.username, 'friend-request-accepted');
-                if (this.closest('ul').className === 'pending-contact-list-result')
-                    this.manageChangePendingContact();
-                else
-                    console.log('in friends list here');
+            if (data.status === 'success' && action !== 'remove') {
+                this.manageChangePendingContact();
             }
             console.log(data.message);
         } catch (error) {
             console.error('catch: ', error);
-        }
-    }
-
-    async sendNotification(receiver, type){
-        const url = 'http://localhost:8004/notifications/manage_notifications/';
-        const payload = {
-            receiver: receiver,
-            type: type
-        };
-
-        try {
-            const data = await sendRequest('POST', url, payload);
-            if (data.status === 'error')
-                console.error(data.message);
-        } catch (error) {
-            console.error(error.message);
         }
     }
 
@@ -123,6 +206,17 @@ class ContactComponent extends HTMLElement {
         } else
             newPendingSummary = pendingSummary.textContent.replace(pendingCountMatch[0], newPendingCount);
         pendingSummary.textContent = newPendingSummary;
+    }
+
+    throwCloseActionsMenuEvent (senderInstance) {
+        const event = new CustomEvent('closeActionMenu', {
+            bubbles: true,
+            detail: {
+                senderInstance: senderInstance
+            }
+        });
+    
+        document.dispatchEvent(event);
     }
 }
 

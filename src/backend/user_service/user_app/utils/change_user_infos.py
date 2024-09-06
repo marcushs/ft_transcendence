@@ -105,8 +105,9 @@ class ChangeUserInfosView(View):
     def change_username(self, User, request):
         request.user.username = request.POST.get('username')
         payload = {'username': request.user.username}
-        response = send_post_request(request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
-        response = send_post_request(request=request, url='http://auth:8000/auth/update_user/', payload=payload)
+        send_post_request(request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
+        send_post_request(request=request, url='http://auth:8000/auth/update_user/', payload=payload)
+        send_post_request(request=request, url='http://friends:8000/friends/update_user/', payload=payload)
         request.user.save()
 
         return {'username_message': 'Username successfully changed'}

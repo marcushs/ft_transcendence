@@ -20,6 +20,7 @@ export default () => {
                     </div>
                 </div>
             </div>
+			<contact-menu-component></contact-menu-component>
         </section>
     `;
 

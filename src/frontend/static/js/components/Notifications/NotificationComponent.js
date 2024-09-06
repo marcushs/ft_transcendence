@@ -172,8 +172,10 @@ class NotificationComponent extends HTMLElement {
 			this.closeNotificationsComponent();
 		} else {
 			this.closeOtherNavBarComponent();
-			this.openNotificationsComponent();
-			this.querySelector('.notifications-container-background').style.display = 'block';
+			if (this.notifications.length > 0) {
+				this.openNotificationsComponent();
+				this.querySelector('.notifications-container-background').style.display = 'block';
+			}
 		}
 	}
 
@@ -213,10 +215,11 @@ class NotificationComponent extends HTMLElement {
 
 	openNotificationsComponent() {
 		const notificationsMenu = this.querySelector('.notifications-container-background');
+		const animationSpeed = (this.notifications.length > 1) ? 0.3 : 0.7;
 
 		notificationsMenu.style.display = 'block';
-		notificationsMenu.style.animation = 'increaseNotificationsContainerBackgroundHeight 0.3s ease forwards';
-		notificationsMenu.querySelector('ul').style.animation = 'increaseNotificationsContainerListHeight 0.3s ease forwards';
+		notificationsMenu.style.animation = `increaseNotificationsContainerBackgroundHeight ${animationSpeed}s ease forwards`;
+		notificationsMenu.querySelector('ul').style.animation = `increaseNotificationsContainerListHeight ${animationSpeed}s ease forwards`;
 		this.style.zIndex = '3';
 		this.isOpen = !this.isOpen;
 	}

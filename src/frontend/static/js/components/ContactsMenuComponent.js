@@ -146,13 +146,13 @@ class FriendsMenuComponent extends HTMLElement {
             this.contactList.classList.add('no-contacts');
         }
         else {
-            this.createContactList(contactsData.online, 'contacts-online');
-            this.createContactList(contactsData.offline, 'contacts-offline');
+            this.createContactList(contactsData.online, 'contacts');
+            this.createContactList(contactsData.offline, 'contacts');
         }
         const receivedRequestUsersData = await this.getDataRequest('users_data', contacts.received_requests);
         const sentRequestUsersData = await this.getDataRequest('users_data', contacts.sent_requests);
-        const requestsCount = contacts.received_requests.length + contacts.sent_requests.length; 
-        this.pendingContactSummary.innerHTML = `<p>Contacts Requests-${requestsCount}</p>`;
+        const requestsCount = contacts.received_requests.length + contacts.sent_requests.length;
+        this.pendingContactSummary.innerHTML = `<p>Contacts Requests - ${requestsCount}</p>`;
         if (requestsCount === 0) {
             this.pendingContactSummary.innerHTML = `<p>Contacts Requests</p>`;
             this.pendingContactList.innerHTML = `No contacts request...`
@@ -165,18 +165,20 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     createContactList(contacts, status) {
-        contacts.forEach(contact => {     
+        contacts.forEach(contact => {
             const li = document.createElement('li');
             li.innerHTML = `
                 <contact-component data-user='${JSON.stringify(contact)}' data-status='${status}'></contact-component>
             `;
-            if (status === 'contacts-online') {
+            if (contact.status === 'online')
                 li.classList.add('online-contact-status')
-                this.contactList.appendChild(li);
-            } else if (status === 'contacts-offline') {
+            else if (contact.status === 'offline')
                 li.classList.add('offline-contact-status')
+            else if (contact.status === 'away')
+                li.classList.add('away-contact-status')
+            if (status === 'contacts')
                 this.contactList.appendChild(li);
-            } else
+            else
                 this.pendingContactList.appendChild(li);
         });
     }
@@ -185,11 +187,11 @@ class FriendsMenuComponent extends HTMLElement {
         let url = null;
         if (requestType === 'search_contacts')
             url = `http://localhost:8003/friends/search_contacts/`;
-        else if (requestType === 'users_status') {            
+        else if (requestType === 'users_status') {
             const encodedList = encodeURIComponent(JSON.stringify(payload));
             url = `http://localhost:8000/user/get_users_status/?q=${encodedList}`
         }
-        else if (requestType === 'users_data') {            
+        else if (requestType === 'users_data') {
             const encodedList = encodeURIComponent(JSON.stringify(payload));
             url = `http://localhost:8000/user/get_users_info/?q=${encodedList}`
         }
@@ -199,14 +201,13 @@ class FriendsMenuComponent extends HTMLElement {
                 return data.message;
             } else {
                 return null;
-            }   
+            }
         } catch (error) {
             return null;
         }
     }
- 
+
     attachEventListener() {
-        this.attachTestEventListener(); // NOT DEFINITIVE
         this.contactBottomNavDiv.addEventListener('click', () => {
             this.contactMenuDiv.style.display = this.contactMenuDiv.style.display === 'none' ? 'block' : 'none';
         });
@@ -220,6 +221,7 @@ class FriendsMenuComponent extends HTMLElement {
             app.querySelector('section').innerHTML += '<pop-up-component class="add-new-contact-pop-up"></pop-up-component>' 
         })
         this.searchContactInput.addEventListener('input', () => this.updateContactList());
+        this.attachTestEventListener();
     }
 
     async updateContactList() {
@@ -229,11 +231,11 @@ class FriendsMenuComponent extends HTMLElement {
         let displayedUsername = this.getCurrentDisplayedContactUsername();
 		if (!searchValue) {
             const contactsUsername = contacts.friends.map(contact => contact.username);
-            if (!contactsUsername.every(username => displayedUsername.includes(username))) {   
+            if (!contactsUsername.every(username => displayedUsername.includes(username))) {
                 this.contactList.innerHTML = '';
                 this.contactList.classList.remove('no-contacts');
-                this.createContactList(contactsData.online, 'contacts-online');
-                this.createContactList(contactsData.offline, 'contacts-offline');
+                this.createContactList(contactsData.online, 'contacts');
+                this.createContactList(contactsData.offline, 'contacts');
             }
 			return ;
 		}
@@ -245,8 +247,8 @@ class FriendsMenuComponent extends HTMLElement {
                 this.contactList.classList.remove('no-contacts');
             }
             const newContactsToDisplayData = await this.getDataRequest('users_status', newContactsToDisplay);
-            this.createContactList(newContactsToDisplayData.online, 'contacts-online');
-            this.createContactList(newContactsToDisplayData.offline, 'contacts-offline');
+            this.createContactList(newContactsToDisplayData.online, 'contacts');
+            this.createContactList(newContactsToDisplayData.offline, 'contacts');
         } else {
             let displayedUsername = this.getCurrentDisplayedContactUsername();
             if (displayedUsername.length === 0) {
@@ -259,14 +261,14 @@ class FriendsMenuComponent extends HTMLElement {
 
     getCurrentDisplayedContactUsername() {
         const currentContacts = this.contactList.querySelectorAll('contact-component');
-        return Array.from(currentContacts).map(contact => contact.userData.username.toLowerCase());    
+        return Array.from(currentContacts).map(contact => contact.userData.username.toLowerCase());
     }
 
     getContactsToDisplay(contacts, searchValue) {
         const currentContactUsernames = Array.from(this.contactList.querySelectorAll('contact-component'))
             .map(contact => contact.userData.username.toLowerCase());
-    
-        const filteredContacts = contacts.filter(contact => 
+
+        const filteredContacts = contacts.filter(contact =>
             contact.username.toLowerCase().includes(searchValue) &&
             !currentContactUsernames.includes(contact.username.toLowerCase())
         );
@@ -274,7 +276,7 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     deleteObsoleteContact(searchValue) {
-        const currentContactDisplay = this.contactList.querySelectorAll('li');
+        const currentContactDisplay = this.contactList.querySelectorAll('li:not(.contact-action-list li)');
         currentContactDisplay.forEach(contactComponent => {
             const contact = contactComponent.querySelector('contact-component')
             const username = contact.userData.username.toLowerCase();

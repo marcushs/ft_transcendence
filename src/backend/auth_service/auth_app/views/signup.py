@@ -25,7 +25,10 @@ class signup_view(View):
         if response is not None:
             return response
         user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
-        self._send_request(user=user, csrf_token=request.headers.get('X-CSRFToken'))
+        response = self._send_request(user=user, csrf_token=request.headers.get('X-CSRFToken'))
+        if response.status_code != 200:
+            user.delete()
+            return response
         return JsonResponse({'message': 'User created successfully', 'redirect_url': 'login'}, status=200)
 
     def _send_request(self, user, csrf_token):
@@ -34,10 +37,14 @@ class signup_view(View):
                 'username': user.username,
                 'email': user.email,
         }
-        send_post_request_without_token(url='http://user:8000/user/add_user/', payload=payload, csrf_token=csrf_token)
-        send_post_request_without_token(url='http://twofactor:8000/twofactor/add_user/', payload=payload, csrf_token=csrf_token)
-        send_post_request_without_token(url='http://friends:8000/friends/add_user/', payload=payload, csrf_token=csrf_token)
-        send_post_request_without_token(url='http://notifications:8000/notifications/add_user/', payload=payload, csrf_token=csrf_token)
+        response = send_post_request_without_token(url='http://user:8000/user/add_user/', payload=payload, csrf_token=csrf_token)
+        if response.status_code != 200:
+            return response
+        response = send_post_request_without_token(url='http://twofactor:8000/twofactor/add_user/', payload=payload, csrf_token=csrf_token)
+        if response.status_code != 200:
+            return response
+        response = send_post_request_without_token(url='http://friends:8000/friends/add_user/', payload=payload, csrf_token=csrf_token)
+        return response
  
     def _check_data(self, request, data):
         if not data['username']:

@@ -4,6 +4,8 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.conf import settings
+from datetime import timedelta
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -47,3 +49,23 @@ class JWTAuthMiddleware(MiddlewareMixin):
         if hasattr(request, 'new_jwt_refresh'):
             response.set_cookie('jwt_refresh', request.new_jwt_refresh, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
         return response
+
+ 
+class UserStatusMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        online_users = list(User.objects.filter(status='online'))
+        self.set_new_users_status(online_users, status_change='away')
+        away_users = list(User.objects.filter(status='away'))
+        self.set_new_users_status(away_users, status_change='offline')
+        response = self.get_response(request)
+        return response
+    
+    def set_new_users_status(self, users, status_change):
+        if status_change == 'away':
+            threshold = timezone.now() - timedelta(minutes=2)
+        else:
+            threshold = timezone.now() - timedelta(minutes=15)
+        for user in users:
+            if user.last_active < threshold:
+                user.status = status_change
+                user.save()

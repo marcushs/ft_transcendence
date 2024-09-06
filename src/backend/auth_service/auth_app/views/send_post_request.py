@@ -34,5 +34,7 @@ def send_post_request_without_token(url, payload, csrf_token):
     if response.status_code == 200:
         return JsonResponse({'message': 'success'}, status=200)
     else:
-        return JsonResponse({'message': 'fail'}, status=400)
-        
+        response_data = json.loads(response.text)
+
+        message = response_data.get('message')
+        return JsonResponse({'message': message}, status=400)

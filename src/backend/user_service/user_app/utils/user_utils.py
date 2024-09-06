@@ -1,12 +1,39 @@
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
-from datetime import datetime
+from django.utils import timezone
 from django.db.models import Q
 from django.views import View
 from ..models import User
 import json
 import requests
+
+class set_offline_user(View):
+    def __init__(self):
+        super().__init__   
+
+    def post(self, request):
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'message': 'User not found'}, status=400)
+        if request.user.status == 'online' or request.user.status == 'away':
+            request.user.status = 'offline'
+        request.user.last_active = timezone.now()
+        request.user.save()
+        return JsonResponse(status=200)
+
+class ping_status_user(View):
+    def __init__(self):
+        super().__init__   
+
+    def post(self, request):
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'message': 'User not found'}, status=400)
+        if request.user.status == 'offline' or request.user.status == 'away':
+            request.user.status = 'online'
+        request.user.last_active = timezone.now()
+        request.user.save()
+        return JsonResponse({"message": 'pong'}, status=200)
+    
 
 class add_new_user(View):
     def __init__(self):
@@ -37,7 +64,7 @@ class update_user(View):
         for field in ['username', 'email', 'is_verified', 'two_factor_method', 'status', 'last_active']:
             if field in data:
                 if field == 'last_active':
-                    setattr(request.user, field, datetime.now())
+                    setattr(request.user, field, timezone.now())
                 else:
                     setattr(request.user, field, data[field])
         request.user.save()
@@ -102,7 +129,7 @@ class getUserInfos(View):
             return JsonResponse({'status': 'success', 'message': users_data}, safe=False, status=200)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
-
+ 
 class getUsersInfo(View):
     def __init__(self):
         super().__init__

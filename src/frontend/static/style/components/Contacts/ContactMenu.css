@@ -1,5 +1,8 @@
+@import './ContactList.css';
+@import './TopBarContact.css';
+@import './ContactList.css';
+@import './ContactComponent.css';
 @import './BottomNavContact.css';
-@import 'ContactComponent.css';
 
 contact-menu-component {
     position: absolute;
@@ -7,7 +10,6 @@ contact-menu-component {
     right: 0;
     height: 100%;
     width: 100%;
-    /*z-index: -1;*/
 }
 
 .full-border {
@@ -33,3 +35,19 @@ contact-menu-component {
     background-color: var(--background-color);
     /*background-color: var(--component-background-color);*/
 }
+
+/*.contact-menu {*/
+/*    position: absolute;*/
+/*    height: 90%;*/
+/*    width: 100%;*/
+/*    border: 1px solid var(--light-grey);*/
+/*    border-radius: 10px;*/
+/*    background-color: #171820;*/
+/*}*/
+
+/*contact-component {*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*}*/

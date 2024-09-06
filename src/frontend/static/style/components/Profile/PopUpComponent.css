@@ -9,7 +9,7 @@ pop-up-component {
 	height: 100%;
 	background: rgba(0, 0, 0, 0.45);
 	animation: pop-up-apparition 0.2s linear forwards;
-	z-index: 2;
+	z-index: 4;
 }
 
 @keyframes pop-up-apparition {
