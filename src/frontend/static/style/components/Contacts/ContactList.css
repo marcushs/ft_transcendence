@@ -53,11 +53,11 @@
 
 .status-circle {
     position: absolute;
-    left: 4.5rem;
+    left: 4.6rem;
     top: 4.1rem;
     border-radius: 50%;
-    width: 1.7rem;
-    height: 1.7rem;
+    width: 1.8rem;
+    height: 1.8rem;
 }
 
 .online-status-circle {
@@ -152,12 +152,9 @@
 
  /* ------------>>> contact action <<<------------*/
 
-.contact-show-action-button {
-    position: relative;
-    flex-direction: column;
-    display: flex;
-    height: 25%;
-    width: 25%;
+.contact-action-menu i {
+    padding-left: 3rem;
+    font-size: 2.5rem;
 }
 
 .contact-action-list {
@@ -167,20 +164,17 @@
     display: flex;
     flex-direction: column;
     position: absolute;
-    top: 7rem;
-    right: 0;
+    top: 5rem;
+    right: 1rem;
     height: auto;
-    /* height: calc(4 * 3.8rem); */
     width: 37%;
     z-index: 3;
 }
 
 .contact-action-list hr {
-    /* border-color: #AC1AA4; */
     border: none;
     height: 1px;
     background-color: var(--light-grey);
-	/* margin: 0.1rem 0; */
 	width: 100%;
 }
 

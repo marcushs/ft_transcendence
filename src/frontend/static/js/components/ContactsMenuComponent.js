@@ -197,7 +197,7 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     deleteObsoleteContact(searchValue) {
-        const currentContactDisplay = this.contactList.querySelectorAll('li');
+        const currentContactDisplay = this.contactList.querySelectorAll('li:not(.contact-action-list li)');
         currentContactDisplay.forEach(contactComponent => {
             const contact = contactComponent.querySelector('contact-component')
             const username = contact.userData.username.toLowerCase();
