@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
 from django.views import View
 from ..models import User
-import json    
+import json
 
 class update_user(View):
     def __init__(self):

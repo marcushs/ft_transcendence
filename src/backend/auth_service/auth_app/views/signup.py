@@ -18,7 +18,7 @@ class signup_view(View):
         self.regexUsernameCheck = r'^[a-zA-Z0-9_-]+$'
         self.regexEmailCheck = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     
-
+ 
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
         response = self._check_data(request, data)

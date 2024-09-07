@@ -8,7 +8,4 @@ COPY docker/requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-#jwt
-RUN pip install PyJWT
-
 COPY ../auth_service /app

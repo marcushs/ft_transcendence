@@ -1,12 +1,12 @@
-from .utils.jwt_utils import get_user_from_jwt, Refresh_jwt_token
 from django.utils.deprecation import MiddlewareMixin # assure the retro-compability for recent django middleware
 from django.contrib.auth.models import AnonymousUser
+from .utils.jwt_utils import get_user_from_jwt
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+from .models import Notification
+from datetime import timedelta
 from django.http import JsonResponse
 from django.conf import settings
-from .models import Notification
-from django.utils import timezone
-from datetime import timedelta, datetime
  
 User = get_user_model()
 # Middleware for jwt authentication
@@ -15,39 +15,29 @@ class JWTAuthMiddleware(MiddlewareMixin):
         token = request.COOKIES.get('jwt')
         if token:
             jwt_user = get_user_from_jwt(token)
-            if jwt_user:
-                request.user = jwt_user
-            else:
+            if jwt_user == 'expired':
+                # call endpoint auth here to get new token from refresh_token
+                pass
+            elif jwt_user == None:
                 request.jwt_failed = True
                 request.user = AnonymousUser()
+                return JsonResponse({"message": 'les problemes'}, status=400)
+            else:
+                request.user = jwt_user
         else:
             refresh_token = request.COOKIES.get('jwt_refresh')
             if refresh_token:
                 jwt_user = get_user_from_jwt(refresh_token)
-                if jwt_user:
-                    token = Refresh_jwt_token(refresh_token, 'access')
-                    request.new_jwt = token
-                    token_refresh = Refresh_jwt_token(refresh_token, 'refresh')
-                    request.new_jwt_refresh = token_refresh
-                    request.user = jwt_user
-                else:
+                if jwt_user == 'expired' or jwt_user == None:
                     request.jwt_failed = True
                     request.user = AnonymousUser()
+                    pass
+                else:
+                    # call endpoint auth here to get new token from refresh_token
+                    pass
             else:
                     request.user = AnonymousUser()
         response = self.get_response(request)
-        return response
-    
-
-    def process_response(self, request, response):
-        if hasattr(request, 'jwt_failed'):
-            response = JsonResponse({'message': 'session has expired, please log in again'}, status=401)
-            response.delete_cookie('jwt')
-            response.delete_cookie('jwt_refresh')
-        if hasattr(request, 'new_jwt'):
-            response.set_cookie('jwt', request.new_jwt, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
-        if hasattr(request, 'new_jwt_refresh'):
-            response.set_cookie('jwt_refresh', request.new_jwt_refresh, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
         return response
  
 class NotificationMiddleware(MiddlewareMixin):
@@ -84,10 +74,9 @@ class NotificationMiddleware(MiddlewareMixin):
         self.delete_notifications(friend_request_accepted[:-1])
         self.delete_notifications(friend_request_pending[:-1])
         self.delete_notifications(private_match_invitation[:-1])
-        self.delete_notifications(tournament_invitation[:-1])                   
+        self.delete_notifications(tournament_invitation[:-1])
         
     
     def delete_notifications(self, notifications_to_delete):
         for notification in notifications_to_delete:
             notification.delete()
-        

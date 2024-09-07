@@ -27,14 +27,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("USER_SECRET_KEY")
+# /-----> Django key <-----\
 
-# /--> JWT <--\      
-JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
-JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
-JWT_EXP_DELTA_SECONDS = 3000 # 15 minutes
-JWT_REFRESH_EXP_DELTA_SECONDS = 6000 # 1day
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = env("AUTH_SECRET_KEY")
+
+# /-----> JWT keys && algorithm <-----\
+
+JWT_VERIFYING_KEY = env("PUBLIC_JWT_KEY")
+JWT_ALGORITHM = env("JWT_ALGORITHM")
+
+# /-----> JWT token lifetime in minutes <-----\
+
+ACCESS_TOKEN_LIFETIME = 5
+REFRESH_TOKEN_LIFETIME = 30
+
+# /-----><-----\
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

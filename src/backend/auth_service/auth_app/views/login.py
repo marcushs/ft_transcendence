@@ -48,8 +48,8 @@ class login_view(View):
         token = create_jwt_token(user, 'access')
         refresh_token = create_jwt_token(user, 'refresh')
         response = JsonResponse({'message': 'Login successfully'}, status=200)
-        response.set_cookie('jwt', token, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
-        response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
+        response.set_cookie('jwt', token, httponly=True, max_age=settings.ACCESS_TOKEN_LIFETIME)
+        response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.REFRESH_TOKEN_LIFETIME)
         payload = {
             'status': 'online',
             'last_active': '',

@@ -43,7 +43,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
             response.delete_cookie('jwt')
             response.delete_cookie('jwt_refresh')
         if hasattr(request, 'new_jwt'):
-            response.set_cookie('jwt', request.new_jwt, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
+            response.set_cookie('jwt', request.new_jwt, httponly=True, max_age=settings.ACCESS_TOKEN_LIFETIME)
         if hasattr(request, 'new_jwt_refresh'):
-            response.set_cookie('jwt_refresh', request.new_jwt_refresh, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
+            response.set_cookie('jwt_refresh', request.new_jwt_refresh, httponly=True, max_age=settings.REFRESH_TOKEN_LIFETIME)
         return response
