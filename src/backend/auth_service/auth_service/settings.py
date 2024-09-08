@@ -41,10 +41,10 @@ JWT_SIGNING_KEY = env("PRIVATE_JWT_KEY")
 JWT_VERIFYING_KEY = env("PUBLIC_JWT_KEY")
 JWT_ALGORITHM = env("JWT_ALGORITHM")
 
-# /-----> JWT token lifetime in minutes <-----\
+# /-----> JWT token lifetime in seconds <-----\
 
-ACCESS_TOKEN_LIFETIME = 5
-REFRESH_TOKEN_LIFETIME = 30
+ACCESS_TOKEN_LIFETIME = 120 # 2 minutes
+REFRESH_TOKEN_LIFETIME = 86400 # 1 day
 
 # /-----><-----\
     

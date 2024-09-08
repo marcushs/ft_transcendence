@@ -55,7 +55,7 @@ class update_user(View):
         super().__init__
         
     def get(self, request):
-        return JsonResponse({"message": 'get request successfully reached'}, status=200)
+        return JsonResponse({"message": 'get request successfully reached'}, status=200) 
     
     def post(self, request):
         if isinstance(request.user, AnonymousUser):
@@ -71,26 +71,29 @@ class update_user(View):
         return JsonResponse({'message': 'User updated successfully'}, status=200)
 
 
-def send_post_request(request, url, payload):
+def send_request(request_type, request, url, payload=None):
         headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-CSRFToken': request.COOKIES.get('csrftoken')
-            }
+                'X-CSRFToken': request.COOKIES.get('csrftoken') 
+            } 
         cookies = {
             'csrftoken': request.COOKIES.get('csrftoken'),
             'jwt': request.COOKIES.get('jwt'),
             'jwt_refresh': request.COOKIES.get('jwt_refresh'),
             }
-        response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
-        if response.status_code == 200:
-            return JsonResponse({'message': 'success'}, status=200)
-        else:
-            response_data = json.loads(response.text)
+        try:
+            if request_type == 'GET':
+                response = requests.get(url=url, headers=headers, cookies=cookies)
+            else:
+                response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
+            if response.status_code == 200:
+                return response
+            else:
+                response.raise_for_status()
+        except Exception as e:
+            raise Exception(f"An error occurred: {e}")
 
-            message = response_data.get('message')
-            return JsonResponse({'message': message}, status=400)
-        
 class searchUsers(View):
     def __init__(self):
         super().__init__

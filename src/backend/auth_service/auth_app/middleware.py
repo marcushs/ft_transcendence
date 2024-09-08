@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.conf import settings
 
 User = get_user_model()
-
+ 
 # Middleware for jwt authentication
 class JWTAuthMiddleware(MiddlewareMixin):
     def process_request(self, request):
@@ -35,7 +35,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
                     request.user = AnonymousUser()
         response = self.get_response(request)
         return response
-    
+
 
     def process_response(self, request, response):
         if hasattr(request, 'jwt_failed'):

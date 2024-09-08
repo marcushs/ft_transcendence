@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
-from .user_utils import send_post_request
+from .user_utils import send_request
 import requests
 import magic
 import re
@@ -105,9 +105,12 @@ class ChangeUserInfosView(View):
     def change_username(self, User, request):
         request.user.username = request.POST.get('username')
         payload = {'username': request.user.username}
-        send_post_request(request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
-        send_post_request(request=request, url='http://auth:8000/auth/update_user/', payload=payload)
-        send_post_request(request=request, url='http://friends:8000/friends/update_user/', payload=payload)
+        try:
+            send_request(request_type='POST',request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
+            send_request(request_type='POST',request=request, url='http://auth:8000/auth/update_user/', payload=payload)
+            send_request(request_type='POST',request=request, url='http://friends:8000/friends/update_user/', payload=payload)
+        except Exception:
+            pass
         request.user.save()
 
         return {'username_message': 'Username successfully changed'}
@@ -115,10 +118,13 @@ class ChangeUserInfosView(View):
     def change_email(self, User, request):
         request.user.email = request.POST.get('email')
         payload = {'email': request.user.email}
-
-        send_post_request(request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
-        send_post_request(request=request, url='http://auth:8000/auth/update_user/', payload=payload)
-        request.user.save()
+        
+        try:
+            send_request(request_type='POST',request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
+            send_request(request_type='POST',request=request, url='http://auth:8000/auth/update_user/', payload=payload)
+        except Exception:
+            pass
+        request.user.save() 
 
         return {'email_message': 'Email successfully changed'}
 

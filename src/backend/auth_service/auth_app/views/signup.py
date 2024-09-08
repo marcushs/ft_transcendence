@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model
-from .send_post_request import send_post_request_without_token
+from .send_request import send_request_without_token
 
 # --- UTILS --- #
 import json
@@ -37,16 +37,16 @@ class signup_view(View):
                 'username': user.username,
                 'email': user.email,
         }
-        response = send_post_request_without_token(url='http://user:8000/user/add_user/', payload=payload, csrf_token=csrf_token)
+        response = send_request_without_token(request_type='POST', url='http://user:8000/user/add_user/', payload=payload, csrf_token=csrf_token)
         if response.status_code != 200:
             return response
-        response = send_post_request_without_token(url='http://twofactor:8000/twofactor/add_user/', payload=payload, csrf_token=csrf_token)
+        response = send_request_without_token(request_type='POST', url='http://twofactor:8000/twofactor/add_user/', payload=payload, csrf_token=csrf_token)
         if response.status_code != 200:
             return response
-        response = send_post_request_without_token(url='http://friends:8000/friends/add_user/', payload=payload, csrf_token=csrf_token)
+        response = send_request_without_token(request_type='POST', url='http://friends:8000/friends/add_user/', payload=payload, csrf_token=csrf_token)
         if response.status_code != 200:
             return response
-        response = send_post_request_without_token(url='http://notifications:8000/notifications/add_user/', payload=payload, csrf_token=csrf_token)
+        response = send_request_without_token(request_type='POST', url='http://notifications:8000/notifications/add_user/', payload=payload, csrf_token=csrf_token)
         return response
  
     def _check_data(self, request, data):

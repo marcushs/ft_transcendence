@@ -17,16 +17,16 @@ def create_jwt_token(user, type: str) -> None:
     if type == 'access':
         payload = {
             'user_id': user.id,
-            'exp': datetime.datetime.now() + datetime.timedelta(minutes=settings.ACCESS_TOKEN_LIFETIME)
+            'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.ACCESS_TOKEN_LIFETIME)
         }
     else:
         payload = {
             'user_id': user.id,
-            'exp': datetime.datetime.now() + datetime.timedelta(minutes=settings.REFRESH_TOKEN_LIFETIME)
+            'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.REFRESH_TOKEN_LIFETIME)
         }
     token = jwt.encode(payload, settings.JWT_SIGNING_KEY, algorithm=settings.JWT_ALGORITHM)
     return token
-
+ 
 # ---> refresh specific type (access or refresh) JWT token with active refresh token in args <---
 
 def Refresh_jwt_token(refresh_token, type: str):

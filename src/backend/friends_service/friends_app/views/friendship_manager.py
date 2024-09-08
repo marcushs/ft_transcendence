@@ -38,7 +38,7 @@
 #         request.user.save()
 #         return JsonResponse({'message': 'User updated successfully'}, status=200)
 
-# def send_post_request(request, url, payload):
+# def send_request(request, url, payload):
 #         headers = {
 #                 'Accept': 'application/json',
 #                 'Content-Type': 'application/json',
