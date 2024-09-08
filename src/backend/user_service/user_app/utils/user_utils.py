@@ -27,7 +27,7 @@ class ping_status_user(View):
 
     def post(self, request):
         if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'message': 'User not found'}, status=400)
+            return JsonResponse({'message': 'User not found'}, status=200)
         if request.user.status == 'offline' or request.user.status == 'away':
             request.user.status = 'online'
         request.user.last_active = timezone.now()

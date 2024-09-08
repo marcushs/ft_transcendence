@@ -44,6 +44,9 @@ class signup_view(View):
         if response.status_code != 200:
             return response
         response = send_post_request_without_token(url='http://friends:8000/friends/add_user/', payload=payload, csrf_token=csrf_token)
+        if response.status_code != 200:
+            return response
+        response = send_post_request_without_token(url='http://notifications:8000/notifications/add_user/', payload=payload, csrf_token=csrf_token)
         return response
  
     def _check_data(self, request, data):
