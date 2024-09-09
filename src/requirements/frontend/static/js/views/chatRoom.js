@@ -7,9 +7,20 @@ export default () => {
 	`;
 
 	setTimeout(() => {
-		const chatSocket = new WebSocket(
-            'ws://localhost:8006/ws/chat/'
+        const roomName = "acarlott";
+        
+        const chatSocket = new WebSocket(
+            'ws://'
+            + 'localhost:8006'
+            + '/ws/chat/'
+            + roomName
+            + '/'
         );
+
+        chatSocket.onopen = function (e) {
+            console.log(e)
+            console.log("The connection was setup successfully !");
+          };
 
 		chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);

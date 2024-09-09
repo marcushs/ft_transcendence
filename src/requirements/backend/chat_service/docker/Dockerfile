@@ -6,6 +6,8 @@ WORKDIR /app
 
 COPY docker/requirements.txt .
 
-RUN python -m pip install -U channels["daphne"]
+RUN python3 -m pip install -U channels["daphne"]
+
+RUN python3 -m pip install channels_redis
 
 RUN pip install --no-cache-dir -r requirements.txt
