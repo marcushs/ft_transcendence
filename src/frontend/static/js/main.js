@@ -17,19 +17,7 @@ import { PingStatus } from "./views/pingStatus.js";
 
 let languageJson;
 
-new PingStatus();
-
 localStorage.setItem('lastAuthorizedPage', '/');
-
-(async () => {
-    if (await isTwoFactorActivated()) {
-        localStorage.setItem('isTwoFactorActivated', 'true');
-        localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
-    } else {
-        localStorage.setItem('isTwoFactorActivated', 'false');
-        localStorage.removeItem('twoFactorMethod');
-    }
-})();
 
 const routes = {
     "/": { title: "Home", render: home },
@@ -43,8 +31,22 @@ const routes = {
     "/two-factor-deactivation": { title: "TwoFactorDeactivate", render: twoFactorDeactivation },
 };
 
-// create the csrf token if it does not already exist
-generateCsrfToken();
+(async () => {
+    await generateCsrfToken(); // generate csrf cookies
+    new PingStatus(); // launch user status update ping
+})();
+
+// set twoFactor needed data
+(async () => {
+    if (await isTwoFactorActivated()) {
+        localStorage.setItem('isTwoFactorActivated', 'true');
+        localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
+    } else {
+        localStorage.setItem('isTwoFactorActivated', 'false');
+        localStorage.removeItem('twoFactorMethod');
+    }
+})();
+
 async function router() {
     if (!languageJson)
         languageJson = await loadLanguagesJson();

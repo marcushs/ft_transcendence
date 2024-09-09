@@ -36,7 +36,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
                     request.user = AnonymousUser() 
         response = self.get_response(request) 
         return response 
-    
+
     def send_new_token_request(self, request, jwt_user):
         try:
             request_response = send_request(request_type='GET',request=request, url='http://auth:8000/auth/update-tokens/')

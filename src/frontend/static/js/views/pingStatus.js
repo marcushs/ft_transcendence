@@ -25,9 +25,12 @@ export class PingStatus {
         console.log('ping sent to back');
         try {
             const data = await sendRequest('POST', url, null);
-            console.log('back response: ', data.message);
+            if (data.status === ' success')
+                console.log('back response: ', data.message);
+            else
+                console.log('back response: ', data.message);
         } catch (error) {
-            console.log(error);
+            console.log(error.message); 
         }
     }
 

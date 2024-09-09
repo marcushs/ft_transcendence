@@ -35,6 +35,7 @@ class manage_notification_view(View):
             return JsonResponse({'status': 'error', 'message': check_response}, status=200)
         self.set_notifications_as_read(data=data)
         return JsonResponse({"status": "success"}, status=200)
+        
 
     def set_notifications_as_read(self, data):
         for notification_id in data['uuids']:
@@ -43,8 +44,9 @@ class manage_notification_view(View):
                 notification.is_read = True
                 notification.is_read_at = timezone.now()
                 notification.save()
+                return True
             except User.DoesNotExist:
-                pass
+                return False
             
     
     def delete(self, request):

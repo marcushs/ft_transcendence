@@ -27,13 +27,13 @@ class ping_status_user(View):
 
     def post(self, request):
         if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'message': 'User not found'}, status=200)
+            return JsonResponse({'status': 'fail', 'message': 'User not found'}, status=200)
         if request.user.status == 'offline' or request.user.status == 'away':
             request.user.status = 'online'
         request.user.last_active = timezone.now()
         request.user.save()
-        return JsonResponse({"message": 'pong'}, status=200)
-    
+        return JsonResponse({'status': 'success', "message": 'pong'}, status=200)
+
 
 class add_new_user(View):
     def __init__(self):

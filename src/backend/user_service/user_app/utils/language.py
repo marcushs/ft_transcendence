@@ -1,4 +1,5 @@
-from django.http import JsonResponse, HttpResponse
+from django.contrib.auth.models import AnonymousUser
+from django.http import JsonResponse
 from django.views import View
 import json
 # from ..decorator import check_jwt
@@ -14,6 +15,8 @@ class language_view(View):
 
 #     @method_decorator(check_jwt)
     def post(self, request):
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'message': 'Language setup failed'}, status=200)
         data = json.loads(request.body.decode('utf-8'))
         if data['language'] == 'fr' or 'en' or 'zh':
             request.user.language = data['language']

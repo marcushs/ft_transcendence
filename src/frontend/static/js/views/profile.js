@@ -10,7 +10,6 @@ export default () => {
             <div class="profile-main-section">
                 <profile-component state="personalInformation"></profile-component>
             </div>
-			<contact-menu-component></contact-menu-component>
         </section>
     `;
 
