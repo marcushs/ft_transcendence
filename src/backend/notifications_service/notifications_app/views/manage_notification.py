@@ -11,10 +11,13 @@ User = get_user_model()
 
 class manage_notification_view(View):
     def __init__(self):
+        print('------------INIT----------------')
         super().__init__
 
     def get(self, request):
+        print('-------------ISSSSSSOU--------------------------')
         if isinstance(request.user, AnonymousUser):
+            print('-------------ANON--------------------------')
             return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200)
         own_notifications = Notification.objects.filter(receiver=request.user)
         notifications_dict = self.get_notification_dict(notifications=own_notifications)

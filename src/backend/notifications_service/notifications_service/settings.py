@@ -44,8 +44,8 @@ ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'notifications']
 # Application definition
 
 INSTALLED_APPS = [
-	'corsheaders',
 	'channels',
+	'corsheaders',
     'notifications_app',
     'django.contrib.auth',
     'django.contrib.contenttypes',
