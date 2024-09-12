@@ -120,6 +120,7 @@ services:
     env_file: ./backend/.env
     command: >
       sh -c "
+        mkdir -p /app/logs &&
         python3 manage.py makemigrations &&
         python3 manage.py migrate &&
         daphne -b 0.0.0.0 -p 8000 notifications_service.asgi:application

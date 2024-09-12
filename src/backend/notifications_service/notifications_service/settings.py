@@ -11,26 +11,12 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+# from . import async_middlewares
 import environ
 import os
 
-# Read from .env file
-env = environ.Env()
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+SECRET_KEY = os.environ.get("USER_SECRET_KEY")
 
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent 
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("USER_SECRET_KEY")
-
-# /--> JWT <--\      
 JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
 JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
 JWT_EXP_DELTA_SECONDS = 3000 # 15 minutes
@@ -41,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'notifications']
 
-# Application definition
 
 INSTALLED_APPS = [
 	'channels',
@@ -53,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -86,8 +72,7 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'notifications_service.wsgi.application'
-ASGI_APPLICATION = 'notifications_app.asgi.application'
+ASGI_APPLICATION = 'notifications_service.asgi.application'
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
@@ -122,25 +107,20 @@ CSRF_TRUSTED_ORIGINS = [
 	'http://notifications'
 ]
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('NOTIFICATIONS_DB_NAME'),
-        'USER': env('NOTIFICATIONS_DB_USER'),
-        'PASSWORD': env('NOTIFICATIONS_DB_PASSWORD'),
-        'HOST': env('NOTIFICATIONS_DB_HOST'),
-        'PORT': env('NOTIFICATIONS_DB_PORT'),
+        'NAME': os.environ.get('NOTIFICATIONS_DB_NAME'),
+        'USER': os.environ.get('NOTIFICATIONS_DB_USER'),
+        'PASSWORD': os.environ.get('NOTIFICATIONS_DB_PASSWORD'),
+        'HOST': os.environ.get('NOTIFICATIONS_DB_HOST'),
+        'PORT': os.environ.get('NOTIFICATIONS_DB_PORT'),
     }
 }
 
+
 AUTH_USER_MODEL = "notifications_app.User"
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
@@ -150,13 +130,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
 STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

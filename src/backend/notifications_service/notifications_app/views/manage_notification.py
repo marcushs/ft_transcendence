@@ -5,109 +5,113 @@ from django.views import View
 from django.contrib.auth.models import AnonymousUser
 from django.utils import timezone
 from datetime import timedelta
+from asgiref.sync import sync_to_async
 import json
 
 User = get_user_model()
 
 class manage_notification_view(View):
     def __init__(self):
-        print('------------INIT----------------')
-        super().__init__
+        super().__init__()
 
-    def get(self, request):
-        print('-------------ISSSSSSOU--------------------------')
+
+    async def get(self, request):
         if isinstance(request.user, AnonymousUser):
-            print('-------------ANON--------------------------')
             return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200)
-        own_notifications = Notification.objects.filter(receiver=request.user)
-        notifications_dict = self.get_notification_dict(notifications=own_notifications)
+        own_notifications = await sync_to_async(Notification.objects.filter)(receiver=request.user)
+        notifications_dict = await sync_to_async(self.get_notification_dict)(notifications=own_notifications)
         return JsonResponse({"status": "success", 'message': notifications_dict}, status=200)
-    
+
+
     def get_notification_dict(self, notifications):
         notifications_list = []
         for index, notification in enumerate(notifications):
             notifications_list.insert(index, notification.to_dict())
         return notifications_list
-    
-    def put(self, request):
+
+
+    async def put(self, request):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200)
         data = json.loads(request.body.decode('utf-8'))
-        check_response = self.check_put_data(data=data)
+        check_response = await sync_to_async(self.check_put_data)(data=data)
         if check_response != 'Success':
             return JsonResponse({'status': 'error', 'message': check_response}, status=200)
-        self.set_notifications_as_read(data=data)
+        await self.set_notifications_as_read(data=data)
         return JsonResponse({"status": "success"}, status=200)
 
-    def set_notifications_as_read(self, data):
+
+    async def set_notifications_as_read(self, data):
         for notification_id in data['uuids']:
             try:
-                notification = Notification.objects.get(uuid=notification_id)
+                notification = await sync_to_async(Notification.objects.get)(uuid=notification_id)
                 notification.is_read = True
                 notification.is_read_at = timezone.now()
-                notification.save()
+                await sync_to_async(notification.save)()
             except User.DoesNotExist:
                 pass
             
     
-    def delete(self, request):
+    async def delete(self, request):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200)
         data = json.loads(request.body.decode('utf-8'))
-        check_response = self.check_delete_data(data=data)
+        check_response = await sync_to_async(self.check_delete_data)(data=data)
         if check_response != 'Success':
             return JsonResponse({'status': 'error', 'message': check_response}, status=200)
         try:
-            notification = Notification.objects.get(uuid=data['uuid'])
-            notification.delete()
+            notification = await sync_to_async(Notification.objects.get)(uuid=data['uuid'])
+            await sync_to_async(notification.delete)()
         except User.DoesNotExist:
             pass
         return JsonResponse({"status": "success"}, status=200)
 
 
-    def post(self, request):
-        print('------------------------------------- TEST ---------------------------------')
-
+    async def post(self, request):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200)
         data = json.loads(request.body.decode('utf-8'))
-        check_response = self.check_post_data(data=data)
+        check_response = await self.check_post_data(data=data)
         if check_response != 'Success':
             return JsonResponse({'status': 'error', 'message': check_response}, status=200)
-        match data['type']:
-            case 'friend-request-accepted':
-                message = f'{request.user.username} has accepted your friend request.'
-                Notification.objects.create(sender=request.user, receiver=self.receiver, type=data['type'], message=message)
-            case 'friend-request-pending':
-                message = f'You have a new friend request from {request.user.username}.'
-                Notification.objects.create(sender=request.user, receiver=self.receiver, type=data['type'], message=message)
-            case 'private-match-invitation':
-                message = f'{request.user.username} has invited you to a private game.'
-                Notification.objects.create(sender=request.user, receiver=self.receiver, type=data['type'], message=message)
-            case 'tournament-invitation':
-                message = f'{request.user.username} has invited you to join a tournament.'
-                Notification.objects.create(sender=request.user, receiver=self.receiver, type=data['type'], message=message)
-            case _:
-                return JsonResponse({'status': 'error', 'message': 'unknown notification type'}, status=200)
-        return JsonResponse({"status": "success"}, status=200)
 
-    def check_post_data(self, data):
+
+        notifications_types = ['friend-request-accepted', 'friend-request-pending', 'private-match-invitation', 'tournament-invitation']
+        notifications_messages = [
+                f'{request.user.username} has accepted your friend request.',
+                f'You have a new friend request from {request.user.username}.',
+                f'{request.user.username} has invited you to a private game.',
+                f'{request.user.username} has invited you to join a tournament.'
+            ]
+
+        for index, notification_type in enumerate(notifications_types):
+            if data['type'] == notification_type:
+                message = notifications_messages[index]
+                await sync_to_async(Notification.objects.create)(sender=request.user, receiver=self.receiver, type=notification_type, message=message)
+                return JsonResponse({"status": "success"}, status=200)
+
+        return JsonResponse({'status': 'error', 'message': 'unknown notification type'}, status=200)
+
+
+    async def check_post_data(self, data):
         if not data['receiver'] or not data['type']:
             return 'Missing attributes'
         if data['receiver'] is None or data['type'] is None:
             return 'some attributes are empty'
         try:
-            self.receiver = User.objects.get(username=data['receiver'])
+            self.receiver = await sync_to_async(User.objects.get)(username=data['receiver'])
         except User.DoesNotExist:
             return 'Sender user not found'
         return 'Success'
-    
+
+
     def check_put_data(self, data):
         if not data['uuids']:
             return 'Missing attributes'
         if data['uuids'] is None:
             return 'Notification id is missing'
         return 'Success'
+
 
     def check_delete_data(self, data):
         if not data['uuid']:

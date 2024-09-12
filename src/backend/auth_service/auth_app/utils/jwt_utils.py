@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 import datetime
 import jwt
+from asgiref.sync import sync_to_async
 
 User = get_user_model()
 
@@ -40,11 +41,11 @@ def Refresh_jwt_token(refresh_token, type: str):
         return create_jwt_token(get_user_from_jwt(refresh_token), type)    
     return None
 
-def get_user_from_jwt(token):
+async def get_user_from_jwt(token):
     user_id = decode_jwt_token(token)
     if user_id:
         try:
-            return User.objects.get(id=user_id)
+            return await sync_to_async(User.objects.get)(id=user_id)
         except ObjectDoesNotExist:
             return None
     return None
