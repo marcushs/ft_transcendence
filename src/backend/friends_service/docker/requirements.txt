@@ -7,3 +7,4 @@ pillow==10.4.0
 requests==2.32.3
 pyjwt==2.8.0
 cryptography
+channels[daphne]>=4.0.0
