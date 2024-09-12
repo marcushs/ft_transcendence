@@ -62,7 +62,7 @@ class CustomBtn extends HTMLButtonElement {
             };
 
             try {
-                const res = await fetch(`http://localhost:8001/auth/${this.text.toLowerCase()}/`, config);
+                const res = await fetch(`/api/auth/${this.text.toLowerCase()}/`, config);
                 if (res.status === 403)
                     throw new Error('Access Denied')
                 const data = await res.json();

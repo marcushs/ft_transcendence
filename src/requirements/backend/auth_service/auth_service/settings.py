@@ -41,7 +41,7 @@ JWT_REFRESH_EXP_DELTA_SECONDS = 6000 # 1day
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'auth']
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
 	'corsheaders',
@@ -113,12 +113,14 @@ CORS_ALLOWED_ORIGINS = [
     'https://localhost:3000',
 	'http://frontend',
 	'http://auth',
+	'https://192.168.1.37:3000',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
 	'https://localhost:3000',
 	'http://frontend',
 	'http://auth',
+	'https://192.168.1.37:3000',
 ]
 
 # Database

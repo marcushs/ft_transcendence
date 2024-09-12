@@ -26,7 +26,7 @@ async function getProfile() {
         credentials: 'include' // Needed for send cookie
     };
     try {
-        const res = await fetch('http://localhost:8000/user/user_info/', config);
+        const res = await fetch('/api/user/user_info/', config);
         const data = await res.json();
         console.log(data)
         if (res.status === 200) {

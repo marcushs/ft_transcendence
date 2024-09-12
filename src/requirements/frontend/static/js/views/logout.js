@@ -30,7 +30,7 @@ export default () => {
 //         },
 //         credentials: 'include' // Needed for send cookie
 //     };
-//     const res = await fetch(`http://localhost:8000/user/logout/`, config);
+//     const res = await fetch(`/api/user/logout/`, config);
 //     const data = await res.json();
 //     if (data.error) {
 //         alert(data.error);
@@ -61,7 +61,7 @@ function attachEvent(status) {
             credentials: 'include' // Needed for send cookie
         };
         try {
-            const res = await fetch(`http://localhost:8001/auth/logout/`, config);
+            const res = await fetch(`/api/auth/logout/`, config);
             if (res.status == 403)
                 throw new Error('Access Denied')
             const data = await res.json();

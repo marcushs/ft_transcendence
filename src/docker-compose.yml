@@ -11,8 +11,17 @@ services:
       - ./requirements/frontend/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
       - "3000:443"
+    depends_on:
+      - auth
+      - user
+      - chat
+      - twofactor
+      - oauth_42
+      - oauth_github
+      - oauth_google
     networks:
       - transcendence-network
+
   # --> USER SERVICE <-- #
   user:
     container_name: user
@@ -37,6 +46,7 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
+
   # --> AUTH SERVICE <-- #
   auth:
     container_name: auth
@@ -61,6 +71,7 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
+
   # --> TWOFACTOR SERVICE <-- #
   twofactor:
     container_name: twofactor
@@ -85,6 +96,7 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
+
   # --> OAUTH 42 SERVICE <-- #
   oauth_42:
     container_name: oauth_42
@@ -110,7 +122,6 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
-
 
   # --> OAUTH GOOGLE SERVICE <-- #
   oauth_google:
@@ -212,6 +223,7 @@ services:
       interval: 4s
       timeout: 3s
       retries: 5
+
   # --> DATABASE AUTH <-- #
   auth_db:
     container_name: auth_db
@@ -234,6 +246,7 @@ services:
       interval: 4s
       timeout: 3s
       retries: 5
+
   # --> DATABASE USER <-- #
   user_db:
     container_name: user_db
@@ -256,6 +269,7 @@ services:
       interval: 4s
       timeout: 3s
       retries: 5
+
   # --> DATABASE OAUTH_42 <-- #
   oauth_42_db:
     container_name: oauth_42_db
@@ -355,6 +369,8 @@ services:
     restart: always
     ports:
      - "6379:6379"
+    networks:
+    - transcendence-network
 
 volumes:
   user_pgdata:

@@ -18,6 +18,6 @@ Including another URLconf
 from django.urls import include, path
 
 urlpatterns = [
-	path('oauth_google/', include('oauth_google_app.urls')),
+	path('api/oauth_google/', include('oauth_google_app.urls')),
 ]
 

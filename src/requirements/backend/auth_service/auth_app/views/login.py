@@ -69,7 +69,7 @@ class login_view(View):
     def _send_twofactor_request(self, data, csrf_token):
         try:
             user = User.objects.get(username=data['username'])
-            response = send_post_request(url='http://twofactor:8000/twofactor/twofactor_login/', payload=data, csrf_token=csrf_token)
+            response = send_post_request(url='http://twofactor:8000/api/twofactor/twofactor_login/', payload=data, csrf_token=csrf_token)
             if response.status_code != 200:
                 return response
             return self._create_user_session(user=user)

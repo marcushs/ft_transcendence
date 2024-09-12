@@ -412,7 +412,7 @@ async function postNewUserInfos(newUserInfos) {
 
 	console.log(config.body)
 	try {
-		const res = await fetch(`http://localhost:8000/user/change-user-infos/`, config);
+		const res = await fetch(`/api/user/change-user-infos/`, config);
 		if (res.status == 403) {
 			throw new Error('Access Denied');
 		}

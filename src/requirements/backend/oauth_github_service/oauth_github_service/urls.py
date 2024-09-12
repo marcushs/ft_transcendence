@@ -17,5 +17,5 @@ Including another URLconf
 from django.urls import include, path
 
 urlpatterns = [
-	path('oauth_github/', include('oauth_github_app.urls')),
+	path('api/oauth_github/', include('oauth_github_app.urls')),
 ]

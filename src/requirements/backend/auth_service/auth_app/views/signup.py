@@ -38,10 +38,10 @@ class signup_view(View):
                 'email': user.email,
                 'logged_in_with_oauth': user.logged_in_with_oauth,
         }
-        response = send_post_request(url='http://user:8000/user/add_user/', payload=payload, csrf_token=csrf_token)
+        response = send_post_request(url='http://user:8000/api/user/add_user/', payload=payload, csrf_token=csrf_token)
         if response.status_code != 200:
             return response
-        response = send_post_request(url='http://twofactor:8000/twofactor/add_user/', payload=payload, csrf_token=csrf_token)
+        response = send_post_request(url='http://twofactor:8000/api/twofactor/add_user/', payload=payload, csrf_token=csrf_token)
         return response
 
     def _check_data(self, request, data):

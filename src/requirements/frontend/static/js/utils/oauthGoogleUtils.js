@@ -47,7 +47,7 @@ export async function oauthGoogleRedirectCallback() {
 // Callback function for login view
 export async function redirectToOauthGoogle() {
 	try {
-	const res = await fetch(`http://localhost:8004/oauth_google/login/`, config);
+	const res = await fetch(`/api/oauth_google/login/`, config);
 	const data = await res.json();
 	console.log(data);
 	window.location.replace(data.url);
@@ -58,7 +58,7 @@ export async function redirectToOauthGoogle() {
 
 async function handleOauthCallback(code, state) {
 	try {
-		const res = await fetch(`http://localhost:8004/oauth_google/redirect/?code=${code}&state=${state}`, config);
+		const res = await fetch(`/api/oauth_google/redirect/?code=${code}&state=${state}`, config);
 		const data = await res.json();
 		console.log(data)
 		return data;
@@ -70,7 +70,7 @@ async function handleOauthCallback(code, state) {
 
 async function accessResource() {
 	try {
-		const res = await fetch(`http://localhost:8004/oauth_google/access_resource/`, config);
+		const res = await fetch(`/api/oauth_google/access_resource/`, config);
 		const data = await res.json();
 		return data;
 	} catch (error) {
