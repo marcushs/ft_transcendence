@@ -1,5 +1,6 @@
 services:
-  # --> FRONTEND SERVICE <-- #
+
+  # ---------------> FRONTEND <--------------- #
   frontend:
     container_name: frontend
     build:
@@ -13,7 +14,11 @@ services:
       - "3000:80"
     networks:
       - transcendence-network
-  # --> USER SERVICE <-- #
+
+
+  # ---------------> USER <--------------- #
+
+  # Service
   user:
     container_name: user
     restart: always
@@ -37,7 +42,34 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
-  # --> AUTH SERVICE <-- #
+
+  # DB
+  user_db:
+    container_name: user_db
+    image: postgres
+    restart: always
+    env_file: ./backend/.env
+    environment:
+      - POSTGRES_USER=${USER_DB_USER}
+      - POSTGRES_DB=${USER_DB_NAME}
+      - POSTGRES_PASSWORD=${USER_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - user_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${USER_DB_USER} -d ${USER_DB_NAME}" ]
+      interval: 8s
+      timeout: 5s
+      retries: 5
+
+
+  # ---------------> AUTH <--------------- #
+
+  # Service
   auth:
     container_name: auth
     restart: always
@@ -61,7 +93,34 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
-  # --> TWOFACTOR SERVICE <-- #
+
+  # DB
+  auth_db:
+    container_name: auth_db
+    image: postgres
+    restart: always
+    env_file: ./backend/.env
+    environment:
+      - POSTGRES_USER=${AUTH_DB_USER}
+      - POSTGRES_DB=${AUTH_DB_NAME}
+      - POSTGRES_PASSWORD=${AUTH_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - auth_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${AUTH_DB_USER} -d ${AUTH_DB_NAME}" ]
+      interval: 8s
+      timeout: 5s
+      retries: 5
+
+
+  # ---------------> TWOFACTOR <--------------- #
+
+  # Service
   twofactor:
     container_name: twofactor
     restart: always
@@ -85,7 +144,34 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
- # --> FRIENDS SERVICE <-- #
+
+  # DB
+  twofactor_db:
+    container_name: twofactor_db
+    image: postgres
+    restart: always
+    env_file: ./backend/.env
+    environment:
+      - POSTGRES_USER=${TWOFACTOR_DB_USER}
+      - POSTGRES_DB=${TWOFACTOR_DB_NAME}
+      - POSTGRES_PASSWORD=${TWOFACTOR_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - twofactor_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${TWOFACTOR_DB_USER} -d ${TWOFACTOR_DB_NAME}" ]
+      interval: 8s
+      timeout: 5s
+      retries: 5
+
+
+ # ---------------> FRIENDS <--------------- #
+
+  # Service
   friends:
     container_name: friends
     restart: always
@@ -109,98 +195,8 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
-  # --> NOTIFICATIONS SERVICE <-- #
-  notifications:
-    container_name: notifications
-    restart: always
-    build:
-      context: ./backend/notifications_service
-      dockerfile: docker/Dockerfile
-    image: notifications
-    env_file: ./backend/.env
-    command: >
-      sh -c "
-        mkdir -p /app/logs &&
-        python3 manage.py makemigrations &&
-        python3 manage.py migrate &&
-        daphne -b 0.0.0.0 -p 8000 notifications_service.asgi:application
-      "
-    volumes:
-      - ./backend/notifications_service:/app
-    ports:
-      - "8004:8000"
-    depends_on:
-      notifications_db:
-        condition: service_healthy
-    networks:
-      - transcendence-network
-  # --> DATABASE TWOFACTOR <-- #
-  twofactor_db:
-    container_name: twofactor_db
-    image: postgres
-    restart: always
-    env_file: ./backend/.env
-    environment:
-      - POSTGRES_USER=${TWOFACTOR_DB_USER}
-      - POSTGRES_DB=${TWOFACTOR_DB_NAME}
-      - POSTGRES_PASSWORD=${TWOFACTOR_DB_PASSWORD}
-    shm_size: 128mb
-    volumes:
-      - twofactor_pgdata:/var/lib/postgresql/data
-    networks:
-      - transcendence-network
-    ports: 
-     - "5434:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${TWOFACTOR_DB_USER} -d ${TWOFACTOR_DB_NAME}"]
-      interval: 8s
-      timeout: 5s
-      retries: 5
-  # --> DATABASE AUTH <-- #
-  auth_db:
-    container_name: auth_db
-    image: postgres
-    restart: always
-    env_file: ./backend/.env
-    environment:
-      - POSTGRES_USER=${AUTH_DB_USER}
-      - POSTGRES_DB=${AUTH_DB_NAME}
-      - POSTGRES_PASSWORD=${AUTH_DB_PASSWORD}
-    shm_size: 128mb
-    volumes:
-      - auth_pgdata:/var/lib/postgresql/data
-    networks:
-      - transcendence-network
-    ports: 
-     - "5433:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${AUTH_DB_USER} -d ${AUTH_DB_NAME}"]
-      interval: 8s
-      timeout: 5s
-      retries: 5
-  # --> DATABASE USER <-- #
-  user_db:
-    container_name: user_db
-    image: postgres
-    restart: always
-    env_file: ./backend/.env
-    environment:
-      - POSTGRES_USER=${USER_DB_USER}
-      - POSTGRES_DB=${USER_DB_NAME}
-      - POSTGRES_PASSWORD=${USER_DB_PASSWORD}
-    shm_size: 128mb
-    volumes:
-      - user_pgdata:/var/lib/postgresql/data
-    networks:
-      - transcendence-network
-    ports:
-     - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${USER_DB_USER} -d ${USER_DB_NAME}"]
-      interval: 8s
-      timeout: 5s
-      retries: 5
-  # --> DATABASE FRIENDS <-- #
+
+  # DB
   friends_db:
     container_name: friends_db
     image: postgres
@@ -216,13 +212,43 @@ services:
     networks:
       - transcendence-network
     ports:
-     - "5435:5432"
+      - "5435:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${FRIENDS_DB_USER} -d ${FRIENDS_DB_NAME}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${FRIENDS_DB_USER} -d ${FRIENDS_DB_NAME}" ]
       interval: 8s
       timeout: 5s
       retries: 5
-  # --> DATABASE NOTIFICATIONS <-- #
+
+
+  # -----> NOTIFICATIONS <----- #
+
+  # Service
+  notifications:
+    container_name: notifications
+    restart: always
+    build:
+      context: ./backend/notifications_service
+      dockerfile: docker/Dockerfile
+    image: notifications
+    env_file: ./backend/.env
+    command: >
+      sh -c "
+        mkdir -p /app/logs &&
+        python3 manage.py makemigrations &&
+        python3 manage.py migrate &&
+        daphne -b 0.0.0.0 -p 8000  --verbosity 3 notifications_service.asgi:application
+      "
+    volumes:
+      - ./backend/notifications_service:/app
+    ports:
+      - "8004:8000"
+    depends_on:
+      notifications_db:
+        condition: service_healthy
+    networks:
+      - transcendence-network
+
+  # DB
   notifications_db:
     container_name: notifications_db
     image: postgres
@@ -238,12 +264,26 @@ services:
     networks:
       - transcendence-network
     ports:
-     - "5431:5432"
+      - "5431:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${NOTIFICATIONS_DB_USER} -d ${NOTIFICATIONS_DB_NAME}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${NOTIFICATIONS_DB_USER} -d ${NOTIFICATIONS_DB_NAME}" ]
       interval: 8s
       timeout: 5s
       retries: 5
+
+
+  # ---------------> REDIS <---------------
+
+  # Service
+  redis:
+    container_name: redis
+    restart: always
+    image: redis:latest
+    networks:
+      - transcendence-network
+    ports:
+      - "6379:6379"
+
 
 volumes:
   user_pgdata:

@@ -8,15 +8,24 @@ For more information on this file, see
 https://docs.djangoproject.com/en/5.0/howto/deployment/asgi/
 """
 
+
 import os
-from django.core.asgi import get_asgi_application
-from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.auth import AuthMiddlewareStack
-from .routing import websocket_urlpatterns
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'notifications_service.settings')
 
+import django
+django.setup() # Need to setup django first fpr JWTAuthMiddleware
+
+from django.core.asgi import get_asgi_application
+from channels.sessions import SessionMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
+from notifications_app.asgi_jwt_middleware import JWTAuthMiddleware
+from .routing import websocket_urlpatterns
+
+
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
-    "websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
+    "websocket": JWTAuthMiddleware(
+            URLRouter(websocket_urlpatterns)
+        )
 })

@@ -14,10 +14,13 @@ import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
 import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
 import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
 import { PingStatus } from "./views/pingStatus.js";
+import {loadWebSocket} from "./utils/loadWebSocket.js";
 
 let languageJson;
 
 new PingStatus();
+
+loadWebSocket();
 
 localStorage.setItem('lastAuthorizedPage', '/');
 

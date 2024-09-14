@@ -7,6 +7,7 @@ from django.utils import timezone
 from datetime import timedelta
 from asgiref.sync import sync_to_async
 import json
+import redis
 
 User = get_user_model()
 
@@ -18,6 +19,10 @@ class manage_notification_view(View):
     async def get(self, request):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200)
+        
+        redis_client = redis.Redis(host='redis', port=6379)
+        redis_client.publish('notifications', 'New notification for user')
+        
         own_notifications = await sync_to_async(Notification.objects.filter)(receiver=request.user)
         notifications_dict = await sync_to_async(self.get_notification_dict)(notifications=own_notifications)
         return JsonResponse({"status": "success", 'message': notifications_dict}, status=200)

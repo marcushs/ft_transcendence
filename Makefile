@@ -1,30 +1,26 @@
 NAME = ft_transcendence
 DOCKER_COMPOSE = docker compose -f ./src/docker-compose.yml
-# VOLUME = /home/${USER}/data/
 RM = sudo rm -rf
 ENV = --env-file ./src/backend/.env
 
 all: up
 
-up: #${VOLUME}
+up:
 	${DOCKER_COMPOSE} ${ENV} up --build --detach --quiet-pull
 
 down:
 	${DOCKER_COMPOSE} ${ENV} down --volumes
 
+restart:
+	${DOCKER_COMPOSE} ${ENV} down && ${DOCKER_COMPOSE} ${ENV} up --build --detach --quiet-pull
+
 clean: down
 
-delete_medias:
-# 	sudo rm -rf ./src/django/ft_transcendence/media
-
-fclean: delete_medias clean
+fclean: clean
 	docker system prune -a -f --volumes
 
 re: 
 	${MAKE} fclean
 	${MAKE}
-
-# ${VOLUME}:
-# 	mkdir -p ${VOLUME}postgres 
 
 .PHONY: all up down clean fclean re
