@@ -33,9 +33,10 @@ class signup_view(View):
 
     def _send_request(self, user, csrf_token):
         payload = {
-                'user_id': user.id,
+                'user_id': str(user.id),
                 'username': user.username,
                 'email': user.email,
+                'logged_in_with_oauth': user.logged_in_with_oauth,
         }
         response = send_post_request_without_token(url='http://user:8000/user/add_user/', payload=payload, csrf_token=csrf_token)
         if response.status_code != 200:

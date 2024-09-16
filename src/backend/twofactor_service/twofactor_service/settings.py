@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-j#^my))q=i+hv25751fa2d!&h&v&7glpu*1i2645n1(a8$zch5'
+SECRET_KEY = env("TWOFACTOR_SECRET_KEY")
 
 # /--> JWT <--\      
 JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
@@ -122,13 +122,13 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
+    'https://localhost:3000',
 	'http://frontend',
 	'http://twofactor'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-	'http://localhost:3000',
+	'https://localhost:3000',
 	'http://frontend',
 	'http://twofactor'
 ]

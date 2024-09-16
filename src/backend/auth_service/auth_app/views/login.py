@@ -13,9 +13,11 @@ class login_view(View):
     def __init__(self):
         super().__init__
     
-    
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
+        if 'logged_in_with_oauth' in data and data['logged_in_with_oauth'] is True:
+            print('oauth login')
+            return self._oauth_login(request, data)
         if 'twofactor' in data:
             return self._send_twofactor_request(data=data, csrf_token=request.headers.get('X-CSRFToken'), request=request)
         response = self._check_data(request=request, data=data)
@@ -33,6 +35,19 @@ class login_view(View):
             response = JsonResponse({'message': 'This username does not exist, please try again'}, status=400)
         return response
     
+    def _oauth_login(self, request, data):
+        if 'twofactor' in data:
+            return self._send_twofactor_request(data=data, csrf_token=request.headers.get('X-CSRFToken'))
+        if request.COOKIES.get('jwt'):
+            return JsonResponse({'message': 'You are already logged in'}, status=400)
+        try:
+            user = User.objects.get(username=data['username']) 
+            if user.is_verified is True:
+                return JsonResponse({'message': '2FA activated on this account, need to verify before log', 'is_verified': user.is_verified}, status=200)
+            response = self._create_user_session(user=user)
+        except User.DoesNotExist:
+            response = JsonResponse({'message': 'Invalid username, please try again'}, status=400)
+        return response
     
     def _check_data(self, request, data):
         if not data['username']:
@@ -66,4 +81,3 @@ class login_view(View):
             return self._create_user_session(user=user, request=request)
         except ObjectDoesNotExist:
             return JsonResponse({'error': 'User not found'}, status=404)
-
