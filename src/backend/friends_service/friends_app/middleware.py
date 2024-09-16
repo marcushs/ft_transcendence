@@ -10,10 +10,10 @@ User = get_user_model()
 
 from .utils.user_utils import send_request
 class JWTAuthMiddleware(MiddlewareMixin):
-    def process_request(self, request):
+    async def process_request(self, request):
         token = request.COOKIES.get('jwt')
         if token:
-            jwt_user = get_user_from_jwt(token)
+            jwt_user = await get_user_from_jwt(token)
             if jwt_user == 'expired':
                 self.send_new_token_request(request=request, jwt_user=jwt_user)
             elif jwt_user == None: 
@@ -24,7 +24,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
         else:
             refresh_token = request.COOKIES.get('jwt_refresh')
             if refresh_token:
-                jwt_user = get_user_from_jwt(refresh_token)
+                jwt_user = await get_user_from_jwt(refresh_token)
                 if jwt_user == 'expired' or jwt_user == None:
                     request.jwt_failed = True
                     request.user = AnonymousUser()

@@ -9,10 +9,4 @@ class ContactsConsumer(AsyncWebsocketConsumer):
         pass
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        message = data.get('message', '')
-
-        # Renvoie le message au client
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        pass

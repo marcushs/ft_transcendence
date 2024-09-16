@@ -8,15 +8,18 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/asgi/
 """
 
 import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'friends_service.settings')
+
+import django
+django.setup()
 
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.auth import AuthMiddlewareStack
 from .routing import websocket_urlpatterns
+from friends_app.middleware import JWTAuthMiddleware
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'friends_service.settings')
 
-application = ProtocolTypeRouter({
+application = ProtocolTypeRouter({ 
     "http": get_asgi_application(),
-    "websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
-})
+    # "websocket": JWTAuthMiddleware(URLRouter(websocket_urlpatterns))
+}) 

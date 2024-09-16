@@ -11,20 +11,17 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import environ
 import os
 
 # Read from .env file
-env = environ.Env()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Path for files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths inside the project like this: BASE_DIR / 'subdir'. 
 BASE_DIR = Path(__file__).resolve().parent.parent 
 
 
@@ -34,12 +31,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # /-----> Django key <-----\
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("AUTH_SECRET_KEY")
+SECRET_KEY = os.environ.get("AUTH_SECRET_KEY")
 
 # /-----> JWT keys && algorithm <-----\
 
-JWT_VERIFYING_KEY = env("PUBLIC_JWT_KEY")
-JWT_ALGORITHM = env("JWT_ALGORITHM")
+JWT_VERIFYING_KEY = os.environ.get("PUBLIC_JWT_KEY")
+JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")
 
 # /-----> JWT token lifetime in seconds <-----\
 
@@ -49,7 +46,7 @@ REFRESH_TOKEN_LIFETIME = 86400 # 1 day
 # /-----><-----\
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True 
 
 ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'friends']
 
@@ -57,7 +54,6 @@ ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'friends']
  
 INSTALLED_APPS = [
 	'corsheaders',
-    'daphne',
     'friends_app',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -101,7 +97,6 @@ TEMPLATES = [
 
 ASGI_APPLICATION = 'friends_service.asgi.application'
 
-# WSGI_APPLICATION = 'friends_service.wsgi.application'
 
 
 CORS_ALLOW_CREDENTIALS = True
@@ -143,11 +138,11 @@ CSRF_TRUSTED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('FRIENDS_DB_NAME'),
-        'USER': env('FRIENDS_DB_USER'),
-        'PASSWORD': env('FRIENDS_DB_PASSWORD'),
-        'HOST': env('FRIENDS_DB_HOST'),
-        'PORT': env('FRIENDS_DB_PORT'),
+        'NAME': os.environ.get('FRIENDS_DB_NAME'),
+        'USER': os.environ.get('FRIENDS_DB_USER'),
+        'PASSWORD': os.environ.get('FRIENDS_DB_PASSWORD'),
+        'HOST': os.environ.get('FRIENDS_DB_HOST'),
+        'PORT': os.environ.get('FRIENDS_DB_PORT'),
     }
 }
 
@@ -174,4 +169,4 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'  

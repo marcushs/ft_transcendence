@@ -98,7 +98,7 @@ services:
       sh -c "
         python3 manage.py makemigrations &&
         python3 manage.py migrate &&
-        daphne -b 0.0.0.0 -p 8000 friends_service.asgi:application
+        daphne -b 0.0.0.0 -p 8000 --verbosity 3 friends_service.asgi:application
       "
     volumes:
       - ./backend/friends_service:/app
