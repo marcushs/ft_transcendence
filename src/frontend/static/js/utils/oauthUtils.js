@@ -28,7 +28,7 @@ export async function oauthRedirectCallback() {
 				status_text.textContent = `Error: ${login_res ? login_res.message : 'Fetch failed'}`
 				setTimeout(() => window.location.href = '/login', 2000);
 				if (login_res.url)
-					setTimeout(() => window.location.href = login_res.url, 2000);
+					// setTimeout(() => window.location.href = login_res.url, 2000);
 				return ;
 			}
 			console.log('oauth redirect page:')
@@ -38,19 +38,19 @@ export async function oauthRedirectCallback() {
 		} else {
 			// if handleOauthCallback error
 			status_text.textContent = `Error: ${data.message}`;
-			setTimeout(() => window.location.href = '/login', 2000);
+			// setTimeout(() => window.location.href = '/login', 2000);
 		}
 	} else {
 		// No query params, not from 42 oauth
 		status_text.textContent = 'Error: Invalid request';
-		setTimeout(() => window.location.href = '/login', 2000);
+		// setTimeout(() => window.location.href = '/login', 2000);
 	}
 }
 
 // Callback function for login view
 export async function redirectToOauth(oauthProvider) {
 	try {
-	const res = await fetch(`http://localhost:${getPortNumber(oauthProvider)}/${oauthProvider}/auth/`, config);
+	const res = await fetch(`/api/${oauthProvider}/auth/`, config);
 	const data = await res.json();
 	console.log(data);
 	window.location.replace(data.url);
@@ -61,7 +61,7 @@ export async function redirectToOauth(oauthProvider) {
 
 async function handleOauthCallback(oauthProvider, code, state) {
 	try {
-		const res = await fetch(`http://localhost:${getPortNumber(oauthProvider)}/${oauthProvider}/redirect/?code=${code}&state=${state}`, config);
+		const res = await fetch(`/api/${oauthProvider}/redirect/?code=${code}&state=${state}`, config);
 		const data = await res.json();
 		console.log(data)
 		return data;
@@ -73,7 +73,7 @@ async function handleOauthCallback(oauthProvider, code, state) {
 
 async function accessResource(oauthProvider) {
 	try {
-		const res = await fetch(`http://localhost:${getPortNumber(oauthProvider)}/${oauthProvider}/access_resource/`, config);
+		const res = await fetch(`/api/${oauthProvider}/access_resource/`, config);
 		const data = await res.json();
 		return data;
 	} catch (error) {

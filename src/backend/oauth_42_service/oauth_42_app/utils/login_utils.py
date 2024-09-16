@@ -34,13 +34,13 @@ def _create_user_session(user):
 	token = create_jwt_token(user, 'access')
 	refresh_token = create_jwt_token(user, 'refresh')
 	response = JsonResponse({'message': 'Login successfully'}, status=200)
-	response.set_cookie('jwt', token, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
-	response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
+	response.set_cookie('jwt', token, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS, samesite=None)
+	response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS, samesite=None)
 	return response
 
 def _send_twofactor_request(user, payload, csrf_token):
 	try:
-		response = send_post_request(url='http://twofactor:8000/twofactor/twofactor_login/', payload=payload, csrf_token=csrf_token)
+		response = send_post_request(url='http://twofactor:8000/api/twofactor/twofactor_login/', payload=payload, csrf_token=csrf_token)
 		if response.status_code != 200:
 			return response
 		return _create_user_session(user=user)

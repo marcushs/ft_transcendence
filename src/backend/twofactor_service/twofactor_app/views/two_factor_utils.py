@@ -13,10 +13,10 @@ def send_update_request(request):
         'two_factor_method': request.user.two_factor_method
     }
     
-    response = send_post_request(request=request, url='http://user:8000/user/update_user/', payload=payload)
+    response = send_post_request(request=request, url='http://user:8000/api/user/update_user/', payload=payload)
     if response.status_code != 200:
         return response
-    response = send_post_request(request=request, url='http://auth:8000/auth/update_user/', payload=payload)
+    response = send_post_request(request=request, url='http://auth:8000/api/auth/update_user/', payload=payload)
     if response.status_code != 200:
         return response
     return response

@@ -45,7 +45,7 @@ async function postNewUsername() {
 	};
 
 	try {
-		const res = await fetch(`http://localhost:${getPortNumber(oauthProvider)}/${oauthProvider}/update_username/`, config);
+		const res = await fetch(`/api/${oauthProvider}/update_username/`, config);
 		// if (res.status == 403)
 		// 	throw new Error('Access Denied')
 		const data = await res.json();

@@ -1,5 +1,5 @@
 """
-URL configuration for twofactor_service project.
+URL configuration for chat_service project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -17,5 +17,6 @@ Including another URLconf
 from django.urls import include, path
 
 urlpatterns = [
-	path('api/twofactor/', include('twofactor_app.urls')),
+	path('api/chat/', include('chat_app.urls')),
 ]
+

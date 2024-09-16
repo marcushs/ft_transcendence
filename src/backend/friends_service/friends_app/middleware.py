@@ -15,6 +15,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
             if jwt_user:
                 request.user = jwt_user
             else:
+                print('jwt_failed???') 
                 request.jwt_failed = True
                 request.user = AnonymousUser()
         else:
