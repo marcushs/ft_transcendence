@@ -5,6 +5,13 @@ from ..models import User
 from asgiref.sync import sync_to_async
 import json
 
+
+async def get_user_id_by_username(username):
+    user = await sync_to_async(User.objects.get)(username=username)
+    
+    return user.id
+
+
 class add_new_user(View):
     def __init__(self):
         super().__init__()

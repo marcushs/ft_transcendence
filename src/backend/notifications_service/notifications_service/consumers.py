@@ -2,10 +2,13 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 from urllib.parse import parse_qs
+from asgiref.sync import sync_to_async
+from notifications_app.utils.user_utils import get_user_id_by_username
+from notifications_app.models import Notification
+
 
 class NotificationsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        query_params = parse_qs(self.scope["query_string"].decode())
         self.user = self.scope["user"]
         try:
             if self.user.is_anonymous:
@@ -15,32 +18,28 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
                 await self.channel_layer.group_add(self.group_name, self.channel_name)
                 await self.accept()
         except Exception as e:
-            print('------------------- ERROR : ', e, ' -------------------------')
+            print('Error: ', e)
 
     async def disconnect(self, close_code):
         pass
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        query_params = parse_qs(self.scope["query_string"].decode())
-
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-        
-        channel_layer = get_channel_layer()
-
-        await channel_layer.group_send(
-            self.group_name,
-            {
-                'type': 'notification_message',
-                'message': f'id is {self.user.id}'
-            }
-        )
+        pass
         
         
-    async def notification_message(self, event):
-        message = event['message']
-
+    async def new_notification(self, event):
+        notification = event['notification']
+        
         await self.send(text_data=json.dumps({
-            'message': message
+            'type': 'new_notification',
+            'notification': notification
         }))
+        
+    
+    # async def delete_notification(self, event):
+    #     notification = event['notification']
+        
+    #     await self.send(text_data=json.dumps({
+    #         'type': 'delete_notification',
+    #         'notification': notification
+    #     }))

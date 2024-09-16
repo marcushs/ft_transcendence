@@ -1,3 +1,5 @@
+import {convertDateFormat} from "../../utils/convertDateFormat.js";
+
 class AcceptedContactRequestNotificationComponent extends HTMLElement {
 	constructor() {
 		super();
@@ -7,9 +9,12 @@ class AcceptedContactRequestNotificationComponent extends HTMLElement {
 
 
 	initializeComponent() {
+		this.notificationCreateAt = new Date(this.notificationObj.created_at);
+
 		this.innerHTML = `
 			<li>			
 				<p>${this.notificationObj.message}</p>
+				<p class="notification-date">${convertDateFormat(this.notificationCreateAt)}</p>
 				<hr>
 			</li>
 		`;
@@ -20,6 +25,7 @@ class AcceptedContactRequestNotificationComponent extends HTMLElement {
 		this.notificationObj = JSON.parse(this.getAttribute('notificationObj'));
 		this.initializeComponent();
 		this.setNotificationClass();
+		this.reloadDateEachSeconds();
 	}
 
 
@@ -27,15 +33,17 @@ class AcceptedContactRequestNotificationComponent extends HTMLElement {
 		const li = this.querySelector('li');
 
 		if (!this.notificationObj.is_read)
-			li.className = 'no-viewed-notification';
+			li.className = 'unread-notification';
 	}
 
 
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (name === 'notificationObj')
-			this.notificationObj = JSON.parse(newValue);
-	}
+	reloadDateEachSeconds() {
+		const dateElement = this.querySelector('.notification-date');
 
+		setInterval(() => {
+			dateElement.textContent = convertDateFormat(this.notificationCreateAt);
+		}, 1000)
+	}
 
 }
 

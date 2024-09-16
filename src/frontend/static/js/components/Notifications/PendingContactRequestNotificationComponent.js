@@ -1,5 +1,6 @@
 import {sendRequest} from "../../utils/sendRequest.js";
 import {sendNotification} from "../../utils/sendNotification.js";
+import {convertDateFormat} from "../../utils/convertDateFormat.js";
 
 class PendingContactRequestNotificationComponent extends HTMLElement {
 	constructor() {
@@ -8,51 +9,28 @@ class PendingContactRequestNotificationComponent extends HTMLElement {
 		this.notificationObj = null;
 	}
 
-	initializeComponent() {
-		const date = new Date(this.notificationObj.created_at);
 
-		// this.convertDateFormat(date);
+	initializeComponent() {
+		this.notificationCreateAt = new Date(this.notificationObj.created_at);
+
 		this.innerHTML = `
 			<li>			
 				<p>${this.notificationObj.message}</p>
 				<i class="fa-solid fa-check"></i>
 				<i class="fa-solid fa-xmark"></i>
-				<p class="notification-date">${this.convertDateFormat(date)}</p>
+				<p class="notification-date">${convertDateFormat(this.notificationCreateAt)}</p>
 				<hr>
 			</li>
 		`;
 	}
 
 
-	convertDateFormat(date) {
-		const currentDate = new Date();
-		const diffInMs = currentDate - date;
-
-		const diffObj = {
-			seconds: Math.floor((diffInMs / 1000) % 60),
-			minutes: Math.floor((diffInMs / (1000 * 60)) % 60),
-		    hours: Math.floor((diffInMs / (1000 * 60 * 60)) % 24),
-		    days: Math.floor((diffInMs / (1000 * 60 * 60 * 24)) % 7)
-		}
-
-		if (diffObj.days >= 7)
-			return `${date.toLocaleDateString()}`;
-		if (diffObj.days >= 1)
-			return `${diffObj.days}d`;
-		if (diffObj.hours >= 1)
-			return `${diffObj.hours}h`;
-		if (diffObj.minutes >= 1)
-			return `${diffObj.minutes}m`;
-		return `${diffObj.seconds}s`;
-	}
-
-
 	connectedCallback() {
 		this.notificationObj = JSON.parse(this.getAttribute('notificationObj'));
-		console.log(this.notificationObj)
 		this.initializeComponent();
 		this.setNotificationClass();
 		this.attachEventsListener();
+		this.reloadDateEachSeconds();
 	}
 
 
@@ -66,7 +44,37 @@ class PendingContactRequestNotificationComponent extends HTMLElement {
 		const li = this.querySelector('li');
 
 		if (!this.notificationObj.is_read)
-			li.className = 'no-viewed-notification';
+			li.className = 'unread-notification';
+	}
+
+
+	reloadDateEachSeconds() {
+		const dateElement = this.querySelector('.notification-date');
+
+		setInterval(() => {
+			dateElement.textContent = convertDateFormat(this.notificationCreateAt);
+		}, 1000)
+	}
+
+
+	throwCloseNotificationsContainerEvent() {
+		const event = new CustomEvent('closeNotificationsContainer', {
+			bubbles: true
+		});
+
+		document.dispatchEvent(event);
+	}
+
+
+	throwDeleteNotificationEvent() {
+		const event = new CustomEvent('deleteNotificationEvent', {
+			bubbles: true,
+			detail: {
+				uuid: this.notificationObj.uuid
+			}
+		});
+
+		document.dispatchEvent(event);
 	}
 
 
@@ -82,6 +90,9 @@ class PendingContactRequestNotificationComponent extends HTMLElement {
                 if (action === 'accept')
                     sendNotification(this.notificationObj.sender, 'friend-request-accepted');
 				await sendRequest('DELETE', 'http://localhost:8004/notifications/manage_notifications/', { uuid: this.notificationObj.uuid });
+				this.throwDeleteNotificationEvent();
+				this.throwCloseNotificationsContainerEvent();
+				this.remove();
             }
         } catch (error) {
             console.error('catch: ', error);

@@ -5,19 +5,9 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 from asgiref.sync import sync_to_async
 from django.http import parse_cookie
-
+from .utils.jwt_utils import get_user_from_jwt
 
 User = get_user_model()
-
-async def get_user_from_jwt(token):
-    try:
-        payload = jwt.decode(token, settings.JWT_SECRET_KEY,  algorithms=[settings.JWT_ALGORITHM])
-        user_id = payload.get('user_id')
-        user = await sync_to_async(User.objects.get)(id=user_id)
-        return user
-    except Exception as e:
-        return AnonymousUser()
-
 
 class JWTAuthMiddleware:
     def __init__(self, inner):
@@ -42,9 +32,11 @@ class JWTAuthMiddlewareInstance:
         
         if jwt_token:
             user = await get_user_from_jwt(jwt_token)
-            self.scope['user'] = user
+            if user is not None:
+                self.scope['user'] = user
+            else:
+                self.scope['user'] = AnonymousUser()
         else:
             self.scope['user'] = AnonymousUser()
 
         return await self.inner(self.scope, self.receive, self.send)
-    

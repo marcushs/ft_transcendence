@@ -6,6 +6,8 @@ from django.contrib.auth.models import AnonymousUser
 from django.utils import timezone
 from datetime import timedelta
 from asgiref.sync import sync_to_async
+from channels.layers import get_channel_layer
+from ..utils.user_utils import get_user_id_by_username
 import json
 import redis
 
@@ -53,7 +55,7 @@ class manage_notification_view(View):
                 notification.is_read = True
                 notification.is_read_at = timezone.now()
                 await sync_to_async(notification.save)()
-            except User.DoesNotExist:
+            except Exception:
                 pass
             
     
@@ -66,6 +68,7 @@ class manage_notification_view(View):
             return JsonResponse({'status': 'error', 'message': check_response}, status=200)
         try:
             notification = await sync_to_async(Notification.objects.get)(uuid=data['uuid'])
+            # self.send_delete_notification_to_channel(notification)
             await sync_to_async(notification.delete)()
         except User.DoesNotExist:
             pass
@@ -92,7 +95,8 @@ class manage_notification_view(View):
         for index, notification_type in enumerate(notifications_types):
             if data['type'] == notification_type:
                 message = notifications_messages[index]
-                await sync_to_async(Notification.objects.create)(sender=request.user, receiver=self.receiver, type=notification_type, message=message)
+                notification = await sync_to_async(Notification.objects.create)(sender=request.user, receiver=self.receiver, type=notification_type,message=message)
+                await self.send_new_notification_to_channel(notification)
                 return JsonResponse({"status": "success"}, status=200)
 
         return JsonResponse({'status': 'error', 'message': 'unknown notification type'}, status=200)
@@ -124,3 +128,29 @@ class manage_notification_view(View):
         if data['uuid'] is None:
             return 'Notification id  is missing'
         return 'Success'
+
+
+    async def send_new_notification_to_channel(self, notification):
+        channel_layer = get_channel_layer()
+        user_id = await get_user_id_by_username(self.receiver)
+        
+        await channel_layer.group_send(
+            f'user_{user_id}',
+            {
+                'type': 'new_notification',
+                'notification': notification.to_dict()
+            }
+        )
+        
+    async def send_delete_notification_to_channel(self, notification):
+        print('------------------ DELETE -------------------------')
+        channel_layer = get_channel_layer()
+        user_id = await get_user_id_by_username(self.receiver)
+        
+        await channel_layer.group_send(
+            f'user_{user_id}',
+            {
+                'type': 'delete_notification',
+                'notification': notification.to_dict()
+            }
+        )

@@ -8,6 +8,9 @@ from .models import Notification
 from django.utils import timezone
 from datetime import timedelta, datetime
 from asgiref.sync import sync_to_async
+from channels.layers import get_channel_layer
+from .utils.user_utils import get_user_id_by_username
+
 
 User = get_user_model()
 
@@ -78,20 +81,33 @@ class NotificationMiddleware(MiddlewareMixin):
         senders = set(await sync_to_async(lambda: [notification.sender for notification in user_notifications])())
         for sender in senders:
             notifications_by_sender = Notification.objects.filter(sender=sender)
-            await self.remove_duplicate_notifications_by_sender(notifications_by_sender)
+            await self.remove_duplicate_notifications_by_sender(request, notifications_by_sender)
 
 
-    async def remove_duplicate_notifications_by_sender(self, notifications_by_sender):
+    async def remove_duplicate_notifications_by_sender(self, request, notifications_by_sender):
         friend_request_accepted = await sync_to_async(list)(notifications_by_sender.filter(type='friend-request-accepted'))
         friend_request_pending = await sync_to_async(list)(notifications_by_sender.filter(type='friend-request-pending'))
         private_match_invitation = await sync_to_async(list)(notifications_by_sender.filter(type='private-match-invitation'))
         tournament_invitation = await sync_to_async(list)(notifications_by_sender.filter(type='tournament-invitation'))
 
-        await self.delete_notifications(friend_request_accepted[:-1])
-        await self.delete_notifications(friend_request_pending[:-1])
-        await self.delete_notifications(private_match_invitation[:-1])
-        await self.delete_notifications(tournament_invitation[:-1])
+        await self.delete_notifications(request, friend_request_accepted[:-1])
+        await self.delete_notifications(request, friend_request_pending[:-1])
+        await self.delete_notifications(request, private_match_invitation[:-1])
+        await self.delete_notifications(request, tournament_invitation[:-1])
 
-    async def delete_notifications(self, notifications_to_delete):
+    async def delete_notifications(self, request, notifications_to_delete):
         for notification in notifications_to_delete:
+            # await self.send_delete_notification_to_channel(request, notification)
             await sync_to_async(notification.delete)()
+
+    # async def send_delete_notification_to_channel(self, request, notification):
+    #     channel_layer = get_channel_layer()
+    #     user_id = await get_user_id_by_username(request.user)
+        
+    #     await channel_layer.group_send(
+    #         f'user_{user_id}',
+    #         {
+    #             'type': 'delete_notification',
+    #             'notification': await sync_to_async(notification.to_dict)()
+    #         }
+    #     )

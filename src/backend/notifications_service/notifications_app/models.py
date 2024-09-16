@@ -25,8 +25,8 @@ class Notification(models.Model):
             'message': self.message,
             'type': self.type,
             'is_read': self.is_read,
-            'uuid': self.uuid,
-            'created_at': self.created_at
+            'uuid': str(self.uuid),
+            'created_at': self.created_at.isoformat()
         }
 
 class UserManager(BaseUserManager):

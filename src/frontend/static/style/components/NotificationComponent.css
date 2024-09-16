@@ -32,7 +32,6 @@ notification-component .number-of-notifications {
 	position: absolute;
 	top: 20%;
 	left: 40%;
-	background: #ff3030;
 	border-radius: 50%;
 	height: 2.5rem;
 	width: 2.5rem;
@@ -45,7 +44,6 @@ notification-component .notifications-container-background {
 	background: linear-gradient(0deg, var(--neon-pink), var(--neon-blue));
 	position: absolute;
 	width: 35rem;
-	/*max-height: 0;*/
 	top: calc(100% + 0.5px);
 	padding: 0 1px 1px 1px;
 	border-bottom-left-radius: 5px;
@@ -53,13 +51,12 @@ notification-component .notifications-container-background {
 }
 
 notification-component .notifications-container {
-	overflow-y: auto;
 	height: 100%;
 	width: 100%;
 }
 
 notification-component .notifications-container ul {
-	overflow-y: auto;
+	overflow-y: scroll;
 	width: 100%;
 	max-height: 0;
 	list-style-type: none;
@@ -68,7 +65,7 @@ notification-component .notifications-container ul {
 	border-bottom-right-radius: 5px;
 }
 
-notification-component .notifications-container ul .no-viewed-notification {
+notification-component .notifications-container ul .unread-notification {
 	background: #14171c;
 }
 
@@ -81,6 +78,7 @@ notification-component .notifications-container ul li {
 }
 
 notification-component .notifications-container ul li p {
+	display: inline-block;
 	font-size: 1.5rem;
 }
 
@@ -153,5 +151,23 @@ notification-component .notifications-container ul li .fa-xmark {
 	}
 	to {
 		max-height: 0;
+	}
+}
+
+@keyframes changeNumberOfNotificationsColorToRead {
+	from {
+		background: #ff3030;
+	}
+	to {
+		background: #444;
+	}
+}
+
+@keyframes changeNumberOfNotificationsColorToUnread {
+	from {
+		background: #444;
+	}
+	to {
+		background: #ff3030;
 	}
 }
