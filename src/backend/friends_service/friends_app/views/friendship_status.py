@@ -13,8 +13,8 @@ class GetFriendShipStatus(View):
     async def get(self, request):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status': 'error', 'message': 'unregistered'}, status=200)
-        self.init(request=request)
-        response = self.check_data(user=request.user)
+        await self.init(request=request)
+        response = await self.check_data(user=request.user)
         if response['status'] != 200:
             return JsonResponse({'message': response['message']}, status=response['status'])
         return await self.get_friend_request_status(user=request.user)
@@ -23,7 +23,7 @@ class GetFriendShipStatus(View):
         self.is_self = True
         self.User = get_user_model()
         self.target_username = request.GET.get('q', '')
-        self.friend_list = await sync_to_async(FriendList.objects.filter)(user=request.user).first()
+        self.friend_list = await sync_to_async(lambda: FriendList.objects.filter(user=request.user).first())
     
     async def check_data(self, user):
         if not self.friend_list:
@@ -41,7 +41,7 @@ class GetFriendShipStatus(View):
     async def get_friend_request_status(self, user):
         if self.is_self == True:
             return JsonResponse({'status': 'success', 'friend_status': 'own_profile'}, status=200)
-        if self.friend_list.is_mutual_friend(friend=self.target_user):
+        if await sync_to_async(self.friend_list.is_mutual_friend)(friend=self.target_user):
             return JsonResponse({'status': 'success', 'friend_status': 'mutual_friend'}, status=200)
         if await get_friend_request(sender=user, receiver=self.target_user) is not False:
             return JsonResponse({'status': 'success', 'friend_status': 'pending_sent'}, status=200)

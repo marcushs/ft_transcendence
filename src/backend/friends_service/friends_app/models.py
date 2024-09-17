@@ -23,7 +23,7 @@ class FriendList(models.Model):
 
     def unfriend(self, target_user):
         self.remove_friend(target_user)
-        friend_list = FriendList.objects.get(user=target_user)
+        friend_list = FriendList.objects.get(user=target_user) 
         friend_list.remove_friend(self.user)
 
     def is_mutual_friend(self, friend):

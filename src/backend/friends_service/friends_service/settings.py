@@ -72,8 +72,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'friends_app.middleware.JWTAuthMiddleware', # Custom middleware for jwt token feature
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware', 
-]
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',   
+] 
 
 
 ROOT_URLCONF = 'friends_service.urls'

@@ -10,12 +10,18 @@ User = get_user_model()
 
 from .utils.user_utils import send_request
 class JWTAuthMiddleware(MiddlewareMixin):
+    
+    async def __call__(self, request):
+        response = await self.process_request(request)
+        response = await self.process_response(request, response)
+        return response
+    
     async def process_request(self, request):
         token = request.COOKIES.get('jwt')
         if token:
             jwt_user = await get_user_from_jwt(token)
             if jwt_user == 'expired':
-                self.send_new_token_request(request=request, jwt_user=jwt_user)
+                await self.send_new_token_request(request=request, jwt_user=jwt_user)
             elif jwt_user == None: 
                 request.jwt_failed = True
                 request.user = AnonymousUser()
@@ -29,15 +35,15 @@ class JWTAuthMiddleware(MiddlewareMixin):
                     request.jwt_failed = True
                     request.user = AnonymousUser()
                 else:
-                    self.send_new_token_request(request=request, jwt_user=jwt_user)
+                    await self.send_new_token_request(request=request, jwt_user=jwt_user)
             else:
                     request.user = AnonymousUser() 
-        response = self.get_response(request) 
+        response = await self.get_response(request) 
         return response 
     
-    def send_new_token_request(self, request, jwt_user):
+    async def send_new_token_request(self, request, jwt_user):
         try:
-            request_response = send_request(request_type='GET',request=request, url='http://auth:8000/auth/update-tokens/')
+            request_response = await send_request(request_type='GET',request=request, url='http://auth:8000/auth/update-tokens/')
             if request_response and request_response.cookies:
                 request.new_token = request_response.cookies.get('jwt')
                 request.new_token_refresh =  request_response.cookies.get('jwt_refresh')
@@ -48,7 +54,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
             request.jwt_failed = True
             request.user = AnonymousUser() 
     
-    def process_response(self, request, response): 
+    async def process_response(self, request, response):  
         if hasattr(request, 'jwt_failed'):
             response = JsonResponse({'error': 'invalid session token'}, status=401)
             response.delete_cookie('jwt')

@@ -8,7 +8,7 @@ import json
 
 async def get_friend_request(sender, receiver):
     try:
-        return await sync_to_async(FriendRequest.objects.get)(sender=sender, receiver=receiver, is_active=True)
+        return await FriendRequest.objects.get(sender=sender, receiver=receiver, is_active=True)
     except FriendRequest.DoesNotExist:
         return False
 
@@ -51,36 +51,36 @@ class friendshipManager(View):
         return True
  
     async def accept_friendship(self):
-        friend_request = await sync_to_async(FriendRequest.objects.filter)(sender=self.target_user, receiver=self.user, is_active=True).first()
+        friend_request = await sync_to_async(lambda: FriendRequest.objects.filter(sender=self.target_user, receiver=self.user, is_active=True).first())
         if not friend_request:
             return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
-        friend_request.accept()
+        await sync_to_async(friend_request.accept)()
         return JsonResponse({'status': 'success', 'friendship_status': 'mutual_friend', 'message': 'friends invitation successfully accepted'}, status=200)
 
     async def send_friendship(self):
-        from_friend_request = await sync_to_async(FriendRequest.objects.filter)(sender=self.target_user, receiver=self.user, is_active=True).first()
-        to_friend_request = await sync_to_async(FriendRequest.objects.filter)(sender=self.user, receiver=self.target_user, is_active=True).first()
+        from_friend_request = await sync_to_async(lambda: FriendRequest.objects.filter(sender=self.target_user, receiver=self.user, is_active=True).first())
+        to_friend_request = await sync_to_async(lambda: FriendRequest.objects.filter(sender=self.user, receiver=self.target_user, is_active=True).first())
         if from_friend_request or to_friend_request:
             return JsonResponse({'status': 'error', 'message': 'Friend request already sent'}, status=200)
         await sync_to_async(FriendRequest.objects.create)(sender=self.user, receiver=self.target_user)
         return JsonResponse({'status': 'success', 'friendship_status': 'pending_sent', 'message': 'friends invitation successfully send'}, status=200)
 
     async def cancel_friendship(self):
-        friend_request = await sync_to_async(FriendRequest.objects.filter)(sender=self.user, receiver=self.target_user, is_active=True).first()
+        friend_request = await sync_to_async(lambda: FriendRequest.objects.filter(sender=self.user, receiver=self.target_user, is_active=True).first())
         if not friend_request:
             return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
-        friend_request.cancel()
+        await sync_to_async(friend_request.cancel)()
         return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully canceled'}, status=200)
 
     async def decline_friendship(self):
-        friend_request = await sync_to_async(FriendRequest.objects.filter)(sender=self.target_user, receiver=self.user, is_active=True).first()
+        friend_request = await sync_to_async(lambda: FriendRequest.objects.filter(sender=self.target_user, receiver=self.user, is_active=True).first())
         if not friend_request:
             return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
-        friend_request.cancel()
+        await sync_to_async(friend_request.cancel)()
         return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully declined'}, status=200)
 
     async def remove_friendship(self):
         if self.friend_list.is_mutual_friend(friend=self.target_user) is False:
             return JsonResponse({'status': 'error', 'message': 'Cant remove this contact from friendlist, you\'re already not friend'}, status=200)
-        self.friend_list.unfriend(self.target_user)
+        await sync_to_async(self.friend_list.unfriend)(self.target_user)
         return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully removed'}, status=200)

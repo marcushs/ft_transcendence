@@ -7,6 +7,7 @@ from asgiref.sync import sync_to_async
 from ..models import User
 import json
 import requests
+import httpx
 
 class add_new_user(View):
     def __init__(self):
@@ -27,19 +28,19 @@ class update_user(View):
     def __init__(self):
         super().__init__
         
-    def get(self, request):
+    async def get(self, request):
         return JsonResponse({"message": 'get request successfully reached'}, status=200)
     
-    def post(self, request):
+    async def post(self, request):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'User not found'}, status=400)
         data = json.loads(request.body.decode('utf-8'))
         if 'username' in data:
             setattr(request.user, 'username', data['username'])
-        request.user.save()
+        await sync_to_async(request.user.save)()
         return JsonResponse({'message': 'User updated successfully'}, status=200)
 
-def send_request(request_type, request, url, payload=None):
+async def send_request(request_type, request, url, payload=None):
         headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -51,13 +52,15 @@ def send_request(request_type, request, url, payload=None):
             'jwt_refresh': request.COOKIES.get('jwt_refresh'),
             }
         try:
-            if request_type == 'GET':
-                response = requests.get(url=url, headers=headers, cookies=cookies)
-            else:
-                response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
-            if response.status_code == 200:
+            async with httpx.AsyncClient() as client:
+                if request_type == 'GET':
+                    response = await client.get(url, headers=headers, cookies=cookies)
+                else:
+                    response = await client.post(url, headers=headers, cookies=cookies, content=json.dumps(payload))
+
+                response.raise_for_status()  # Raise an exception for HTTP errors
                 return response
-            else:
-                response.raise_for_status()
-        except Exception as e:
-            raise Exception(f"An error occurred: {e}")
+        except httpx.HTTPStatusError as e:
+            raise Exception(f"HTTP error occurred: {e}")
+        except httpx.RequestError as e:
+            raise Exception(f"An error occurred while requesting: {e}")
