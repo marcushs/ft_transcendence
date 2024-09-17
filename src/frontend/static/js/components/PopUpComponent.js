@@ -126,7 +126,7 @@ class PopUpComponent extends HTMLElement {
 			target_username: username,
 		};
 		try {
-			const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
+			const data = await sendRequest('POST', '/api/friends/manage_friendship/', payload);
 			console.log(data.message);
 			if (data.status === 'success') {
 				await this.sendNotification(username, 'friend-request-pending');
@@ -167,9 +167,9 @@ class PopUpComponent extends HTMLElement {
 	async getSearchResult(requestType, ) {
 		let url = null;
 		if (requestType === 'search_contacts')
-			url = `http://localhost:8003/friends/search_contacts/`;
+			url = `/api/friends/search_contacts/`;
 		else if (requestType === 'search_users')
-			url = `http://localhost:8000/user/search_users/?q=${encodeURIComponent(this.searchInput.value)}`;
+			url = `/api/user/search_users/?q=${encodeURIComponent(this.searchInput.value)}`;
 		try {
 			const data = await sendRequest('GET', url, null);
 			if (data.status === 'success') {
@@ -206,7 +206,7 @@ class PopUpComponent extends HTMLElement {
 	}
 
     async sendNotification(receiver, type){
-        const url = 'http://localhost:8004/notifications/manage_notifications/';
+        const url = '/api/notifications/manage_notifications/';
         const payload = {
             receiver: receiver,
             type: type

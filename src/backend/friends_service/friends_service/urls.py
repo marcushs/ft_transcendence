@@ -18,5 +18,5 @@ Including another URLconf
 from django.urls import include, path
 
 urlpatterns = [
-	path('friends/', include('friends_app.urls')),
+	path('api/friends/', include('friends_app.urls')),
 ]

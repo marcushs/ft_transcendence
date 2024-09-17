@@ -40,7 +40,7 @@ class NotificationComponent extends HTMLElement {
 
 
 	async getNotificationsFromDb() {
-		const url = 'http://localhost:8004/notifications/manage_notifications/';
+		const url = '/api/notifications/manage_notifications/';
 
 		try {
 			const data = await sendRequest('GET', url, null);
@@ -57,7 +57,7 @@ class NotificationComponent extends HTMLElement {
 		const uuids = notifications.map((notification) => notification.uuid);
 
 		for (const notification of notifications) {
-			await sendRequest('PUT', 'http://localhost:8004/notifications/manage_notifications/', { uuids: uuids });
+			await sendRequest('PUT', '/api/notifications/manage_notifications/', { uuids: uuids });
 		}
 	}
 

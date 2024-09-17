@@ -15,6 +15,8 @@ services:
       - auth
       - user
       - chat
+      - friends
+      - notifications
       - twofactor
       - oauth_42
       - oauth_github
@@ -47,7 +49,6 @@ services:
     networks:
       - transcendence-network
 
-
   # --> AUTH SERVICE <-- #
   auth:
     container_name: auth
@@ -72,7 +73,6 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
-
 
   # --> TWOFACTOR SERVICE <-- #
   twofactor:
@@ -99,17 +99,16 @@ services:
     networks:
       - transcendence-network
 
-
   # --> OAUTH 42 SERVICE <-- #
   oauth_42:
     container_name: oauth_42
     restart: always
     build:
-      context: ./requirements/backend/oauth_42_service
+      context: ./backend/oauth_42_service
       dockerfile: docker/Dockerfile
     image: oauth_42
     env_file:
-      - ./requirements/backend/.env
+      - ./backend/.env
     command: >
       sh -c "
           python3 manage.py makemigrations &&
@@ -117,7 +116,7 @@ services:
           python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./requirements/backend/oauth_42_service:/app
+      - ./backend/oauth_42_service:/app
     ports:
       - "8003:8000"
     depends_on:
@@ -131,11 +130,11 @@ services:
     container_name: oauth_google
     restart: always
     build:
-      context: ./requirements/backend/oauth_google_service
+      context: ./backend/oauth_google_service
       dockerfile: docker/Dockerfile
     image: oauth_google
     env_file:
-      - ./requirements/backend/.env
+      - ./backend/.env
     command: >
       sh -c "
           python3 manage.py makemigrations &&
@@ -143,7 +142,7 @@ services:
           python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./requirements/backend/oauth_google_service:/app
+      - ./backend/oauth_google_service:/app
     ports:
       - "8004:8000"
     depends_on:
@@ -157,11 +156,11 @@ services:
     container_name: oauth_github
     restart: always
     build:
-      context: ./requirements/backend/oauth_github_service
+      context: ./backend/oauth_github_service
       dockerfile: docker/Dockerfile
     image: oauth_github
     env_file:
-      - ./requirements/backend/.env
+      - ./backend/.env
     command: >
       sh -c "
           python3 manage.py makemigrations &&
@@ -169,7 +168,7 @@ services:
           python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./requirements/backend/oauth_github_service:/app
+      - ./backend/oauth_github_service:/app
     ports:
       - "8005:8000"
     depends_on:
@@ -177,20 +176,17 @@ services:
         condition: service_healthy
     networks:
       - transcendence-network
-  # --> DATABASE TWOFACTOR <-- #
-  twofactor_db:
-    container_name: twofactor_db
 
   # --> CHAT SERVICE <-- #
   chat:
     container_name: chat
     restart: always
     build:
-      context: ./requirements/backend/chat_service
+      context: ./backend/chat_service
       dockerfile: docker/Dockerfile
     image: chat
     env_file:
-      - ./requirements/backend/.env
+      - ./backend/.env
     command: >
       sh -c "
           python3 manage.py makemigrations &&
@@ -199,14 +195,23 @@ services:
           daphne chat.asgi:application
       "
     volumes:
-      - ./requirements/backend/chat_service:/app
+      - ./backend/chat_service:/app
     ports:
       - "8006:8000"
     depends_on:
-      chat_db:
-        condition: service_healthy
+      - chat_redis
     networks:
       - transcendence-network
+
+   # --> CHANNEL LAYER REDIS <-- #
+  chat_redis:
+    container_name: chat_redis
+    image: redis
+    restart: always
+    ports:
+     - "6379:6379"
+    networks:
+    - transcendence-network
 
  # --> FRIENDS SERVICE <-- #
   friends:
@@ -281,7 +286,6 @@ services:
       timeout: 5s
       retries: 5
 
-
   # --> DATABASE AUTH <-- #
   auth_db:
     container_name: auth_db
@@ -333,7 +337,7 @@ services:
     container_name: oauth_42_db
     image: postgres
     restart: always
-    env_file: ./requirements/backend/.env
+    env_file: ./backend/.env
     environment:
       - POSTGRES_USER=${OAUTH_42_DB_USER}
       - POSTGRES_DB=${OAUTH_42_DB_NAME}
@@ -356,7 +360,7 @@ services:
     container_name: oauth_google_db
     image: postgres
     restart: always
-    env_file: ./requirements/backend/.env
+    env_file: ./backend/.env
     environment:
       - POSTGRES_USER=${OAUTH_GOOGLE_DB_USER}
       - POSTGRES_DB=${OAUTH_GOOGLE_DB_NAME}
@@ -379,7 +383,7 @@ services:
     container_name: oauth_github_db
     image: postgres
     restart: always
-    env_file: ./requirements/backend/.env
+    env_file: ./backend/.env
     environment:
       - POSTGRES_USER=${OAUTH_GITHUB_DB_USER}
       - POSTGRES_DB=${OAUTH_GITHUB_DB_NAME}
@@ -419,6 +423,7 @@ services:
       interval: 8s
       timeout: 5s
       retries: 5
+      
   # --> DATABASE NOTIFICATIONS <-- #
   notifications_db:
     container_name: notifications_db

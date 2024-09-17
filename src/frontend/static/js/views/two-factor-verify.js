@@ -77,7 +77,7 @@ export class TwoFactorVerify {
 }
 
 async function sendTwoFactorCode(userCredentials) {
-	const url = 'http://localhost:8002/twofactor/get_2fa_code/';
+	const url = '/api/twofactor/get_2fa_code/';
 
 	try {
 		await sendRequest('POST', url, userCredentials );
@@ -87,7 +87,7 @@ async function sendTwoFactorCode(userCredentials) {
 }
 
 async function VerifyTwoFactorRequest(verificationCode, userCredentials) {
-	const url = 'http://localhost:8001/auth/login/';
+	const url = '/api/auth/login/';
 
 	try {
 		const data = await sendRequest('POST', url, {

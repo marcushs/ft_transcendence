@@ -14,6 +14,9 @@ import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
 import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
 import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
 import { PingStatus } from "./views/pingStatus.js";
+import oauthRedirect from './views/oauthRedirect.js';
+import oauthUsername from "./views/oauthUsername.js";
+import chatRoom from "./views/chatRoom.js";
 
 let languageJson;
 
@@ -41,6 +44,9 @@ const routes = {
     "/two-factor-app": { title: "TwoFactorApp", render: twoFactorApp },
     "/two-factor-email": { title: "TwoFactorEmail", render: twoFactorEmail },
     "/two-factor-deactivation": { title: "TwoFactorDeactivate", render: twoFactorDeactivation },
+    "/oauth-redirect": { title: "OauthRedirect", render: oauthRedirect },
+    "/oauth-username": { title: "OauthUsername", render: oauthUsername},
+    "/chatroom": { title: "chatRoom", render: chatRoom},
 };
 
 // create the csrf token if it does not already exist

@@ -181,7 +181,7 @@ class ContactComponent extends HTMLElement {
         try {
             console.log(action);
             
-            const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
+            const data = await sendRequest('POST', '/api/friends/manage_friendship/', payload);
             if (data.status === 'success' && action !== 'remove') {
                 this.manageChangePendingContact();
             }

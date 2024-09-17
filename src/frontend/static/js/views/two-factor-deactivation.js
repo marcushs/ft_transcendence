@@ -95,7 +95,7 @@ async function removeTwoFactorLocalStorage() {
 }
 
 async function sendTwoFactorCode() {
-	const url = `http://localhost:8002/twofactor/get_2fa_code/`;
+	const url = `/api/twofactor/get_2fa_code/`;
 
 	try {
 		await sendRequest('GET', url, null);
@@ -105,7 +105,7 @@ async function sendTwoFactorCode() {
 }
 
 async function DeactivateTwoFactorRequest(verificationCode) {
-	const url = `http://localhost:8002/twofactor/disable/`;
+	const url = `/api/twofactor/disable/`;
 
 	try {
 		const data = await sendRequest('POST', url, { twofactor: verificationCode });

@@ -12,14 +12,14 @@ def create_jwt_token(user, type: str) -> None:
         raise TypeError("Inrecognized type for jwt token")
     if type == 'access':
         payload = {
-            'user_id': user.id,
+            'user_id': str(user.id),
             'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
         }
         token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
         return token
     else:
         payload = {
-            'user_id': user.id,
+            'user_id': str(user.id),
             'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
         }
         refresh_token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)

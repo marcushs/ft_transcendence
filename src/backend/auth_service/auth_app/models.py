@@ -25,9 +25,7 @@ class UserManager(BaseUserManager):
         id = data['user_id']
         email = data['email']
         username = data['username']
-        first_name = data['first_name']
-        last_name = data['last_name']
-        user = self.model(id=id, email=email, username=username, first_name=first_name, last_name=last_name, logged_in_with_oauth=True)
+        user = self.model(id=id, email=email, username=username, logged_in_with_oauth=True)
         user.save(using=self._db)
         return user
 

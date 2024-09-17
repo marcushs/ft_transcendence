@@ -52,7 +52,7 @@ async function displayInformation() {
 }
     
 async function getInformation(targetUsername) {
-    const url = `http://localhost:8000/user/get_user/?q=${targetUsername}`;
+    const url = `/api/user/get_user/?q=${targetUsername}`;
     
     try {
         const data = await sendRequest('GET', url, null);
@@ -69,7 +69,7 @@ async function getInformation(targetUsername) {
 
 async function checkFriendshipStatus() {
     const targetUsername = localStorage.getItem('users-profile-target-username');
-    const url = `http://localhost:8003/friends/friendship_status/?q=${targetUsername}`
+    const url = `/api/friends/friendship_status/?q=${targetUsername}`
 
     try {
         const data = await sendRequest('GET', url, null);

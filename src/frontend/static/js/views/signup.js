@@ -78,7 +78,7 @@ async function postData(event, signupBtn) {
 	const form = signupBtn.closest('form');
 	const formData = new FormData(form);
 	const formValues = Object.fromEntries(formData.entries());
-	const url = `http://localhost:8001/auth/signup/`;
+	const url = `/api/auth/signup/`;
 
 	try {
 		const data = await sendRequest('POST', url, formValues);

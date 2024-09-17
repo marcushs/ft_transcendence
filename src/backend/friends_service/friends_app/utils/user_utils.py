@@ -13,7 +13,6 @@ class add_new_user(View):
     
     def get(self, request):
         return JsonResponse({"message": 'get request successfully reached'}, status=200)
-    
 
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
