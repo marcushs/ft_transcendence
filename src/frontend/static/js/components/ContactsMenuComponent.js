@@ -1,7 +1,8 @@
 import './ContactComponent.js';
 import { sendRequest } from "../utils/sendRequest.js";
 import './Friendship/FriendshipButtonComponent.js';
-import './PopUpComponent.js'
+import './PopUpComponent.js';
+import './Chat/ChatNavbarButton.js';
 
 class FriendsMenuComponent extends HTMLElement {
     constructor() {
@@ -14,6 +15,7 @@ class FriendsMenuComponent extends HTMLElement {
             <div class='bottom-nav-contacts'>
                 <p>Contacts</p>
                 <img src='../../assets/contact.svg' alt='contact-icon'>
+                <chat-navbar-button></chat-navbar-button>
             </div>
             <div class='contact-menu partial-border'>
                 <div class='top-bar-contacts-menu'>
