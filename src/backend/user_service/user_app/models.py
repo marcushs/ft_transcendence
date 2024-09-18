@@ -1,25 +1,29 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
 import os
 
 def user_directory_path(instance, filename):
-    return f'profile_images/{instance.id}/{filename}'
+    return f'profile_images/{instance.uuid}/{filename}'
 class UserManager(BaseUserManager):
-    def create_user(self, email, username, user_id):
+    def create_user(self, email, username, user_uuid):
         if not email:
             raise ValueError('The Email field must be set')
         if not username:
             raise ValueError('The username field must be set')
         email = self.normalize_email(email)
-        user = self.model(email=email, username=username, id=user_id)
+        self.model(email=email, username=username, uuid=user_uuid)
+        user = self.model(email=email, username=username, uuid=user_uuid)
         user.set_unusable_password()
         user.save(using=self._db)
         return user
+    
 
 class User(AbstractBaseUser, PermissionsMixin):
     language = models.CharField(max_length=4, null=True, default=None)
     username = models.CharField(max_length=12, unique=True, default='default')
     email = models.EmailField(unique=True)
+    uuid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, unique=True)
     profile_image = models.ImageField(upload_to=user_directory_path, null=True)
     profile_image_link = models.CharField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
     status = models.CharField(max_length=10, choices=[('online', 'Online'), ('away', 'Away'), ('ingame', 'In Game'), ('offline', 'Offline')], default='offline')
@@ -35,9 +39,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def save(self, has_new_image=False, *args, **kwargs):
         if has_new_image:
-            if self.id: # If instance already exist in db
+            if self.uuid: # If instance already exist in db
                 try:
-                    old_instance = User.objects.get(id=self.id) # Get old instance to check if an image already exists
+                    old_instance = User.objects.get(uuid=self.uuid) # Get old instance to check if an image already exists
                     if old_instance.profile_image:
                         if os.path.isfile(old_instance.profile_image.path): # Check if the file exists in file system
                             os.remove(old_instance.profile_image.path)

@@ -25,7 +25,7 @@ export default function validateSignupInputs() {
 function validateEmailInput(inputRequiredInfos, checkValidity) {
 	const emailInput = document.querySelector('input[name="email"]');
 	const feedbackElement = document.querySelector('#emailFeedback');
-	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 	emailInput.addEventListener('input', () => {
 		const emailValue = emailInput.value.trim();
@@ -38,7 +38,7 @@ function validateEmailInput(inputRequiredInfos, checkValidity) {
 
 function updateEmailFeedback() {
 	const feedbackElement = document.querySelector('#emailFeedback');
-	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 	const emailValue = document.querySelector('input[name="email"]').value;
 
 	if (emailValue === '')

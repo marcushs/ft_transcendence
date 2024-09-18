@@ -18,7 +18,7 @@ export default () => {
 				<form>
 					<h1>${getString('loginView/loginTitle')}</h1>
 					<div class="form-fields">
-						<input type="text" placeholder="${getString('loginView/username')}" name="username" autofocus required>
+						<input type="text" placeholder="${getString('loginView/username')}" name="username" maxlength="12" autofocus required>
 					</div>
 					<div class="form-fields">
 						<input type="password" placeholder="${getString('loginView/password')}" name="password" required>

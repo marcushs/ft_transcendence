@@ -32,21 +32,22 @@ class signup_view(View):
         return JsonResponse({'message': 'User created successfully', 'redirect_url': 'login'}, status=200)
 
     def _send_request(self, user, csrf_token):
+        print(f'test = -------------> {user.uuid}')
         payload = {
-                'user_id': user.id,
+                'user_uuid': str(user.uuid),
                 'username': user.username,
                 'email': user.email,
         }
         response = send_post_request_without_token(url='http://user:8000/user/add_user/', payload=payload, csrf_token=csrf_token)
         if response.status_code != 200:
             return response
-        response = send_post_request_without_token(url='http://notifications:8000/notifications/add_user/', payload=payload, csrf_token=csrf_token)
-        if response.status_code != 200:
-            return response
-        response = send_post_request_without_token(url='http://twofactor:8000/twofactor/add_user/', payload=payload, csrf_token=csrf_token)
-        if response.status_code != 200:
-            return response
-        response = send_post_request_without_token(url='http://friends:8000/friends/add_user/', payload=payload, csrf_token=csrf_token)
+        # response = send_post_request_without_token(url='http://notifications:8000/notifications/add_user/', payload=payload, csrf_token=csrf_token)
+        # if response.status_code != 200:
+        #     return response
+        # response = send_post_request_without_token(url='http://twofactor:8000/twofactor/add_user/', payload=payload, csrf_token=csrf_token)
+        # if response.status_code != 200:
+        #     return response
+        # response = send_post_request_without_token(url='http://friends:8000/friends/add_user/', payload=payload, csrf_token=csrf_token)
         return response
  
     def _check_data(self, request, data):
@@ -70,7 +71,7 @@ class signup_view(View):
         except ValidationError as error:
             return JsonResponse({'message': str(error.messages[0])}, status=401)
         if data['password'] != data['confirm_password']:
-            return JsonResponse({'message': 'Password did not match'}, status=401)  
+            return JsonResponse({'message': 'Password did not match'}, status=401)
         return None
     
     

@@ -3,13 +3,14 @@ from django.contrib.auth.models import AnonymousUser
 from django.views import View
 from ..models import User
 from asgiref.sync import sync_to_async
+from channels.layers import get_channel_layer
 import json
 
 
-async def get_user_id_by_username(username):
+async def get_user_uuid_by_username(username):
     user = await sync_to_async(User.objects.get)(username=username)
     
-    return user.id
+    return user.uuid
 
 
 class add_new_user(View):
@@ -40,5 +41,20 @@ class update_user(View):
         data = json.loads(request.body.decode('utf-8'))
         if 'username' in data:
             setattr(request.user, 'username', data['username'])
+        print('--------------------------------- >>>>>>>>>>>>>>>>> test = ', request.user, data['username'])
         await sync_to_async(request.user.save)()
+        await self.send_new_notification_to_channel(data['username'])
         return JsonResponse({'message': 'User updated successfully'}, status=200)
+
+    async def send_new_notification_to_channel(self, new_username):
+        channel_layer = get_channel_layer()
+        user_uuid = await get_user_uuid_by_username(new_username)
+        print(f'---------------- UUID =========== {user_uuid}')
+        
+        # await channel_layer.group_send(
+            # f'user_{user_id}',
+        #     {
+        #         'type': 'new_notification',
+        #         'notification': notification.to_dict()
+        #     }
+        # )

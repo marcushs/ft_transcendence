@@ -36,8 +36,8 @@ class NotificationComponent extends HTMLElement {
 		this.notificationsUlElement = this.querySelector('ul');
 		this.setUnreadNotifications();
 		this.setNumberOfNotifications();
-		this.fillNotifications();
 		this.attachEventsListener();
+		const test = this.fillNotifications();
 	}
 
 
@@ -51,8 +51,14 @@ class NotificationComponent extends HTMLElement {
 		this.addEventListener('click', event => event.stopPropagation());
 		document.addEventListener('click', () => this.handleClickOutOfComponent());
 
-		document.addEventListener('newNotification', (event) => this.handleNewNotificationEvent(event))
-		document.addEventListener('deleteNotificationEvent', (event) => this.handleDeleteNotificationEvent(event))
+		document.addEventListener('newNotification', (event) => this.handleNewNotificationEvent(event));
+		document.addEventListener('deleteNotificationEvent', (event) => this.handleDeleteNotificationEvent(event));
+		document.addEventListener('usernameInNotificationsChanged', (event) => this.handleUsernameInNotificationsChanged(event));
+	}
+
+
+	handleUsernameInNotificationsChanged(event) {
+		this.changeNotificationUsername(event.detail.uuid, event.detail.newUsername);
 	}
 
 
@@ -76,10 +82,11 @@ class NotificationComponent extends HTMLElement {
 
 
 	fillNotifications() {
+		let id;
 		this.notifications.forEach((notification) => {
 			switch (notification.type) {
 				case 'friend-request-pending':
-					this.createPendingFriendRequestNotification(notification);
+					id =  this.createPendingFriendRequestNotification(notification);
 					break ;
 				case 'friend-request-accepted':
 					this.createAcceptedFriendRequestNotification(notification);
@@ -92,16 +99,29 @@ class NotificationComponent extends HTMLElement {
 					break ;
 			}
 		});
+		return id;
 	}
 
 
 	// Create notification element as li
 
+	changeNotificationUsername(uuid, newUsername) {
+		console.log('#' + uuid);
+		const notificationElement = document.querySelector('#' + uuid);
+
+		console.log(notificationElement)
+		const notificationObj = notificationElement.getAttribute('notificationObj');
+		console.log(notificationObj, notificationElement);
+		console.log(this.notificationsUlElement);
+	}
+
 	createPendingFriendRequestNotification(notification) {
 		const li = document.createElement('pending-contact-request-notification-component');
 
+		li.id = notification.uuid;
 		li.setAttribute('notificationObj', JSON.stringify(notification));
 		this.notificationsUlElement.appendChild(li);
+		return li.id;
 	}
 
 

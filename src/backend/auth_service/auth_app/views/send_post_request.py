@@ -13,17 +13,15 @@ def send_post_request_with_token(request, url, payload, jwt, jwt_refresh):
         'jwt': jwt,
         'jwt_refresh': jwt_refresh,
     }
-    response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
-    print('-----> ', response)
+    response = requests.post(url=url, headers=headers, cookies=cookies, data=json.dumps(payload))
     if response.status_code == 200:
         return JsonResponse({'message': 'success'}, status=200)
     else:
-        # response_data = json.loads(response)
-        # message = response_data.get('message')
         return JsonResponse({'message': 'fail'}, status=400)
  
  
-def send_post_request_without_token(url, payload, csrf_token):
+def send_post_request_without_token(url, payload, csrf_token): 
+    print('      --------      test ---------- ')
     headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',

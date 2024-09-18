@@ -45,6 +45,18 @@ function throwDeleteNotificationElementEvent(notification) {
 	document.dispatchEvent(event);
 }
 
-function sendMessage() {
+function throwUsernameInNotificationsChangedEvent(userInfos) {
+	const event = new CustomEvent('UsernameInNotificationsChanged', {
+		bubbles: true,
+		detail: {
+			uuid: userInfos.uuid,
+			newUsername: userInfos.new_username
+		}
+	});
 
+	document.dispatchEvent(event);
 }
+//
+// function sendMessage() {
+//
+// }

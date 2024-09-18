@@ -19,8 +19,7 @@ class ChangeUserInfosView(View):
         response = {}
 
         if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'error': 'User not found'}, status=201) 
-
+            return JsonResponse({'error': 'User not found'}, status=201)
         try:
             self.check_update_error(User, request)
         except ValidationError as e:
@@ -34,7 +33,6 @@ class ChangeUserInfosView(View):
             response.update(self.change_profile_image(request))
         elif request.POST.get('profile_image_link'):
             response.update(self.change_profile_image_link(request))
-
         
         return JsonResponse(response, status=201)
 
@@ -75,7 +73,7 @@ class ChangeUserInfosView(View):
         if User.objects.filter(email=new_email).exists() and new_email != request.user.email:
             error['email_error'] = f'Email {new_email} is already associated with an account'
             raise ValidationError(error)
-        if re.search(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", new_email) is None:
+        if re.search(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", new_email) is None:
             error['email_error'] = f'Invalid email format'
             raise ValidationError(error)
 
@@ -86,7 +84,6 @@ class ChangeUserInfosView(View):
         myme_type = mime.from_buffer(new_profile_image.read()) # get the mime of the image
 
         valid_mime_type = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp']
-        print(myme_type)
         if myme_type not in valid_mime_type:
             error['profile-image_error'] = f'Invalid profile image format, valid formats are: (png, jpg, jpeg, gif, svg, webp)'
             raise ValidationError(error)
@@ -108,6 +105,7 @@ class ChangeUserInfosView(View):
         send_post_request(request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
         send_post_request(request=request, url='http://auth:8000/auth/update_user/', payload=payload)
         send_post_request(request=request, url='http://friends:8000/friends/update_user/', payload=payload)
+        send_post_request(request=request, url='http://notifications:8000/notifications/update_user/', payload=payload)
         request.user.save()
 
         return {'username_message': 'Username successfully changed'}

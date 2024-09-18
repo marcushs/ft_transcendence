@@ -15,7 +15,7 @@ export default () => {
 				<form>
 					<h1>${getString('signupView/signupTitle')}</h1>
 					<div class="form-fields">
-						<input type="text" placeholder="${getString('signupView/username')}" name="username" required>
+						<input type="text" placeholder="${getString('signupView/username')}" maxlength="12" name="username" required>
 					</div>
 					<div class="form-fields">
 						<input type="text" placeholder="${getString('signupView/email')}" name="email" autofocus required>

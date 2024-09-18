@@ -9,8 +9,6 @@ from django.utils import timezone
 from datetime import timedelta, datetime
 from asgiref.sync import sync_to_async
 from channels.layers import get_channel_layer
-from .utils.user_utils import get_user_id_by_username
-
 
 User = get_user_model()
 

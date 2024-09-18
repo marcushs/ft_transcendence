@@ -7,7 +7,7 @@ from django.utils import timezone
 from datetime import timedelta
 from asgiref.sync import sync_to_async
 from channels.layers import get_channel_layer
-from ..utils.user_utils import get_user_id_by_username
+from ..utils.user_utils import get_user_uuid_by_username
 import json
 import redis
 
@@ -132,7 +132,7 @@ class manage_notification_view(View):
 
     async def send_new_notification_to_channel(self, notification):
         channel_layer = get_channel_layer()
-        user_id = await get_user_id_by_username(self.receiver)
+        user_id = await get_user_uuid_by_username(self.receiver)
         
         await channel_layer.group_send(
             f'user_{user_id}',
@@ -143,9 +143,8 @@ class manage_notification_view(View):
         )
         
     async def send_delete_notification_to_channel(self, notification):
-        print('------------------ DELETE -------------------------')
         channel_layer = get_channel_layer()
-        user_id = await get_user_id_by_username(self.receiver)
+        user_id = await get_user_uuid_by_username(self.receiver)
         
         await channel_layer.group_send(
             f'user_{user_id}',

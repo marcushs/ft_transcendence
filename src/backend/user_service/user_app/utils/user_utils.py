@@ -45,9 +45,9 @@ class add_new_user(View):
 
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
-        if not all(key in data for key in ('email', 'username', 'user_id')):
+        if not all(key in data for key in ('email', 'username', 'user_uuid')):
             return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
-        User.objects.create_user(email=data['email'], username=data['username'], user_id=data['user_id'])
+        User.objects.create_user(email=data['email'], username=data['username'], user_uuid=data['user_uuid'])
         return JsonResponse({"message": 'user added with success'}, status=200)
     
 class update_user(View):
@@ -86,6 +86,7 @@ def send_post_request(request, url, payload):
         if response.status_code == 200:
             return JsonResponse({'message': 'success'}, status=200)
         else:
+            print(f'----------=========================================================================================================================================  test  {response.text}  ----------------- ' )
             response_data = json.loads(response.text)
 
             message = response_data.get('message')

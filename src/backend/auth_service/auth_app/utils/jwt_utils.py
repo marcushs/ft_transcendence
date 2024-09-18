@@ -13,14 +13,14 @@ def create_jwt_token(user, type: str) -> None:
         raise TypeError("Inrecognized type for jwt token")
     if type == 'access':
         payload = {
-            'user_id': user.id,
+            'user_uuid': str(user.uuid),
             'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
         }
         token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
         return token
     else:
         payload = {
-            'user_id': user.id,
+            'user_uuid': str(user.uuid),
             'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
         }
         refresh_token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
@@ -29,23 +29,23 @@ def create_jwt_token(user, type: str) -> None:
 def decode_jwt_token(token):
     try:
         payload = jwt.decode(token, settings.JWT_SECRET_KEY,  algorithms=[settings.JWT_ALGORITHM])
-        return payload['user_id']
+        return payload['user_uuid']
     except jwt.ExpiredSignatureError:
         return None
     except jwt.InvalidTokenError:
         return None
 
 def Refresh_jwt_token(refresh_token, type: str):
-    user_id = decode_jwt_token(refresh_token)
-    if user_id:
+    user_uuid = decode_jwt_token(refresh_token)
+    if user_uuid:
         return create_jwt_token(get_user_from_jwt(refresh_token), type)    
     return None
 
-async def get_user_from_jwt(token):
-    user_id = decode_jwt_token(token)
-    if user_id:
+def get_user_from_jwt(token):
+    user_uuid = decode_jwt_token(token)
+    if user_uuid:
         try:
-            return await sync_to_async(User.objects.get)(id=user_id)
+            return User.objects.get(uuid=user_uuid)
         except ObjectDoesNotExist:
             return None
     return None

@@ -3,7 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 from urllib.parse import parse_qs
 from asgiref.sync import sync_to_async
-from notifications_app.utils.user_utils import get_user_id_by_username
+# from notifications_app.utils.user_utils import get_user_uuid_by_username
 from notifications_app.models import Notification
 
 
@@ -35,11 +35,20 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
             'notification': notification
         }))
         
-    
-    # async def delete_notification(self, event):
-    #     notification = event['notification']
+    async def delete_notification(self, event):
+        notification = event['notification']
         
-    #     await self.send(text_data=json.dumps({
-    #         'type': 'delete_notification',
-    #         'notification': notification
-    #     }))
+        await self.send(text_data=json.dumps({
+            'type': 'delete_notification',
+            'notification': notification
+        }))
+        
+    async def username_changed(self, event):
+        user_uuid = event['uuid']
+        new_username = event['new_username']
+        
+        await self.send(text_data=json.dumps({
+            'type': 'username_changed',
+            'uuid': user_uuid,
+            'new_username': new_username
+        }))
