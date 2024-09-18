@@ -14,13 +14,13 @@ class FriendsMenuComponent extends HTMLElement {
             <div class='bottom-nav-contacts'>
                 <p>Contacts</p>
                 <img src='../../assets/contact.svg' alt='contact-icon'>
-                <img id='chat-icon' src='../../assets/chat-icon.svg' alt='chat-icon'>
+                <img id='bottom-nav-chat-icon' src='../../assets/chat-icon.svg' alt='chat-icon'>
             </div>
             <div class='contact-menu partial-border'>
                 <div class='top-bar-contacts-menu'>
                     <div class='add-contact'>
                         <img src='../../assets/add_friend_white.svg' alt='add-friend-icon'>
-                        <img id='chat-icon' src='../../assets/chat-icon.svg' alt='chat-icon'>
+                        <img id='top-bar-chat-icon' src='../../assets/chat-icon.svg' alt='chat-icon'>
                     </div>
                     <form action="#" autocomplete="off"> 
                         <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
@@ -44,14 +44,13 @@ class FriendsMenuComponent extends HTMLElement {
         this.pendingContactSummary = this.querySelector('.pending-contact-summary');
         this.searchContactInput = this.querySelector('#search-contact-input');
         this.contactBottomNavDiv = this.querySelector('.bottom-nav-contacts');
+        this.topBarChatIcon = this.querySelector('#top-bar-chat-icon');
         
         this.contactMenuDiv.style.display = 'none';
         this.pendingContactList.style.display = 'none';
         this.contactBottomNavDiv.style.display = 'none';
         this.isMouseDown = false;
     }
-
-
 
 
     // -------------------------- //
@@ -211,6 +210,8 @@ class FriendsMenuComponent extends HTMLElement {
 
     attachEventListener() {
         this.contactBottomNavDiv.addEventListener('click', (e) => {
+            if (e.target.id === 'chat-icon') {this.topBarChatIcon.src = '../../assets/contact.svg'}
+
             this.contactMenuDiv.style.display = this.contactMenuDiv.style.display === 'none' ? 'block' : 'none';
         });
         this.pendingContactSummary.addEventListener('click', () => {
@@ -285,6 +286,10 @@ class FriendsMenuComponent extends HTMLElement {
             if (!username.includes(searchValue))
                 contactComponent.remove();
         })
+    }
+
+    renderChatList() {
+
     }
 }
 customElements.define("contact-menu-component", FriendsMenuComponent);
