@@ -200,6 +200,7 @@ services:
       - "8006:8000"
     depends_on:
       - chat_redis
+      - chat_db
     networks:
       - transcendence-network
 
@@ -209,7 +210,7 @@ services:
     image: redis
     restart: always
     ports:
-     - "6379:6379"
+     - "6480:6379"
     networks:
     - transcendence-network
 
@@ -447,6 +448,29 @@ services:
       timeout: 5s
       retries: 5
 
+  # --> DATABASE CHAT <-- #
+  chat_db:
+    container_name: chat_db
+    image: postgres
+    restart: always
+    env_file: ./backend/.env
+    environment:
+      - POSTGRES_USER=${CHAT_DB_USER}
+      - POSTGRES_DB=${CHAT_DB_NAME}
+      - POSTGRES_PASSWORD=${CHAT_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - chat_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+     - "5440:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${CHAT_DB_USER} -d ${CHAT_DB_NAME}"]
+      interval: 8s
+      timeout: 5s
+      retries: 5
+
 volumes:
   user_pgdata:
     name: user_data
@@ -464,6 +488,8 @@ volumes:
     name: friends_data
   notifications_pgdata:
     name: notifications_data
+  chat_pgdata:
+    name: chat_data
 
 networks:
   transcendence-network:

@@ -2,7 +2,6 @@ import './ContactComponent.js';
 import { sendRequest } from "../utils/sendRequest.js";
 import './Friendship/FriendshipButtonComponent.js';
 import './PopUpComponent.js';
-import './Chat/ChatNavbarButton.js';
 
 class FriendsMenuComponent extends HTMLElement {
     constructor() {
@@ -11,18 +10,19 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     async initComponent() {
-        this.innerHTML = `
+        this.innerHTML =  `
             <div class='bottom-nav-contacts'>
                 <p>Contacts</p>
                 <img src='../../assets/contact.svg' alt='contact-icon'>
-                <chat-navbar-button></chat-navbar-button>
+                <img id='chat-icon' src='../../assets/chat-icon.svg' alt='chat-icon'>
             </div>
             <div class='contact-menu partial-border'>
                 <div class='top-bar-contacts-menu'>
                     <div class='add-contact'>
                         <img src='../../assets/add_friend_white.svg' alt='add-friend-icon'>
+                        <img id='chat-icon' src='../../assets/chat-icon.svg' alt='chat-icon'>
                     </div>
-                    <form action="#" autocomplete="off">
+                    <form action="#" autocomplete="off"> 
                         <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
                         <input type="text" placeholder="Search contacts" id="search-contact-input"/>
                     </form>
@@ -34,7 +34,7 @@ class FriendsMenuComponent extends HTMLElement {
                     <ul class="pending-contact-list-result"></ul>
                 </div>
             </div>
-        `;
+        ` ;
 
         this.addContact = this.querySelector('.add-contact');
         this.contactList = this.querySelector('.contact-list-result');
@@ -210,7 +210,7 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     attachEventListener() {
-        this.contactBottomNavDiv.addEventListener('click', () => {
+        this.contactBottomNavDiv.addEventListener('click', (e) => {
             this.contactMenuDiv.style.display = this.contactMenuDiv.style.display === 'none' ? 'block' : 'none';
         });
         this.pendingContactSummary.addEventListener('click', () => {

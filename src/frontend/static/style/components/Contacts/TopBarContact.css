@@ -13,6 +13,11 @@
     order: 2;
 }
 
+.top-bar-contacts-menu .add-contact #chat-icon{
+    margin-left: 1rem;
+    width: 2.7rem;
+}
+
 .top-bar-contacts-menu form {
     display: flex;
     align-items: center;
