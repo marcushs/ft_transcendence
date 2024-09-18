@@ -1,4 +1,5 @@
 import {getString} from "../../../utils/languageManagement.js";
+import './gameTestComponent.js';
 
 class matchmakingChoice {
 
@@ -10,10 +11,11 @@ class matchmakingChoice {
 
 	render() {
 		return `
-			<p state-redirect tournament-home>${getString('gameComponent/tournaments')}</p>
-			<p state-redirect online-home>${getString('gameComponent/online')}</p>
-			<p state-redirect local-home>${getString('gameComponent/local')}</p>
+			<game-test-component></game-test-component>
 		`;
+			// <p state-redirect tournament-home>${getString('gameComponent/tournaments')}</p>
+			// <p state-redirect online-home>${getString('gameComponent/online')}</p>
+			// <p state-redirect local-home>${getString('gameComponent/local')}</p>
 	}
 }
 

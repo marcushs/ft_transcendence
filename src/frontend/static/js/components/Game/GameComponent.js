@@ -24,7 +24,7 @@ class GameComponent extends HTMLElement {
         this.innerHTML = `
             <div class="game-background"></div>
             <div class="states-container"></div>
-            <game-top-bar></game-top-bar>
+<!--            <game-top-bar></game-top-bar>-->
         `;
 
         this.statesContainer = this.querySelector('.states-container');
@@ -43,11 +43,13 @@ class GameComponent extends HTMLElement {
     }
 
     pushNewState(state) {
-        this.statesContainer.innerHTML = `<div class="left-player-paddle"></div>
-                <div class="right-player-paddle"></div>
-                <div class="middle-line"></div>`
-                + state.render();
-
+                // <div class="left-player-paddle"></div>
+                // <div class="right-player-paddle"></div>
+                // <div class="middle-line"></div>`
+                // +
+        this.statesContainer.innerHTML = `
+            ${state.render()}
+        `
         this.statesContainer.classList.add(state.class);
     }
 
