@@ -8,6 +8,7 @@ class GameTestComponent extends HTMLElement {
 		this.initialPosY = null;
 		this.heightReference = 1000;
 		this.widthReference = 1587.30;
+		this.angle = 0;
 		this.initializeComponent();
 	}
 
@@ -32,7 +33,20 @@ class GameTestComponent extends HTMLElement {
 			ballPosX: this.widthReference / 2,
 			ballAngle: 120
 		}
+		this.animate(tempGameInfos);
 		this.drawInCanvas(tempGameInfos);
+	}
+
+
+	animate(tempGameInfos) {
+		this.refreshCanvas(tempGameInfos);
+		requestAnimationFrame(() => this.animate(tempGameInfos));
+	}
+
+
+	refreshCanvas(tempGameInfos) {
+		this.canvasContext.clearRect(0, 0, this.widthReference, this.heightReference);
+		this.drawInCanvas((tempGameInfos))
 	}
 
 
@@ -75,6 +89,7 @@ class GameTestComponent extends HTMLElement {
 
 
 	drawBall(gameInfos) {
+		console.log('test')
 		const ballColor = 'rgb(189, 195, 199)';
 		const posY = gameInfos.ballPosY;
 		const posX = gameInfos.ballPosX;
@@ -117,12 +132,19 @@ class GameTestComponent extends HTMLElement {
 		// 	angle = Math.PI * 1 / 180;
 		// 	angle = -Math.PI / 6;
 
-		let angle = 55;
+		this.angle += Math.PI / 6;
+		// this.angle = 0;
 
+		// setInterval((angle) => {
+			// if (angle === 360)
+			// 	angle += 90;
+			// let angle = 0;
+		// this.canvasContext.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+		// this.canvasContext.
 		this.canvasContext.beginPath();
 		this.canvasContext.moveTo(posX, posY);
-		this.canvasContext.lineTo(posX + Math.cos(-Math.PI / 6 + angle) * ballRadius, posY + Math.sin(-Math.PI / 6 + angle) * ballRadius);
-		this.canvasContext.strokeStyle= '#000000'; //Nuance de bleu
+		this.canvasContext.lineTo(posX + Math.cos(-Math.PI / 6 + this.angle) * ballRadius, posY + Math.sin(-Math.PI / 6 + this.angle) * ballRadius);
+		this.canvasContext.strokeStyle= '#000000';
 		this.canvasContext.lineWidth = 1;
 		this.canvasContext.stroke();
 		this.canvasContext.closePath();
@@ -130,8 +152,8 @@ class GameTestComponent extends HTMLElement {
 
 		this.canvasContext.beginPath();
 		this.canvasContext.moveTo(posX, posY);
-		this.canvasContext.lineTo(posX + Math.cos(Math.PI / 2 + angle) * ballRadius, posY + Math.sin(Math.PI / 2 + angle) * ballRadius);
-		this.canvasContext.strokeStyle= '#000000'; //Nuance de bleu
+		this.canvasContext.lineTo(posX + Math.cos(Math.PI / 2 + this.angle) * ballRadius, posY + Math.sin(Math.PI / 2 + this.angle) * ballRadius);
+		this.canvasContext.strokeStyle= '#000000';
 		this.canvasContext.lineWidth = 1;
 		this.canvasContext.stroke();
 		this.canvasContext.closePath();
@@ -139,12 +161,91 @@ class GameTestComponent extends HTMLElement {
 
 		this.canvasContext.beginPath();
 		this.canvasContext.moveTo(posX, posY);
-		this.canvasContext.lineTo(posX + Math.cos(Math.PI / 6 + Math.PI + angle) * ballRadius, posY + Math.sin(Math.PI / 6 + Math.PI + angle) * ballRadius);
-		this.canvasContext.strokeStyle= '#000000'; //Nuance de bleu
+		this.canvasContext.lineTo(posX + Math.cos(Math.PI / 6 + Math.PI + this.angle) * ballRadius, posY + Math.sin(Math.PI / 6 + Math.PI + this.angle) * ballRadius);
+		this.canvasContext.strokeStyle= '#000000';
 		this.canvasContext.lineWidth = 1;
 		this.canvasContext.stroke();
 		this.canvasContext.closePath();
 		this.canvasContext.fill();
+
+		this.canvasContext.beginPath();
+		this.canvasContext.fillStyle = 'rgb(30, 32, 43)';
+		// this.canvasContext.ellipse(posX - (ballSize >> 1) - 7.5, posY - (ballSize >> 1) - 3,65, 7, Math.PI / 5.7, 0, 2 * Math.PI);
+		this.canvasContext.ellipse(posX + Math.cos(Math.PI / 6 + Math.PI + this.angle) * ballRadius, posY + Math.sin(Math.PI / 6 + Math.PI + this.angle) * ballRadius, 4, 7, Math.PI / 5.7+ this.angle, 0, 2 * Math.PI);
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+
+		// this.canvasContext.filter = 'blur(0px)';
+		this.canvasContext.beginPath();
+		this.canvasContext.fillStyle = 'rgb(0, 206, 255)';
+		this.canvasContext.ellipse(posX + Math.cos(Math.PI / 6 + Math.PI + this.angle) * ballRadius, posY + Math.sin(Math.PI / 6 + Math.PI + this.angle) * ballRadius, 3, 6, Math.PI / 5.7+ this.angle, 0, 2 * Math.PI);
+		// this.canvasContext.ellipse(posX - (ballSize >> 1) - 7.5, posY - (ballSize >> 1) - 3, 4, 6, Math.PI / 5.7+ this.angle, 0, 2 * Math.PI);
+		this.canvasContext.fill();
+
+		// //   //////
+		// this.canvasContext.filter = 'blur(5px)';
+		this.canvasContext.beginPath();
+		this.canvasContext.fillStyle = 'rgb(30, 32, 43)';
+		this.canvasContext.ellipse(posX + Math.cos(-Math.PI / 6 + this.angle) * ballRadius, posY + Math.sin(-Math.PI / 6 + this.angle) * ballRadius, 4, 7, -Math.PI / 5.7+ this.angle, 0, 2 * Math.PI);
+		// this.canvasContext.ellipse(posX + (ballSize >> 1) + 7.5, posY - (ballSize >> 1) - 3, 5, 8, -Math.PI / 5.7+ this.angle, 0, 2 * Math.PI);
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+
+		// this.canvasContext.filter = 'blur(0px)';
+		this.canvasContext.beginPath();
+		this.canvasContext.fillStyle = 'rgb(0, 206, 255)';
+		this.canvasContext.ellipse(posX + Math.cos(-Math.PI / 6 + this.angle) * ballRadius, posY + Math.sin(-Math.PI / 6 + this.angle) * ballRadius, 3, 6, -Math.PI / 5.7+ this.angle, 0, 2 * Math.PI);
+		this.canvasContext.fill();
+
+		// //   //////
+		// this.canvasContext.filter = 'blur(5px)';
+		this.canvasContext.beginPath();
+		this.canvasContext.fillStyle = 'rgb(30, 32, 43)';
+		this.canvasContext.ellipse(posX + Math.cos(Math.PI / 2 + this.angle) * ballRadius, posY + Math.sin(Math.PI / 2 + this.angle) * ballRadius, 4, 7, -Math.PI / 2 + this.angle, 0, 2 * Math.PI);
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+
+		// this.canvasContext.filter = 'blur(0px)';
+		this.canvasContext.beginPath();
+		this.canvasContext.fillStyle = 'rgb(0, 206, 255)';
+		this.canvasContext.ellipse(posX + Math.cos(Math.PI / 2 + this.angle) * ballRadius, posY + Math.sin(Math.PI / 2 + this.angle) * ballRadius, 3, 6, -Math.PI / 2 + this.angle, 0, 2 * Math.PI);
+		this.canvasContext.fill();
+
+
+
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+
+		// }, 1000)
+
+		// let angle = 0;
+
+		// this.canvasContext.beginPath();
+		// this.canvasContext.moveTo(posX, posY);
+		// this.canvasContext.lineTo(posX + Math.cos(-Math.PI / 6 + angle) * ballRadius, posY + Math.sin(-Math.PI / 6 + angle) * ballRadius);
+		// this.canvasContext.strokeStyle= '#000000';
+		// this.canvasContext.lineWidth = 1;
+		// this.canvasContext.stroke();
+		// this.canvasContext.closePath();
+		// this.canvasContext.fill();
+		//
+		// this.canvasContext.beginPath();
+		// this.canvasContext.moveTo(posX, posY);
+		// this.canvasContext.lineTo(posX + Math.cos(Math.PI / 2 + angle) * ballRadius, posY + Math.sin(Math.PI / 2 + angle) * ballRadius);
+		// this.canvasContext.strokeStyle= '#000000';
+		// this.canvasContext.lineWidth = 1;
+		// this.canvasContext.stroke();
+		// this.canvasContext.closePath();
+		// this.canvasContext.fill();
+		//
+		// this.canvasContext.beginPath();
+		// this.canvasContext.moveTo(posX, posY);
+		// this.canvasContext.lineTo(posX + Math.cos(Math.PI / 6 + Math.PI + angle) * ballRadius, posY + Math.sin(Math.PI / 6 + Math.PI + angle) * ballRadius);
+		// this.canvasContext.strokeStyle= '#000000';
+		// this.canvasContext.lineWidth = 1;
+		// this.canvasContext.stroke();
+		// this.canvasContext.closePath();
+		// this.canvasContext.fill();
 	// }
 
 		//
@@ -159,51 +260,56 @@ class GameTestComponent extends HTMLElement {
 
 
 		// Textures
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// this.canvasContext.filter = 'blur(5px)';
-		this.canvasContext.beginPath();
-		this.canvasContext.fillStyle = 'rgb(30, 32, 43)';
-		this.canvasContext.ellipse(posX - (ballSize >> 1) - 7.5, posY - (ballSize >> 1) - 3, 5, 8, Math.PI / 5.7, 0, 2 * Math.PI);
-		this.canvasContext.closePath();
-		this.canvasContext.fill();
-
-		// this.canvasContext.filter = 'blur(0px)';
-		this.canvasContext.beginPath();
-		this.canvasContext.fillStyle = 'rgb(0, 206, 255)';
-		this.canvasContext.ellipse(posX - (ballSize >> 1) - 7.5, posY - (ballSize >> 1) - 3, 4, 7, Math.PI / 5.7, 0, 2 * Math.PI);
-		this.canvasContext.fill();
-
-		// //   //////
-		// this.canvasContext.filter = 'blur(5px)';
-		this.canvasContext.beginPath();
-		this.canvasContext.fillStyle = 'rgb(30, 32, 43)';
-		this.canvasContext.ellipse(posX + (ballSize >> 1) + 7.5, posY - (ballSize >> 1) - 3, 5, 8, -Math.PI / 5.7, 0, 2 * Math.PI);
-		this.canvasContext.closePath();
-		this.canvasContext.fill();
-
-		// this.canvasContext.filter = 'blur(0px)';
-		this.canvasContext.beginPath();
-		this.canvasContext.fillStyle = 'rgb(0, 206, 255)';
-		this.canvasContext.ellipse(posX + (ballSize >> 1) + 7.5, posY - (ballSize >> 1) - 3, 4, 7, -Math.PI / 5.7, 0, 2 * Math.PI);
-		this.canvasContext.fill();
-
-		// //   //////
-		// this.canvasContext.filter = 'blur(5px)';
-		this.canvasContext.beginPath();
-		this.canvasContext.fillStyle = 'rgb(30, 32, 43)';
-		this.canvasContext.ellipse(posX, posY + (ballSize >> 1) + 9, 5, 8, -Math.PI / 2, 0, 2 * Math.PI);
-		this.canvasContext.closePath();
-		this.canvasContext.fill();
-
-		// this.canvasContext.filter = 'blur(0px)';
-		this.canvasContext.beginPath();
-		this.canvasContext.fillStyle = 'rgb(0, 206, 255)';
-		this.canvasContext.ellipse(posX, posY + (ballSize >> 1) + 9, 4, 7, -Math.PI / 2, 0, 2 * Math.PI);
-		this.canvasContext.fill();
-
-
-
-		this.canvasContext.closePath();
-		this.canvasContext.fill();
+		// this.canvasContext.beginPath();
+		// this.canvasContext.fillStyle = 'rgb(30, 32, 43)';
+		// // this.canvasContext.ellipse(posX - (ballSize >> 1) - 7.5, posY - (ballSize >> 1) - 3,65, 7, Math.PI / 5.7+ this.angle, 0, 2 * Math.PI);
+		// this.canvasContext.ellipse(posX + Math.cos(Math.PI / 6 + Math.PI + angle) * ballRadius, posY + Math.sin(Math.PI / 6 + Math.PI + angle) * ballRadius, 4, 7, Math.PI / 5.7, 0, 2 * Math.PI);
+		// this.canvasContext.closePath();
+		// this.canvasContext.fill();
+		//
+		// // this.canvasContext.filter = 'blur(0px)';
+		// this.canvasContext.beginPath();
+		// this.canvasContext.fillStyle = 'rgb(0, 206, 255)';
+		// this.canvasContext.ellipse(posX + Math.cos(Math.PI / 6 + Math.PI + angle) * ballRadius, posY + Math.sin(Math.PI / 6 + Math.PI + angle) * ballRadius, 3, 6, Math.PI / 5.7, 0, 2 * Math.PI);
+		// // this.canvasContext.ellipse(posX - (ballSize >> 1) - 7.5, posY - (ballSize >> 1) - 3, 4, 6, Math.PI / 5.7, 0, 2 * Math.PI);
+		// this.canvasContext.fill();
+		//
+		// // //   //////
+		// // this.canvasContext.filter = 'blur(5px)';
+		// this.canvasContext.beginPath();
+		// this.canvasContext.fillStyle = 'rgb(30, 32, 43)';
+		// this.canvasContext.ellipse(posX + Math.cos(-Math.PI / 6 + angle) * ballRadius, posY + Math.sin(-Math.PI / 6 + angle) * ballRadius, 4, 7, -Math.PI / 5.7, 0, 2 * Math.PI);
+		// // this.canvasContext.ellipse(posX + (ballSize >> 1) + 7.5, posY - (ballSize >> 1) - 3, 5, 8, -Math.PI / 5.7, 0, 2 * Math.PI);
+		// this.canvasContext.closePath();
+		// this.canvasContext.fill();
+		//
+		// // this.canvasContext.filter = 'blur(0px)';
+		// this.canvasContext.beginPath();
+		// this.canvasContext.fillStyle = 'rgb(0, 206, 255)';
+		// this.canvasContext.ellipse(posX + Math.cos(-Math.PI / 6 + angle) * ballRadius, posY + Math.sin(-Math.PI / 6 + angle) * ballRadius, 3, 6, -Math.PI / 5.7, 0, 2 * Math.PI);
+		// this.canvasContext.fill();
+		//
+		// // //   //////
+		// // this.canvasContext.filter = 'blur(5px)';
+		// this.canvasContext.beginPath();
+		// this.canvasContext.fillStyle = 'rgb(30, 32, 43)';
+		// this.canvasContext.ellipse(posX + Math.cos(Math.PI / 2 + angle) * ballRadius, posY + Math.sin(Math.PI / 2 + angle) * ballRadius, 4, 7, -Math.PI / 2, 0, 2 * Math.PI);
+		// this.canvasContext.closePath();
+		// this.canvasContext.fill();
+		//
+		// // this.canvasContext.filter = 'blur(0px)';
+		// this.canvasContext.beginPath();
+		// this.canvasContext.fillStyle = 'rgb(0, 206, 255)';
+		// this.canvasContext.ellipse(posX + Math.cos(Math.PI / 2 + angle) * ballRadius, posY + Math.sin(Math.PI / 2 + angle) * ballRadius, 3, 6, -Math.PI / 2, 0, 2 * Math.PI);
+		// this.canvasContext.fill();
+		//
+		//
+		//
+		// this.canvasContext.closePath();
+		// this.canvasContext.fill();
 	}
 
 
