@@ -13,10 +13,24 @@
     order: 2;
 }
 
+.top-bar-contacts-menu .add-contact #top-bar-chat-icon.contact{
+    width: 3.5rem;
+    height: 3.5rem;
+    transform: translateY(-8%);
+}
+
 .top-bar-contacts-menu .add-contact #top-bar-chat-icon{
     margin-left: 1rem;
     width: 2.7rem;
 }
+
+.top-bar-contacts-menu #close-btn {
+    font-size: 3.3rem;
+    position: absolute;
+    right: 1.5rem;
+    transform: translateY(-6%);
+}
+
 
 .top-bar-contacts-menu form {
     display: flex;

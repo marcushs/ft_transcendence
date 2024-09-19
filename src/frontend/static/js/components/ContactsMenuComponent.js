@@ -12,8 +12,8 @@ class FriendsMenuComponent extends HTMLElement {
     async initComponent() {
         this.innerHTML =  `
             <div class='bottom-nav-contacts'>
-                <p>Contacts</p>
-                <img src='../../assets/contact.svg' alt='contact-icon'>
+                <p id="bottom-nav-contact-icon">Contacts</p>
+                <img id="bottom-nav-contact-icon" src='../../assets/contact.svg' alt='contact-icon'>
                 <img id='bottom-nav-chat-icon' src='../../assets/chat-icon.svg' alt='chat-icon'>
             </div>
             <div class='contact-menu partial-border'>
@@ -21,6 +21,7 @@ class FriendsMenuComponent extends HTMLElement {
                     <div class='add-contact'>
                         <img src='../../assets/add_friend_white.svg' alt='add-friend-icon'>
                         <img id='top-bar-chat-icon' src='../../assets/chat-icon.svg' alt='chat-icon'>
+                        <i id="close-btn" class="fa-solid fa-xmark" aria-hidden="true"></i>
                     </div>
                     <form action="#" autocomplete="off"> 
                         <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
@@ -50,6 +51,7 @@ class FriendsMenuComponent extends HTMLElement {
         this.pendingContactList.style.display = 'none';
         this.contactBottomNavDiv.style.display = 'none';
         this.isMouseDown = false;
+        this.bottomNavLastClicked = 'none';
     }
 
 
@@ -210,9 +212,7 @@ class FriendsMenuComponent extends HTMLElement {
 
     attachEventListener() {
         this.contactBottomNavDiv.addEventListener('click', (e) => {
-            if (e.target.id === 'chat-icon') {this.topBarChatIcon.src = '../../assets/contact.svg'}
-
-            this.contactMenuDiv.style.display = this.contactMenuDiv.style.display === 'none' ? 'block' : 'none';
+            this.contactBottomNavCallback(e);
         });
         this.pendingContactSummary.addEventListener('click', () => {
             this.pendingContactList.style.display = this.pendingContactList.style.display === 'none' ? 'block' : 'none';
@@ -288,8 +288,20 @@ class FriendsMenuComponent extends HTMLElement {
         })
     }
 
-    renderChatList() {
+    contactBottomNavCallback(e) {
+        if (e.target.id === 'bottom-nav-chat-icon') {
+            this.topBarChatIcon.src = '../../assets/contact.svg';
+            this.topBarChatIcon.classList.add('contact');
 
+            this.contactSummary.innerHTML = '<p>Messages</p>';
+        } else {
+            this.topBarChatIcon.src = '../../assets/chat-icon.svg';
+            this.topBarChatIcon.classList.remove('contact');
+            
+            this.contactSummary.innerHTML = '<p>Contacts</p>';
+        };
+        this.contactMenuDiv.style.display = this.contactMenuDiv.style.display === 'block' && this.bottomNavLastClicked === e.target.id ? 'none' : 'block';
+        this.bottomNavLastClicked = e.target.id;
     }
 }
 customElements.define("contact-menu-component", FriendsMenuComponent);
