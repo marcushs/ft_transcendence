@@ -6,6 +6,8 @@ class GameTestComponent extends HTMLElement {
 		this.parentHeight = null;
 		this.parentWidth = null;
 		this.initialPosY = null;
+		this.heightReference = 1000;
+		this.widthReference = 1587.30;
 		this.initializeComponent();
 	}
 
@@ -14,17 +16,49 @@ class GameTestComponent extends HTMLElement {
 		const parent = document.querySelector('.states-container');
 
 		this.innerHTML = `
-			<canvas width="${parent.clientWidth}" height="${parent.clientHeight}"></canvas>
+			<canvas></canvas>
 		`;
 	}
 
 
 	connectedCallback() {
-		const parent = document.querySelector('.states-container');
-		this.canvasElement = this.querySelector('canvas');
-		this.canvasContext = this.canvasElement.getContext('2d');
-		this.initialPosY = (parent.clientHeight / 2);
-		this.drawInCanvas(this.initialPosY, this.initialPosY);
+		this.initCanvas();
+		this.playerSideGap = this.widthReference * 0.015;
+
+		const tempGameInfos = {
+			playerOnePosY: this.heightReference / 2,
+			playerTwoPosY: this.heightReference / 3,
+			ballPosY: this.heightReference / 2,
+			ballPosX: this.widthReference / 2,
+			ballAngle: 120
+		}
+		this.drawInCanvas(tempGameInfos);
+	}
+
+
+	initCanvas() {
+		const canvasElement = this.querySelector('canvas');
+
+		this.canvasContext = canvasElement.getContext('2d');
+		this.setCanvasSize(canvasElement);
+		this.scaleCanvas(canvasElement);
+	}
+
+
+	setCanvasSize(canvasElement) {
+		const devicePixelRatio = window.devicePixelRatio || 1;
+
+		canvasElement.width = canvasElement.clientWidth * devicePixelRatio;
+		canvasElement.height = canvasElement.clientHeight * devicePixelRatio;
+	}
+
+
+	scaleCanvas(canvasElement) {
+		const scaleX = canvasElement.width / this.widthReference;
+		const scaleY = canvasElement.height / this.heightReference;
+
+		this.canvasContext.scale(scaleX, scaleY);
+		this.canvasContext.save();
 	}
 
 
@@ -34,43 +68,213 @@ class GameTestComponent extends HTMLElement {
 	// }
 	//
 
-	drawInCanvas(playerOnePosY, playerTwoPosY) {
-		this.drawPlayerOne(playerOnePosY - 225 / 2);
-		this.drawPlayerTwo(playerTwoPosY - 225 / 2);
+	drawInCanvas(gameInfos) {
+		this.drawPlayers(gameInfos);
+		this.drawBall(gameInfos);
 	}
 
 
-	drawPlayer(posX, posY, color) {
-		const radius = 8;
-		const width = 20;
-		const height = 225;
+	drawBall(gameInfos) {
+		const ballColor = 'rgb(189, 195, 199)';
+		const posY = gameInfos.ballPosY;
+		const posX = gameInfos.ballPosX;
+		const ballSize = this.widthReference * 0.005;
+		const ballRadius = 15;
 
-		this.canvasContext.fillStyle = color;
+
+		// Background
+		this.canvasContext.filter = 'blur(10px)';
+		this.canvasContext.fillStyle = 'rgb(0, 0, 0)';
 		this.canvasContext.beginPath();
-		this.canvasContext.lineTo(posX, posY + radius);
-		this.canvasContext.arcTo(posX, posY, posX + width, posY, radius);
-		this.canvasContext.arcTo(posX + width, posY, posX + width, posY + height, radius);
-		this.canvasContext.arcTo(posX + width, posY + height, posX, posY + height, radius);
-		this.canvasContext.arcTo(posX, posY + height, posX, posY, radius);
+		this.canvasContext.arc(posX, posY, ballRadius + 3, 0, 2 * Math.PI);
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+
+		// Ball
+		this.canvasContext.filter = 'blur(0px)';
+		this.canvasContext.beginPath();
+		this.canvasContext.fillStyle = ballColor;
+		this.canvasContext.arc(posX, posY, ballRadius, 0, 2 * Math.PI);
+		this.canvasContext.fill();
+
+
+		// Lines
+
+
+
+		// this.canvasContext.beginPath();
+		// this.canvasContext.moveTo(posX, posY);
+		// // this.canvasContext.lineTo(posX, posY + (ballSize >> 1) + ballRadius);
+		// this.canvasContext.lineTo(posX, posY - Math.tan(Math.PI / 6) * ballRadius);
+		// this.canvasContext.strokeStyle= '#000000'; //Nuance de bleu
+		// this.canvasContext.lineWidth = 1;
+		// this.canvasContext.stroke();
+		// this.canvasContext.closePath();
+		// this.canvasContext.fill();
+
+		// let angle;
+		// for (let i = 0; i < 360; i++) {
+		// 	angle = Math.PI * 1 / 180;
+		// 	angle = -Math.PI / 6;
+
+		let angle = 55;
+
+		this.canvasContext.beginPath();
+		this.canvasContext.moveTo(posX, posY);
+		this.canvasContext.lineTo(posX + Math.cos(-Math.PI / 6 + angle) * ballRadius, posY + Math.sin(-Math.PI / 6 + angle) * ballRadius);
+		this.canvasContext.strokeStyle= '#000000'; //Nuance de bleu
+		this.canvasContext.lineWidth = 1;
+		this.canvasContext.stroke();
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+
+		this.canvasContext.beginPath();
+		this.canvasContext.moveTo(posX, posY);
+		this.canvasContext.lineTo(posX + Math.cos(Math.PI / 2 + angle) * ballRadius, posY + Math.sin(Math.PI / 2 + angle) * ballRadius);
+		this.canvasContext.strokeStyle= '#000000'; //Nuance de bleu
+		this.canvasContext.lineWidth = 1;
+		this.canvasContext.stroke();
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+
+		this.canvasContext.beginPath();
+		this.canvasContext.moveTo(posX, posY);
+		this.canvasContext.lineTo(posX + Math.cos(Math.PI / 6 + Math.PI + angle) * ballRadius, posY + Math.sin(Math.PI / 6 + Math.PI + angle) * ballRadius);
+		this.canvasContext.strokeStyle= '#000000'; //Nuance de bleu
+		this.canvasContext.lineWidth = 1;
+		this.canvasContext.stroke();
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+	// }
+
+		//
+		// this.canvasContext.beginPath();
+		// this.canvasContext.moveTo(posX, posY);
+		// this.canvasContext.lineTo(posX - ballRadius, posY - Math.tan(Math.PI / 6) * ballRadius);
+		// this.canvasContext.strokeStyle= '#000000'; //Nuance de bleu
+		// this.canvasContext.lineWidth = 1;
+		// this.canvasContext.stroke();
+		// this.canvasContext.closePath();
+		// this.canvasContext.fill();
+
+
+		// Textures
+		// this.canvasContext.filter = 'blur(5px)';
+		this.canvasContext.beginPath();
+		this.canvasContext.fillStyle = 'rgb(30, 32, 43)';
+		this.canvasContext.ellipse(posX - (ballSize >> 1) - 7.5, posY - (ballSize >> 1) - 3, 5, 8, Math.PI / 5.7, 0, 2 * Math.PI);
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+
+		// this.canvasContext.filter = 'blur(0px)';
+		this.canvasContext.beginPath();
+		this.canvasContext.fillStyle = 'rgb(0, 206, 255)';
+		this.canvasContext.ellipse(posX - (ballSize >> 1) - 7.5, posY - (ballSize >> 1) - 3, 4, 7, Math.PI / 5.7, 0, 2 * Math.PI);
+		this.canvasContext.fill();
+
+		// //   //////
+		// this.canvasContext.filter = 'blur(5px)';
+		this.canvasContext.beginPath();
+		this.canvasContext.fillStyle = 'rgb(30, 32, 43)';
+		this.canvasContext.ellipse(posX + (ballSize >> 1) + 7.5, posY - (ballSize >> 1) - 3, 5, 8, -Math.PI / 5.7, 0, 2 * Math.PI);
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+
+		// this.canvasContext.filter = 'blur(0px)';
+		this.canvasContext.beginPath();
+		this.canvasContext.fillStyle = 'rgb(0, 206, 255)';
+		this.canvasContext.ellipse(posX + (ballSize >> 1) + 7.5, posY - (ballSize >> 1) - 3, 4, 7, -Math.PI / 5.7, 0, 2 * Math.PI);
+		this.canvasContext.fill();
+
+		// //   //////
+		// this.canvasContext.filter = 'blur(5px)';
+		this.canvasContext.beginPath();
+		this.canvasContext.fillStyle = 'rgb(30, 32, 43)';
+		this.canvasContext.ellipse(posX, posY + (ballSize >> 1) + 9, 5, 8, -Math.PI / 2, 0, 2 * Math.PI);
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+
+		// this.canvasContext.filter = 'blur(0px)';
+		this.canvasContext.beginPath();
+		this.canvasContext.fillStyle = 'rgb(0, 206, 255)';
+		this.canvasContext.ellipse(posX, posY + (ballSize >> 1) + 9, 4, 7, -Math.PI / 2, 0, 2 * Math.PI);
+		this.canvasContext.fill();
+
+
+
 		this.canvasContext.closePath();
 		this.canvasContext.fill();
 	}
 
 
-	drawPlayerOne(posY) {
-		const posX = 15;
-		const color = 'rgb(0, 206, 255)';
+	drawPlayers(gameInfos) {
+		const playerOneColor = 'rgb(0, 206, 255)';
+		const playerTwoColor = 'rgb(255, 22, 198)';
+		const blackColor = 'rgb(0, 0, 0)';
 
-		this.drawPlayer(posX, posY, color);
+		this.playerWidth = this.widthReference * 0.005;
+		this.playerHeight = this.heightReference * 0.2;
+		this.playerRadius = 6;
+
+		// Add a blur effect with the players colors
+		this.canvasContext.filter = 'blur(12px)';
+		this.drawPlayerOne(gameInfos.playerOnePosY, playerOneColor);
+		this.drawPlayerTwo(gameInfos.playerTwoPosY, playerTwoColor);
+
+		// Add a blur effect with black color (for shadow effect)
+		this.canvasContext.filter = 'blur(9px)';
+		this.drawPlayerOne(gameInfos.playerOnePosY, blackColor);
+		this.drawPlayerTwo(gameInfos.playerTwoPosY, blackColor);
+
+		// Draw players
+		this.canvasContext.restore();
+		this.drawPlayerOne(gameInfos.playerOnePosY, playerOneColor);
+		this.drawPlayerTwo(gameInfos.playerTwoPosY, playerTwoColor);
 	}
 
-	drawPlayerTwo(posY) {
-		const parent = document.querySelector('.states-container');
-		const posX = parent.clientWidth - 35;
-		const color = 'rgb(255, 22, 198)';
 
-		this.drawPlayer(posX, posY, color);
+	drawPlayerOne(posY, color) {
+		const posX = this.playerSideGap;
+
+		this.canvasContext.fillStyle = color;
+		this.canvasContext.beginPath();
+
+		this.canvasContext.lineTo(posX, posY);
+		this.canvasContext.lineTo(posX - (this.playerWidth >> 1), posY);
+		this.canvasContext.arcTo(posX - (this.playerWidth >> 1), posY - (this.playerHeight >> 1) - this.playerRadius, posX - (this.playerWidth >> 1) + this.playerRadius, posY - (this.playerHeight >> 1) - this.playerRadius, this.playerRadius);
+		this.canvasContext.lineTo(posX + (this.playerWidth >> 1), posY - (this.playerHeight >> 1) - this.playerRadius);
+		this.canvasContext.arcTo(posX + (this.playerWidth >> 1) + this.playerRadius, posY - (this.playerHeight >> 1) - this.playerRadius, posX + (this.playerWidth >> 1) + this.playerRadius, posY - (this.playerHeight >> 1), this.playerRadius);
+		this.canvasContext.lineTo(posX + (this.playerWidth >> 1) + this.playerRadius, posY + (this.playerHeight >> 1));
+		this.canvasContext.arcTo(posX + (this.playerWidth >> 1) + this.playerRadius, posY + (this.playerHeight >> 1) + this.playerRadius, posX + (this.playerWidth >> 1), posY + (this.playerHeight >> 1) + this.playerRadius, this.playerRadius);
+		this.canvasContext.lineTo(posX + this.playerRadius, posY + (this.playerHeight >> 1) + this.playerRadius);
+		this.canvasContext.arcTo(posX - (this.playerWidth >> 1), posY + (this.playerHeight >> 1) + this.playerRadius, posX - (this.playerWidth >> 1), posY + (this.playerHeight >> 1), this.playerRadius);
+		this.canvasContext.lineTo(posX - (this.playerWidth >> 1), posY);
+
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
 	}
+
+	drawPlayerTwo(posY, color) {
+		const posX = this.widthReference - this.playerSideGap;
+
+		this.canvasContext.fillStyle = color;
+		this.canvasContext.beginPath();
+
+		this.canvasContext.lineTo(posX, posY);
+		this.canvasContext.lineTo(posX + (this.playerWidth >> 1), posY);
+		this.canvasContext.arcTo(posX + (this.playerWidth >> 1), posY - (this.playerHeight >> 1) - this.playerRadius, posX + (this.playerWidth >> 1) - this.playerRadius, posY - (this.playerHeight >> 1) - this.playerRadius, this.playerRadius);
+		this.canvasContext.lineTo(posX - (this.playerWidth >> 1), posY - (this.playerHeight >> 1) - this.playerRadius);
+		this.canvasContext.arcTo(posX - (this.playerWidth >> 1) - this.playerRadius, posY - (this.playerHeight >> 1) - this.playerRadius, posX - (this.playerWidth >> 1) - this.playerRadius, posY - (this.playerHeight >> 1), this.playerRadius);
+		this.canvasContext.lineTo(posX - (this.playerWidth >> 1) - this.playerRadius, posY + (this.playerHeight >> 1));
+		this.canvasContext.arcTo(posX - (this.playerWidth >> 1) - this.playerRadius, posY + (this.playerHeight >> 1) + this.playerRadius, posX - (this.playerWidth >> 1), posY + (this.playerHeight >> 1) + this.playerRadius, this.playerRadius);
+		this.canvasContext.lineTo(posX - this.playerRadius, posY + (this.playerHeight >> 1) + this.playerRadius);
+		this.canvasContext.arcTo(posX + (this.playerWidth >> 1), posY + (this.playerHeight >> 1) + this.playerRadius, posX + (this.playerWidth >> 1), posY + (this.playerHeight >> 1), this.playerRadius);
+		this.canvasContext.lineTo(posX + (this.playerWidth >> 1), posY);
+
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+	}
+
 }
 
 customElements.define('game-test-component', GameTestComponent);
