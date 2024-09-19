@@ -2,6 +2,7 @@ import './ContactComponent.js';
 import { sendRequest } from "../utils/sendRequest.js";
 import './Friendship/FriendshipButtonComponent.js';
 import './PopUpComponent.js';
+import './Contact/ContactBottomNav.js'
 
 class FriendsMenuComponent extends HTMLElement {
     constructor() {
@@ -11,11 +12,7 @@ class FriendsMenuComponent extends HTMLElement {
 
     async initComponent() {
         this.innerHTML =  `
-            <div class='bottom-nav-contacts'>
-                <p id="bottom-nav-contact-icon">Contacts</p>
-                <img id="bottom-nav-contact-icon" src='../../assets/contact.svg' alt='contact-icon'>
-                <img id='bottom-nav-chat-icon' src='../../assets/chat-icon.svg' alt='chat-icon'>
-            </div>
+            <contact-bottom-nav></contact-bottom-nav>
             <div class='contact-menu partial-border'>
                 <div class='top-bar-contacts-menu'>
                     <div class='add-contact'>
@@ -29,6 +26,7 @@ class FriendsMenuComponent extends HTMLElement {
                     </form>
                 </div>
                 <div class='contact-list-menu'>
+                    <p> yoyoyo </p>
                     <p class='contact-summary'></p>
                     <ul class="contact-list-result"></ul>
                     <p class='pending-contact-summary'></p>

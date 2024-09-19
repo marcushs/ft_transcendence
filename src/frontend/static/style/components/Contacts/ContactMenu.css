@@ -28,9 +28,9 @@ contact-menu-component {
 .contact-menu {
     z-index: 3;
     position: absolute;
-    height: 46.8rem;
+    height: 48rem;
     width: 30rem;
-    right: 0;
+    right: 10rem;
     bottom: 5.4rem;
     background-color: var(--background-color);
     /*background-color: var(--component-background-color);*/
