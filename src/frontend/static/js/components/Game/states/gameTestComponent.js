@@ -163,6 +163,7 @@ class GameTestComponent extends HTMLElement {
 		const ballSize = this.widthReference * 0.005;
 		const ballRadius = 15;
 
+		this.drawBallTrail(posX, posY);
 		// Background
 		this.canvasContext.filter = 'blur(10px)';
 		this.canvasContext.fillStyle = 'rgb(0, 0, 0)';
@@ -182,7 +183,9 @@ class GameTestComponent extends HTMLElement {
 
 	drawBallTexture(posX, posY, ballRadius) {
 		this.angle += Math.PI / 16;
-
+		// this.angle = 0;
+		this.angleDirection = 0;
+		// console.log(Math.cos(Math.PI / 6 + Math.PI + this.angle), Math.sin(Math.PI / 6 + Math.PI + this.angle))
 		const ellipseCoordinatesX = [
 			posX + Math.cos(Math.PI / 6 + Math.PI + this.angle)  * (ballRadius - 2),
 			posX + Math.cos(-Math.PI / 6 + this.angle)  * (ballRadius - 2),
@@ -203,6 +206,90 @@ class GameTestComponent extends HTMLElement {
 			this.drawBallTextureLine(posX, posY, ellipseCoordinatesX[i], ellipseCoordinatesY[i], ballRadius);
 			this.drawBallTextureEllipse(ellipseCoordinatesX[i], ellipseCoordinatesY[i], ellipseRotation[i]);
 		}
+
+	}
+
+
+	drawBallTrail(posX, posY) {
+
+		const color = 'rgb(255, 22, 198)';
+		const ballSize = this.widthReference * 0.005;
+		const ballRadius = 15;
+
+		this.canvasContext.fillStyle = color;
+
+		const coordinatesTop = {
+			x: posX - 10,
+			y: posY
+		}
+		const coordinatesBottom = {
+			x: posX - 10,
+			y: posY
+		}
+
+		this.canvasContext.beginPath();
+		this.canvasContext.lineTo(coordinatesTop.x, coordinatesTop.y);
+		this.canvasContext.lineTo(coordinatesTop.x , coordinatesTop.y - 5);
+
+		this.canvasContext.arcTo(coordinatesTop.x, coordinatesTop.y - 25, coordinatesTop.x + 25, coordinatesTop.y - 15, 25);
+		this.canvasContext.arcTo(coordinatesTop.x + 40, coordinatesTop.y - 10, coordinatesTop.x + 60, coordinatesTop.y - 25, 25);
+		this.canvasContext.lineTo(coordinatesTop.x + 40, coordinatesTop.y - 8);
+		this.canvasContext.arcTo(coordinatesTop.x + 45, coordinatesTop.y - 6, coordinatesTop.x + 60, coordinatesTop.y - 15, 25);
+		this.canvasContext.arcTo(coordinatesTop.x + 42, coordinatesTop.y - 2, coordinatesTop.x + 40, coordinatesTop.y - 2, 25);
+		this.canvasContext.lineTo(coordinatesTop.x + 48, coordinatesTop.y - 6);
+		this.canvasContext.arcTo(coordinatesTop.x + 48, coordinatesTop.y - 6, coordinatesTop.x + 100, coordinatesTop.y, 25);
+		this.canvasContext.lineTo(coordinatesTop.x + 100, coordinatesTop.y);
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+
+		this.canvasContext.beginPath();
+		this.canvasContext.lineTo(coordinatesBottom.x , coordinatesBottom.y);
+		this.canvasContext.lineTo(coordinatesBottom.x , coordinatesBottom.y + 5);
+
+		this.canvasContext.arcTo(coordinatesBottom.x, coordinatesBottom.y + 25, coordinatesBottom.x + 25, coordinatesBottom.y + 15, 25);
+		this.canvasContext.arcTo(coordinatesBottom.x + 40, coordinatesBottom.y + 10, coordinatesBottom.x + 60, coordinatesBottom.y + 25, 25);
+		this.canvasContext.lineTo(coordinatesBottom.x + 40, coordinatesBottom.y + 8);
+		this.canvasContext.arcTo(coordinatesBottom.x + 45, coordinatesBottom.y + 6, coordinatesBottom.x + 60, coordinatesBottom.y + 15, 25);
+		this.canvasContext.arcTo(coordinatesBottom.x + 42, coordinatesBottom.y + 2, coordinatesBottom.x + 40, coordinatesBottom.y + 2, 25);
+		this.canvasContext.lineTo(coordinatesTop.x + 48, coordinatesTop.y + 6);
+		this.canvasContext.arcTo(coordinatesBottom.x + 48, coordinatesBottom.y + 6, coordinatesBottom.x + 100, coordinatesBottom.y, 25);
+		this.canvasContext.lineTo(coordinatesBottom.x + 100, coordinatesBottom.y);
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+
+
+		// this.canvasContext.fillStyle = 'rgb(3, 114, 155)';
+		this.canvasContext.fillStyle = 'rgb(146, 0, 117)';
+
+		this.canvasContext.beginPath();
+		this.canvasContext.lineTo(coordinatesTop.x , coordinatesTop.y);
+		this.canvasContext.lineTo(coordinatesTop.x , coordinatesTop.y - 4);
+
+		this.canvasContext.arcTo(coordinatesTop.x, coordinatesTop.y - 23, coordinatesTop.x + 22, coordinatesTop.y - 13.5, 25);
+		this.canvasContext.arcTo(coordinatesTop.x + 38, coordinatesTop.y - 8, coordinatesTop.x + 58, coordinatesTop.y - 23, 25);
+		this.canvasContext.lineTo(coordinatesTop.x + 38, coordinatesTop.y - 6);
+		this.canvasContext.arcTo(coordinatesTop.x + 43, coordinatesTop.y - 4, coordinatesTop.x + 58, coordinatesTop.y - 13, 25);
+		this.canvasContext.arcTo(coordinatesTop.x + 40, coordinatesTop.y, coordinatesTop.x + 38, coordinatesTop.y, 25);
+		this.canvasContext.lineTo(coordinatesTop.x + 46, coordinatesTop.y - 4);
+		this.canvasContext.arcTo(coordinatesTop.x + 46, coordinatesTop.y - 4, coordinatesTop.x + 98, coordinatesTop.y, 25);
+		this.canvasContext.lineTo(coordinatesTop.x + 98, coordinatesTop.y);
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
+
+		this.canvasContext.beginPath();
+		this.canvasContext.lineTo(coordinatesBottom.x , coordinatesBottom.y);
+		this.canvasContext.lineTo(coordinatesBottom.x , coordinatesBottom.y + 4);
+
+		this.canvasContext.arcTo(coordinatesBottom.x, coordinatesBottom.y + 23, coordinatesBottom.x + 22, coordinatesBottom.y + 13.5, 25);
+		this.canvasContext.arcTo(coordinatesBottom.x + 38, coordinatesBottom.y + 8, coordinatesBottom.x + 58, coordinatesBottom.y + 23, 25);
+		this.canvasContext.lineTo(coordinatesBottom.x + 38, coordinatesBottom.y + 6);
+		this.canvasContext.arcTo(coordinatesBottom.x + 43, coordinatesBottom.y + 4, coordinatesBottom.x + 58, coordinatesBottom.y + 13, 25);
+		this.canvasContext.arcTo(coordinatesBottom.x + 40, coordinatesBottom.y, coordinatesBottom.x + 38, coordinatesBottom.y, 25);
+		this.canvasContext.lineTo(coordinatesTop.x + 46, coordinatesTop.y + 4);
+		this.canvasContext.arcTo(coordinatesBottom.x + 46, coordinatesBottom.y + 4, coordinatesBottom.x + 98, coordinatesBottom.y, 25);
+		this.canvasContext.lineTo(coordinatesBottom.x + 98, coordinatesBottom.y);
+		this.canvasContext.closePath();
+		this.canvasContext.fill();
 	}
 
 	drawBallTextureEllipse(posX, posY, ellipseRotation) {
