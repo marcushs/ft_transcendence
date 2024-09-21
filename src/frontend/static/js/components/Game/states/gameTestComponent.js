@@ -26,27 +26,59 @@ class GameTestComponent extends HTMLElement {
 		this.initCanvas();
 		this.playerSideGap = this.widthReference * 0.015;
 
-		const tempGameInfos = {
+		this.tempGameInfos = {
 			playerOnePosY: this.heightReference / 2,
 			playerTwoPosY: this.heightReference / 3,
 			ballPosY: this.heightReference / 2,
-			ballPosX: this.widthReference / 2,
+			ballPosX: this.widthReference,
 			ballAngle: 120
 		}
-		this.animate(tempGameInfos);
-		this.drawInCanvas(tempGameInfos);
+		this.animate(this.tempGameInfos);
+		this.drawInCanvas(this.tempGameInfos);
+		this.attachEventsListener();
+	}
+
+
+	attachEventsListener() {
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'w') {
+				let base = 0;
+				const intervalId = setInterval(() => {
+					this.tempGameInfos.playerOnePosY -= 2;
+					base++;
+					if (base === 20)
+						clearInterval(intervalId);
+				}, 1)
+				// for (let i = 0; i < 50; i++) {
+				// 	// this.refreshCanvas(this.tempGameInfos);
+				// }
+				this.isUp = true;
+			} else if (event.key === 's') {
+				let base = 0;
+				const intervalId = setInterval(() => {
+					this.tempGameInfos.playerOnePosY += 2;
+					base++;
+					// this.tempGameInfos.playerOnePosY += 50;
+					if (base === 20)
+						clearInterval(intervalId);
+				}, 1)
+				this.isDown = true;
+				// this.refreshCanvas(this.tempGameInfos);
+			}
+		})
 	}
 
 
 	animate(tempGameInfos) {
 		this.refreshCanvas(tempGameInfos);
+		tempGameInfos.ballPosX -= 10;
 		requestAnimationFrame(() => this.animate(tempGameInfos));
 	}
 
 
-	refreshCanvas(tempGameInfos) {
+	refreshCanvas(tempGameInfos, isUp = false, isDown = false) {
 		this.canvasContext.clearRect(0, 0, this.widthReference, this.heightReference);
-		this.drawInCanvas((tempGameInfos))
+		this.drawInCanvas(tempGameInfos, isUp, isDown);
 	}
 
 
@@ -82,14 +114,14 @@ class GameTestComponent extends HTMLElement {
 	// }
 	//
 
-	drawInCanvas(gameInfos) {
-		this.drawPlayers(gameInfos);
+	drawInCanvas(gameInfos, isUp = false, isDown = false) {
+		this.drawPlayers(gameInfos, isUp, isDown);
 		this.drawBall(gameInfos);
 	}
 
-	drawPlayers(gameInfos) {
-		const playerOneColor = 'rgb(0, 206, 255)';
-		const playerTwoColor = 'rgb(255, 22, 198)';
+	drawPlayers(gameInfos, isUp = false, isDown = false) {
+		// const playerOneColor = 'rgb(0, 206, 255)';
+		// const playerTwoColor = 'rgb(255, 22, 198)';
 		const blackColor = 'rgb(0, 0, 0)';
 
 		this.playerWidth = this.widthReference * 0.005;
@@ -97,18 +129,45 @@ class GameTestComponent extends HTMLElement {
 		this.playerRadius = 6;
 
 		// Add a blur effect with the players colors
-		this.canvasContext.filter = 'blur(12px)';
-		this.drawPlayerOne(gameInfos.playerOnePosY, playerOneColor);
-		this.drawPlayerTwo(gameInfos.playerTwoPosY, playerTwoColor);
+		// this.canvasContext.filter = 'blur(12px)';
+		// this.drawPlayerOne(gameInfos.playerOnePosY, playerOneColor);
+		// this.drawPlayerTwo(gameInfos.playerTwoPosY, playerTwoColor);
 
 		// Add a blur effect with black color (for shadow effect)
-		this.canvasContext.filter = 'blur(9px)';
-		this.drawPlayerOne(gameInfos.playerOnePosY, blackColor);
-		this.drawPlayerTwo(gameInfos.playerTwoPosY, blackColor);
+		// this.canvasContext.filter = 'blur(9px)';
+		// this.drawPlayerOne(gameInfos.playerOnePosY, blackColor);
+		// this.drawPlayerTwo(gameInfos.playerTwoPosY, blackColor);
 
 		// Draw players
-		this.canvasContext.filter = 'blur(0px)';
-		this.canvasContext.restore();
+		// this.canvasContext.filter = 'blur(0px)';
+		// this.canvasContext.restore();
+		let playerOneColor;
+		let playerTwoColor;
+		let opacity;
+
+		if (this.isUp) {
+
+			for (let i = 5; i > 0; i--) {
+				opacity = 1 / i;
+				console.log(opacity)
+				playerOneColor = `rgba(0, 206, 255, ${opacity})`;
+				playerTwoColor = `rgba(255, 22, 198, ${opacity})`;
+				this.drawPlayerOne(gameInfos.playerOnePosY + i, playerOneColor);
+				this.drawPlayerTwo(gameInfos.playerTwoPosY, playerTwoColor);
+			}
+			this.isUp = false;
+		} else if (this.isDown) {
+			for (let i = 5; i > 0; i--) {
+				opacity = 1 / i;
+				playerOneColor = `rgba(0, 206, 255, ${opacity})`;
+				playerTwoColor = `rgba(255, 22, 198, ${opacity})`;
+				this.drawPlayerOne(gameInfos.playerOnePosY - i, playerOneColor);
+				this.drawPlayerTwo(gameInfos.playerTwoPosY, playerTwoColor);
+			}
+			this.isDown = false;
+		}
+		playerOneColor = `rgba(0, 206, 255, ${opacity})`;
+		playerTwoColor = `rgba(255, 22, 198, ${opacity})`;
 		this.drawPlayerOne(gameInfos.playerOnePosY, playerOneColor);
 		this.drawPlayerTwo(gameInfos.playerTwoPosY, playerTwoColor);
 	}
@@ -165,7 +224,6 @@ class GameTestComponent extends HTMLElement {
 
 		this.drawBallTrail(posX, posY);
 		// Background
-		this.canvasContext.filter = 'blur(10px)';
 		this.canvasContext.fillStyle = 'rgb(0, 0, 0)';
 		this.canvasContext.beginPath();
 		this.canvasContext.arc(posX, posY, ballRadius + 3, 0, 2 * Math.PI);
@@ -173,7 +231,6 @@ class GameTestComponent extends HTMLElement {
 		this.canvasContext.fill();
 
 		// Ball
-		this.canvasContext.filter = 'blur(0px)';
 		this.canvasContext.beginPath();
 		this.canvasContext.fillStyle = ballColor;
 		this.canvasContext.arc(posX, posY, ballRadius, 0, 2 * Math.PI);
