@@ -46,10 +46,9 @@ export default class Game {
 
 
 	gameLoop() {
-		console.log(this.canvas)
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.drawFrame();
-		this.movePlayerPosition();
+		this.movePlayers();
 		requestAnimationFrame(() => this.gameLoop());
 	}
 
@@ -61,18 +60,56 @@ export default class Game {
 	}
 
 
-	movePlayerPosition() {
-		if (this.keysPlayerOne.up) this.movePlayerDelay(() => this.playerOne.y -= 2);
-		if (this.keysPlayerOne.down) this.movePlayerDelay(() => this.playerOne.y += 2);
-		if (this.keysPlayerTwo.up) this.movePlayerDelay(() => this.playerTwo.y -= 2);
-		if (this.keysPlayerTwo.down) this.movePlayerDelay(() => this.playerTwo.y += 2);
+	movePlayers() {
+		this.movePlayerOne();
+		this.movePlayerTwo();
 	}
 
 
-	movePlayerDelay(callback) {
+	movePlayerOne() {
+		let newPosY = 0;
+
+		if (this.keysPlayerOne.up)
+			newPosY = -2;
+		if (this.keysPlayerOne.down)
+			newPosY = 2;
+		if (this.checkHitBox(newPosY, this.playerOne))
+			return ;
+		this.movePlayerDelay(newPosY, this.playerOne, () => this.playerOne.y += newPosY);
+	}
+
+
+	movePlayerTwo() {
+		let newPosY = 0;
+
+		if (this.keysPlayerTwo.up)
+			newPosY = -2;
+		if (this.keysPlayerTwo.down)
+			newPosY = 2;
+		if (this.checkHitBox(newPosY, this.playerTwo))
+			return ;
+		this.movePlayerDelay(newPosY, this.playerTwo, () => this.playerTwo.y += newPosY);
+	}
+
+
+	checkHitBox(newPosY, player) {
+		console.log(player.y - newPosY - player.height / 2, player.y + newPosY + player.height / 2)
+		if (player.y + newPosY + player.height / 2 + 5 > this.canvas.height)
+			return true;
+		if (player.y + newPosY - player.height / 2 - 5 < 0)
+			return true;
+		return false;
+	}
+
+
+	movePlayerDelay(newPosY, player, callback) {
 		let i = 0;
 
 		const intervalId = setInterval(() => {
+			if (this.checkHitBox(newPosY, player)) {
+				clearInterval(intervalId);
+				return ;
+			}
 			callback();
 			i++;
 			if (i === 10)
