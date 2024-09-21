@@ -8,25 +8,31 @@ export async function loadWebSocket() {
 async function loadContactsWebSocket() {
     const socket = new WebSocket(`ws://localhost:8003/ws/contacts/`);
 
-    socket.onopen = function(event) {};
+    socket.onopen = function(event) {
+		console.log('Contact websocket started');
+	};
 
     socket.onmessage = function(event) {
         const data = JSON.parse(event.data);
 
         console.log(data.message);
+		console.log('data-type: ', data.type);
+		console.log('data-sender: ', data.is_sender);
         if (data.type === 'deleted contact') {
-            removeContactFromList(data.user);
+            removeContactFromList(data.contact);
         } else {
             const is_request = (data.type === 'new contact request') ? true : false;
-            addNewContactToList(data.user, is_request);
+            addNewContactToList(data.contact, is_request, data.is_sender);
         }
 
     };
 
-    socket.onclose = function(event) {};
+    socket.onclose = function(event) {
+		console.log('test');
+	};
 
     socket.onerror = function(event) {
-        console.error("Websocket error: ", event);
+        console.log("Websocket error: ", event);
     };
 }
 

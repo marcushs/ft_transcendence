@@ -1,14 +1,14 @@
+from .websocket_utils import notify_friend_display_change
 from django.contrib.auth.models import AnonymousUser
-from django.db.models.signals import post_save
+from ..models import FriendList, User
 from django.http import JsonResponse
 from ..models import FriendRequest
-from ..models import FriendList, User
 from django.views import View
 import json
 
 def get_friend_request(sender, receiver):
     try:
-        return FriendRequest.objects.get(sender=sender, receiver=receiver, is_active=True)
+        return FriendRequest.objects.get(sender=sender, receiver=receiver)
     except FriendRequest.DoesNotExist:
         return False
 
@@ -55,7 +55,7 @@ class friendshipManager(View):
         if not friend_request:
             return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
         friend_request.accept()
-        post_save.send(sender=FriendRequest, instance=friend_request, created=False, user=self.user, action='accepted')
+        notify_friend_display_change(created=False, action='accepted', receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'mutual_friend', 'message': 'friends invitation successfully accepted'}, status=200)
 
     def send_friendship(self):
@@ -63,8 +63,8 @@ class friendshipManager(View):
         to_friend_request = FriendRequest.objects.filter(sender=self.user, receiver=self.target_user).first()
         if from_friend_request or to_friend_request:
             return JsonResponse({'status': 'error', 'message': 'Friend request already sent'}, status=200)
-        friend_request = FriendRequest.objects.create(sender=self.user, receiver=self.target_user)
-        post_save.send(sender=FriendRequest, instance=friend_request, created=False, user=self.user, action='accepted')
+        FriendRequest.objects.create(sender=self.user, receiver=self.target_user)
+        notify_friend_display_change(created=True, action='accepted', receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'pending_sent', 'message': 'friends invitation successfully send'}, status=200)
 
     def cancel_friendship(self):
@@ -72,7 +72,7 @@ class friendshipManager(View):
         if not friend_request:
             return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
         friend_request.cancel()
-        post_save.send(sender=FriendRequest, instance=friend_request, created=False, user=self.user, action='refused')
+        notify_friend_display_change(created=False, action='refused', receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully canceled'}, status=200)
 
     def decline_friendship(self):
@@ -80,12 +80,12 @@ class friendshipManager(View):
         if not friend_request:
             return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
         friend_request.cancel()
-        post_save.send(sender=FriendRequest, instance=friend_request, created=False, user=self.user, action='refused')
+        notify_friend_display_change(created=False, action='refused', receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully declined'}, status=200)
 
     def remove_friendship(self):
         if self.friend_list.is_mutual_friend(friend=self.target_user) is False:
             return JsonResponse({'status': 'error', 'message': 'Cant remove this contact from friendlist, you\'re already not friend'}, status=200)
         self.friend_list.unfriend(self.target_user)
-        post_save.send(sender=FriendList, instance=self.friend_list, created=False, user=self.user, action='refused')
+        notify_friend_display_change(created=False, action='refused', receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully removed'}, status=200)

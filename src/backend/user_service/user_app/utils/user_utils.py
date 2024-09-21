@@ -122,7 +122,7 @@ class getUserInfos(View):
     def get(self, request):
         try:
             username = request.GET.get('q', '')
-            users = User.objects.get(username=username)
+            users = User.objects.get(username=username) 
             users_data = {
                 'username': users.username,
                 'profile_image': users.profile_image.url if users.profile_image else None,
@@ -130,6 +130,7 @@ class getUserInfos(View):
                 'status': users.status
             }
             return JsonResponse({'status': 'success', 'message': users_data}, safe=False, status=200)
+        
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
  

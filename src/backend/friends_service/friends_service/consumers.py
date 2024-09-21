@@ -27,5 +27,7 @@ class ContactsConsumer(AsyncWebsocketConsumer):
             {
                 'type' : event['event'],
                 'message': event['message'],
-                'user': event['user']
-            }))
+                'contact': event['contact'],
+                'is_sender': event['is_sender']
+            }
+        ))

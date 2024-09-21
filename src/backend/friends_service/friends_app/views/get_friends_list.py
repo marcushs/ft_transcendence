@@ -27,8 +27,8 @@ class GetFriendsList(View):
         return FriendList.objects.filter(user=user).first()
 
     def get_pending_requests(self, user):
-        received_requests = FriendRequest.objects.filter(receiver=user, is_active=True)
-        sent_requests = FriendRequest.objects.filter(sender=user, is_active=True)
+        received_requests = FriendRequest.objects.filter(receiver=user)
+        sent_requests = FriendRequest.objects.filter(sender=user)
         return {
             'received': [{'username': request.sender.username} for request in received_requests],
             'sent': [{'username': request.receiver.username} for request in sent_requests],

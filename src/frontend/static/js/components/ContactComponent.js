@@ -30,6 +30,7 @@ class ContactComponent extends HTMLElement {
     }
 
     async setRender() {
+        console.log('contact: ', this.userData);
         const contactPictureUrl = await getProfileImage(this.userData);
 
         
@@ -179,12 +180,14 @@ class ContactComponent extends HTMLElement {
             target_username: this.userData.username,
         };
         try {
-            console.log(action);
+            console.log('DEBUG: ', payload);
             
             const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
             if (data.status === 'success' && action !== 'remove') {
                 this.manageChangePendingContact();
             }
+            console.log(data);
+            
             console.log(data.message);
         } catch (error) {
             console.error('catch: ', error);
