@@ -1,5 +1,4 @@
-import {getString} from "../../../utils/languageManagement.js";
-import './gameTestComponent.js';
+import './inGameComponent.js';
 
 class matchmakingChoice {
 
@@ -11,7 +10,7 @@ class matchmakingChoice {
 
 	render() {
 		return `
-			<game-test-component></game-test-component>
+			<in-game-component></in-game-component>
 		`;
 			// <p state-redirect tournament-home>${getString('gameComponent/tournaments')}</p>
 			// <p state-redirect online-home>${getString('gameComponent/online')}</p>
