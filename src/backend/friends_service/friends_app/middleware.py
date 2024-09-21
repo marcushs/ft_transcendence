@@ -65,3 +65,4 @@ class JWTAuthMiddleware(MiddlewareMixin):
             response.set_cookie('jwt_refresh', request.new_token_refresh, httponly=True, max_age=settings.REFRESH_TOKEN_LIFETIME)
         return response
 
+

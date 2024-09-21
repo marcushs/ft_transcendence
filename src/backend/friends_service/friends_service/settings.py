@@ -53,14 +53,14 @@ ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'friends']
 # Application definition
  
 INSTALLED_APPS = [
+    'channels',
 	'corsheaders',
     'friends_app',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'channels'
+    'django.contrib.staticfiles'
 ]
 
 
@@ -97,7 +97,14 @@ TEMPLATES = [
 
 ASGI_APPLICATION = 'friends_service.asgi.application'
 
-
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True

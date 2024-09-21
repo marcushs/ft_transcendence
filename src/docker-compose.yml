@@ -244,6 +244,19 @@ services:
       timeout: 5s
       retries: 5
 
+  # ---------------> REDIS <---------------
+
+  # Service
+  redis:
+    container_name: redis
+    restart: always
+    image: redis:latest
+    networks:
+      - transcendence-network
+    ports:
+      - "6380:6379"
+
+
 volumes:
   user_pgdata:
     name: user_data
