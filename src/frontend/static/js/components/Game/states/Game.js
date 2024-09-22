@@ -5,7 +5,8 @@ import Spark from "./Spark.js";
 export default class Game {
 	constructor(canvas) {
 		this.canvas = canvas;
-		this.speed = 10;
+		this.speed = 15;
+		this.speedLimit = 45;
 		this.ball = new Ball(canvas, canvas.width / 2, canvas.height / 2, this.speed);
 		this.playerOne = new Player(canvas, true, '2dewf-23fsdv23-32fff');
 		this.playerTwo = new Player(canvas, false, '2dewf-23fsdv23-32fff');
@@ -124,9 +125,11 @@ export default class Game {
 
 			let direction = (this.ball.x < this.canvas.width / 2) ? 1 : -1; // To reverse x direction
 
+			if (this.speed < this.speedLimit)
+				this.speed += 0.5;
+
 			this.ball.ballDirectionX = direction * this.speed * Math.cos(angleRad);
 			this.ball.ballDirectionY = this.speed * Math.sin(angleRad);
-			this.speed += 0.5;
 			(direction === 1) ? this.ball.changeBallInfos(false) : this.ball.changeBallInfos(true);
 		}
 	}
@@ -197,19 +200,31 @@ export default class Game {
 		}
 		if (this.ball.x - this.ball.ballRadius < 15) {
 
-			this.speed = 10;
+			this.speed = 15;
 			this.ball.x = this.canvas.width / 2;
 			this.ball.y = this.canvas.height / 2;
 			this.playerOneScore++;
 			document.querySelector('.player2').innerHTML = `${this.playerOneScore}`;
+			this.ball.offsetTrailHeight = -12;
+			this.ball.offsetTrailWidth = -10;
+			this.ball.ballDirectionY = 0;
+			this.ball.ballDirectionX = this.speed;
+			this.playerOne.y = this.canvas.height / 2;
+			this.playerTwo.y = this.canvas.height / 2;
 		}
 		if (this.ball.x + this.ball.ballRadius > this.canvas.width - 15) {
 
-			this.speed = 10;
+			this.speed = 15;
 			this.ball.x = this.canvas.width / 2;
 			this.ball.y = this.canvas.height / 2;
 			this.playerTwoScore++;
 			document.querySelector('.player1').innerHTML = `${this.playerTwoScore}`;
+			this.ball.offsetTrailHeight = -12;
+			this.ball.offsetTrailWidth = -10;
+			this.ball.ballDirectionY = 0;
+			this.ball.ballDirectionX = this.speed;
+			this.playerOne.y = this.canvas.height / 2;
+			this.playerTwo.y = this.canvas.height / 2;
 		}
 
 

@@ -13,7 +13,8 @@ export default class Ball {
 		this.pinkPrimaryColor = 'rgb(255, 22, 198)';
 		this.pinkSecondaryColor = 'rgb(146, 0, 117)';
 		this.ballDirectionX = ballSpeed;
-		this.ballDirectionY = ballSpeed;
+		this.ballDirectionY = 0;
+		this.offsetMaxTrailDifference = 25;
 		this.offsetTrailHeight = -12;
 		this.offsetTrailWidth = -10;
 		this.baseBlue = 255;
@@ -25,8 +26,10 @@ export default class Ball {
 
 	changeBallInfos(isPositiveBallDirection) {
 		this.rotationSpeed += 0.05;
-		this.offsetTrailHeight += 0.25;
-		this.offsetTrailWidth += 0.3;
+		if (this.offsetTrailHeight < -12 + this.offsetMaxTrailDifference)
+			this.offsetTrailHeight += 0.4;
+		if (this.offsetTrailWidth < -10 + this.offsetMaxTrailDifference)
+			this.offsetTrailWidth += 0.6;
 		this.isPositiveBallDirection = isPositiveBallDirection;
 	}
 
