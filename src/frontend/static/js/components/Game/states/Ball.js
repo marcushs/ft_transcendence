@@ -1,14 +1,13 @@
 export default class Ball {
-	constructor(canvas, x, y, height,width) {
+	constructor(canvas, x, y, rotationSpeed) {
 		this.canvas = canvas;
 		this.x = x;
 		this.y = y;
-		this.height = height;
-		this.width = width;
 		this.ballColor = 'rgb(189, 195, 199)';
-		this.ballSize = canvas.width * 0.005;
 		this.ballRadius = 15;
+		this.rotationSpeed = 0.1;
 		this.rotationAngle = 0;
+		this.positiveRotationDirection = true;
 	}
 
 
@@ -69,7 +68,10 @@ export default class Ball {
 
 
 	drawBallTexture() {
-		this.rotationAngle += Math.PI / 16;
+		if (!this.positiveRotationDirection)
+			this.rotationAngle += this.rotationSpeed;
+		else
+			this.rotationAngle += -this.rotationSpeed;
 
 		const ellipseCoordinatesX = [
 			this.x + Math.cos(Math.PI / 6 + Math.PI + this.rotationAngle)  * (this.ballRadius - 2),
