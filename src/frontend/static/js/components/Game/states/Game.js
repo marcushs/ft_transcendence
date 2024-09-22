@@ -52,6 +52,12 @@ export default class Game {
 	gameLoop(currentTime) {
 		this.deltaTime = (performance.now() - this.lastTime) / 1000;
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.canvas.ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+		this.canvas.ctx.font = '500px Russo One';
+		this.canvas.ctx.textAlign = 'center';
+		this.canvas.ctx.textBaseline = 'middle';
+		this.canvas.ctx.fillText(`${this.playerOneScore}`, this.canvas.width / 4, this.canvas.height / 2 + 35);
+		this.canvas.ctx.fillText(`${this.playerTwoScore}`, this.canvas.width / 4 * 3, this.canvas.height / 2 + 35);
 		this.drawFrame();
 		this.movePlayers();
 		this.moveBall();
@@ -204,7 +210,7 @@ export default class Game {
 			this.ball.x = this.canvas.width / 2;
 			this.ball.y = this.canvas.height / 2;
 			this.playerOneScore++;
-			document.querySelector('.player2').innerHTML = `${this.playerOneScore}`;
+			// document.querySelector('.player2').innerHTML = `${this.playerOneScore}`;
 			this.ball.offsetTrailHeight = -12;
 			this.ball.offsetTrailWidth = -10;
 			this.ball.ballDirectionY = 0;
@@ -218,7 +224,7 @@ export default class Game {
 			this.ball.x = this.canvas.width / 2;
 			this.ball.y = this.canvas.height / 2;
 			this.playerTwoScore++;
-			document.querySelector('.player1').innerHTML = `${this.playerTwoScore}`;
+			// document.querySelector('.player1').innerHTML = `${this.playerTwoScore}`;
 			this.ball.offsetTrailHeight = -12;
 			this.ball.offsetTrailWidth = -10;
 			this.ball.ballDirectionY = 0;
