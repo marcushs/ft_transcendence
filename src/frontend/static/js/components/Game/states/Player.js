@@ -64,7 +64,6 @@ export default class Player {
 
 
 	playerHitColor() {
-			console.log(performance.now(), this.hitTime)
 		if (this.isPlayerHit)
 			if (performance.now() > this.hitTime + this.hitDuration)
 				this.isPlayerHit = false;

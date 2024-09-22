@@ -9,6 +9,8 @@ export default class Game {
 		this.ball = new Ball(canvas, canvas.width / 2, canvas.height / 2, this.speed);
 		this.playerOne = new Player(canvas, true, '2dewf-23fsdv23-32fff');
 		this.playerTwo = new Player(canvas, false, '2dewf-23fsdv23-32fff');
+		this.playerOneScore = 0;
+		this.playerTwoScore = 0;
 		this.sparks = [];
 		this.lastTime = performance.now();
 		this.keysPlayerOne = {
@@ -76,11 +78,6 @@ export default class Game {
 		this.canvas.ctx.moveTo(this.canvas.width / 2, 0);
 		this.canvas.ctx.lineTo(this.canvas.width / 2, this.canvas.height);
 		this.canvas.ctx.stroke();
-		// this.canvas.ctx.moveTo(this.canvas.width / 2, 0);
-		// this.canvas.ctx.lineTo(this.canvas.width / 2, 0);
-		// this.canvas.ctx.lineTo(this.canvas.width / 2, this.canvas.height);
-		// this.canvas.ctx.lineWidth = 3;
-		// this.canvas.ctx.stroke();
 		this.canvas.ctx.closePath();
 		this.canvas.ctx.fill();
 
@@ -182,7 +179,7 @@ export default class Game {
 			if (side === 'right')
 				sparkX = x + this.ball.ballRadius;
 			// sparkX = (side === '')
-		    console.log(sparkY, sparkX)
+		    // console.log(sparkY, sparkX)
 
 	        let spark = new Spark(sparkX, sparkY, angle, speed, lifetime, this.deltaTime, color);
 	        this.sparks.push(spark);
@@ -198,6 +195,24 @@ export default class Game {
 			if (!this.sparks[i].isAlive())
 				this.sparks.splice(i, 1);
 		}
+		if (this.ball.x - this.ball.ballRadius < 15) {
+
+			this.speed = 10;
+			this.ball.x = this.canvas.width / 2;
+			this.ball.y = this.canvas.height / 2;
+			this.playerOneScore++;
+			document.querySelector('.player2').innerHTML = `${this.playerOneScore}`;
+		}
+		if (this.ball.x + this.ball.ballRadius > this.canvas.width - 15) {
+
+			this.speed = 10;
+			this.ball.x = this.canvas.width / 2;
+			this.ball.y = this.canvas.height / 2;
+			this.playerTwoScore++;
+			document.querySelector('.player1').innerHTML = `${this.playerTwoScore}`;
+		}
+
+
 	}
 
 

@@ -18,6 +18,8 @@ class InGameComponent extends HTMLElement {
 	initializeComponent() {
 		this.innerHTML = `
 			<canvas></canvas>
+			<p class="player1">0</p>
+			<p class="player2">0</p>
 		`;
 	}
 

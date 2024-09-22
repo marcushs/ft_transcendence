@@ -119,8 +119,23 @@ game-test-component {
 }
 
 canvas {
+    position: relative;
     border-radius: 7px;
     height: 100%;
     width: 100%;
     background: var(--component-background-color);
+}
+
+.player1, .player2 {
+    position: absolute;
+}
+
+.player1 {
+    top: 15px;
+    left: 15px;
+}
+
+.player2 {
+    top: 15px;
+    right: 15px;
 }
