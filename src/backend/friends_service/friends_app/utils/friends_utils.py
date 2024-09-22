@@ -55,7 +55,7 @@ class friendshipManager(View):
         if not friend_request:
             return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
         friend_request.accept()
-        notify_friend_display_change(created=False, action='accepted', receiver=self.target_user, sender=self.user)
+        notify_friend_display_change(created=False, action='accepted', is_contact=False , receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'mutual_friend', 'message': 'friends invitation successfully accepted'}, status=200)
 
     def send_friendship(self):
@@ -64,7 +64,7 @@ class friendshipManager(View):
         if from_friend_request or to_friend_request:
             return JsonResponse({'status': 'error', 'message': 'Friend request already sent'}, status=200)
         FriendRequest.objects.create(sender=self.user, receiver=self.target_user)
-        notify_friend_display_change(created=True, action='accepted', receiver=self.target_user, sender=self.user)
+        notify_friend_display_change(created=True, action='accepted', is_contact=False , receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'pending_sent', 'message': 'friends invitation successfully send'}, status=200)
 
     def cancel_friendship(self):
@@ -72,7 +72,7 @@ class friendshipManager(View):
         if not friend_request:
             return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
         friend_request.cancel()
-        notify_friend_display_change(created=False, action='refused', receiver=self.target_user, sender=self.user)
+        notify_friend_display_change(created=False, action='refused', is_contact=False , receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully canceled'}, status=200)
 
     def decline_friendship(self):
@@ -80,12 +80,12 @@ class friendshipManager(View):
         if not friend_request:
             return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
         friend_request.cancel()
-        notify_friend_display_change(created=False, action='refused', receiver=self.target_user, sender=self.user)
+        notify_friend_display_change(created=False, action='refused', is_contact=False , receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully declined'}, status=200)
 
     def remove_friendship(self):
         if self.friend_list.is_mutual_friend(friend=self.target_user) is False:
             return JsonResponse({'status': 'error', 'message': 'Cant remove this contact from friendlist, you\'re already not friend'}, status=200)
         self.friend_list.unfriend(self.target_user)
-        notify_friend_display_change(created=False, action='refused', receiver=self.target_user, sender=self.user)
+        notify_friend_display_change(created=False, action='refused', is_contact=True , receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully removed'}, status=200)

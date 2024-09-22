@@ -15,14 +15,10 @@ async function loadContactsWebSocket() {
     socket.onmessage = function(event) {
         const data = JSON.parse(event.data);
 
-        console.log(data.message);
-		console.log('data-type: ', data.type);
-		console.log('data-sender: ', data.is_sender);
-        if (data.type === 'deleted contact') {
-            removeContactFromList(data.contact);
+        if (data.type === 'deleted contact' || data.type === 'deleted contact request') {
+            removeContactFromList(data.contact, data.type);
         } else {
-            const is_request = (data.type === 'new contact request') ? true : false;
-            addNewContactToList(data.contact, is_request, data.is_sender);
+            addNewContactToList(data.contact, data.type, data.is_sender);
         }
 
     };
