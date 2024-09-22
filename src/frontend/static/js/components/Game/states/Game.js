@@ -16,8 +16,6 @@ export default class Game {
 			up: false,
 			down: false,
 		}
-		this.ballDirectionX = this.speed;
-		this.ballDirectionY = this.speed;
 		this.attachEventsListener();
 		this.gameLoop();
 	}
@@ -65,20 +63,20 @@ export default class Game {
 
 
 	checkBallHitBox() {
-		this.playerCollision(this.playerOne, this.speed, () => this.ball.x + this.ballDirectionX - this.ball.ballRadius < this.playerOne.x + this.playerOne.width / 2, true);
-		this.playerCollision(this.playerTwo, -this.speed, () => this.ball.x + this.ballDirectionX + this.ball.ballRadius > this.playerTwo.x - this.playerTwo.width / 2, false);
+		this.playerCollision(this.playerOne, this.speed, () => this.ball.x + this.ball.ballDirectionX - this.ball.ballRadius < this.playerOne.x + this.playerOne.width / 2, true);
+		this.playerCollision(this.playerTwo, -this.speed, () => this.ball.x + this.ball.ballDirectionX + this.ball.ballRadius > this.playerTwo.x - this.playerTwo.width / 2, false);
 		this.wallCollision();
 
-		this.ball.x += this.ballDirectionX;
-		this.ball.y += this.ballDirectionY;
+		this.ball.x += this.ball.ballDirectionX;
+		this.ball.y += this.ball.ballDirectionY;
 	}
 
 
 	playerCollision(player, speed, calculateXPosition, isPlayerOne) {
-		if ((this.ball.y + this.ballDirectionY + this.ball.ballRadius < player.y + player.height / 2 &&
-			this.ball.y + this.ballDirectionY + this.ball.ballRadius >  player.y - player.height / 2) && calculateXPosition()) {
+		if ((this.ball.y + this.ball.ballDirectionY + this.ball.ballRadius < player.y + player.height / 2 &&
+			this.ball.y + this.ball.ballDirectionY + this.ball.ballRadius >  player.y - player.height / 2) && calculateXPosition()) {
 
-			this.ballDirectionX = speed;
+			this.ball.ballDirectionX = speed;
 
 			let collidePoint = this.ball.y - player.y;
 
@@ -91,11 +89,10 @@ export default class Game {
 
 			let direction = (this.ball.x < this.canvas.width / 2) ? 1 : -1; // To reverse x direction
 
-			this.ballDirectionX = direction * this.speed * Math.cos(angleRad);
-			this.ballDirectionY = this.speed * Math.sin(angleRad);
+			this.ball.ballDirectionX = direction * this.speed * Math.cos(angleRad);
+			this.ball.ballDirectionY = this.speed * Math.sin(angleRad);
 			this.speed += 0.5;
-			this.ball.rotationSpeed += 0.05;
-			(direction === 1) ? this.ball.positiveRotationDirection = false : this.ball.positiveRotationDirection = true;
+			(direction === 1) ? this.ball.changeBallInfos(false) : this.ball.changeBallInfos(true);
 		}
 	}
 
@@ -103,14 +100,14 @@ export default class Game {
 	wallCollision() {
 		// X should be deleted to score a goal
 		if (this.ball.x + this.ball.ballRadius > this.canvas.width)
-			this.ballDirectionX = this.ballDirectionX * -1;
+			this.ball.ballDirectionX = this.ball.ballDirectionX * -1;
 		if (this.ball.x - this.ball.ballRadius < 0)
-			this.ballDirectionX = this.ballDirectionX * -1;
+			this.ball.ballDirectionX = this.ball.ballDirectionX * -1;
 
 		if (this.ball.y + this.ball.ballRadius > this.canvas.height)
-			this.ballDirectionY = this.ballDirectionY * -1;
+			this.ball.ballDirectionY = this.ball.ballDirectionY * -1;
 		if (this.ball.y - this.ball.ballRadius < 0) {
-			this.ballDirectionY = this.ballDirectionY * -1;
+			this.ball.ballDirectionY = this.ball.ballDirectionY * -1;
 		}
 	}
 

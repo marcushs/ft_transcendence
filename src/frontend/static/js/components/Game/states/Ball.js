@@ -1,13 +1,29 @@
 export default class Ball {
-	constructor(canvas, x, y, rotationSpeed) {
+	constructor(canvas, x, y, ballSpeed) {
 		this.canvas = canvas;
 		this.x = x;
 		this.y = y;
-		this.ballColor = 'rgb(189, 195, 199)';
 		this.ballRadius = 15;
-		this.rotationSpeed = 0.1;
+		this.rotationSpeed = 0.01;
 		this.rotationAngle = 0;
-		this.positiveRotationDirection = true;
+		this.isPositiveBallDirection = true;
+		this.ballColor = 'rgb(189, 195, 199)';
+		this.bluePrimaryColor = 'rgb(0, 206, 255)';
+		this.blueSecondaryColor = 'rgb(3, 114, 155)';
+		this.pinkPrimaryColor = 'rgb(255, 22, 198)';
+		this.pinkSecondaryColor = 'rgb(146, 0, 117)';
+		this.ballDirectionX = ballSpeed;
+		this.ballDirectionY = ballSpeed;
+		this.testHeight = -12;
+		this.testWidth = -10;
+	}
+
+
+	changeBallInfos(isPositiveBallDirection) {
+		this.rotationSpeed += 0.05;
+		this.testHeight += 0.25;
+		this.testWidth += 0.3;
+		this.isPositiveBallDirection = isPositiveBallDirection;
 	}
 
 
@@ -19,34 +35,41 @@ export default class Ball {
 
 
 	drawTrail(primaryColor, secondaryColor) {
-		const coordinates = {
-			x: this.x - 10,
-			y: this.y,
-		}
+		let angle = Math.atan2(this.ballDirectionY, this.ballDirectionX); // Get the angle direction of the ball
+	    this.canvas.ctx.save(); // Save the current state of the context to apply translation and rotation separately from the rest.
+	    this.canvas.ctx.translate(this.x, this.y); // Set the x and y coordinate as origin coordinates
+
+	    this.canvas.ctx.rotate(angle); // Rotate according to angle
 
 		let subtractBy = 0; // To change the size of trail
-		let multiplier = 1; // To draw on negative or positive
+		let multiplier = 1; // To invert the drawing direction for symmetry
 
+		// Loop to draw the shapes of the trail with different colors and sizes
 		for (let i = 0; i < 4; i++) {
-			(i % 2 === 0) ? subtractBy = 0 : subtractBy = 3;
-			(i % 2 === 0) ? this.canvas.ctx.fillStyle = primaryColor : this.canvas.ctx.fillStyle = secondaryColor;
+			(i % 2 === 0) ? subtractBy = 0 : subtractBy = 5;
+			if (this.isPositiveBallDirection)
+				(i % 2 === 0) ? this.canvas.ctx.fillStyle = this.pinkPrimaryColor : this.canvas.ctx.fillStyle = this.pinkSecondaryColor;
+			else
+				(i % 2 === 0) ? this.canvas.ctx.fillStyle = this.bluePrimaryColor : this.canvas.ctx.fillStyle = this.blueSecondaryColor;
 			if (i === 2)
 				multiplier = -1;
 
 		this.canvas.ctx.beginPath();
-		this.canvas.ctx.lineTo(coordinates.x, coordinates.y);
-		this.canvas.ctx.lineTo(coordinates.x , coordinates.y + (5 * multiplier));
-		this.canvas.ctx.arcTo(coordinates.x, coordinates.y + (25 * multiplier) - (subtractBy * multiplier), coordinates.x + 25, coordinates.y + (15 * multiplier) - (subtractBy * multiplier), 25);
-		this.canvas.ctx.arcTo(coordinates.x + 40, coordinates.y + (10 * multiplier) - (subtractBy * multiplier), coordinates.x + 60, coordinates.y + (25 * multiplier) - (subtractBy * multiplier), 25);
-		this.canvas.ctx.lineTo(coordinates.x + 40, coordinates.y + (8 * multiplier) - (subtractBy * multiplier));
-		this.canvas.ctx.arcTo(coordinates.x + 45, coordinates.y + (6 * multiplier) - (subtractBy * multiplier), coordinates.x + 60, coordinates.y + (15 * multiplier) - (subtractBy * multiplier), 25);
-		this.canvas.ctx.arcTo(coordinates.x + 42, coordinates.y + (2 * multiplier) - (subtractBy * multiplier), coordinates.x + 40, coordinates.y + (2 * multiplier) - (subtractBy * multiplier), 25);
-		this.canvas.ctx.lineTo(coordinates.x + 48, coordinates.y + (6 * multiplier) - (subtractBy * multiplier));
-		this.canvas.ctx.arcTo(coordinates.x + 48, coordinates.y + (6 * multiplier) - (subtractBy * multiplier), coordinates.x + 100, coordinates.y, 25);
-		this.canvas.ctx.lineTo(coordinates.x + 100, coordinates.y);
-		this.canvas.ctx.closePath();
-		this.canvas.ctx.fill();
+        this.canvas.ctx.moveTo(0, 0);
+        this.canvas.ctx.lineTo(0, (5 + this.testHeight + subtractBy) * multiplier);
+        this.canvas.ctx.arcTo(0, (25 + this.testHeight + subtractBy) * multiplier, -15, (15 + this.testHeight + subtractBy) * multiplier, 20);
+        this.canvas.ctx.arcTo(-30, (10 + this.testHeight + subtractBy) * multiplier, -50, (20 + this.testHeight + subtractBy) * multiplier, 20);
+        this.canvas.ctx.lineTo(-30, (8 + this.testHeight + subtractBy) * multiplier);
+        this.canvas.ctx.arcTo(-35, (6 + this.testHeight + subtractBy) * multiplier, -50, (15 + this.testHeight + subtractBy) * multiplier, 20);
+        this.canvas.ctx.arcTo(-32, (2 + this.testHeight + subtractBy) * multiplier, -30, (2 + this.testHeight + subtractBy) * multiplier, 20);
+        this.canvas.ctx.lineTo(-38, (6 + this.testHeight + subtractBy) * multiplier);
+        this.canvas.ctx.arcTo(-38, (6 + this.testHeight + subtractBy) * multiplier, -90, 0, 25);
+        this.canvas.ctx.lineTo(-90 - this.testWidth * 10, 0);
+        this.canvas.ctx.closePath();
+        this.canvas.ctx.fill();
 		}
+
+	   this.canvas.ctx.restore(); // To restore context as previous context
 	}
 
 
@@ -68,7 +91,7 @@ export default class Ball {
 
 
 	drawBallTexture() {
-		if (!this.positiveRotationDirection)
+		if (!this.isPositiveBallDirection)
 			this.rotationAngle += this.rotationSpeed;
 		else
 			this.rotationAngle += -this.rotationSpeed;
@@ -111,13 +134,16 @@ export default class Ball {
 
 	drawBallTextureEllipse(x, y, ellipseRotation) {
 		this.canvas.ctx.beginPath();
-		this.canvas.ctx.fillStyle = 'rgb(30, 32, 43)';
+		this.canvas.ctx.fillStyle = 'rgb(0, 0, 0)';
 		this.canvas.ctx.ellipse(x, y, 4, 7, ellipseRotation, 0, 2 * Math.PI);
 		this.canvas.ctx.closePath();
 		this.canvas.ctx.fill();
 
 		this.canvas.ctx.beginPath();
-		this.canvas.ctx.fillStyle = 'rgb(0, 206, 255)';
+		if (this.isPositiveBallDirection)
+			this.canvas.ctx.fillStyle = this.pinkPrimaryColor;
+		else
+			this.canvas.ctx.fillStyle = this.bluePrimaryColor;
 		this.canvas.ctx.ellipse(x, y, 3, 6, ellipseRotation, 0, 2 * Math.PI);
 		this.canvas.ctx.closePath();
 		this.canvas.ctx.fill();
