@@ -3,7 +3,7 @@ export default class Ball {
 		this.canvas = canvas;
 		this.x = x;
 		this.y = y;
-		this.ballRadius = 15;
+		this.ballRadius = 16;
 		this.rotationSpeed = 0.01;
 		this.rotationAngle = 0;
 		this.isPositiveBallDirection = true;
@@ -14,15 +14,19 @@ export default class Ball {
 		this.pinkSecondaryColor = 'rgb(146, 0, 117)';
 		this.ballDirectionX = ballSpeed;
 		this.ballDirectionY = ballSpeed;
-		this.testHeight = -12;
-		this.testWidth = -10;
+		this.offsetTrailHeight = -12;
+		this.offsetTrailWidth = -10;
+		this.baseBlue = 255;
+		this.basePink = 255;
+		this.increaseBlue = false;
+		this.increasePink = false;
 	}
 
 
 	changeBallInfos(isPositiveBallDirection) {
 		this.rotationSpeed += 0.05;
-		this.testHeight += 0.25;
-		this.testWidth += 0.3;
+		this.offsetTrailHeight += 0.25;
+		this.offsetTrailWidth += 0.3;
 		this.isPositiveBallDirection = isPositiveBallDirection;
 	}
 
@@ -31,6 +35,7 @@ export default class Ball {
 		this.drawTrail(primaryColor, secondaryColor);
 		this.drawBall();
 		this.drawBallTexture();
+		this.updateTrailColors()
 	}
 
 
@@ -56,20 +61,49 @@ export default class Ball {
 
 		this.canvas.ctx.beginPath();
         this.canvas.ctx.moveTo(0, 0);
-        this.canvas.ctx.lineTo(0, (5 + this.testHeight + subtractBy) * multiplier);
-        this.canvas.ctx.arcTo(0, (25 + this.testHeight + subtractBy) * multiplier, -15, (15 + this.testHeight + subtractBy) * multiplier, 20);
-        this.canvas.ctx.arcTo(-30, (10 + this.testHeight + subtractBy) * multiplier, -50, (20 + this.testHeight + subtractBy) * multiplier, 20);
-        this.canvas.ctx.lineTo(-30, (8 + this.testHeight + subtractBy) * multiplier);
-        this.canvas.ctx.arcTo(-35, (6 + this.testHeight + subtractBy) * multiplier, -50, (15 + this.testHeight + subtractBy) * multiplier, 20);
-        this.canvas.ctx.arcTo(-32, (2 + this.testHeight + subtractBy) * multiplier, -30, (2 + this.testHeight + subtractBy) * multiplier, 20);
-        this.canvas.ctx.lineTo(-38, (6 + this.testHeight + subtractBy) * multiplier);
-        this.canvas.ctx.arcTo(-38, (6 + this.testHeight + subtractBy) * multiplier, -90, 0, 25);
-        this.canvas.ctx.lineTo(-90 - this.testWidth * 10, 0);
+        this.canvas.ctx.lineTo(0, (5 + this.offsetTrailHeight + subtractBy) * multiplier);
+        this.canvas.ctx.arcTo(0, (25 + this.offsetTrailHeight + subtractBy) * multiplier, -15, (15 + this.offsetTrailHeight + subtractBy) * multiplier, 20);
+        this.canvas.ctx.arcTo(-30, (10 + this.offsetTrailHeight + subtractBy) * multiplier, -50, (20 + this.offsetTrailHeight + subtractBy) * multiplier, 20);
+        this.canvas.ctx.lineTo(-30, (8 + this.offsetTrailHeight + subtractBy) * multiplier);
+        this.canvas.ctx.arcTo(-35, (6 + this.offsetTrailHeight + subtractBy) * multiplier, -50, (15 + this.offsetTrailHeight + subtractBy) * multiplier, 20);
+        this.canvas.ctx.arcTo(-32, (2 + this.offsetTrailHeight + subtractBy) * multiplier, -30, (2 + this.offsetTrailHeight + subtractBy) * multiplier, 20);
+        this.canvas.ctx.lineTo(-38, (6 + this.offsetTrailHeight + subtractBy) * multiplier);
+        this.canvas.ctx.arcTo(-38, (6 + this.offsetTrailHeight + subtractBy) * multiplier, -90, 0, 25);
+        this.canvas.ctx.lineTo(-90 - this.offsetTrailWidth * 10, 0);
         this.canvas.ctx.closePath();
         this.canvas.ctx.fill();
 		}
 
 	   this.canvas.ctx.restore(); // To restore context as previous context
+	}
+
+
+	updateTrailColors() {
+		if (!this.isPositiveBallDirection) {
+			if (this.increaseBlue) {
+				this.bluePrimaryColor = `rgb(0, ${this.baseBlue - 50}, ${this.baseBlue})`;
+				if (this.baseBlue === 255)
+					this.increaseBlue = false;
+				this.baseBlue += 5;
+			} else {
+				this.bluePrimaryColor = `rgb(0, ${this.baseBlue - 50}, ${this.baseBlue})`;
+				if (this.baseBlue === 155)
+					this.increaseBlue = true;
+				this.baseBlue -= 5;
+			}
+		} else {
+			if (this.increasePink) {
+				this.pinkPrimaryColor = `rgb(${this.basePink}, 22, ${this.basePink * 0.8})`;
+				if (this.basePink === 255)
+					this.increasePink = false;
+				this.basePink += 5;
+			} else {
+				this.pinkPrimaryColor = `rgb(${this.basePink}, 22, ${this.basePink * 0.8})`;
+				if (this.basePink === 155)
+					this.increasePink = true;
+				this.basePink -= 5;
+			}
+		}
 	}
 
 
