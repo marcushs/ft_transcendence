@@ -28,6 +28,8 @@ export default class Game {
 		document.addEventListener('keydown', (event) => {
 			if (event.key === 'w') this.keysPlayerOne.up = true;
 			if (event.key === 's') this.keysPlayerOne.down = true;
+			if (event.key === 'W') this.keysPlayerOne.up = true;
+			if (event.key === 'S') this.keysPlayerOne.down = true;
 			if (event.key === 'ArrowUp') this.keysPlayerTwo.up = true;
 			if (event.key === 'ArrowDown') this.keysPlayerTwo.down = true;
 		});
@@ -36,6 +38,8 @@ export default class Game {
 		document.addEventListener('keyup', (event) => {
 			if (event.key === 'w') this.keysPlayerOne.up = false;
 			if (event.key === 's') this.keysPlayerOne.down = false;
+			if (event.key === 'W') this.keysPlayerOne.up = false;
+			if (event.key === 'S') this.keysPlayerOne.down = false;
 			if (event.key === 'ArrowUp') this.keysPlayerTwo.up = false;
 			if (event.key === 'ArrowDown') this.keysPlayerTwo.down = false;
 		});
@@ -54,9 +58,32 @@ export default class Game {
 
 
 	drawFrame(gameInfos) {
+		this.drawMiddleLine();
 		this.playerOne.draw();
 		this.playerTwo.draw();
 		this.ball.draw('rgb(255, 22, 198)', 'rgb(146, 0, 117)');
+	}
+
+
+	drawMiddleLine() {
+		this.canvas.fillStyle = '#fff';
+		this.canvas.ctx.beginPath();
+		const gradient = this.canvas.ctx.createLinearGradient(this.canvas.width / 2, 0, this.canvas.width / 2, this.canvas.height);
+		gradient.addColorStop(0, 'rgb(255, 22, 198)');
+		gradient.addColorStop(1, 'rgb(0, 206, 255)');
+		this.canvas.ctx.lineWidth = 5;
+		this.canvas.ctx.strokeStyle = gradient;
+		this.canvas.ctx.moveTo(this.canvas.width / 2, 0);
+		this.canvas.ctx.lineTo(this.canvas.width / 2, this.canvas.height);
+		this.canvas.ctx.stroke();
+		// this.canvas.ctx.moveTo(this.canvas.width / 2, 0);
+		// this.canvas.ctx.lineTo(this.canvas.width / 2, 0);
+		// this.canvas.ctx.lineTo(this.canvas.width / 2, this.canvas.height);
+		// this.canvas.ctx.lineWidth = 3;
+		// this.canvas.ctx.stroke();
+		this.canvas.ctx.closePath();
+		this.canvas.ctx.fill();
+
 	}
 
 
@@ -80,11 +107,12 @@ export default class Game {
 	playerCollision(player, speed, calculateXPosition, isPlayerOne) {
 		if ((this.ball.y + this.ball.ballDirectionY + this.ball.ballRadius < player.y + player.height / 2 &&
 			this.ball.y + this.ball.ballDirectionY + this.ball.ballRadius >  player.y - player.height / 2) && calculateXPosition()) {
-
-			if (isPlayerOne)
-				this.generateSparks(this.ball.x, this.ball.y, 'left', true, false, 'rgb(0, 206, 255)');
-			else
-				this.generateSparks(this.ball.x, this.ball.y, 'right', false, true, 'rgb(255, 22, 198)');
+			player.hitTime = performance.now();
+			player.isPlayerHit = true;
+			// if (isPlayerOne)ss
+			// 	this.generateSparks(this.ball.x, this.ball.y, 'left', true, false, 'rgb(0, 206, 255)');
+			// else
+			// 	this.generateSparks(this.ball.x, this.ball.y, 'right', false, true, 'rgb(255, 22, 198)');
 
 			this.ball.ballDirectionX = speed;
 
@@ -92,8 +120,8 @@ export default class Game {
 
 			collidePoint = collidePoint / (player.height / 2); // Return a value between 1 and -1 which 1 is bottom and -1 is top
 
-			if (collidePoint < 0.50 && collidePoint > 0.25 || collidePoint > -0.50 && collidePoint < -0.25) // Increase low angle between 0.25 and 0.50 to 0.5 to increase afressivity
-				(collidePoint >= 0) ? collidePoint = 0.50 : collidePoint = -0.50;
+			// if (collidePoint < 0.50 && collidePoint > 0.10 || collidePoint > -0.50 && collidePoint < -0.10) // Increase low angle between 0.25 and 0.50 to 0.5 to increase afressivity
+			// 	(collidePoint >= 0) ? collidePoint = 0.50 : collidePoint = -0.50;
 
 			let angleRad = collidePoint * (Math.PI / 4); // Angle in radiant between 45 and -45deg
 
