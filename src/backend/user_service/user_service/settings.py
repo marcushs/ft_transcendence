@@ -11,13 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import environ
 import os
 
 # Read from .env file
-env = environ.Env()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Path for files
 MEDIA_URL = '/media/'
@@ -27,19 +24,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent 
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
 # /-----> Django key <-----\
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("AUTH_SECRET_KEY")
+SECRET_KEY = os.environ.get("AUTH_SECRET_KEY")
 
 # /-----> JWT keys && algorithm <-----\
 
-JWT_VERIFYING_KEY = env("PUBLIC_JWT_KEY")
-JWT_ALGORITHM = env("JWT_ALGORITHM")
+JWT_VERIFYING_KEY = os.environ.get("PUBLIC_JWT_KEY")
+JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")
 
 # /-----> JWT token lifetime in seconds <-----\
 
@@ -56,6 +49,7 @@ ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'user']
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
 	'corsheaders',
     'user_app',
     'django.contrib.auth',
@@ -99,7 +93,16 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'user_service.wsgi.application'
+ASGI_APPLICATION = 'user_service.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('redis', 6379)],
+        },
+    },
+}
 
 
 CORS_ALLOW_CREDENTIALS = True
@@ -141,11 +144,11 @@ CSRF_TRUSTED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('USER_DB_NAME'),
-        'USER': env('USER_DB_USER'),
-        'PASSWORD': env('USER_DB_PASSWORD'),
-        'HOST': env('USER_DB_HOST'),
-        'PORT': env('USER_DB_PORT'),
+        'NAME': os.environ.get('USER_DB_NAME'),
+        'USER': os.environ.get('USER_DB_USER'),
+        'PASSWORD': os.environ.get('USER_DB_PASSWORD'),
+        'HOST': os.environ.get('USER_DB_HOST'),
+        'PORT': os.environ.get('USER_DB_PORT'),
     }
 }
 

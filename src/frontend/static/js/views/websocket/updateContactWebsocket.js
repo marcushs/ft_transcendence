@@ -1,5 +1,5 @@
-import '../components/ContactComponent.js'
-import { sendRequest } from './sendRequest.js';
+import '../../components/ContactComponent.js'
+import { sendRequest } from '../../utils/sendRequest.js';
 
 export async function addNewContactToList(contact, requestType, is_sender) {
     const url = `http://localhost:8000/user/get_user/?q=${contact}`

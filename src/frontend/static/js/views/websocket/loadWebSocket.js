@@ -1,9 +1,37 @@
-import {removeContactFromList, addNewContactToList} from './contactListUtils.js'
+import {removeContactFromList, addNewContactToList} from './updateContactWebsocket.js'
 
 export async function loadWebSocket() {
     await loadContactsWebSocket();
+	await loadUserWebSocket();
     // await loadNotificationWebSocket();
 }
+
+//--------------> USER WEBSOCKET <--------------\\
+
+async function loadUserWebSocket() {
+    const socket = new WebSocket(`ws://localhost:8000/ws/user/`);
+
+    socket.onopen = function(event) {
+		console.log('User websocket started');
+	};
+
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+
+		console.log('websocket event: ', data);
+		
+    };
+
+    socket.onclose = function(event) {
+		console.log('test');
+	};
+
+    socket.onerror = function(event) {
+        console.log("Websocket error: ", event);
+    };
+}
+
+//--------------> CONTACT WEBSOCKET <--------------\\
 
 async function loadContactsWebSocket() {
     const socket = new WebSocket(`ws://localhost:8003/ws/contacts/`);
@@ -31,6 +59,8 @@ async function loadContactsWebSocket() {
         console.log("Websocket error: ", event);
     };
 }
+
+//--------------> NOTIFICATION WEBSOCKET <--------------\\
 
 async function loadNotificationWebSocket() {
     const socket = new WebSocket(`ws://localhost:8004/ws/notifications/`);

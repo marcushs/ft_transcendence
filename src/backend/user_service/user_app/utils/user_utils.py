@@ -7,6 +7,7 @@ from django.views import View
 from ..models import User
 import json
 import requests
+import httpx
 
 class set_offline_user(View):
     def __init__(self):
@@ -71,11 +72,11 @@ class update_user(View):
         return JsonResponse({'message': 'User updated successfully'}, status=200)
 
 
-def send_request(request_type, request, url, payload=None):
+async def send_request(request_type, request, url, payload=None):
         headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-CSRFToken': request.COOKIES.get('csrftoken') 
+                'X-CSRFToken': request.COOKIES.get('csrftoken')
             } 
         cookies = {
             'csrftoken': request.COOKIES.get('csrftoken'),
@@ -83,16 +84,18 @@ def send_request(request_type, request, url, payload=None):
             'jwt_refresh': request.COOKIES.get('jwt_refresh'),
             }
         try:
-            if request_type == 'GET':
-                response = requests.get(url=url, headers=headers, cookies=cookies)
-            else:
-                response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
-            if response.status_code == 200:
+            async with httpx.AsyncClient() as client:
+                if request_type == 'GET':
+                    response = await client.get(url, headers=headers, cookies=cookies)
+                else:
+                    response = await client.post(url, headers=headers, cookies=cookies, content=json.dumps(payload))
+
+                response.raise_for_status()  # Raise an exception for HTTP errors
                 return response
-            else:
-                response.raise_for_status()
-        except Exception as e:
-            raise Exception(f"An error occurred: {e}")
+        except httpx.HTTPStatusError as e:
+            raise Exception(f"HTTP error occurred: {e}")
+        except httpx.RequestError as e:
+            raise Exception(f"An error occurred while requesting: {e}")
 
 class searchUsers(View):
     def __init__(self):
