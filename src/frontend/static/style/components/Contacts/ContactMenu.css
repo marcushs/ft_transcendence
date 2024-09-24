@@ -3,6 +3,7 @@
 @import './ContactList.css';
 @import './ContactComponent.css';
 @import './BottomNavContact.css';
+@import './ContactMenuSearchBar.css';
 
 contact-menu-component {
     position: absolute;
@@ -32,11 +33,15 @@ contact-menu-component {
     width: 30rem;
     right: 1rem;
     bottom: 5.4rem;
-    background-color: var(--background-color);
+    background-color: var(--contact-background-color);
     border: 1px solid var(--light-grey);
     border-radius: 10px;
     overflow-x: hidden;
     /*background-color: var(--component-background-color);*/
+}
+
+.contact-menu i {
+    font-size: 3rem;
 }
 
 /*.contact-menu {*/
