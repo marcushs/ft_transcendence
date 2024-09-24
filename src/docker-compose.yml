@@ -270,6 +270,31 @@ services:
       interval: 8s
       timeout: 5s
       retries: 5
+        # -----> NOTIFICATIONS <----- #
+
+
+  # Game
+  game:
+    container_name: game
+    restart: always
+    build:
+      context: ./backend/game_service
+      dockerfile: docker/Dockerfile
+    image: game
+    env_file: ./backend/.env
+    command: >
+      sh -c "
+        mkdir -p /app/logs &&
+        python3 manage.py makemigrations &&
+        python3 manage.py migrate &&
+        daphne -b 0.0.0.0 -p 8000  --verbosity 3 game_service.asgi:application
+      "
+    volumes:
+      - ./backend/game_service:/app
+    ports:
+      - "8005:8000"
+    networks:
+      - transcendence-network
 
 
   # ---------------> REDIS <---------------
