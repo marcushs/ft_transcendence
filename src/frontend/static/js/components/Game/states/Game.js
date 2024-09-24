@@ -56,8 +56,8 @@ export default class Game {
 		this.canvas.ctx.font = '500px Russo One';
 		this.canvas.ctx.textAlign = 'center';
 		this.canvas.ctx.textBaseline = 'middle';
-		this.canvas.ctx.fillText(`${this.playerOneScore}`, this.canvas.width / 4, this.canvas.height / 2 + 35);
-		this.canvas.ctx.fillText(`${this.playerTwoScore}`, this.canvas.width / 4 * 3, this.canvas.height / 2 + 35);
+		this.canvas.ctx.fillText(`${this.playerTwoScore}`, this.canvas.width / 4, this.canvas.height / 2 + 35);
+		this.canvas.ctx.fillText(`${this.playerOneScore}`, this.canvas.width / 4 * 3, this.canvas.height / 2 + 35);
 		this.drawFrame();
 		this.movePlayers();
 		this.moveBall();
@@ -109,8 +109,8 @@ export default class Game {
 
 
 	playerCollision(player, speed, calculateXPosition, isPlayerOne) {
-		if ((this.ball.y + this.ball.ballDirectionY + this.ball.ballRadius < player.y + player.height / 2 &&
-			this.ball.y + this.ball.ballDirectionY + this.ball.ballRadius >  player.y - player.height / 2) && calculateXPosition()) {
+		if ((this.ball.y + this.ball.ballDirectionY - this.ball.ballRadius < player.y + player.height / 2 + this.ball.ballRadius / 2 &&
+			this.ball.y + this.ball.ballDirectionY + this.ball.ballRadius >  player.y - player.height / 2 - this.ball.ballRadius / 2) && calculateXPosition()) {
 			player.hitTime = performance.now();
 			player.isPlayerHit = true;
 			// if (isPlayerOne)ss
