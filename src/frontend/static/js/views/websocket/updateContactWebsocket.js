@@ -6,6 +6,8 @@ export async function addNewContactToList(contact, requestType, is_sender) {
     try {
         const data = await sendRequest('GET', url, null);
         const user = data.message;
+        console.log('bouh');
+        
 
         if (requestType === 'new contact request') {
             manageUpdateOfContactRequestList(user, is_sender);

@@ -31,3 +31,12 @@ class ContactsConsumer(AsyncWebsocketConsumer):
                 'is_sender': event['is_sender']
             }
         ))
+        
+    # async def contact_info_update(self, event):
+    #     await self.send(text_data=json.dumps(
+    #         {
+    #             'type' : event['event'],
+    #             'contact': event['contact'],
+    #             'change': event['change']
+    #         }
+    #     ))

@@ -2,6 +2,7 @@ from django.views import View
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AnonymousUser
+from asgiref.sync import sync_to_async
 from django.http import JsonResponse
 from .user_utils import send_request
 import requests
@@ -14,7 +15,7 @@ class ChangeUserInfosView(View):
         super().__init__
 
 
-    def post(self, request):
+    async def post(self, request):
         User = get_user_model()
         response = {}
 
@@ -26,20 +27,21 @@ class ChangeUserInfosView(View):
         except ValidationError as e:
             return JsonResponse(e.message_dict, status=409)
 
+        print('-------------------------TEST-----------------------')
         if request.POST.get('username') and request.user.username != request.POST.get('username'):
-            response.update(self.change_username(User, request))
+            response.update(await self.change_username(User, request))
         if request.POST.get('email') and request.user.email != request.POST.get('email'):
-            response.update(self.change_email(User, request))
+            response.update(await self.change_email(User, request))
         if request.FILES.get('profile_image'):
-            response.update(self.change_profile_image(request))
+            response.update(await self.change_profile_image(request))
         elif request.POST.get('profile_image_link'):
-            response.update(self.change_profile_image_link(request))
+            response.update(await self.change_profile_image_link(request))
 
         
         return JsonResponse(response, status=201)
 
 
-    def check_update_error(self, User, request):
+    async def check_update_error(self, User, request):
         new_username = request.POST.get('username')
         new_email = request.POST.get('email')
         new_profile_image = request.FILES.get('profile_image')
@@ -55,10 +57,10 @@ class ChangeUserInfosView(View):
             self.check_profile_image_link_errors(new_profile_image_link)
 
 
-    def check_username_errors(self, User, new_username, request):
+    async def check_username_errors(self, User, new_username, request):
         error = {}
 
-        if User.objects.filter(username=new_username).exists() and new_username != request.user.username:
+        if sync_to_async(lambda: User.objects.filter(username=new_username).exists()) and new_username != request.user.username:
             error['username_error'] = f"Username '{new_username}' already exists"
             raise ValidationError(error)
         if len(new_username) > 12:
@@ -69,10 +71,10 @@ class ChangeUserInfosView(View):
             raise ValidationError(error)
 
 
-    def check_email_errors(self, User, new_email, request):
+    async def check_email_errors(self, User, new_email, request):
         error = {}
 
-        if User.objects.filter(email=new_email).exists() and new_email != request.user.email:
+        if sync_to_async(lambda: User.objects.filter(email=new_email).exists())() and new_email != request.user.email:
             error['email_error'] = f'Email {new_email} is already associated with an account'
             raise ValidationError(error)
         if re.search(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", new_email) is None:
@@ -86,7 +88,6 @@ class ChangeUserInfosView(View):
         myme_type = mime.from_buffer(new_profile_image.read()) # get the mime of the image
 
         valid_mime_type = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp']
-        print(myme_type)
         if myme_type not in valid_mime_type:
             error['profile-image_error'] = f'Invalid profile image format, valid formats are: (png, jpg, jpeg, gif, svg, webp)'
             raise ValidationError(error)
@@ -102,48 +103,48 @@ class ChangeUserInfosView(View):
             return False
 
   
-    def change_username(self, User, request):
+    async def change_username(self, User, request):
         request.user.username = request.POST.get('username')
         payload = {'username': request.user.username}
         try:
-            send_request(request_type='POST',request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
-            send_request(request_type='POST',request=request, url='http://auth:8000/auth/update_user/', payload=payload)
-            send_request(request_type='POST',request=request, url='http://friends:8000/friends/update_user/', payload=payload)
+            await send_request(request_type='POST',request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
+            await send_request(request_type='POST',request=request, url='http://auth:8000/auth/update_user/', payload=payload)
+            await send_request(request_type='POST',request=request, url='http://friends:8000/friends/update_user/', payload=payload)
         except Exception:
             pass
-        request.user.save()
+        await sync_to_async(request.user.save)()
 
         return {'username_message': 'Username successfully changed'}
 
-    def change_email(self, User, request):
+    async def change_email(self, User, request):
         request.user.email = request.POST.get('email')
         payload = {'email': request.user.email}
         
         try:
-            send_request(request_type='POST',request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
-            send_request(request_type='POST',request=request, url='http://auth:8000/auth/update_user/', payload=payload)
+            await send_request(request_type='POST',request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
+            await send_request(request_type='POST',request=request, url='http://auth:8000/auth/update_user/', payload=payload)
         except Exception:
             pass
-        request.user.save() 
+        await sync_to_async(request.user.save)() 
 
         return {'email_message': 'Email successfully changed'}
 
 
-    def change_profile_image(self, request):
+    async def change_profile_image(self, request):
         new_image = request.FILES.get('profile_image')
 
         request.user.profile_image = new_image
         request.user.profile_image_link = None
-        request.user.save(has_new_image=True)
+        await sync_to_async(request.user.save)(has_new_image=True)
 
         return {'profile-image_message': 'Profile image successfully changed'}
 
 
-    def change_profile_image_link(self, request):
+    async def change_profile_image_link(self, request):
         new_image_link = request.POST.get('profile_image_link')
 
         request.user.profile_image = None
         request.user.profile_image_link = new_image_link
-        request.user.save(has_new_image=True)
+        await sync_to_async(request.user.save)(has_new_image=True)
 
         return {'profile-image_message': 'Profile image successfully changed'}

@@ -138,16 +138,16 @@ class FriendsMenuComponent extends HTMLElement {
             return;
         }
         const contactsData = await this.getDataRequest('users_status', contacts.friends);
-        const contactsCount = contactsData.online.length + contactsData.offline.length;
+        console.log(contactsData);
+        
         this.contactBottomNavDiv.style.display = 'flex';
         this.contactSummary.innerHTML = `<p>Contacts</p>`;
-        if (contactsCount === 0) {
+        if (!contactsData) {
             this.contactList.innerHTML = `No contacts found...`;
             this.contactList.classList.add('no-contacts');
         }
         else {
-            this.createContactList(contactsData.online, 'contacts');
-            this.createContactList(contactsData.offline, 'contacts');
+            this.createContactList(contactsData, 'contacts');
         }
         const receivedRequestUsersData = await this.getDataRequest('users_data', contacts.received_requests);
         const sentRequestUsersData = await this.getDataRequest('users_data', contacts.sent_requests);
@@ -165,6 +165,7 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     createContactList(contacts, status) {
+        
         contacts.forEach(contact => {
             const li = document.createElement('li');
             li.innerHTML = `

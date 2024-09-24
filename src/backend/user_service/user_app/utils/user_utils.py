@@ -170,8 +170,7 @@ class getUsersByStatus(View):
             if isinstance(request.user, AnonymousUser):
                 return JsonResponse({'message': 'User not found'}, status=400)
             users_target = json.loads(request.GET.get('q', ''))
-            users_online = []
-            users_offline = []
+            users = []
             for user in users_target:
                 username = user.get('username')
                 user_data = User.objects.get(username=username)
@@ -181,10 +180,7 @@ class getUsersByStatus(View):
                     'profile_image_link': user_data.profile_image_link,
                     'status': user_data.status
                 }
-                if user_data.status == 'online':
-                    users_online.append(users_info)
-                else:
-                    users_offline.append(users_info)
-            return JsonResponse({'status': 'success', 'message': {'online': users_online, 'offline': users_offline}}, safe=False, status=200)
+                users.append(user)
+            return JsonResponse({'status': 'success', 'message': users}, safe=False, status=200)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)

@@ -43,6 +43,8 @@ async function loadContactsWebSocket() {
     socket.onmessage = function(event) {
         const data = JSON.parse(event.data);
 
+		console.log('data: ', data);
+		
         if (data.type === 'deleted contact' || data.type === 'deleted contact request') {
             removeContactFromList(data.contact, data.type);
         } else {
