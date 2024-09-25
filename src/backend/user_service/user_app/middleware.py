@@ -76,15 +76,16 @@ class UserStatusMiddleware(MiddlewareMixin):
         return response
     
     async def process_request(self, request):
-        online_users = await sync_to_async(lambda: list(User.objects.filter(status='online')))()
-        await self.set_new_users_status(request=request, users=online_users, status_change='away')
-        away_users = await sync_to_async(lambda: list(User.objects.filter(status='away')))()
-        await self.set_new_users_status(request=request, users=away_users, status_change='offline')
+        if not isinstance(request.user, AnonymousUser):
+            online_users = await sync_to_async(lambda: list(User.objects.filter(status='online')))()
+            await self.set_new_users_status(request=request, users=online_users, status_change='away')
+            away_users = await sync_to_async(lambda: list(User.objects.filter(status='away')))()
+            await self.set_new_users_status(request=request, users=away_users, status_change='offline')
         response = await self.get_response(request)
         return response
     
     async def set_new_users_status(self, request, users, status_change):
-        if status_change == 'away':
+        if status_change == 'away': 
             threshold = timezone.now() - timedelta(minutes=2)
         else:
             threshold = timezone.now() - timedelta(minutes=15)
@@ -92,5 +93,5 @@ class UserStatusMiddleware(MiddlewareMixin):
             if user.last_active < threshold:
                 user.status = status_change
                 sync_to_async(user.save)()
-                await notify_user_info_display_change(request=request, change_type='status')
+                # await notify_user_info_display_change(request=request)
                 

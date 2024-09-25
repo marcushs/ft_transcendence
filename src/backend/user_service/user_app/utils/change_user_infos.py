@@ -27,7 +27,6 @@ class ChangeUserInfosView(View):
         except ValidationError as e:
             return JsonResponse(e.message_dict, status=409)
 
-        print('-------------------------TEST-----------------------')
         if request.POST.get('username') and request.user.username != request.POST.get('username'):
             response.update(await self.change_username(User, request))
         if request.POST.get('email') and request.user.email != request.POST.get('email'):
@@ -36,9 +35,13 @@ class ChangeUserInfosView(View):
             response.update(await self.change_profile_image(request))
         elif request.POST.get('profile_image_link'):
             response.update(await self.change_profile_image_link(request))
-
+        else:
+            return JsonResponse(response, status=201)
+        
         
         return JsonResponse(response, status=201)
+        
+
 
 
     async def check_update_error(self, User, request):

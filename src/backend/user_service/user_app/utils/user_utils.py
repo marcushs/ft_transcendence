@@ -160,27 +160,3 @@ class getUsersInfo(View):
             return JsonResponse({'status': 'success', 'message': users_list}, safe=False, status=200)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
- 
-class getUsersByStatus(View):
-    def __init__(self):
-        super().__init__
- 
-    def get(self, request):
-        try:
-            if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'User not found'}, status=400)
-            users_target = json.loads(request.GET.get('q', ''))
-            users = []
-            for user in users_target:
-                username = user.get('username')
-                user_data = User.objects.get(username=username)
-                users_info = {
-                    'username': user_data.username,
-                    'profile_image': user_data.profile_image.url if user_data.profile_image else None,
-                    'profile_image_link': user_data.profile_image_link,
-                    'status': user_data.status
-                }
-                users.append(user)
-            return JsonResponse({'status': 'success', 'message': users}, safe=False, status=200)
-        except ObjectDoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)

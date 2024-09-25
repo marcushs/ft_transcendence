@@ -17,10 +17,10 @@ export default () => {
 				<form>
 					<h1>${getString('loginView/loginTitle')}</h1>
 					<div class="form-fields">
-						<input type="text" placeholder="${getString('loginView/username')}" name="username" autofocus required>
+						<input class="login-input" type="text" placeholder="${getString('loginView/username')}" name="username" autofocus required>
 					</div>
 					<div class="form-fields">
-						<input type="password" placeholder="${getString('loginView/password')}" name="password" required>
+						<input class="login-input" type="password" placeholder="${getString('loginView/password')}" name="password" required>
 						<i class="fa-solid fa-eye" id="password-eye"></i>
 						<a href="/change-password" id="forgotten-password">${getString('loginView/forgottenPassword')}</a>
 					</div>
@@ -41,7 +41,8 @@ export default () => {
 		});
 
 		document.addEventListener('input', event => {
-			document.querySelector('#feedbackElement').innerHTML = '';
+			if (event.target.className === 'login-input')
+				document.querySelector('#feedbackElement').innerHTML = '';
 		});
 
 		displayFeedback();

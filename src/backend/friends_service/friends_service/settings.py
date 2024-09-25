@@ -54,6 +54,7 @@ ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'friends']
  
 INSTALLED_APPS = [
     'channels',
+    'daphne',
 	'corsheaders',
     'friends_app',
     'django.contrib.auth',

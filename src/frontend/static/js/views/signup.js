@@ -15,19 +15,19 @@ export default () => {
 				<form>
 					<h1>${getString('signupView/signupTitle')}</h1>
 					<div class="form-fields">
-						<input type="text" placeholder="${getString('signupView/username')}" name="username" required>
+						<input class="signup-input" type="text" placeholder="${getString('signupView/username')}" name="username" required>
 					</div>
 					<div class="form-fields">
-						<input type="text" placeholder="${getString('signupView/email')}" name="email" autofocus required>
+						<input class="signup-input" type="text" placeholder="${getString('signupView/email')}" name="email" autofocus required>
 						<span id="emailFeedback" class="input-feedback"></span>
 					</div>
 					<div class="form-fields">
-						<input type="password" placeholder="${getString('signupView/password')}" name="password" required>
+						<input class="signup-input" type="password" placeholder="${getString('signupView/password')}" name="password" required>
 						<i class="fa-solid fa-eye" id="password-eye"></i>
 						<span id="passwordFeedback" class="input-feedback"></span>
 					</div>
 					<div class="form-fields">
-						<input type="password" placeholder="${getString('signupView/confirmPassword')}" name="confirm_password" required>
+						<input class="signup-input" type="password" placeholder="${getString('signupView/confirmPassword')}" name="confirm_password" required>
 						<i class="fa-solid fa-eye" id="confirm-password-eye"></i>
 						<span id="confirmPasswordFeedback" class="input-feedback"></span>
 					</div>
@@ -49,7 +49,8 @@ export default () => {
 		});
 
 		document.addEventListener('input', event => {
-			document.querySelector('#errorFeedback').innerHTML = '';
+			if (event.target.className === 'signup-input')
+				document.querySelector('#errorFeedback').innerHTML = '';
 		});
 
 		displayErrorFeedback();

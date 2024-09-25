@@ -2,34 +2,34 @@ import {removeContactFromList, addNewContactToList} from './updateContactWebsock
 
 export async function loadWebSocket() {
     await loadContactsWebSocket();
-	await loadUserWebSocket();
+	// await loadUserWebSocket();
     // await loadNotificationWebSocket();
 }
 
 //--------------> USER WEBSOCKET <--------------\\
 
-async function loadUserWebSocket() {
-    const socket = new WebSocket(`ws://localhost:8000/ws/user/`);
+// async function loadUserWebSocket() {
+//     const socket = new WebSocket(`ws://localhost:8000/ws/user/`);
 
-    socket.onopen = function(event) {
-		console.log('User websocket started');
-	};
+//     socket.onopen = function(event) {
+// 		console.log('User websocket started');
+// 	};
 
-    socket.onmessage = function(event) {
-        const data = JSON.parse(event.data);
+//     socket.onmessage = function(event) {
+//         const data = JSON.parse(event.data);
 
-		console.log('websocket event: ', data);
+// 		console.log('websocket event: ', data);
 		
-    };
+//     };
 
-    socket.onclose = function(event) {
-		console.log('test');
-	};
+//     socket.onclose = function(event) {
+// 		console.log('test');
+// 	};
 
-    socket.onerror = function(event) {
-        console.log("Websocket error: ", event);
-    };
-}
+//     socket.onerror = function(event) {
+//         console.log("Websocket error: ", event);
+//     };
+// }
 
 //--------------> CONTACT WEBSOCKET <--------------\\
 
@@ -41,13 +41,18 @@ async function loadContactsWebSocket() {
 	};
 
     socket.onmessage = function(event) {
+		// console.log('MESSAGE LA');
         const data = JSON.parse(event.data);
 
 		console.log('data: ', data);
 		
         if (data.type === 'deleted contact' || data.type === 'deleted contact request') {
             removeContactFromList(data.contact, data.type);
-        } else {
+        } else if (data.type === 'contact_update') {
+			console.log('data.contact = ', data.contact);
+			
+			// UpdateContactInList(da);
+		} else {
             addNewContactToList(data.contact, data.type, data.is_sender);
         }
 

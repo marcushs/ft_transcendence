@@ -3,10 +3,23 @@ from django.http import JsonResponse
 from ..models import FriendList, FriendRequest
 from django.views import View
 
-class GetFriendsList(View):
+def get_friends_and_pending_id_list(user):
+    user_friends_list = FriendList.objects.get(user=user)
+    if not user_friends_list:
+        raise Exception('Friend list not found')
+    friends_list = list(user_friends_list.friends.all()) 
+    received_requests = list(FriendRequest.objects.filter(receiver=user)) 
+    sent_requests = list(FriendRequest.objects.filter(sender=user))
+    friends_id = [friend.id for friend in friends_list]
+    send_request_id = [request.sender.id for request in sent_requests]
+    receive_request_id = [request.receiver.id for request in received_requests]
+    return friends_id + send_request_id + receive_request_id  
+    
+
+class GetFriendsList(View): 
     def __init__(self):
         super()
-        
+         
     def get(self, request):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status': 'error', 'message': 'unregistered'}, status=200)

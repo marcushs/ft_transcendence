@@ -3,16 +3,17 @@ import json
 
 class ContactsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.user = self.scope["user"]
-        try:
-            if self.user.is_anonymous:
-                await self.close()
-            else:
-                self.group_name = f'user_{self.user.id}'
-                await self.channel_layer.group_add(self.group_name, self.channel_name)
-                await self.accept()
-        except Exception as e:
-            print('Error while connecting contacts websockets ', e)
+        pass
+        # self.user = self.scope["user"]
+        # try:
+        #     if self.user.is_anonymous:
+        #         await self.close()
+        #     else:
+        #         self.group_name = f'user_{self.user.id}'
+        #         await self.channel_layer.group_add(self.group_name, self.channel_name)
+        #         await self.accept()
+        # except Exception as e:
+        #     print('Error while connecting contacts websockets ', e)
 
 
     async def disconnect(self, close_code):
