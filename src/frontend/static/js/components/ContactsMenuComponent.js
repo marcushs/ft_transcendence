@@ -11,12 +11,13 @@ class FriendsMenuComponent extends HTMLElement {
         this.initComponent();
     }
 
-    async initComponent() {
+    initComponent() {
+        console.log("RENDERING CONTACT MENU!!!")
         this.innerHTML =  `
             <contact-bottom-nav></contact-bottom-nav>
             <div class='contact-menu'>
                 <i id="close-btn" class="fa-solid fa-xmark" aria-hidden="true"></i>
-                <contact-menu-search-bar></contact-menu-search-bar>
+                <div id="search-bar"></div>
                 <div class='top-bar-contacts-menu'>
                     <div class='add-contact'>
                         <img src='../../assets/add_friend_white.svg' alt='add-friend-icon'>
@@ -24,7 +25,6 @@ class FriendsMenuComponent extends HTMLElement {
                     </div>
                 </div>
                 <div class='contact-list-menu'>
-                    <p> yoyoyo </p>
                     <p class='contact-summary'></p>
                     <ul class="contact-list-result"></ul>
                     <p class='pending-contact-summary'></p>
@@ -39,7 +39,7 @@ class FriendsMenuComponent extends HTMLElement {
         this.contactMenuDiv = this.querySelector('.contact-menu');
         this.contactSummary = this.querySelector('.contact-summary');
         this.pendingContactSummary = this.querySelector('.pending-contact-summary');
-        this.searchContactInput = this.querySelector('#search-contact-input');
+        this.searchBar = this.querySelector('#search-bar');
         this.contactBottomNavDiv = this.querySelector('.bottom-nav-contacts');
         this.topBarChatIcon = this.querySelector('#top-bar-chat-icon');
         
@@ -219,14 +219,14 @@ class FriendsMenuComponent extends HTMLElement {
         this.addContact.addEventListener('click', () => {
             app.querySelector('section').innerHTML += '<pop-up-component class="add-new-contact-pop-up"></pop-up-component>' 
         })
-        this.searchContactInput.addEventListener('input', () => this.updateContactList());
+        // this.searchContactInput.addEventListener('input', () => this.updateContactList());
         this.attachTestEventListener();
     }
 
     async updateContactList() {
         const contacts = await this.getDataRequest('search_contacts');
         const contactsData = await this.getDataRequest('users_status', contacts.friends);
-        const searchValue = this.searchContactInput.value.toLowerCase();
+        // const searchValue = this.searchContactInput.value.toLowerCase();
         let displayedUsername = this.getCurrentDisplayedContactUsername();
 		if (!searchValue) {
             const contactsUsername = contacts.friends.map(contact => contact.username);
@@ -285,19 +285,23 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     contactBottomNavCallback(e) {
-        if (e.target.id === 'bottom-nav-chat-icon') {
-            this.topBarChatIcon.src = '../../assets/contact.svg';
-            this.topBarChatIcon.classList.add('contact');
+        // if (e.target.id === 'bottom-nav-chat-icon') {
+        //     this.topBarChatIcon.src = '../../assets/contact.svg';
+        //     this.topBarChatIcon.classList.add('contact');
 
-            this.contactSummary.innerHTML = '<p>Messages</p>';
-        } else {
-            this.topBarChatIcon.src = '../../assets/chat-icon.svg';
-            this.topBarChatIcon.classList.remove('contact');
+        //     this.contactSummary.innerHTML = '<p>Messages</p>';
+        // } else {
+        //     this.topBarChatIcon.src = '../../assets/chat-icon.svg';
+        //     this.topBarChatIcon.classList.remove('contact');
             
-            this.contactSummary.innerHTML = '<p>Contacts</p>';
-        };
+        //     this.contactSummary.innerHTML = '<p>Contacts</p>';
+        // };
         this.contactMenuDiv.style.display = this.contactMenuDiv.style.display === 'block' && this.bottomNavLastClicked === e.target.id ? 'none' : 'block';
         this.bottomNavLastClicked = e.target.id;
+        // Finally fixed search-bar doubling bug!!! By adding a div and only render when contact meny has display block
+        if (this.contactMenuDiv.style.display === 'block') {
+            this.searchBar.innerHTML = "<contact-menu-search-bar></contact-menu-search-bar>"
+        };
     }
 }
 customElements.define("contact-menu-component", FriendsMenuComponent);

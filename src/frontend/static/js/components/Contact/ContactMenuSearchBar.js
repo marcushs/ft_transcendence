@@ -7,6 +7,7 @@ class ContactMenuSearchBar extends HTMLElement {
 	};
 
 	render() {
+		console.log("rendering contact menu search bar");
 		this.innerHTML = `
 			<div class="contact-menu-search-bar">
 				<p class="contact-text">CONTACTS</p>
@@ -28,6 +29,8 @@ class ContactMenuSearchBar extends HTMLElement {
 	}
 
 	attachEventListener() {
+		this.removeEventListeners();
+		console.log("adding event listeners to the search bar")
 		this.contactText.addEventListener('click', this.boundHandleClick);
 		this.searchBox.addEventListener('click', this.boundHandleClick);
 		this.searchBarIcon.addEventListener('mouseenter', () => {
@@ -38,9 +41,13 @@ class ContactMenuSearchBar extends HTMLElement {
 		});
 		this.searchBarIcon.addEventListener('click', this.boundHandleClick);
 		this.searchBarCloseBtn.addEventListener('click', this.boundHandleClick);
+		// this.addFriendIcon.addEventListener('click', () => {
+        //     app.querySelector('section').innerHTML += '<pop-up-component class="add-new-contact-pop-up"></pop-up-component>';
+        // });
 	};
 
 	handleClick(e) {
+		console.log(e);
 		if (e.target.id === 'search-bar-icon' && this.searchBarIcon.classList.contains("active")) return;
 		if (e.target.classList.contains("active") && e.target.classList.contains("search-box")) return;
 		if (e.target.id === 'search-contact-input') return ;
@@ -50,6 +57,15 @@ class ContactMenuSearchBar extends HTMLElement {
 		this.searchBarIcon.classList.toggle('active');
 		this.searchBarCloseBtn.classList.toggle('active');
 		this.searchContactInput.focus();
+		if (e.target.id === 'search-bar-close-btn') this.searchContactInput.value = '';
+	}
+
+	removeEventListeners() {
+		console.log('remove event listeners');
+		this.contactText.removeEventListener('click', this.boundHandleClick);
+		this.searchBox.removeEventListener('click', this.boundHandleClick);
+		this.searchBarIcon.removeEventListener('click', this.boundHandleClick);
+		this.searchBarCloseBtn.removeEventListener('click', this.boundHandleClick);
 	}
 };
 

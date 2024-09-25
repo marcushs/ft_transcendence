@@ -62,10 +62,13 @@ contact-menu-search-bar p.inactive {
 	position: absolute;
 	top: 1rem;
 	right: 1rem;
+	transition: transform 0.2s ease;
 }
 
 #add-friend-icon:hover {
 	cursor: pointer;
+	transform: scale(1.1);
+	transition: transform 0.2s ease;
 }
 
 #search-bar-icon {
