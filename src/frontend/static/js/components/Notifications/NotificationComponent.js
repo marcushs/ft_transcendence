@@ -336,7 +336,7 @@ class NotificationComponent extends HTMLElement {
 		const uuids = this.unreadNotifications.map((notification) => notification.uuid);
 
 		for (const notification of this.unreadNotifications) {
-			await sendRequest('PUT', 'http://localhost:8004/notifications/manage_notifications/', { uuids: uuids });
+			await sendRequest('PUT', 'http://localhost:8004/notifications/manage_notifications/', { uuids: uuids, type: 'set_as_read' });
 		}
 		this.unreadNotifications = [];
 	}

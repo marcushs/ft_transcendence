@@ -3,7 +3,8 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
-from .user_utils import send_post_request
+from .user_utils import send_post_request, send_put_request
+from .user_utils import get_user_id_by_username
 import requests
 import magic
 import re
@@ -26,8 +27,11 @@ class ChangeUserInfosView(View):
         except ValidationError as e:
             return JsonResponse(e.message_dict, status=409)
 
-        if request.POST.get('username') and request.user.username != request.POST.get('username'):
+        username = request.POST.get('username')
+        
+        if username and request.user.username != username:
             response.update(self.change_username(User, request))
+            send_put_request(request=request, url='http://notifications:8000/notifications/manage_notifications/', payload={'sender_id': get_user_id_by_username(request.user.username), 'type': 'change_sender_name'})
         if request.POST.get('email') and request.user.email != request.POST.get('email'):
             response.update(self.change_email(User, request))
         if request.FILES.get('profile_image'):
@@ -35,7 +39,6 @@ class ChangeUserInfosView(View):
         elif request.POST.get('profile_image_link'):
             response.update(self.change_profile_image_link(request))
 
-        
         return JsonResponse(response, status=201)
 
 
@@ -105,7 +108,6 @@ class ChangeUserInfosView(View):
     def change_username(self, User, request):
         request.user.username = request.POST.get('username')
         payload = {'username': request.user.username}
-        print(f'--------------- {payload} ----------------')  
         send_post_request(request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
         send_post_request(request=request, url='http://auth:8000/auth/update_user/', payload=payload)
         send_post_request(request=request, url='http://notifications:8000/notifications/update_user/', payload=payload)

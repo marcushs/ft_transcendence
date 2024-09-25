@@ -9,7 +9,6 @@ from notifications_app.models import Notification
 
 class NotificationsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        print('------------ TESt --------------') 
         self.user = self.scope["user"]
         try:
             if self.user.is_anonymous:

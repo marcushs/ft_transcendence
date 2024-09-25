@@ -5,8 +5,18 @@ from django.utils import timezone
 from django.db.models import Q
 from django.views import View
 from ..models import User
+from django.contrib.auth import get_user_model
 import json
 import requests
+
+
+User = get_user_model()
+
+
+def get_user_id_by_username(username):
+    user = User.objects.get(username=username)
+    
+    return user.id
 
 class set_offline_user(View):
     def __init__(self):
@@ -90,6 +100,22 @@ def send_post_request(request, url, payload):
 
             message = response_data.get('message')
             return JsonResponse({'message': message}, status=400)
+        
+        
+def send_put_request(request, url, payload):
+    headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': request.COOKIES.get('csrftoken')
+        }
+    cookies = {
+        'csrftoken': request.COOKIES.get('csrftoken'),
+        'jwt': request.COOKIES.get('jwt'),
+        'jwt_refresh': request.COOKIES.get('jwt_refresh'),
+        }
+    requests.put(url=url, headers=headers, cookies=cookies, data=json.dumps(payload))
+    return JsonResponse({'message': 'success'}, status=200)
+
         
 class searchUsers(View):
     def __init__(self):
