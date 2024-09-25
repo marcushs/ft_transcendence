@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'notifications']
 
 INSTALLED_APPS = [
 	'channels',
+    'daphne',
 	'corsheaders',
     'notifications_app',
     'django.contrib.auth',

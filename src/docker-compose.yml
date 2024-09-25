@@ -236,8 +236,9 @@ services:
         mkdir -p /app/logs &&
         python3 manage.py makemigrations &&
         python3 manage.py migrate &&
-        daphne -b 0.0.0.0 -p 8000  --verbosity 3 notifications_service.asgi:application
+        python3 manage.py runserver 0.0.0.0:8000
       "
+    # daphne -b 0.0.0.0 -p 8000  --verbosity 3 notifications_service.asgi:application
     volumes:
       - ./backend/notifications_service:/app
     ports:
@@ -282,7 +283,7 @@ services:
     networks:
       - transcendence-network
     ports:
-      - "6379:6379"
+      - "6380:6379"
 
 
 volumes:

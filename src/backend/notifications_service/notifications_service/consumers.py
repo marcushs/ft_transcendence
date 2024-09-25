@@ -9,6 +9,7 @@ from notifications_app.models import Notification
 
 class NotificationsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        print('------------ TESt --------------') 
         self.user = self.scope["user"]
         try:
             if self.user.is_anonymous:
@@ -34,12 +35,3 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
             'type': 'new_notification',
             'notification': notification
         }))
-        
-    
-    # async def delete_notification(self, event):
-    #     notification = event['notification']
-        
-    #     await self.send(text_data=json.dumps({
-    #         'type': 'delete_notification',
-    #         'notification': notification
-    #     }))
