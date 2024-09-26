@@ -43,16 +43,8 @@ class manage_notification_view(View):
         if data['type'] == 'set_as_read':
             await self.set_notifications_as_read(data=data)
         elif data['type'] == 'change_sender_name':
-            await self.change_notification_receiver_name(data=data)
+            await self.send_notifications_changed_to_websocket(data=data)
         return JsonResponse({"status": "success"}, status=200)
-
-
-    async def change_notification_receiver_name(self, data):
-        username = await sync_to_async(User.objects.get)(id=data['sender_id'])
-        notifications = await sync_to_async(list)(Notification.objects.filter(sender=username))
-        
-        for notification in notifications:
-            print(notification)
 
 
     async def set_notifications_as_read(self, data):
@@ -92,17 +84,10 @@ class manage_notification_view(View):
 
 
         notifications_types = ['friend-request-accepted', 'friend-request-pending', 'private-match-invitation', 'tournament-invitation']
-        notifications_messages = [
-                f'{request.user.username} has accepted your friend request.',
-                f'You have a new friend request from {request.user.username}.',
-                f'{request.user.username} has invited you to a private game.',
-                f'{request.user.username} has invited you to join a tournament.'
-            ]
 
-        for index, notification_type in enumerate(notifications_types):
+        for notification_type in notifications_types:
             if data['type'] == notification_type:
-                message = notifications_messages[index]
-                notification = await sync_to_async(Notification.objects.create)(sender=request.user, receiver=self.receiver, type=notification_type,message=message)
+                notification = await sync_to_async(Notification.objects.create)(sender=request.user, receiver=self.receiver, type=notification_type)
                 await self.send_new_notification_to_channel(notification)
                 return JsonResponse({"status": "success"}, status=200)
 
@@ -155,6 +140,24 @@ class manage_notification_view(View):
             f'user_{user_id}',
             {
                 'type': 'delete_notification',
+                'notification': notification.to_dict()
+            }
+        )
+        
+        
+    async def send_notifications_changed_to_websocket(self, data):
+        channel_layer = get_channel_layer()
+        username = await sync_to_async(User.objects.get)(id=data['sender_id'])
+        notifications = await sync_to_async(list)(Notification.objects.filter(sender=username))
+
+        for notification in notifications:
+            notification_dict = await sync_to_async(notification.to_dict)()
+            receiver_id = await get_user_id_by_username(notification_dict['receiver'])
+            
+            await channel_layer.group_send(
+            f'user_{receiver_id}',
+            {
+                'type': 'change_notification_sender',
                 'notification': notification.to_dict()
             }
         )

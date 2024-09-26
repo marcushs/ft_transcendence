@@ -15,7 +15,7 @@ class PendingContactRequestNotificationComponent extends HTMLElement {
 
 		this.innerHTML = `
 			<li>			
-				<p>${this.notificationObj.message}</p>
+				<p>You have a new friend request from <span>${this.notificationObj.sender}</span></p>
 				<i class="fa-solid fa-check"></i>
 				<i class="fa-solid fa-xmark"></i>
 				<p class="notification-date">${convertDateFormat(this.notificationCreateAt)}</p>
@@ -79,6 +79,8 @@ class PendingContactRequestNotificationComponent extends HTMLElement {
 
 
 	async handleClickContactRequest(action) {
+		this.notificationObj = JSON.parse(this.getAttribute('notificationObj'));
+
 		const payload = {
 	            status: action,
 	            target_username: this.notificationObj.sender,

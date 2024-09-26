@@ -52,6 +52,7 @@ class NotificationComponent extends HTMLElement {
 		document.addEventListener('click', () => this.handleClickOutOfComponent());
 
 		document.addEventListener('newNotification', (event) => this.handleNewNotificationEvent(event))
+		document.addEventListener('changeNotificationSender', (event) => this.handleChangeNotificationSenderEvent(event))
 		document.addEventListener('deleteNotificationEvent', (event) => this.handleDeleteNotificationEvent(event))
 	}
 
@@ -100,6 +101,7 @@ class NotificationComponent extends HTMLElement {
 	createPendingFriendRequestNotification(notification) {
 		const li = document.createElement('pending-contact-request-notification-component');
 
+		li.id = notification.uuid;
 		li.setAttribute('notificationObj', JSON.stringify(notification));
 		this.notificationsUlElement.appendChild(li);
 	}
@@ -108,6 +110,7 @@ class NotificationComponent extends HTMLElement {
 	createAcceptedFriendRequestNotification(notification) {
 		const li = document.createElement('accepted-contact-request-notification-component');
 
+		li.id = notification.uuid;
 		li.setAttribute('notificationObj', JSON.stringify(notification));
 		this.notificationsUlElement.appendChild(li);
 	}
@@ -116,6 +119,7 @@ class NotificationComponent extends HTMLElement {
 	createPrivateMatchInvitationNotification(notification) {
 		const li = document.createElement('li');
 
+		li.id = notification.uuid;
 		if (notification.is_read)
 			li.className = 'unread-notification';
 
@@ -132,6 +136,7 @@ class NotificationComponent extends HTMLElement {
 	createTournamentInvitationNotification(notification) {
 		const li = document.createElement('li');
 
+		li.id = notification.uuid;
 		if (notification.is_read)
 			li.className = 'unread-notification';
 
@@ -172,6 +177,7 @@ class NotificationComponent extends HTMLElement {
 		}
 	}
 
+
 	handleNewNotificationEvent(event) {
 		const notification = event.detail.notification;
 		const notificationsUlElements = this.notificationsUlElement.querySelectorAll('li');
@@ -195,6 +201,14 @@ class NotificationComponent extends HTMLElement {
 				break ;
 		}
 		this.deleteDuplicateNotificationElement(notificationsUlElements);
+	}
+
+
+	handleChangeNotificationSenderEvent(event) {
+		const notificationElement = this.querySelector(`#${event.detail.notification.uuid}`);
+
+		notificationElement.setAttribute('notificationObj', JSON.stringify(event.detail.notification));
+		notificationElement.querySelector('span').textContent = event.detail.notification.sender;
 	}
 
 
@@ -303,6 +317,7 @@ class NotificationComponent extends HTMLElement {
 			const data = await sendRequest('GET', url, null);
 
 			this.notifications = data.message;
+			console.log('test = ', data)
 		} catch (error) {
 			console.error(error.message);
 		}
@@ -333,7 +348,9 @@ class NotificationComponent extends HTMLElement {
 
 
 	async changeIsReadStatus() {
-		const uuids = this.unreadNotifications.map((notification) => notification.uuid);
+		let uuids = this.unreadNotifications.map((notification) => notification.uuid);
+
+		uuids = uuids.map((uuid) => uuid.replace('notif-', ''))
 
 		for (const notification of this.unreadNotifications) {
 			await sendRequest('PUT', 'http://localhost:8004/notifications/manage_notifications/', { uuids: uuids, type: 'set_as_read' });

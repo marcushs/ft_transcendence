@@ -13,7 +13,7 @@ class AcceptedContactRequestNotificationComponent extends HTMLElement {
 
 		this.innerHTML = `
 			<li>			
-				<p>${this.notificationObj.message}</p>
+				<p><span>${this.notificationObj.sender}</span> has accepted your friend request</p>
 				<p class="notification-date">${convertDateFormat(this.notificationCreateAt)}</p>
 				<hr>
 			</li>

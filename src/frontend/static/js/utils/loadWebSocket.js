@@ -10,6 +10,8 @@ export async function loadWebSocket() {
 
 			if (data.type === 'new_notification')
 				throwNewNotificationEvent(data.notification);
+			else if (data.type === 'change_notification_sender')
+				throwChangeNotificationSenderEvent(data.notification);
 		};
 
 		socket.onclose = function(event) {};
@@ -33,6 +35,19 @@ function throwNewNotificationEvent(notification) {
 
 	document.dispatchEvent(event);
 }
+
+
+function throwChangeNotificationSenderEvent(notification) {
+	const event = new CustomEvent('changeNotificationSender', {
+		bubbles: true,
+		detail: {
+			notification: notification
+		}
+	});
+
+	document.dispatchEvent(event);
+}
+
 
 function throwDeleteNotificationElementEvent(notification) {
 	const event = new CustomEvent('deleteNotificationElementEvent', {

@@ -34,3 +34,12 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
             'type': 'new_notification',
             'notification': notification
         }))
+        
+        
+    async def change_notification_sender(self, event):
+        notification = event['notification']
+        
+        await self.send(text_data=json.dumps({
+            'type': 'change_notification_sender',
+            'notification': notification
+        }))
