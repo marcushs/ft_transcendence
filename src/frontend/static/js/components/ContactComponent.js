@@ -35,13 +35,13 @@ class ContactComponent extends HTMLElement {
         
         this.innerHTML = `
             <div class="contact-menu-picture">
-                <img src='${contactPictureUrl}' alt='contact picture'></img>
+                <img class='contact-picture' src='${contactPictureUrl}' alt='contact picture'></img>
             </div>
             <div class="status-circle">
             </div>
             <div class="contact-menu-info">
-                <p>${this.userData.username}</p>
-                <p>${this.userData.status}</p>
+                <p class='contact-username'>${this.userData.username}</p>
+                <p class='contact-status'>${this.userData.status}</p>
             </div>
         `;
         this.setContactActionHTML();

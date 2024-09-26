@@ -1,10 +1,11 @@
-from django.views import View
-from django.contrib.auth import get_user_model
+from .websocket_utils import notify_user_info_display_change
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth import get_user_model
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse
 from .user_utils import send_request
+from django.views import View
 import requests
 import magic
 import re
@@ -107,6 +108,7 @@ class ChangeUserInfosView(View):
 
   
     async def change_username(self, User, request):
+        old_username = request.user.username
         request.user.username = request.POST.get('username')
         payload = {'username': request.user.username}
         try:
@@ -116,11 +118,12 @@ class ChangeUserInfosView(View):
         except Exception:
             pass
         await sync_to_async(request.user.save)()
+        await notify_user_info_display_change(request=request, change_info='username', old_value=old_username)
 
-        return {'username_message': 'Username successfully changed'}
+        return {'username_message': 'Username successfully changed'} 
 
     async def change_email(self, User, request):
-        request.user.email = request.POST.get('email')
+        request.user.email = request.POST.get('email') 
         payload = {'email': request.user.email}
         
         try:
@@ -139,6 +142,7 @@ class ChangeUserInfosView(View):
         request.user.profile_image = new_image
         request.user.profile_image_link = None
         await sync_to_async(request.user.save)(has_new_image=True)
+        await notify_user_info_display_change(request=request, change_info='picture')
 
         return {'profile-image_message': 'Profile image successfully changed'}
 
@@ -149,5 +153,6 @@ class ChangeUserInfosView(View):
         request.user.profile_image = None
         request.user.profile_image_link = new_image_link
         await sync_to_async(request.user.save)(has_new_image=True)
+        await notify_user_info_display_change(request=request, change_info='picture')
 
         return {'profile-image_message': 'Profile image successfully changed'}

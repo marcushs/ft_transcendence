@@ -29,7 +29,7 @@ services:
         python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/user_service:/app
+      - ./backend/user_service:/app 
     ports:
       - "8000:8000"
     depends_on:

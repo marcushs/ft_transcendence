@@ -86,12 +86,17 @@ class UserStatusMiddleware(MiddlewareMixin):
     
     async def set_new_users_status(self, request, users, status_change):
         if status_change == 'away': 
-            threshold = timezone.now() - timedelta(minutes=2)
+            threshold = timezone.now() - timedelta(seconds=15) 
         else:
-            threshold = timezone.now() - timedelta(minutes=15)
-        for user in users:
+            threshold = timezone.now() - timedelta(minutes=15) 
+        print(f'-------------------- status_time check -----------------------------')
+        for user in users: 
+            print(f'user: {user}')
+            print(f'user.last_active: {user.last_active} -- threshold: {threshold}')
+            print(f'check: {user.last_active < threshold}')
             if user.last_active < threshold:
                 user.status = status_change
                 sync_to_async(user.save)()
-                # await notify_user_info_display_change(request=request)
-                
+                await notify_user_info_display_change(request=request, change_info='status')
+            print('-----')
+        print(f'--------------------------------------------------------------------')

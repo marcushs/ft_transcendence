@@ -12,7 +12,7 @@ class FriendList(models.Model):
         return self.user.username
 
     def add_friend(self, target_user):
-        if not target_user in self.friends.all():
+        if not target_user in self.friends.all(): 
             self.friends.add(target_user)
             self.save()
 

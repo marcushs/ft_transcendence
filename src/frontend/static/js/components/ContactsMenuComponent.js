@@ -138,7 +138,6 @@ class FriendsMenuComponent extends HTMLElement {
             return;
         }
         const contactsData = await this.getDataRequest('users_data', contacts.friends);
-        console.log(contactsData);
         
         this.contactBottomNavDiv.style.display = 'flex';
         this.contactSummary.innerHTML = `<p>Contacts</p>`;

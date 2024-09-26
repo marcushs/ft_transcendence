@@ -1,5 +1,36 @@
 import '../../components/ContactComponent.js'
 import { sendRequest } from '../../utils/sendRequest.js';
+import getProfileImage from '../../utils/getProfileImage.js';
+
+export function UpdateContactInList(contactJSON, change_info, old_value) {
+    const contactList = document.querySelectorAll('contact-component');
+    const contact = JSON.parse(contactJSON)
+    console.log('-------> CONTACT: ', contact);
+    console.log('change_info: ', change_info);
+    
+    
+    if (contactList) {
+        
+        contactList.forEach(async contactElement => {
+            console.log('contactElement: ', contactElement);
+            console.log(contactElement.querySelector('.contact-status'));
+            const contactUsername = contactElement.querySelector('.contact-username')
+            if (change_info === 'username') {
+                if (contactUsername.textContent === old_value)
+                    contactUsername.textContent = contact.username;
+            } else if (change_info === 'picture') {
+                if (contactUsername.textContent === contact.username) {
+                    const contactPictureUrl = await getProfileImage(contact);
+                    contactElement.querySelector('.contact-picture').src = contactPictureUrl;
+                }
+            } else {
+                if (contactUsername.textContent === contact.username) {
+                    contactElement.querySelector('.contact-status').textContent = contact.status;
+                }
+            }
+        })
+    }
+}
 
 export async function addNewContactToList(contact, requestType, is_sender) {
     const url = `http://localhost:8000/user/get_user/?q=${contact}`

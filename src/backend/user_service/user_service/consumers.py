@@ -1,5 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-import json
+from user_app.tasks import run_users_status_task
+from channels.exceptions import StopConsumer
+from channels.consumer import SyncConsumer
 
 class ContactsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -22,14 +24,3 @@ class ContactsConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         pass
-    
-    async def user_update(self, event):
-        pass
-        # await self.send(text_data=json.dumps(
-        #     {
-        #         'type' : event['event'],
-        #         'message': event['message'],
-        #         'contact': event['contact'],
-        #         'is_sender': event['is_sender']
-        #     }
-        # ))

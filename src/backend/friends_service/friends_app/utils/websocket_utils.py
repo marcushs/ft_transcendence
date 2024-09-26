@@ -23,6 +23,12 @@ class handle_friend_info_change(View):
         except Exception as e:
             return JsonResponse({'message': str(e), 'status': 'error'}, status=200) 
         data = json.loads(request.body.decode('utf-8'))
+        data_contact = {
+            'username': data['username'],
+            'profile_image': data['profile_image'],
+            'profile_image_link': data['profile_image_link'],
+            'status': data['status']
+        }
         for user_id in contacts_id_list:
             channel_layer = get_channel_layer()
             print(f'user_{user_id}') 
@@ -31,7 +37,9 @@ class handle_friend_info_change(View):
                 {
                     'type': 'contact_info_update',
                     'event': 'contact_update',
-                    'contact': json.dumps(data),
+                    'contact': json.dumps(data_contact),
+                    'change_info': data['change_info'],
+                    'old_value': data['old_value']
                 }
             )
         print(f'contacts_list: \'{contacts_id_list}\' -- data: \'{data}\'')

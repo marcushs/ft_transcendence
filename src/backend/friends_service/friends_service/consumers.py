@@ -37,5 +37,7 @@ class ContactsConsumer(AsyncWebsocketConsumer):
             {
                 'type' : event['event'],
                 'contact': event['contact'],
+                'change_info': event['change_info'],
+                'old_value': event['old_value']
             }
         ))  

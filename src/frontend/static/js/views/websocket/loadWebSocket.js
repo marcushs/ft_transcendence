@@ -1,4 +1,4 @@
-import {removeContactFromList, addNewContactToList} from './updateContactWebsocket.js'
+import {removeContactFromList, addNewContactToList, UpdateContactInList} from './updateContactWebsocket.js'
 
 export async function loadWebSocket() {
     await loadContactsWebSocket();
@@ -41,21 +41,15 @@ async function loadContactsWebSocket() {
 	};
 
     socket.onmessage = function(event) {
-		// console.log('MESSAGE LA');
         const data = JSON.parse(event.data);
-
-		console.log('data: ', data);
 		
         if (data.type === 'deleted contact' || data.type === 'deleted contact request') {
             removeContactFromList(data.contact, data.type);
         } else if (data.type === 'contact_update') {
-			console.log('data.contact = ', data.contact);
-			
-			// UpdateContactInList(da);
+			UpdateContactInList(data.contact, data.change_info, data.old_value);
 		} else {
             addNewContactToList(data.contact, data.type, data.is_sender);
         }
-
     };
 
     socket.onclose = function(event) {
