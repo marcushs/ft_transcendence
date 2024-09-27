@@ -4,25 +4,28 @@ from asgiref.sync import async_to_sync
 from django.http import JsonResponse
 from django.views import View
 from ..views.get_friends_list import get_friends_and_pending_id_list
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from ..models import User
 import json
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class handle_friend_info_change(View):
     def __init__(self):
         super()
-        
-    def get(self, request):
-        return JsonResponse({'message': 'http method not authorized', 'status': 'error'}, status=400)
     
     def post(self, request):
         print('--------------------------TEST--------------------------')
-        if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'status': 'error', 'message': 'unregistered'}, status=200)  
         try:
-            contacts_id_list = get_friends_and_pending_id_list(request.user)
+            data = json.loads(request.body.decode('utf-8'))
+            if isinstance(request.user, AnonymousUser):
+                user = User.objects.get(id=data['user_id'])
+            else :
+                user = request.user
+            contacts_id_list = get_friends_and_pending_id_list(user)
         except Exception as e:
             return JsonResponse({'message': str(e), 'status': 'error'}, status=200) 
-        data = json.loads(request.body.decode('utf-8'))
         data_contact = {
             'username': data['username'],
             'profile_image': data['profile_image'],

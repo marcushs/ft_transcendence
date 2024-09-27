@@ -1,39 +1,52 @@
-from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
+from asgiref.sync import async_to_sync, sync_to_async
+from django.http import JsonResponse
 from django.utils import timezone
 from django.db.models import Q
 from django.views import View
 from ..models import User
-import json
-import requests
 import httpx
-
+import json
 class set_offline_user(View):
     def __init__(self):
         super().__init__   
 
-    def post(self, request):
+    async def post(self, request):
+        from .websocket_utils import notify_user_info_display_change
+        
+        
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'User not found'}, status=400)
-        if request.user.status == 'online' or request.user.status == 'away':
-            request.user.status = 'offline'
         request.user.last_active = timezone.now()
-        request.user.save()
+        if request.user.status == 'online' or request.user.status == 'away':
+            old_status = request.user.status
+            request.user.status = 'offline'
+            await sync_to_async(request.user.save)()
+            await notify_user_info_display_change(request=request, change_info='status', old_value=old_status)
+        else:
+            await sync_to_async(request.user.save)()
         return JsonResponse(status=200)
-
+ 
 class ping_status_user(View):
     def __init__(self):
         super().__init__   
 
-    def post(self, request):
+    async def post(self, request):
+        from .websocket_utils import notify_user_info_display_change
+        
+        
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status': 'fail', 'message': 'User not found'}, status=200)
-        if request.user.status == 'offline' or request.user.status == 'away':
-            request.user.status = 'online'
         request.user.last_active = timezone.now()
-        request.user.save()
-        return JsonResponse({'status': 'success', "message": 'pong'}, status=200)
+        if request.user.status == 'offline' or request.user.status == 'away':
+            old_status = request.user.status
+            request.user.status = 'online'
+            await sync_to_async(request.user.save)()
+            await notify_user_info_display_change(request=request, change_info='status', old_value=old_status)
+        else:
+            await sync_to_async(request.user.save)()
+        return JsonResponse({'status': 'success', "message": 'pong'}, status=200) 
 
 
 class add_new_user(View):
@@ -72,7 +85,26 @@ class update_user(View):
         return JsonResponse({'message': 'User updated successfully'}, status=200)
 
 
-async def send_request(request_type, request, url, payload=None):
+async def send_request(request_type, url, request=None, payload=None):
+    if request:
+        headers, cookies = set_headers_cookies_request(request=request)
+    else:
+        headers, cookies = set_headers_cookies_request()
+    try:
+        async with httpx.AsyncClient() as client:
+            if request_type == 'GET':
+                response = await client.get(url, headers=headers, cookies=cookies)
+            else:
+                response = await client.post(url, headers=headers, cookies=cookies, content=json.dumps(payload))
+            response.raise_for_status()  # Raise an exception for HTTP errors
+            return response
+    except httpx.HTTPStatusError as e:
+        raise Exception(f"HTTP error occurred: {e}")
+    except httpx.RequestError as e:
+        raise Exception(f"An error occurred while requesting: {e}")
+        
+def set_headers_cookies_request(request=None):
+    if request:
         headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -83,19 +115,13 @@ async def send_request(request_type, request, url, payload=None):
             'jwt': request.COOKIES.get('jwt'),
             'jwt_refresh': request.COOKIES.get('jwt_refresh'),
             }
-        try:
-            async with httpx.AsyncClient() as client:
-                if request_type == 'GET':
-                    response = await client.get(url, headers=headers, cookies=cookies)
-                else:
-                    response = await client.post(url, headers=headers, cookies=cookies, content=json.dumps(payload))
-
-                response.raise_for_status()  # Raise an exception for HTTP errors
-                return response
-        except httpx.HTTPStatusError as e:
-            raise Exception(f"HTTP error occurred: {e}")
-        except httpx.RequestError as e:
-            raise Exception(f"An error occurred while requesting: {e}")
+    else:
+        headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            } 
+        cookies = None
+    return headers, cookies
 
 class searchUsers(View):
     def __init__(self):

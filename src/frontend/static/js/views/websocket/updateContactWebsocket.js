@@ -12,8 +12,8 @@ export function UpdateContactInList(contactJSON, change_info, old_value) {
     if (contactList) {
         
         contactList.forEach(async contactElement => {
-            console.log('contactElement: ', contactElement);
-            console.log(contactElement.querySelector('.contact-status'));
+            // console.log('contactElement: ', contactElement);
+            // console.log(contactElement.querySelector('.contact-status'));
             const contactUsername = contactElement.querySelector('.contact-username')
             if (change_info === 'username') {
                 if (contactUsername.textContent === old_value)
@@ -24,9 +24,39 @@ export function UpdateContactInList(contactJSON, change_info, old_value) {
                     contactElement.querySelector('.contact-picture').src = contactPictureUrl;
                 }
             } else {
+                const li = contactElement.closest('li');
+                console.log('new status: ', contact.status);
+                console.log('old status: ', contactElement.querySelector('.contact-status').textContent);
+                
                 if (contactUsername.textContent === contact.username) {
+                    const statusCircle = contactElement.querySelector('.status-circle');
                     contactElement.querySelector('.contact-status').textContent = contact.status;
+                    if (old_value === 'online') {
+                        statusCircle.classList.remove('online-status-circle');
+                        li.classList.remove('online-contact-status')
+                    }
+                    else if (old_value === 'away') {
+                        statusCircle.classList.remove('away-status-circle');
+                        li.classList.remove('away-contact-status')
+                    }
+                    else {
+                        statusCircle.classList.remove('offline-status-circle');
+                        li.classList.remove('offline-contact-status')
+                    }
+                    if (contact.status === 'online') {
+                        statusCircle.classList.add('online-status-circle');
+                        li.classList.add('online-contact-status');
+                    }
+                    else if (contact.status === 'away') {
+                        statusCircle.classList.add('away-status-circle');
+                        li.classList.add('away-contact-status');
+                    }
+                    else {
+                        statusCircle.classList.add('offline-status-circle');
+                        li.classList.add('offline-contact-status');
+                    }
                 }
+                console.log('DEBUG: STATUS UPDATED');
             }
         })
     }

@@ -2,13 +2,9 @@ from django.utils.deprecation import MiddlewareMixin # assure the retro-compabil
 from django.contrib.auth.models import AnonymousUser
 from .utils.jwt_utils import get_user_from_jwt
 from django.contrib.auth import get_user_model
-from asgiref.sync import sync_to_async
-from django.utils import timezone
-from datetime import timedelta
 from .utils.user_utils import send_request
 from django.http import JsonResponse
 from django.conf import settings
-from .utils.websocket_utils import notify_user_info_display_change
  
 User = get_user_model()
 # Middleware for jwt authentication
@@ -68,35 +64,3 @@ class JWTAuthMiddleware(MiddlewareMixin):
         if hasattr(request, 'new_token_refresh'):
             response.set_cookie('jwt_refresh', request.new_token_refresh, httponly=True, max_age=settings.REFRESH_TOKEN_LIFETIME)
         return response
-
-class UserStatusMiddleware(MiddlewareMixin):
-    
-    async def __call__(self, request):
-        response = await self.process_request(request)
-        return response
-    
-    async def process_request(self, request):
-        if not isinstance(request.user, AnonymousUser):
-            online_users = await sync_to_async(lambda: list(User.objects.filter(status='online')))()
-            await self.set_new_users_status(request=request, users=online_users, status_change='away')
-            away_users = await sync_to_async(lambda: list(User.objects.filter(status='away')))()
-            await self.set_new_users_status(request=request, users=away_users, status_change='offline')
-        response = await self.get_response(request)
-        return response
-    
-    async def set_new_users_status(self, request, users, status_change):
-        if status_change == 'away': 
-            threshold = timezone.now() - timedelta(seconds=15) 
-        else:
-            threshold = timezone.now() - timedelta(minutes=15) 
-        print(f'-------------------- status_time check -----------------------------')
-        for user in users: 
-            print(f'user: {user}')
-            print(f'user.last_active: {user.last_active} -- threshold: {threshold}')
-            print(f'check: {user.last_active < threshold}')
-            if user.last_active < threshold:
-                user.status = status_change
-                sync_to_async(user.save)()
-                await notify_user_info_display_change(request=request, change_info='status')
-            print('-----')
-        print(f'--------------------------------------------------------------------')

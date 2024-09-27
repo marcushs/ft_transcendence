@@ -2,34 +2,8 @@ import {removeContactFromList, addNewContactToList, UpdateContactInList} from '.
 
 export async function loadWebSocket() {
     await loadContactsWebSocket();
-	// await loadUserWebSocket();
     // await loadNotificationWebSocket();
 }
-
-//--------------> USER WEBSOCKET <--------------\\
-
-// async function loadUserWebSocket() {
-//     const socket = new WebSocket(`ws://localhost:8000/ws/user/`);
-
-//     socket.onopen = function(event) {
-// 		console.log('User websocket started');
-// 	};
-
-//     socket.onmessage = function(event) {
-//         const data = JSON.parse(event.data);
-
-// 		console.log('websocket event: ', data);
-		
-//     };
-
-//     socket.onclose = function(event) {
-// 		console.log('test');
-// 	};
-
-//     socket.onerror = function(event) {
-//         console.log("Websocket error: ", event);
-//     };
-// }
 
 //--------------> CONTACT WEBSOCKET <--------------\\
 
@@ -63,45 +37,45 @@ async function loadContactsWebSocket() {
 
 //--------------> NOTIFICATION WEBSOCKET <--------------\\
 
-async function loadNotificationWebSocket() {
-    const socket = new WebSocket(`ws://localhost:8004/ws/notifications/`);
+// async function loadNotificationWebSocket() {
+//     const socket = new WebSocket(`ws://localhost:8004/ws/notifications/`);
 
-		socket.onopen = function(event) {};
+// 		socket.onopen = function(event) {};
 
-		socket.onmessage = function(event) {
-			const data = JSON.parse(event.data);
+// 		socket.onmessage = function(event) {
+// 			const data = JSON.parse(event.data);
 
-			if (data.type === 'new_notification')
-				throwNewNotificationEvent(data.notification);
-		};
+// 			if (data.type === 'new_notification')
+// 				throwNewNotificationEvent(data.notification);
+// 		};
 
-		socket.onclose = function(event) {};
+// 		socket.onclose = function(event) {};
 
-		socket.onerror = function(event) {
-		    console.error("Websocket error: ", event);
-		};
-}
+// 		socket.onerror = function(event) {
+// 		    console.error("Websocket error: ", event);
+// 		};
+// }
 
-// ------------- Notifications event ------------------ //
+// // ------------- Notifications event ------------------ //
 
-function throwNewNotificationEvent(notification) {
-	const event = new CustomEvent('newNotification', {
-		bubbles: true,
-		detail: {
-			notification: notification
-		}
-	});
+// function throwNewNotificationEvent(notification) {
+// 	const event = new CustomEvent('newNotification', {
+// 		bubbles: true,
+// 		detail: {
+// 			notification: notification
+// 		}
+// 	});
 
-	document.dispatchEvent(event);
-}
+// 	document.dispatchEvent(event);
+// }
 
-function throwDeleteNotificationElementEvent(notification) {
-	const event = new CustomEvent('deleteNotificationElementEvent', {
-		bubbles: true,
-		detail: {
-			notification: notification
-		}
-	});
+// function throwDeleteNotificationElementEvent(notification) {
+// 	const event = new CustomEvent('deleteNotificationElementEvent', {
+// 		bubbles: true,
+// 		detail: {
+// 			notification: notification
+// 		}
+// 	});
 
-	document.dispatchEvent(event);
-}
+// 	document.dispatchEvent(event);
+// }

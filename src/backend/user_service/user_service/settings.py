@@ -68,7 +68,6 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
     'user_app.middleware.JWTAuthMiddleware', # Custom middleware for jwt token feature
-    'user_app.middleware.UserStatusMiddleware', # Custom middleware for managing users status
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
