@@ -80,7 +80,7 @@ class NotificationMiddleware(MiddlewareMixin):
         user_notifications = await sync_to_async(list)(Notification.objects.filter(receiver=request.user))
         senders = set(await sync_to_async(lambda: [notification.sender for notification in user_notifications])())
         for sender in senders:
-            notifications_by_sender = Notification.objects.filter(sender=sender)
+            notifications_by_sender = Notification.objects.filter(sender=sender, receiver=request.user)
             await self.remove_duplicate_notifications_by_sender(request, notifications_by_sender)
 
 
