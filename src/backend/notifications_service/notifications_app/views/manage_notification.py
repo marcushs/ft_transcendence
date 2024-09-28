@@ -59,6 +59,7 @@ class manage_notification_view(View):
             
     
     async def delete(self, request):
+        print('------------ SHOULD BE DELETED ---------------')
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200)
         data = json.loads(request.body.decode('utf-8'))
@@ -68,6 +69,7 @@ class manage_notification_view(View):
         try:
             notification = await sync_to_async(Notification.objects.get)(uuid=data['uuid'])
             # self.send_delete_notification_to_channel(notification)
+            print('------------ DELETED ---------------')
             await sync_to_async(notification.delete)()
         except User.DoesNotExist:
             pass
@@ -95,7 +97,7 @@ class manage_notification_view(View):
 
 
     async def check_post_data(self, data):
-        if not data['receiver'] or not data['type']:
+        if not 'receiver' in data or not 'type' in data:
             return 'Missing attributes'
         if data['receiver'] is None or data['type'] is None:
             return 'some attributes are empty'
@@ -107,15 +109,17 @@ class manage_notification_view(View):
 
 
     def check_put_data(self, data):
-        if data['type'] == 'set_as_read' and not 'uuids' in data.keys():
+        if not 'type' in data:
+            return 'Type is missing'
+        if data['type'] == 'set_as_read' and not 'uuids' in data:
             return 'Uuids is missing'
-        elif data['type'] == 'change_sender_name' and not 'sender_id' in data.keys():
+        elif data['type'] == 'change_sender_name' and not 'sender_id' in data:
             return 'Sender_id is missing'
         return 'Success'
 
 
     def check_delete_data(self, data):
-        if not hasattr(data, 'uuid'):
+        if not 'uuid' in data:
             return 'Notification uuid is missing'
         return 'Success'
 
