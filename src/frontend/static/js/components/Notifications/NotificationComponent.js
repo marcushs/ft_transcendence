@@ -54,7 +54,7 @@ class NotificationComponent extends HTMLElement {
 
 		document.addEventListener('newNotification', (event) => this.handleNewNotificationEvent(event))
 		document.addEventListener('changeNotificationSender', (event) => this.handleChangeNotificationSenderEvent(event))
-		document.addEventListener('deleteNotificationEvent', (event) => this.handleDeleteNotificationEvent(event))
+		document.addEventListener('deleteNotificationElement', (event) => this.handleDeleteNotificationEvent(event))
 	}
 
 
@@ -215,8 +215,12 @@ class NotificationComponent extends HTMLElement {
 
 	handleDeleteNotificationEvent(event) {
 		this.notifications.forEach((notification) => {
-			if (notification.uuid === event.detail.uuid) {
+			if (notification.uuid === event.detail.notification.uuid) {
 				this.notifications.splice(this.notifications.indexOf(notification), 1);
+				this.setUnreadNotifications();
+				this.changeNumberOfNotifications();
+					if (this.notifications.length === 0) this.closeNotificationsComponent();
+				document.querySelector(`#${event.detail.notification.uuid}`).remove();
 			}
 		})
 	}

@@ -4,6 +4,7 @@ from ..models import FriendRequest
 from ..models import FriendList, User
 from django.views import View
 import json
+import requests
 
 def get_friend_request(sender, receiver):
     try:
@@ -26,7 +27,7 @@ class friendshipManager(View):
             case "add":
                 return self.send_friendship()
             case "cancel":
-                return self.cancel_friendship()
+                return self.cancel_friendship(request)
             case "decline":
                 return self.decline_friendship()
             case "remove":
@@ -64,7 +65,23 @@ class friendshipManager(View):
         FriendRequest.objects.create(sender=self.user, receiver=self.target_user)
         return JsonResponse({'status': 'success', 'friendship_status': 'pending_sent', 'message': 'friends invitation successfully send'}, status=200)
 
-    def cancel_friendship(self):
+    def cancel_friendship(self, request):
+        headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': request.COOKIES.get('csrftoken')
+            }
+        cookies = {
+            'csrftoken': request.COOKIES.get('csrftoken'),
+            'jwt': request.COOKIES.get('jwt'),
+            'jwt_refresh': request.COOKIES.get('jwt_refresh'),
+            }
+        payload = {
+            'type': 'canceled_friend_request_notification',
+            'sender': str(self.user),
+            'receiver': str(self.target_user)
+        }
+        requests.delete('http://notifications:8000/notifications/manage_notifications/', headers=headers, cookies=cookies, data=json.dumps(payload))
         friend_request = FriendRequest.objects.filter(sender=self.user, receiver=self.target_user, is_active=True).first()
         if not friend_request:
             return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)

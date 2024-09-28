@@ -59,17 +59,34 @@ class manage_notification_view(View):
             
     
     async def delete(self, request):
-        print('------------ SHOULD BE DELETED ---------------')
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200)
         data = json.loads(request.body.decode('utf-8'))
+        if 'type' in data and 'sender' in data and 'receiver' in data:
+            match data['type']:
+                case 'canceled_friend_request_notification':
+                    # transform into function to get and delete notification
+                    notifications = await sync_to_async(Notification.objects.filter)(type='friend-request-pending',
+                                                                                 sender=await get_user_id_by_username(data['sender']),
+                                                                                 receiver=await get_user_id_by_username(data['receiver']))
+                    async for notification in notifications:
+                        await self.send_delete_notification_to_channel(notification, data)
+                        await sync_to_async(notification.delete)()
+                    
+                case _:
+                    return JsonResponse({"status": "error"}, status=200)
+            return JsonResponse({"status": "success"}, status=200)
+                # case 'canceled_game_request_notification':
+                # case 'canceled_tournament_request_notification':
+                
+            
+        
         check_response = await sync_to_async(self.check_delete_data)(data=data)
         if check_response != 'Success':
             return JsonResponse({'status': 'error', 'message': check_response}, status=200)
         try:
             notification = await sync_to_async(Notification.objects.get)(uuid=data['uuid'])
             # self.send_delete_notification_to_channel(notification)
-            print('------------ DELETED ---------------')
             await sync_to_async(notification.delete)()
         except User.DoesNotExist:
             pass
@@ -136,15 +153,16 @@ class manage_notification_view(View):
             }
         )
         
-    async def send_delete_notification_to_channel(self, notification):
+    async def send_delete_notification_to_channel(self, notification, data):
         channel_layer = get_channel_layer()
-        user_id = await get_user_id_by_username(self.receiver)
+        user_id = await get_user_id_by_username(data['receiver'])
+        notification_dict = await sync_to_async(notification.to_dict)()
         
         await channel_layer.group_send(
             f'user_{user_id}',
             {
-                'type': 'delete_notification',
-                'notification': notification.to_dict()
+                'type': 'delete_notification', 
+                'notification': notification_dict
             }
         )
         
