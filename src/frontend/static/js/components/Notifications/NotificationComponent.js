@@ -3,6 +3,7 @@ import './AcceptedContactRequestNotificationComponent.js';
 import './PendingContactRequestNotificationComponent.js';
 import './PrivateMatchInvitationNotificationComponent.js';
 import './TournamentMatchInvitationNotificationComponent.js';
+import { ArraySet } from "../../utils/ArraySet.js";
 
 class NotificationComponent extends HTMLElement {
 	constructor() {
@@ -152,7 +153,6 @@ class NotificationComponent extends HTMLElement {
 
 	// Handle events
 
-
 	getDuplicateNotificationMessage(notificationsUlElements) {
 		const notificationsSet = new Set();
 
@@ -164,6 +164,7 @@ class NotificationComponent extends HTMLElement {
 			notificationsSet.add(paragraph.innerHTML);
 		}
 	}
+
 
 	deleteDuplicateNotificationElement(oldNotificationsUlElements) {
 		const newNotificationsUlElements = this.notificationsUlElement.querySelectorAll('li');
@@ -330,10 +331,13 @@ class NotificationComponent extends HTMLElement {
 
 
 	getNumberOfUnreadNotifications() {
-		  const arrWithoutDuplicate = this.unreadNotifications.filter((item, index, self) =>
-			  self.findIndex((elem) => (elem.id === item.id )) === index);
+		const arrWithoutDuplicates = new ArraySet();
 
-		  return arrWithoutDuplicate.length;
+		this.unreadNotifications.forEach((notification) => {
+			arrWithoutDuplicates.push([notification.sender, notification.type]);
+		});
+
+		return arrWithoutDuplicates.length;
 	}
 
 
@@ -350,7 +354,7 @@ class NotificationComponent extends HTMLElement {
 	async changeIsReadStatus() {
 		let uuids = this.unreadNotifications.map((notification) => notification.uuid);
 
-		uuids = uuids.map((uuid) => uuid.replace('notif-', ''))
+		uuids = uuids.map((uuid) => uuid.replace('notif-', ''));
 
 		for (const notification of this.unreadNotifications) {
 			await sendRequest('PUT', 'http://localhost:8004/notifications/manage_notifications/', { uuids: uuids, type: 'set_as_read' });

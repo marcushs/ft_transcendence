@@ -97,7 +97,7 @@ class NotificationMiddleware(MiddlewareMixin):
 
     async def delete_notifications(self, request, notifications_to_delete):
         for notification in notifications_to_delete:
-            # await self.send_delete_notification_to_channel(request, notification)
+#             await self.send_delete_notification_to_channel(request, notification)
             await sync_to_async(notification.delete)()
 
     # async def send_delete_notification_to_channel(self, request, notification):
