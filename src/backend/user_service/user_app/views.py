@@ -14,5 +14,5 @@ def index(request):
  
 def get_information_view(request):
     if isinstance(request.user, AnonymousUser):
-        return JsonResponse({'message': 'you are not logged in'}, status=401)
-    return JsonResponse({'user': request.user.to_dict()}, status=200)
+        return JsonResponse({'status':'error', 'message': 'not logged'}, status=200)
+    return JsonResponse({'status':'success', 'user': request.user.to_dict()}, status=200)

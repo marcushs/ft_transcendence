@@ -1,7 +1,10 @@
 import { sendRequest } from "../utils/sendRequest.js"
 
+let pingInstance = null;
 export class PingStatus {
     constructor() {
+        if (pingInstance)
+            return pingInstance;
         this.timeoutDuration = 60000; // 1 minute
         this.isHandlingInactivity = false;
 

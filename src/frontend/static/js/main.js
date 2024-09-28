@@ -32,15 +32,24 @@ const routes = {
     "/two-factor-deactivation": { title: "TwoFactorDeactivate", render: twoFactorDeactivation },
 };
 
-loadWebSocket();
+async function setUserRender() {
+    await generateCsrfToken();
+    const isUserConnected = await checkAuthentication();
+    
+    if (isUserConnected) {
+        console.log('User session');
+        await loadWebSocket();
+        await setTwoFactorUserData();
+        new PingStatus();
+    } else
+        console.log('Guest session');
 
-(async () => {
-    await generateCsrfToken(); // generate csrf cookies
-    new PingStatus(); // launch user status update ping
-})();
+}
+
+setUserRender();
 
 // set twoFactor needed data
-(async () => {
+async function setTwoFactorUserData() {
     if (await isTwoFactorActivated()) {
         localStorage.setItem('isTwoFactorActivated', 'true');
         localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
@@ -48,7 +57,7 @@ loadWebSocket();
         localStorage.setItem('isTwoFactorActivated', 'false');
         localStorage.removeItem('twoFactorMethod');
     }
-})();
+}
 
 async function router() {
     if (!languageJson)
@@ -113,6 +122,10 @@ async function isViewAccessible(view) {
         localStorage.setItem('lastAuthorizedPage', location.pathname);
     return true;
 }
+
+// Handle user connection
+document.addEventListener("userLoggedIn", setUserRender)
+// document.addEventListener("userLoggedOut", setGuestRender)
 
 
 // Handle navigation

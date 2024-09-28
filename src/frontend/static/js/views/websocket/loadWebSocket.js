@@ -1,5 +1,7 @@
 import {removeContactFromList, addNewContactToList, UpdateContactInList} from './updateContactWebsocket.js'
 
+let socket = null;
+
 export async function loadWebSocket() {
     await loadContactsWebSocket();
     // await loadNotificationWebSocket();
@@ -8,7 +10,11 @@ export async function loadWebSocket() {
 //--------------> CONTACT WEBSOCKET <--------------\\
 
 async function loadContactsWebSocket() {
-    const socket = new WebSocket(`ws://localhost:8003/ws/contacts/`);
+    if (socket !== null) {
+        socket.close();
+    }
+
+    socket = new WebSocket(`ws://localhost:8003/ws/contacts/`);
 
     socket.onopen = function(event) {
 		console.log('Contact websocket started');
@@ -27,7 +33,7 @@ async function loadContactsWebSocket() {
     };
 
     socket.onclose = function(event) {
-		console.log('test');
+		console.log('contact websocket closed');
 	};
 
     socket.onerror = function(event) {

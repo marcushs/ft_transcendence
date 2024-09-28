@@ -89,6 +89,8 @@ async function postData(event, loginBtn) {
 			new TwoFactorVerify(formValues, data);
 		else {
 			await loadLanguagesJson();
+			const event = new CustomEvent('userLoggedIn');
+			document.dispatchEvent(event);
 			throwRedirectionEvent('/');
 		}
 	} catch (error) {

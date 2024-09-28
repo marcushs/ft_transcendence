@@ -6,7 +6,7 @@ export default async function checkAuthentication() {
 	try {
 		const data = await sendRequest('GET', url, null);
 
-		if (data.error)
+		if (data.status === 'error')
 			return false;
 		return true;
 	} catch (error) {
