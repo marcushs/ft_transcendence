@@ -5,28 +5,40 @@ import getProfileImage from '../../utils/getProfileImage.js';
 export function UpdateContactInList(contactJSON, change_info, old_value) {
     const contactList = document.querySelectorAll('contact-component');
     const contact = JSON.parse(contactJSON)
-    console.log('-------> CONTACT: ', contact);
     console.log('change_info: ', change_info);
     
     
     if (contactList) {
-        
         contactList.forEach(async contactElement => {
-            // console.log('contactElement: ', contactElement);
-            // console.log(contactElement.querySelector('.contact-status'));
             const contactUsername = contactElement.querySelector('.contact-username')
             if (change_info === 'username') {
-                if (contactUsername.textContent === old_value)
+                if (contactUsername.textContent === old_value) {
+                    const contactUserData = JSON.stringify({
+                        ...JSON.parse(contactElement.getAttribute('data-user')),
+                        username: contact.username
+                    })
+                    contactElement.setAttribute('data-user', contactUserData);
                     contactUsername.textContent = contact.username;
+                }
             } else if (change_info === 'picture') {
                 if (contactUsername.textContent === contact.username) {
+                    const contactUserData = JSON.stringify({
+                        ...JSON.parse(contactElement.getAttribute('data-user')),
+                        profile_image: contact.profile_image,
+                        profile_image_link: contact.profile_image_link
+                    })
+                    contactElement.setAttribute('data-user', contactUserData);
                     const contactPictureUrl = await getProfileImage(contact);
                     contactElement.querySelector('.contact-picture').src = contactPictureUrl;
                 }
             } else {
                 const li = contactElement.closest('li');
-                console.log('new status: ', contact.status);
-                console.log('old status: ', contactElement.querySelector('.contact-status').textContent);
+                const contactUserData = JSON.stringify({
+                    ...JSON.parse(contactElement.getAttribute('data-user')),
+                    status: contact.status,
+                })
+
+                contactElement.setAttribute('data-user', contactUserData);
                 
                 if (contactUsername.textContent === contact.username) {
                     const statusCircle = contactElement.querySelector('.status-circle');
@@ -56,7 +68,6 @@ export function UpdateContactInList(contactJSON, change_info, old_value) {
                         li.classList.add('offline-contact-status');
                     }
                 }
-                console.log('DEBUG: STATUS UPDATED');
             }
         })
     }
@@ -67,7 +78,6 @@ export async function addNewContactToList(contact, requestType, is_sender) {
     try {
         const data = await sendRequest('GET', url, null);
         const user = data.message;
-        console.log('bouh');
         
 
         if (requestType === 'new contact request') {

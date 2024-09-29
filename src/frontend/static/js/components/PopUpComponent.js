@@ -97,13 +97,26 @@ class PopUpComponent extends HTMLElement {
 			}, []);
 			const currentUser = document.querySelector('.account-infos p').textContent;
 			const currentUserIndex = resultList.findIndex(user => user.username === currentUser)
-			if (currentUserIndex !== -1)
+			if (currentUserIndex !== -1) {
 				resultList.splice(currentUserIndex, 1);
-			this.displaySearchResult(resultList);
+				
+				if (resultList.length === 0) {
+					this.querySelector('ul').innerHTML = 'No contacts found...';
+					this.querySelector('ul').classList.add('no-add-contacts');
+					return;
+				}
+
+			}
+			console.log('not sort List: ', resultList);
+			const sortedList = resultList.sort((a, b) => a.username.localeCompare(b.username));
+			console.log('sortedList: ', sortedList);
+			
+			this.displaySearchResult(sortedList);
 			this.addContactButtonEventListener();
 		}
 		else {
 			this.clearSearchResult();
+			console.log('else: ', this.querySelector('ul'));
 			this.querySelector('ul').innerHTML = 'No contacts found...';
 			this.querySelector('ul').classList.add('no-add-contacts');
 		}

@@ -16,7 +16,7 @@ class handle_friend_info_change(View):
         super()
     
     def post(self, request):
-        print('--------------------------TEST--------------------------')
+        print('--------------------------TEST--------------------------') 
         try:
             data = json.loads(request.body.decode('utf-8'))
             if isinstance(request.user, AnonymousUser):
@@ -33,7 +33,7 @@ class handle_friend_info_change(View):
             'status': data['status']
         }
         for user_id in contacts_id_list:
-            channel_layer = get_channel_layer()
+            channel_layer = get_channel_layer() 
             print(f'user_{user_id}') 
             async_to_sync(channel_layer.group_send)(
                 f'user_{user_id}',

@@ -10,6 +10,6 @@ export default async function checkAuthentication() {
 			return false;
 		return true;
 	} catch (error) {
-        console.log('Error: ' + error.message);
+        console.error('Error: ' + error);
 	}
 }

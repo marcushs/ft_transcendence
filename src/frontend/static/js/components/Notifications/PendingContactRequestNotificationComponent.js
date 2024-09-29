@@ -49,7 +49,7 @@ class PendingContactRequestNotificationComponent extends HTMLElement {
 
 	connectedCallback() {
 		this.notificationObj = JSON.parse(this.getAttribute('notificationObj'));
-		console.log(this.notificationObj)
+		// console.log(this.notificationObj)
 		this.initializeComponent();
 		this.setNotificationClass();
 		this.attachEventsListener();

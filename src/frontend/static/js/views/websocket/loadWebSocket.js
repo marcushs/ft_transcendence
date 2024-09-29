@@ -22,7 +22,10 @@ async function loadContactsWebSocket() {
 
     socket.onmessage = function(event) {
         const data = JSON.parse(event.data);
-		
+        
+        const contactMenuComponent = document.querySelector('contact-menu-component')
+        if (!contactMenuComponent)
+            return;
         if (data.type === 'deleted contact' || data.type === 'deleted contact request') {
             removeContactFromList(data.contact, data.type);
         } else if (data.type === 'contact_update') {

@@ -185,25 +185,6 @@ class ContactComponent extends HTMLElement {
         }
     }
 
-    manageChangePendingContact() {
-        const pendingSummary = document.querySelector('.pending-contact-summary');
-        const pendingCountMatch = pendingSummary.textContent.match(/\d+/);
-        const newPendingCount = parseInt(pendingCountMatch[0], 10) - 1;
-        console.log('closest li: ', this.closest('li'));
-        
-        setTimeout(() => this.closest('li').remove(), 200);
-        let newPendingSummary = null;
-         if (newPendingCount === 0) {
-             const segment = pendingSummary.textContent.split(' -');
-             newPendingSummary = segment[0];
-             const pendingContactList = document.querySelector('.pending-contact-list-result')
-             pendingContactList.innerHTML = 'No contacts request...';
-             pendingContactList.classList.add('no-contacts');
-         } else
-             newPendingSummary = pendingSummary.textContent.replace(pendingCountMatch[0], String(newPendingCount));
-         pendingSummary.textContent = newPendingSummary; 
-    }
-
     throwCloseActionsMenuEvent (senderInstance) {
         const event = new CustomEvent('closeActionMenu', {
             bubbles: true,

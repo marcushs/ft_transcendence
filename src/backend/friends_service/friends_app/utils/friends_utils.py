@@ -37,6 +37,7 @@ class friendshipManager(View):
   
     def init(self, request):
         data = json.loads(request.body.decode('utf-8'))
+        print(f'-------------> data: {data}')
         if not all(key in data for key in ('status', 'target_username')):
             return False
         self.user = request.user
@@ -47,7 +48,7 @@ class friendshipManager(View):
         except User.DoesNotExist:
             return False
         except FriendList.DoesNotExist: 
-            return False
+            return False 
         return True
  
     def accept_friendship(self):
