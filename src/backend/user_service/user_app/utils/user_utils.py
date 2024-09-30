@@ -72,17 +72,25 @@ class update_user(View):
         return JsonResponse({"message": 'get request successfully reached'}, status=200) 
     
     def post(self, request):
+        from .websocket_utils import notify_user_info_display_change
+        
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'User not found'}, status=400)
         data = json.loads(request.body.decode('utf-8'))
+        old_status = None
         for field in ['username', 'email', 'is_verified', 'two_factor_method', 'status', 'last_active']:
             if field in data:
                 if field == 'last_active':
                     setattr(request.user, field, timezone.now())
-                else:
+                elif field == 'status':
+                    old_status = request.user.status
                     setattr(request.user, field, data[field])
+                else:
+                    setattr(request.user, field, data[field]) 
         request.user.save()
-        return JsonResponse({'message': 'User updated successfully'}, status=200)
+        if data['status']:
+            async_to_sync(notify_user_info_display_change)(request=request, change_info='status', old_value=old_status)
+        return JsonResponse({'message': 'User updated successfully'}, status=200) 
 
 
 async def send_request(request_type, url, request=None, payload=None):
@@ -93,7 +101,7 @@ async def send_request(request_type, url, request=None, payload=None):
     try:
         async with httpx.AsyncClient() as client:
             if request_type == 'GET':
-                response = await client.get(url, headers=headers, cookies=cookies)
+                response = await client.get(url, headers=headers, cookies=cookies) 
             else:
                 response = await client.post(url, headers=headers, cookies=cookies, content=json.dumps(payload))
             response.raise_for_status()  # Raise an exception for HTTP errors

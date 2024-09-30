@@ -165,8 +165,8 @@ class FriendsMenuComponent extends HTMLElement {
 
     createContactList(contacts, status) {
         console.log('contacts: ', contacts);
-        
-        contacts.forEach(contact => {
+        const sortedList = contacts.sort((a, b) => a.username.localeCompare(b.username));
+        sortedList.forEach(contact => {
             const li = document.createElement('li');
             li.innerHTML = `
                 <contact-component data-user='${JSON.stringify(contact)}' data-status='${status}'></contact-component>

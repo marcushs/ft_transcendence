@@ -23,7 +23,7 @@ async def set_new_users_status(users, status_change):
         threshold = timezone.now() - timedelta(minutes=3, seconds=30)
     else:
         threshold = timezone.now() - timedelta(minutes=15)  
-    for user in users: 
+    for user in users:
         # print(f'  -user: {user}')
         # print(f'  -user_status: {user.status}')
         # print(f'  -user.last_active: {user.last_active} -- threshold: {threshold}') 

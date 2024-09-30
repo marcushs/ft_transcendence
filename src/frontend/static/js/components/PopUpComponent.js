@@ -107,9 +107,7 @@ class PopUpComponent extends HTMLElement {
 				}
 
 			}
-			console.log('not sort List: ', resultList);
 			const sortedList = resultList.sort((a, b) => a.username.localeCompare(b.username));
-			console.log('sortedList: ', sortedList);
 			
 			this.displaySearchResult(sortedList);
 			this.addContactButtonEventListener();
@@ -225,6 +223,8 @@ class PopUpComponent extends HTMLElement {
             type: type
         };
 
+		console.log(`receiver = ${receiver} -- type: ${type}`);
+		
         try {
             const data = await sendRequest('POST', url, payload);
             if (data.status === 'error')

@@ -37,10 +37,11 @@ export function UpdateContactInList(contactJSON, change_info, old_value) {
                     ...JSON.parse(contactElement.getAttribute('data-user')),
                     status: contact.status,
                 })
-
                 contactElement.setAttribute('data-user', contactUserData);
                 
                 if (contactUsername.textContent === contact.username) {
+                    console.log(`old_status = ${old_value}`);
+                    console.log(`new_status = ${contact.status}`);   
                     const statusCircle = contactElement.querySelector('.status-circle');
                     contactElement.querySelector('.contact-status').textContent = contact.status;
                     if (old_value === 'online') {
@@ -104,8 +105,21 @@ function manageUpdateOfContactRequestList(user, is_sender) {
     if (liElements.length === 0) {
         contactRequestList.innerHTML = '';
         contactRequestList.classList.remove('no-contacts');
+        contactRequestList.appendChild(li);
+    }  else {
+        let is_inserted = false;
+        const newLiUsername = user.username.toLowerCase();
+        for (let i = 0; i < liElements.length; i++) {
+            const actualLiUsername = liElements[i].querySelector('.contact-username').textContent.toLowerCase()
+            if (newLiUsername.localeCompare(actualLiUsername) < 0) {
+                contactRequestList.insertBefore(li, liElements[i]);
+                is_inserted = true;
+                break;
+            }
+            if (!is_inserted)
+                contactRequestList.appendChild(li)
+        }
     }
-    contactRequestList.appendChild(li);
     pendingSummary.innerHTML = `Contacts Requests - ${liElements.length + 1}`;
 }
 
@@ -113,14 +127,27 @@ function manageUpdateOfContactList(user) {
     const contactList = document.querySelector('.contact-list-result');
     let status;
 
-    status = 'contact'
+    status = 'contact';
     const li = createLiForComponent(user, status)
     const liElements = contactList.querySelectorAll('li');
     if (liElements.length === 0) {
         contactList.innerHTML = '';
         contactList.classList.remove('no-contacts');
+        contactList.appendChild(li);
+    } else {
+        let is_inserted = false;
+        const newLiUsername = user.username.toLowerCase();
+        for (let i = 0; i < liElements.length; i++) {
+            const actualLiUsername = liElements[i].querySelector('.contact-username').textContent.toLowerCase()
+            if (newLiUsername.localeCompare(actualLiUsername) < 0) {
+                contactList.insertBefore(li, liElements[i]);
+                is_inserted = true;
+                break;
+            }
+            if (!is_inserted)
+                contactList.appendChild(li)
+        }
     }
-    contactList.appendChild(li);
     
     removeContactFromList(user.username, 'deleted contact request');
 }
