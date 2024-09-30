@@ -39,8 +39,8 @@ class AccountInfosComponent extends HTMLElement {
 	attachEventsListener() {
 		this.querySelector('.account-infos').addEventListener('click', event => this.handleClickOnAccountInfos());
 
-		this.querySelector('ul li:first-child p').addEventListener('click', () => throwRedirectionEvent('/profile'));
-		this.querySelector('ul li:last-child p').addEventListener('click', () => throwRedirectionEvent('/logout'));
+		this.querySelector('ul li:first-child').addEventListener('click', () => throwRedirectionEvent('/profile'));
+		this.querySelector('ul li:last-child').addEventListener('click', () => throwRedirectionEvent('/logout'));
 
 		document.addEventListener('closeAccountInfosComponent', () => this.closeMenu());
 

@@ -6,8 +6,19 @@ from django.utils import timezone
 from django.db.models import Q
 from django.views import View
 from ..models import User
+from django.contrib.auth import get_user_model
 import httpx
 import json
+
+
+User = get_user_model()
+
+
+def get_user_id_by_username(username):
+    user = User.objects.get(username=username)
+    
+    return user.id
+
 class set_offline_user(View):
     def __init__(self):
         super().__init__   
@@ -101,7 +112,9 @@ async def send_request(request_type, url, request=None, payload=None):
     try:
         async with httpx.AsyncClient() as client:
             if request_type == 'GET':
-                response = await client.get(url, headers=headers, cookies=cookies) 
+                response = await client.get(url, headers=headers, cookies=cookies)
+            elif request_type == 'PUT':
+                response = await client.put(url, headers=headers, cookies=cookies, content=json.dumps(payload))
             else:
                 response = await client.post(url, headers=headers, cookies=cookies, content=json.dumps(payload))
             response.raise_for_status()  # Raise an exception for HTTP errors

@@ -8,16 +8,29 @@ from datetime import timedelta
 from django.http import JsonResponse
 from django.conf import settings
 
-User = get_user_model()
 # Middleware for jwt authentication
 from .utils.user_utils import send_request
+from datetime import timedelta, datetime
+from asgiref.sync import sync_to_async
+from channels.layers import get_channel_layer
+from .utils.user_utils import get_user_id_by_username
+
+
+User = get_user_model()
+
 class JWTAuthMiddleware(MiddlewareMixin):
-    def process_request(self, request):
+    
+    async def __call__(self, request):
+        response = await self.process_request(request)
+        response = await self.process_response(request, response)
+        return response
+    
+    async def process_request(self, request):
         token = request.COOKIES.get('jwt')
         if token:
-            jwt_user = get_user_from_jwt(token)
+            jwt_user = await get_user_from_jwt(token)
             if jwt_user == 'expired':
-                self.send_new_token_request(request=request, jwt_user=jwt_user)
+                await self.send_new_token_request(request=request, jwt_user=jwt_user)
             elif jwt_user == None: 
                 request.jwt_failed = True
                 request.user = AnonymousUser()
@@ -26,20 +39,20 @@ class JWTAuthMiddleware(MiddlewareMixin):
         else:
             refresh_token = request.COOKIES.get('jwt_refresh')
             if refresh_token:
-                jwt_user = get_user_from_jwt(refresh_token)
+                jwt_user = await get_user_from_jwt(refresh_token)
                 if jwt_user == 'expired' or jwt_user == None:
                     request.jwt_failed = True
                     request.user = AnonymousUser()
                 else:
-                    self.send_new_token_request(request=request, jwt_user=jwt_user)
+                    await self.send_new_token_request(request=request, jwt_user=jwt_user)
             else:
                     request.user = AnonymousUser() 
-        response = self.get_response(request) 
+        response = await self.get_response(request) 
         return response 
-
-    def send_new_token_request(self, request, jwt_user):
+    
+    async def send_new_token_request(self, request, jwt_user):
         try:
-            request_response = send_request(request_type='GET',request=request, url='http://auth:8000/auth/update-tokens/')
+            request_response = await send_request(request_type='GET',request=request, url='http://auth:8000/auth/update-tokens/')
             if request_response and request_response.cookies:
                 request.new_token = request_response.cookies.get('jwt')
                 request.new_token_refresh =  request_response.cookies.get('jwt_refresh')
@@ -50,7 +63,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
             request.jwt_failed = True
             request.user = AnonymousUser() 
     
-    def process_response(self, request, response): 
+    async def process_response(self, request, response):  
         if hasattr(request, 'jwt_failed'):
             response = JsonResponse({'error': 'invalid session token'}, status=401)
             response.delete_cookie('jwt')
@@ -60,44 +73,57 @@ class JWTAuthMiddleware(MiddlewareMixin):
         if hasattr(request, 'new_token_refresh'):
             response.set_cookie('jwt_refresh', request.new_token_refresh, httponly=True, max_age=settings.REFRESH_TOKEN_LIFETIME)
         return response
+
  
 class NotificationMiddleware(MiddlewareMixin):
-    def process_request(self, request):
-        self.remove_duplicate_notifications(request)
-        try:
-            user_notifications = list(Notification.objects.filter(receiver=request.user, is_read=True))
-            for notification in user_notifications:  
-                if notification.type == 'friend-request-accepted' and notification.is_read_at and notification.is_read_at < timezone.now() - timedelta(minutes=1):  #replace by timedelta(days=????)
-                    notification.delete()
-        except Exception as e:
-            pass
-        response = self.get_response(request)
+    async def __call__(self, request):
+        response = await self.process_request(request)
         return response
-    
-    
-    def remove_duplicate_notifications(self, request):
-        try:
-            user_notifications = Notification.objects.filter(receiver=request.user)
-            senders = set(user_notification.sender for user_notification in user_notifications)
-            for sender in senders:
-                notifications_by_sender = user_notifications.filter(sender=sender)
-                self.remove_duplicate_notifications_by_sender(notifications_by_sender)         
-        except Exception as e: 
-            pass
-        
-        
-    def remove_duplicate_notifications_by_sender(self, notifications_by_sender):
-        friend_request_accepted = list(notifications_by_sender.filter(type='friend-request-accepted'))
-        friend_request_pending = list(notifications_by_sender.filter(type='friend-request-pending'))
-        private_match_invitation = list(notifications_by_sender.filter(type='private-match-invitation'))
-        tournament_invitation = list(notifications_by_sender.filter(type='tournament-invitation'))
-        
-        self.delete_notifications(friend_request_accepted[:-1])
-        self.delete_notifications(friend_request_pending[:-1])
-        self.delete_notifications(private_match_invitation[:-1])
-        self.delete_notifications(tournament_invitation[:-1])
-        
-    
-    def delete_notifications(self, notifications_to_delete):
+
+
+    async def process_request(self, request):
+        if request.user.is_authenticated:
+            await self.remove_duplicate_notifications(request)
+            user_notifications = await sync_to_async(list)(Notification.objects.filter(receiver=request.user, is_read=True))
+            for notification in user_notifications:
+                if notification.type == 'friend-request-accepted' and notification.is_read_at and notification.is_read_at < timezone.now() - timedelta(minutes=1):  #replace by timedelta(days=????)
+                    await sync_to_async(notification.delete)()
+        response = await self.get_response(request)
+        return response
+
+
+    async def remove_duplicate_notifications(self, request):
+        user_notifications = await sync_to_async(list)(Notification.objects.filter(receiver=request.user))
+        senders = set(await sync_to_async(lambda: [notification.sender for notification in user_notifications])())
+        for sender in senders:
+            notifications_by_sender = Notification.objects.filter(sender=sender, receiver=request.user)
+            await self.remove_duplicate_notifications_by_sender(request, notifications_by_sender)
+
+
+    async def remove_duplicate_notifications_by_sender(self, request, notifications_by_sender):
+        friend_request_accepted = await sync_to_async(list)(notifications_by_sender.filter(type='friend-request-accepted'))
+        friend_request_pending = await sync_to_async(list)(notifications_by_sender.filter(type='friend-request-pending'))
+        private_match_invitation = await sync_to_async(list)(notifications_by_sender.filter(type='private-match-invitation'))
+        tournament_invitation = await sync_to_async(list)(notifications_by_sender.filter(type='tournament-invitation'))
+
+        await self.delete_notifications(request, friend_request_accepted[:-1])
+        await self.delete_notifications(request, friend_request_pending[:-1])
+        await self.delete_notifications(request, private_match_invitation[:-1])
+        await self.delete_notifications(request, tournament_invitation[:-1])
+
+    async def delete_notifications(self, request, notifications_to_delete):
         for notification in notifications_to_delete:
-            notification.delete()
+#             await self.send_delete_notification_to_channel(request, notification)
+            await sync_to_async(notification.delete)()
+
+    # async def send_delete_notification_to_channel(self, request, notification):
+    #     channel_layer = get_channel_layer()
+    #     user_id = await get_user_id_by_username(request.user)
+        
+    #     await channel_layer.group_send(
+    #         f'user_{user_id}',
+    #         {
+    #             'type': 'delete_notification',
+    #             'notification': await sync_to_async(notification.to_dict)()
+    #         }
+    #     )

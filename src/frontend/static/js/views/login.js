@@ -8,6 +8,7 @@ import {TwoFactorVerify} from './two-factor-verify.js';
 import {getString, loadLanguagesJson} from '../utils/languageManagement.js';
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {sendRequest} from "../utils/sendRequest.js";
+import {loadWebSocket} from "../utils/loadWebSocket.js";
 
 export default () => {
 	const html = `
@@ -92,6 +93,7 @@ async function postData(event, loginBtn) {
 			const event = new CustomEvent('userLoggedIn');
 			document.dispatchEvent(event);
 			throwRedirectionEvent('/');
+			loadWebSocket();
 		}
 	} catch (error) {
 		localStorage.setItem('errorFeedback', error.message);

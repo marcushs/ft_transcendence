@@ -6,6 +6,7 @@ from asgiref.sync import sync_to_async
 from django.http import JsonResponse
 from .user_utils import send_request
 from django.views import View
+from .user_utils import get_user_id_by_username
 import requests
 import magic
 import re
@@ -28,18 +29,18 @@ class ChangeUserInfosView(View):
         except ValidationError as e:
             return JsonResponse(e.message_dict, status=409)
 
-        if request.POST.get('username') and request.user.username != request.POST.get('username'):
+        username = request.POST.get('username')
+        
+        if username and request.user.username != username:
             response.update(await self.change_username(User, request))
+            send_request(request_type='PUT', request=request, url='http://notifications:8000/notifications/manage_notifications/', payload={'sender_id': get_user_id_by_username(request.user.username), 'type': 'change_sender_name'})
         if request.POST.get('email') and request.user.email != request.POST.get('email'):
             response.update(await self.change_email(User, request))
         if request.FILES.get('profile_image'):
             response.update(await self.change_profile_image(request))
         elif request.POST.get('profile_image_link'):
             response.update(await self.change_profile_image_link(request))
-        else:
-            return JsonResponse(response, status=201)
-        
-        
+
         return JsonResponse(response, status=201)
         
 
@@ -111,12 +112,10 @@ class ChangeUserInfosView(View):
         old_username = request.user.username
         request.user.username = request.POST.get('username')
         payload = {'username': request.user.username}
-        try:
-            await send_request(request_type='POST',request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
-            await send_request(request_type='POST',request=request, url='http://auth:8000/auth/update_user/', payload=payload)
-            await send_request(request_type='POST',request=request, url='http://friends:8000/friends/update_user/', payload=payload)
-        except Exception:
-            pass
+        await send_request(request_type='POST', request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
+        await send_request(request_type='POST', request=request, url='http://auth:8000/auth/update_user/', payload=payload)
+        await send_request(request_type='POST', request=request, url='http://notifications:8000/notifications/update_user/', payload=payload)
+        await send_request(request_type='POST', request=request, url='http://friends:8000/friends/update_user/', payload=payload)
         await sync_to_async(request.user.save)()
         await notify_user_info_display_change(request=request, change_info='username', old_value=old_username)
 
