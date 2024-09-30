@@ -116,14 +116,14 @@ class ContactComponent extends HTMLElement {
     }
 
     handleCloseActionMenuEvent() {
-        document.addEventListener('closeActionMenu', (event) => {
-            if (event.detail.senderInstance !== this && this.contactActionList.style.display === 'block') {
-                this.contactActionList.style.display = 'none';
-                this.showActionsList.classList.replace('fa-caret-down', 'fa-caret-up');
-            }
-        })
-
         if (this.contactActionList) {  
+            document.addEventListener('closeActionMenu', (event) => {
+                if (event.detail.senderInstance !== this && this.contactActionList.style.display === 'block') {
+                    this.contactActionList.style.display = 'none';
+                    this.showActionsList.classList.replace('fa-caret-down', 'fa-caret-up');
+                }
+            })
+
             document.addEventListener('click', () => {
                 if (getComputedStyle(this.contactActionList).display === 'block') {
                     this.contactActionList.style.display = 'none';
@@ -179,13 +179,7 @@ class ContactComponent extends HTMLElement {
             target_username: this.userData.username,
         };
         try {
-            console.log(action);
-            
-            const data = await sendRequest('POST', '/api/friends/manage_friendship/', payload);
-            if (data.status === 'success' && action !== 'remove') {
-                this.manageChangePendingContact();
-            }
-            console.log(data.message);
+            await sendRequest('POST', '/api/friends/manage_friendship/', payload);
         } catch (error) {
             console.error('catch: ', error);
         }
@@ -195,17 +189,19 @@ class ContactComponent extends HTMLElement {
         const pendingSummary = document.querySelector('.pending-contact-summary');
         const pendingCountMatch = pendingSummary.textContent.match(/\d+/);
         const newPendingCount = parseInt(pendingCountMatch[0], 10) - 1;
+        console.log('closest li: ', this.closest('li'));
+        
         setTimeout(() => this.closest('li').remove(), 200);
         let newPendingSummary = null;
-        if (newPendingCount === 0) {
-            const segment = pendingSummary.textContent.split(' -');
-            newPendingSummary = segment[0];
-            const pendingContactList = document.querySelector('.pending-contact-list-result')
-            pendingContactList.innerHTML = 'No contacts request...';
-            pendingContactList.classList.add('no-contacts');
-        } else
-            newPendingSummary = pendingSummary.textContent.replace(pendingCountMatch[0], newPendingCount);
-        pendingSummary.textContent = newPendingSummary;
+         if (newPendingCount === 0) {
+             const segment = pendingSummary.textContent.split(' -');
+             newPendingSummary = segment[0];
+             const pendingContactList = document.querySelector('.pending-contact-list-result')
+             pendingContactList.innerHTML = 'No contacts request...';
+             pendingContactList.classList.add('no-contacts');
+         } else
+             newPendingSummary = pendingSummary.textContent.replace(pendingCountMatch[0], String(newPendingCount));
+         pendingSummary.textContent = newPendingSummary; 
     }
 
     throwCloseActionsMenuEvent (senderInstance) {

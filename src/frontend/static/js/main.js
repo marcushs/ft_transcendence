@@ -17,22 +17,11 @@ import { PingStatus } from "./views/pingStatus.js";
 import oauthRedirect from './views/oauthRedirect.js';
 import oauthUsername from "./views/oauthUsername.js";
 import chatRoom from "./views/chatRoom.js";
+import {loadWebSocket} from "./utils/loadWebSocket.js";
 
 let languageJson;
 
-new PingStatus();
-
 localStorage.setItem('lastAuthorizedPage', '/');
-
-(async () => {
-    if (await isTwoFactorActivated()) {
-        localStorage.setItem('isTwoFactorActivated', 'true');
-        localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
-    } else {
-        localStorage.setItem('isTwoFactorActivated', 'false');
-        localStorage.removeItem('twoFactorMethod');
-    }
-})();
 
 const routes = {
     "/": { title: "Home", render: home },
@@ -49,8 +38,24 @@ const routes = {
     "/chatroom": { title: "chatRoom", render: chatRoom},
 };
 
-// create the csrf token if it does not already exist
-generateCsrfToken();
+loadWebSocket();
+
+(async () => {
+    await generateCsrfToken(); // generate csrf cookies
+    new PingStatus(); // launch user status update ping
+})();
+
+// set twoFactor needed data
+(async () => {
+    if (await isTwoFactorActivated()) {
+        localStorage.setItem('isTwoFactorActivated', 'true');
+        localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
+    } else {
+        localStorage.setItem('isTwoFactorActivated', 'false');
+        localStorage.removeItem('twoFactorMethod');
+    }
+})();
+
 async function router() {
     if (!languageJson)
         languageJson = await loadLanguagesJson();

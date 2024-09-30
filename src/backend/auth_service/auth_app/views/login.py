@@ -4,7 +4,7 @@ from django.conf import settings
 from django.views import View
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.hashers import check_password
-from .send_post_request import send_post_request_with_token, send_post_request_without_token
+from .send_request import send_request_with_token, send_request_without_token
 from django.contrib.auth import get_user_model
 import json
  
@@ -16,7 +16,6 @@ class login_view(View):
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
         if 'logged_in_with_oauth' in data and data['logged_in_with_oauth'] is True:
-            print('oauth login')
             return self._oauth_login(request, data)
         if 'twofactor' in data:
             return self._send_twofactor_request(data=data, csrf_token=request.headers.get('X-CSRFToken'), request=request)
@@ -60,24 +59,35 @@ class login_view(View):
     
 
     def _create_user_session(self, user, request):
+        print('---------------------------------TEST LOGIN------------------------------') 
         token = create_jwt_token(user, 'access')
         refresh_token = create_jwt_token(user, 'refresh')
         response = JsonResponse({'message': 'Login successfully'}, status=200)
-        response.set_cookie('jwt', token, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
-        response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
+        response.set_cookie('jwt', token, httponly=True, max_age=settings.ACCESS_TOKEN_LIFETIME)
+        response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.REFRESH_TOKEN_LIFETIME)
+        request.jwt = token
+        request.jwt_refresh = refresh_token
         payload = {
             'status': 'online',
             'last_active': '',
         }
-        send_post_request_with_token(request=request, url='http://user:8000/user/update_user/', payload=payload, jwt=token, jwt_refresh=refresh_token)
-        return response
+        try:
+            send_request_with_token(request_type='POST', request=request, url='http://user:8000/user/update_user/', jwt_token=token, jwt_refresh_token=refresh_token, payload=payload)
+            return response 
+        except Exception as e:
+            print(e)
+            return JsonResponse({'message': 'An error occured while logging in'}, status=400) 
+        print('\n---------------------------------END TEST LOGIN------------------------------') 
 
-    def _send_twofactor_request(self, data, csrf_token, request):
+    def _send_twofactor_request(self, data, csrf_token, request):   
         try:
             user = User.objects.get(username=data['username'])
-            response = send_post_request_without_token(url='http://twofactor:8000/twofactor/twofactor_login/', payload=data, csrf_token=csrf_token)
+            response = send_request_without_token(request_type='POST', url='http://twofactor:8000/twofactor/twofactor_login/', payload=data, csrf_token=csrf_token)
             if response.status_code != 200:
                 return response
             return self._create_user_session(user=user, request=request)
         except ObjectDoesNotExist:
             return JsonResponse({'error': 'User not found'}, status=404)
+        except Exception:
+            pass
+

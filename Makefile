@@ -9,6 +9,9 @@ all: up
 up: #${VOLUME}
 	${DOCKER_COMPOSE} ${ENV} up --build --detach --quiet-pull
 
+restart:
+	${DOCKER_COMPOSE} ${ENV} down && ${DOCKER_COMPOSE} ${ENV} up --build --detach --quiet-pull
+
 down:
 	${DOCKER_COMPOSE} ${ENV} down --volumes
 

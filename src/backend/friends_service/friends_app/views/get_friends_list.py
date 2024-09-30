@@ -10,24 +10,27 @@ class GetFriendsList(View):
     def get(self, request):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status': 'error', 'message': 'unregistered'}, status=200)
-        self.friend_list = FriendList.objects.filter(user=request.user).first()
+        self.friend_list = self.get_friend_list(request.user)
         if not self.friend_list:
-            return JsonResponse({'message': 'Friend list not found', 'status': 404})
+            return JsonResponse({'message': 'Friend list not found', 'status': 404}) 
         pending_requests = self.get_pending_requests(request.user)
         return JsonResponse({
             'status': 'success',
             'message': {
                 'friends': self.friend_list.to_dict(),
-                'received_requests': pending_requests['received'],
+                'received_requests': pending_requests['received'], 
                 'sent_requests': pending_requests['sent']
                 }
-            }, status=200)
- 
+            }, status=200) 
+
+    def get_friend_list(self, user):
+        return FriendList.objects.filter(user=user).first()
+
     def get_pending_requests(self, user):
-        received_requests = FriendRequest.objects.filter(receiver=user, is_active=True)
-        sent_requests = FriendRequest.objects.filter(sender=user, is_active=True)
+        received_requests = FriendRequest.objects.filter(receiver=user)
+        sent_requests = FriendRequest.objects.filter(sender=user)
         return {
             'received': [{'username': request.sender.username} for request in received_requests],
             'sent': [{'username': request.receiver.username} for request in sent_requests],
             'count': received_requests.count() + sent_requests.count(),
-        }
+        }  

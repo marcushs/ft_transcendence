@@ -3,9 +3,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
 from django.db.models import Q
 from django.views import View
+from asgiref.sync import sync_to_async
 from ..models import User
 import json
 import requests
+import httpx
 
 class add_new_user(View):
     def __init__(self):
@@ -21,7 +23,7 @@ class add_new_user(View):
         User.objects.create_user(username=data['username'], user_id=data['user_id'])
         return JsonResponse({"message": 'user added with success'}, status=200)
     
-class update_user(View):
+class update_user(View): 
     def __init__(self):
         super().__init__
         
@@ -36,7 +38,7 @@ class update_user(View):
             setattr(request.user, 'username', data['username'])
         request.user.save()
         return JsonResponse({'message': 'User updated successfully'}, status=200)
-    
+
 class check_username(View):
     def __init__(self):
         super().__init__
@@ -61,29 +63,28 @@ class delete_user(View):
         username = user.username
         user.delete()
         return JsonResponse({'message': f'User {username} deleted successfully', 'status': "Success"}, status=200)
-    
-    def get(self, request):
-        return JsonResponse({'message': 'Method not allowed', 'status': 'Error'}, status=405)
 
-    def post(self, request):
-        return JsonResponse({'message': 'Method not allowed', 'status': 'Error'}, status=405)
-
-def send_post_request(request, url, payload):
+async def send_request(request_type, request, url, payload=None):
         headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'X-CSRFToken': request.COOKIES.get('csrftoken')
-            }
+            } 
         cookies = {
             'csrftoken': request.COOKIES.get('csrftoken'),
             'jwt': request.COOKIES.get('jwt'),
             'jwt_refresh': request.COOKIES.get('jwt_refresh'),
             }
-        response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
-        if response.status_code == 200:
-            return JsonResponse({'message': 'success'}, status=200)
-        else:
-            response_data = json.loads(response.text)
+        try:
+            async with httpx.AsyncClient() as client:
+                if request_type == 'GET':
+                    response = await client.get(url, headers=headers, cookies=cookies)
+                else:
+                    response = await client.post(url, headers=headers, cookies=cookies, content=json.dumps(payload))
 
-            message = response_data.get('message')
-            return JsonResponse({'message': message}, status=400)
+                response.raise_for_status()  # Raise an exception for HTTP errors
+                return response
+        except httpx.HTTPStatusError as e:
+            raise Exception(f"HTTP error occurred: {e}")
+        except httpx.RequestError as e:
+            raise Exception(f"An error occurred while requesting: {e}")

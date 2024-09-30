@@ -13,32 +13,35 @@ def send_update_request(request):
         'two_factor_method': request.user.two_factor_method
     }
     
-    response = send_post_request(request=request, url='http://user:8000/api/user/update_user/', payload=payload)
-    if response.status_code != 200:
+    try:
+        response = send_request(request_type='POST', request=request, url='http://user:8000/api/user/update_user/', payload=payload)
+        response = send_request(request_type='POST', request=request, url='http://auth:8000/api/auth/update_user/', payload=payload)
         return response
-    response = send_post_request(request=request, url='http://auth:8000/api/auth/update_user/', payload=payload)
-    if response.status_code != 200:
-        return response
-    return response
+    except Exception:
+        pass
  
-def send_post_request(request, url, payload):
-    headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRFToken': request.COOKIES.get('csrftoken')
-        }
-    cookies = {
-        'csrftoken': request.COOKIES.get('csrftoken'),
-        'jwt': request.COOKIES.get('jwt'),
-        'jwt_refresh': request.COOKIES.get('jwt_refresh'),
-        }
-    response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
-    if response.status_code == 200:
-        return JsonResponse({'message': 'success'}, status=200)
-    else:
-        # response_data = json.loads(response)
-        # message = response_data.get('message')
-        return JsonResponse({'message': 'fail'}, status=400)
+def send_request(request_type, request, url, payload=None):
+        headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': request.COOKIES.get('csrftoken')
+            } 
+        cookies = {
+            'csrftoken': request.COOKIES.get('csrftoken'),
+            'jwt': request.COOKIES.get('jwt'),
+            'jwt_refresh': request.COOKIES.get('jwt_refresh'),
+            }
+        try:
+            if request_type == 'GET':
+                response = requests.get(url=url, headers=headers, cookies=cookies)
+            else:
+                response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
+            if response.status_code == 200:
+                return response
+            else:
+                response.raise_for_status()
+        except Exception as e:
+            raise Exception(f"An error occurred: {e}")
 
 def twofactor_verify_view(request, two_factor_code, two_factor_method):
     if two_factor_method == 'authenticator':

@@ -227,7 +227,7 @@ services:
       sh -c "
         python3 manage.py makemigrations &&
         python3 manage.py migrate &&
-        python3 manage.py runserver 0.0.0.0:8000
+        daphne -b 0.0.0.0 -p 8000 --verbosity 3 friends_service.asgi:application
       "
     volumes:
       - ./backend/friends_service:/app
@@ -470,6 +470,19 @@ services:
       interval: 8s
       timeout: 5s
       retries: 5
+
+  # ---------------> REDIS <---------------
+
+  # Service
+  redis:
+    container_name: redis
+    restart: always
+    image: redis:latest
+    networks:
+      - transcendence-network
+    ports:
+      - "6381:6379"
+
 
 volumes:
   user_pgdata:
