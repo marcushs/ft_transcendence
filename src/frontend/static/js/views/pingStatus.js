@@ -25,13 +25,13 @@ export class PingStatus {
 
     async sendPingStatus() {
         const url = 'http://localhost:8000/user/ping_status/';
-        console.log('ping sent to back');
+        // console.log('ping backend');
         try {
             const data = await sendRequest('POST', url, null);
-            if (data.status === ' success')
-                console.log('back response: ', data.message);
-            else
-                console.log('back response: ', data.message);
+            // if (data.status === ' success')
+                // console.log('backend: ', data.message);
+            // else
+                // console.log('backend: ', data.message);
         } catch (error) {
             console.log(error.message); 
         }

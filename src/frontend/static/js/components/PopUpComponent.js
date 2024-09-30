@@ -138,7 +138,6 @@ class PopUpComponent extends HTMLElement {
 		};
 		try {
 			const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
-			console.log(data.message);
 			if (data.status === 'success') {
 				await this.sendNotification(username, 'friend-request-pending');
 				return true;
@@ -221,10 +220,7 @@ class PopUpComponent extends HTMLElement {
         const payload = {
             receiver: receiver,
             type: type
-        };
-
-		console.log(`receiver = ${receiver} -- type: ${type}`);
-		
+        };		
         try {
             const data = await sendRequest('POST', url, payload);
             if (data.status === 'error')

@@ -58,7 +58,7 @@
 	margin: 1.5rem 0;
 }
 
-.users-profile-page .user-info p {
+.users-profile-page .user-info p:not(.user-info-username) {
 	font-weight: 700;
 	color: var(--text-primary-color);
 	font-size: 2rem;
@@ -67,7 +67,7 @@
 	padding-left: 10rem;
 }
 
-.users-profile-page .user-info input[type="text"] {
+.user-info .user-info-username {
 	width: 100%;
 	height: 100%;
 	font-size: 1.7rem;
