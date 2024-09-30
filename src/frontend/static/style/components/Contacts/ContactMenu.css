@@ -37,11 +37,26 @@ contact-menu-component {
     border: 1px solid var(--light-grey);
     border-radius: 10px;
     overflow-x: hidden;
+    padding-top: 0.8rem;
     /*background-color: var(--component-background-color);*/
 }
 
 .contact-menu i {
     font-size: 3rem;
+}
+
+#close-btn {
+    transform: translateX(1150%);
+    cursor: pointer;
+}
+
+#close-btn:hover {
+    transform: translateX(1150%) scale(1.1);
+    opacity: 0.8;
+}
+
+#close-btn:active {
+    transform: translateX(1150%) scale(0.98);
 }
 
 /*.contact-menu {*/

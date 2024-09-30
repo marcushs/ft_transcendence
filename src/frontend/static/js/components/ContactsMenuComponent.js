@@ -12,18 +12,11 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     initComponent() {
-        console.log("RENDERING CONTACT MENU!!!")
         this.innerHTML =  `
             <contact-bottom-nav></contact-bottom-nav>
             <div class='contact-menu'>
                 <i id="close-btn" class="fa-solid fa-xmark" aria-hidden="true"></i>
                 <div id="search-bar"></div>
-                <div class='top-bar-contacts-menu'>
-                    <div class='add-contact'>
-                        <img src='../../assets/add_friend_white.svg' alt='add-friend-icon'>
-                        <img id='top-bar-chat-icon' src='../../assets/chat-icon.svg' alt='chat-icon'>
-                    </div>
-                </div>
                 <div class='contact-list-menu'>
                     <p class='contact-summary'></p>
                     <ul class="contact-list-result"></ul>
@@ -33,7 +26,6 @@ class FriendsMenuComponent extends HTMLElement {
             </div>
         ` ;
 
-        this.addContact = this.querySelector('.add-contact');
         this.contactList = this.querySelector('.contact-list-result');
         this.pendingContactList = this.querySelector('.pending-contact-list-result');
         this.contactMenuDiv = this.querySelector('.contact-menu');
@@ -41,7 +33,7 @@ class FriendsMenuComponent extends HTMLElement {
         this.pendingContactSummary = this.querySelector('.pending-contact-summary');
         this.searchBar = this.querySelector('#search-bar');
         this.contactBottomNavDiv = this.querySelector('.bottom-nav-contacts');
-        this.topBarChatIcon = this.querySelector('#top-bar-chat-icon');
+        this.closeBtn = this.querySelector('#close-btn');
         
         this.contactMenuDiv.style.display = 'none';
         this.pendingContactList.style.display = 'none';
@@ -207,6 +199,7 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     attachEventListener() {
+        this.closeBtn.addEventListener('click', () => this.contactMenuDiv.style.display = 'none');
         this.contactBottomNavDiv.addEventListener('click', (e) => {
             this.contactBottomNavCallback(e);
         });
@@ -216,9 +209,6 @@ class FriendsMenuComponent extends HTMLElement {
         this.contactSummary.addEventListener('click', () => {
             this.contactList.style.display = this.contactList.style.display === 'none' ? 'block' : 'none';
         });
-        this.addContact.addEventListener('click', () => {
-            app.querySelector('section').innerHTML += '<pop-up-component class="add-new-contact-pop-up"></pop-up-component>' 
-        })
         // this.searchContactInput.addEventListener('input', () => this.updateContactList());
         this.attachTestEventListener();
     }

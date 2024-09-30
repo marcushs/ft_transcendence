@@ -1,0 +1,15 @@
+@import './ChatMainMenu.css';
+@import './ChatSearchBar.css';
+
+chat-component {
+	position: absolute;
+	bottom: 7px;
+	right: 10px;
+	z-index: 4;
+	width: fit-content;
+}
+
+chat-component .chat-icon {
+	width: 3rem;
+	cursor: pointer;
+}

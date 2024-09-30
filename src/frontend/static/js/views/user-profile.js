@@ -3,6 +3,7 @@ import getProfileImage from '../utils/getProfileImage.js';
 import { sendRequest } from '../utils/sendRequest.js';
 import '../components/Friendship/FriendshipButtonComponent.js';
 import "../components/NavBarComponent.js";
+import "../components/Chat/ChatComponent.js";
 
 export default () => {
     const html = `
@@ -21,6 +22,7 @@ export default () => {
                 </div>
             </div>
 			<contact-menu-component></contact-menu-component>
+            <chat-component></chat-component>
         </section>
     `;
 
