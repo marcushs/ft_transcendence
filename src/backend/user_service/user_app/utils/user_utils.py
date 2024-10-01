@@ -91,6 +91,7 @@ class update_user(View):
         old_status = None
         for field in ['username', 'email', 'is_verified', 'two_factor_method', 'status', 'last_active']:
             if field in data:
+                print('-----------> field:')
                 if field == 'last_active':
                     setattr(request.user, field, timezone.now())
                 elif field == 'status':
@@ -99,7 +100,7 @@ class update_user(View):
                 else:
                     setattr(request.user, field, data[field]) 
         request.user.save()
-        if data['status']:
+        if 'status' in data:
             async_to_sync(notify_user_info_display_change)(request=request, change_info='status', old_value=old_status)
         return JsonResponse({'message': 'User updated successfully'}, status=200) 
 

@@ -247,6 +247,30 @@
 	  "personalInformation": "Informations personnelles",
 	  "security": "Sécurité",
 	  "statistics": "Statistiques"
+	},
+	"contactMenuComponent": {
+		"searchContactPlaceHolder": "Rechercher des contacts",
+		"contactsTitle": "Contacts",
+		"pendingContactsTitle": "Demandes de contact",
+		"noContacts": "Aucun contact trouvé...",
+		"noContactsRequest": "Aucune demande de contact..."
+	},
+	"contactComponent": {
+		"onlineStatus": "en ligne",
+		"awayStatus": "absent",
+		"offlineStatus": "hors ligne",
+		"inGameStatus": "en jeu",
+		"sendMessageAction": "Envoyer un message",
+		"inviteToPlayAction": "Inviter à jouer",
+		"removeContactsAction": "Supprimer le contact",
+		"seeProfileAction": "Voir le profil"
+	},
+	"popUpComponent": {
+		"pasteImageLink": "Coller un lien vers une image",
+		"addNewContact": "Ajouter un nouveau contact",
+		"searchContactPlaceHolder": "Rechercher des contacts",
+		"noContacts": "Aucun contact trouvé...",
+		"add": "Ajouter"
 	}
   },
 
@@ -335,6 +359,30 @@
 	  "personalInformation": "个人信息",
 	  "security": "安全",
 	  "statistics": "统计"
+	},
+	"contactMenuComponent": {
+		"searchContactPlaceHolder": "查找联系人",
+		"contactsTitle": "联系方式",
+		"pendingContactsTitle": "联系要求",
+		"noContacts": "未找到联系人...",
+		"noContactsRequest": "没有联系请求..."
+	},
+	"contactComponent": {
+		"onlineStatus": "在线",
+		"awayStatus": "缺席",
+		"offlineStatus": "网下",
+		"inGameStatus": "危亡",
+		"sendMessageAction": "发送信息",
+		"inviteToPlayAction": "邀请游戏",
+		"removeContactsAction": "删除联系人",
+		"seeProfileAction": "查看简介"
+	},
+	"popUpComponent": {
+		"pasteImageLink": "粘贴图片链接",
+		"addNewContact": "添加新联系人",
+		"searchContactPlaceHolder": "搜索联系人",
+		"noContacts": "未找到联系人...",
+		"add": "添加"
 	}
   }
 

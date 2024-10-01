@@ -26,7 +26,7 @@ class PopUpComponent extends HTMLElement {
 					<i class="fa-solid fa-xmark"></i>
 					<h2>${getString('popUpComponent/pasteImageLink')}</h2>
 					<input type="url" name="image-link" autofocus>
-					<button-component label="Save" class="generic-btn-disabled"></button-component>
+					<button-component label="${getString('buttonComponent/save')}" class="generic-btn-disabled"></button-component>
 				</div>
 			`;
 		} else if (this.className === 'add-new-contact-pop-up') {
@@ -162,7 +162,7 @@ class PopUpComponent extends HTMLElement {
             	    <p>${user.username}</p>
             	</div>
 				<div class="add-friend-pop-up-button">
-                	<p>${getString('popUpComponent/noContacts')}</p>
+                	<p>${getString('popUpComponent/add')}</p>
 					<img src='../../../assets/add_friend.svg' alt='add_contact'></img>
             	</div>
         	`;
