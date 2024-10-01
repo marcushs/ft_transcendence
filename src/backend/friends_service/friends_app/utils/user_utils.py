@@ -40,7 +40,7 @@ class update_user(View):
         request.user.save()
         return JsonResponse({'message': 'User updated successfully'}, status=200)
 
-async def send_request(request_type, request, url, payload=None):
+async def send_async_request(request_type, request, url, payload=None):
         headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -64,3 +64,28 @@ async def send_request(request_type, request, url, payload=None):
             raise Exception(f"HTTP error occurred: {e}")
         except httpx.RequestError as e:
             raise Exception(f"An error occurred while requesting: {e}")
+        
+def send_sync_request(request_type, request, url, payload=None):
+    headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': request.COOKIES.get('csrftoken') 
+        } 
+    cookies = {
+        'csrftoken': request.COOKIES.get('csrftoken'),
+        'jwt': request.COOKIES.get('jwt'),
+        'jwt_refresh': request.COOKIES.get('jwt_refresh'),
+        }
+    try:
+        if request_type is 'DELETE':
+            response = requests.delete(url=url, headers=headers, cookies=cookies, data=json.dumps(payload))
+        elif request_type is 'POST':
+            response = requests.post(url=url, headers=headers, cookies=cookies, data=json.dumps(payload))
+        else:
+            raise Exception('unrecognized request type')
+        if response.status_code == 200:
+            return response
+        else:
+            response.raise_for_status()
+    except Exception as e:
+        raise Exception(f"An error occurred: {e}")
