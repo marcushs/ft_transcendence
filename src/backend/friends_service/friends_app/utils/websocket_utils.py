@@ -34,9 +34,8 @@ class handle_friend_info_change(View):
         }
         for user_id in contacts_id_list:
             channel_layer = get_channel_layer() 
-            print(f'user_{user_id}') 
             async_to_sync(channel_layer.group_send)(
-                f'user_{user_id}',
+                f'contacts_user_{user_id}',
                 {
                     'type': 'contact_info_update',
                     'event': 'contact_update',
@@ -67,7 +66,7 @@ def notify_friend_display_change(created, action, is_contact, receiver=None, sen
     if receiver:
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            f'user_{receiver.id}',
+            f'contacts_user_{receiver.id}',
             {
                 'type': 'friend_update',
                 'event': send_type,
@@ -80,7 +79,7 @@ def notify_friend_display_change(created, action, is_contact, receiver=None, sen
     if sender:
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            f'user_{sender.id}',
+            f'contacts_user_{sender.id}',
             {
                 'type': 'friend_update',
                 'event': send_type,

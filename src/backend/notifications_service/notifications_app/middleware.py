@@ -121,7 +121,7 @@ class NotificationMiddleware(MiddlewareMixin):
     #     user_id = await get_user_id_by_username(request.user)
         
     #     await channel_layer.group_send(
-    #         f'user_{user_id}',
+    #         f'notifications_user_{user_id}',
     #         {
     #             'type': 'delete_notification',
     #             'notification': await sync_to_async(notification.to_dict)()

@@ -24,7 +24,7 @@ class friendshipManager(View):
             return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
         match self.status:
             case "accept":
-                return self.accept_friendship()
+                return self.accept_friendship(request)
             case "add":
                 return self.send_friendship()
             case "cancel":
@@ -52,11 +52,33 @@ class friendshipManager(View):
             return False 
         return True
  
-    def accept_friendship(self):
+    def accept_friendship(self, request):
         friend_request = FriendRequest.objects.filter(sender=self.target_user, receiver=self.user).first()
         if not friend_request:
             return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
         friend_request.accept()
+        headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': request.COOKIES.get('csrftoken')
+            }
+        cookies = {
+            'csrftoken': request.COOKIES.get('csrftoken'),
+            'jwt': request.COOKIES.get('jwt'),
+            'jwt_refresh': request.COOKIES.get('jwt_refresh'),
+            }
+        payload = {
+            'type': 'canceled_friend_request_notification',
+            'sender': str(self.target_user),
+            'receiver': str(self.user)
+        }
+        requests.delete('http://notifications:8000/notifications/manage_notifications/', headers=headers, cookies=cookies, data=json.dumps(payload))
+        payload = {
+            'type': 'friend-request-accepted',
+            'sender': str(self.user),
+            'receiver': str(self.target_user)
+        }
+        requests.post('http://notifications:8000/notifications/manage_notifications/', headers=headers, cookies=cookies, data=json.dumps(payload))
         notify_friend_display_change(created=False, action='accepted', is_contact=False , receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'mutual_friend', 'message': 'friends invitation successfully accepted'}, status=200)
 
@@ -86,7 +108,7 @@ class friendshipManager(View):
             'receiver': str(self.target_user)
         }
         requests.delete('http://notifications:8000/notifications/manage_notifications/', headers=headers, cookies=cookies, data=json.dumps(payload))
-        friend_request = FriendRequest.objects.filter(sender=self.user, receiver=self.target_user, is_active=True).first()
+        friend_request = FriendRequest.objects.filter(sender=self.user, receiver=self.target_user).first()
         if not friend_request:
             return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
         friend_request.cancel()

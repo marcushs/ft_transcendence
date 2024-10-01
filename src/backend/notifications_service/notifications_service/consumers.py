@@ -14,7 +14,7 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
             if self.user.is_anonymous:
                 await self.close()
             else:
-                self.group_name = f'user_{self.user.id}'
+                self.group_name = f'notifications_user_{self.user.id}'
                 await self.channel_layer.group_add(self.group_name, self.channel_name)
                 await self.accept()
         except Exception as e:

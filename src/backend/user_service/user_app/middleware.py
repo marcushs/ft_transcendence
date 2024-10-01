@@ -8,7 +8,7 @@ from django.conf import settings
  
 User = get_user_model()
 # Middleware for jwt authentication
-
+ 
 class JWTAuthMiddleware(MiddlewareMixin):
     
     async def __call__(self, request):

@@ -4,6 +4,7 @@ let socket = null;
 
 export async function loadWebSocket() {
     await loadContactsWebSocket();
+    await loadNotificationsWebSocket();
     // await loadNotificationWebSocket();
 }
 
@@ -36,7 +37,7 @@ async function loadContactsWebSocket() {
     };
 
     socket.onclose = function(event) {
-		console.log('contact websocket closed');
+		console.log('Contact websocket closed: ', event);
 	};
 
     socket.onerror = function(event) {
@@ -46,45 +47,65 @@ async function loadContactsWebSocket() {
 
 //--------------> NOTIFICATION WEBSOCKET <--------------\\
 
-// async function loadNotificationWebSocket() {
-//     const socket = new WebSocket(`ws://localhost:8004/ws/notifications/`);
+function loadNotificationsWebSocket() {
+	const socket = new WebSocket(`ws://localhost:8004/ws/notifications/`);
 
-// 		socket.onopen = function(event) {};
+		socket.onopen = function(event) {
+		    console.log('Notifications websocket started');
+        };
 
-// 		socket.onmessage = function(event) {
-// 			const data = JSON.parse(event.data);
+		socket.onmessage = function(event) {
+			const data = JSON.parse(event.data);
 
-// 			if (data.type === 'new_notification')
-// 				throwNewNotificationEvent(data.notification);
-// 		};
+			// console.log(data)
+			if (data.type === 'new_notification')
+				throwNewNotificationEvent(data.notification);
+			else if (data.type === 'change_notification_sender')
+				throwChangeNotificationSenderEvent(data.notification);
+			else if (data.type === 'delete_notification')
+				throwDeleteNotificationElementEvent(data.notification);
+		};
 
-// 		socket.onclose = function(event) {};
+		socket.onclose = function(event) {
+		    console.log('Notifications websocket closed: ', event);
+        };
 
-// 		socket.onerror = function(event) {
-// 		    console.error("Websocket error: ", event);
-// 		};
-// }
+		socket.onerror = function(event) {
+		    console.error("Websocket error: ", event);
+		};
+}
 
-// // ------------- Notifications event ------------------ //
+function throwNewNotificationEvent(notification) {
+	const event = new CustomEvent('newNotification', {
+		bubbles: true,
+		detail: {
+			notification: notification
+		}
+	});
 
-// function throwNewNotificationEvent(notification) {
-// 	const event = new CustomEvent('newNotification', {
-// 		bubbles: true,
-// 		detail: {
-// 			notification: notification
-// 		}
-// 	});
+	document.dispatchEvent(event);
+}
 
-// 	document.dispatchEvent(event);
-// }
 
-// function throwDeleteNotificationElementEvent(notification) {
-// 	const event = new CustomEvent('deleteNotificationElementEvent', {
-// 		bubbles: true,
-// 		detail: {
-// 			notification: notification
-// 		}
-// 	});
+function throwChangeNotificationSenderEvent(notification) {
+	const event = new CustomEvent('changeNotificationSender', {
+		bubbles: true,
+		detail: {
+			notification: notification
+		}
+	});
 
-// 	document.dispatchEvent(event);
-// }
+	document.dispatchEvent(event);
+}
+
+
+function throwDeleteNotificationElementEvent(notification) {
+	const event = new CustomEvent('deleteNotificationElement', {
+		bubbles: true,
+		detail: {
+			notification: notification
+		}
+	});
+
+	document.dispatchEvent(event);
+}

@@ -341,6 +341,8 @@ class NotificationComponent extends HTMLElement {
 			arrWithoutDuplicates.push([notification.sender, notification.type]);
 		});
 
+		console.log(arrWithoutDuplicates);
+		
 		return arrWithoutDuplicates.length;
 	}
 
@@ -359,7 +361,9 @@ class NotificationComponent extends HTMLElement {
 		let uuids = this.unreadNotifications.map((notification) => notification.uuid);
 
 		uuids = uuids.map((uuid) => uuid.replace('notif-', ''));
-
+		
+		this.notifications.forEach(notification => { if (!notification.is_read) notification.is_read = true });
+		
 		for (const notification of this.unreadNotifications) {
 			await sendRequest('PUT', 'http://localhost:8004/notifications/manage_notifications/', { uuids: uuids, type: 'set_as_read' });
 		}
@@ -372,6 +376,8 @@ class NotificationComponent extends HTMLElement {
 		const numberOfNotificationsElement = this.querySelector('.number-of-notifications');
 		const numberOfNotificationsElementColor = getComputedStyle(numberOfNotificationsElement).backgroundColor;
 
+		console.log('nb = ', numberOfNotifications);
+		
 		if (numberOfNotifications > 9) {
 			numberOfNotificationsElement.textContent = '9+';
 			numberOfNotificationsElement.style.letterSpacing = '-3px';

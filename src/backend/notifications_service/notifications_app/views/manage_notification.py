@@ -63,6 +63,7 @@ class manage_notification_view(View):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200)
         data = json.loads(request.body.decode('utf-8'))
+        print(f'-------------- test = {data['sender']}, {data['receiver']}  ---------------------') 
         if 'type' in data and 'sender' in data and 'receiver' in data:
             match data['type']:
                 case 'canceled_friend_request_notification':
@@ -71,6 +72,7 @@ class manage_notification_view(View):
                                                                                  sender=await get_user_id_by_username(data['sender']),
                                                                                  receiver=await get_user_id_by_username(data['receiver']))
                     async for notification in notifications:
+                        print('---------- NOTIF --------------- ') 
                         await self.send_delete_notification_to_channel(notification, data)
                         await sync_to_async(notification.delete)()
                     
@@ -101,7 +103,6 @@ class manage_notification_view(View):
         check_response = await self.check_post_data(data=data)
         if check_response != 'Success':
             return JsonResponse({'status': 'error', 'message': check_response}, status=200)
-
 
         notifications_types = ['friend-request-accepted', 'friend-request-pending', 'private-match-invitation', 'tournament-invitation']
 
@@ -147,7 +148,7 @@ class manage_notification_view(View):
         user_id = await get_user_id_by_username(self.receiver)
         
         await channel_layer.group_send(
-            f'user_{user_id}',
+            f'notifications_user_{user_id}',
             {
                 'type': 'new_notification',
                 'notification': notification.to_dict()
@@ -160,7 +161,7 @@ class manage_notification_view(View):
         notification_dict = await sync_to_async(notification.to_dict)()
         
         await channel_layer.group_send(
-            f'user_{user_id}',
+            f'notifications_user_{user_id}',
             {
                 'type': 'delete_notification', 
                 'notification': notification_dict
@@ -178,7 +179,7 @@ class manage_notification_view(View):
             receiver_id = await get_user_id_by_username(notification_dict['receiver'])
             
             await channel_layer.group_send(
-            f'user_{receiver_id}',
+            f'notifications_user_{receiver_id}',
             {
                 'type': 'change_notification_sender',
                 'notification': notification.to_dict()

@@ -33,7 +33,7 @@ class ChangeUserInfosView(View):
         
         if username and request.user.username != username:
             response.update(await self.change_username(User, request))
-            send_request(request_type='PUT', request=request, url='http://notifications:8000/notifications/manage_notifications/', payload={'sender_id': get_user_id_by_username(request.user.username), 'type': 'change_sender_name'})
+            send_request(request_type='PUT', request=request, url='http://notifications:8000/notifications/manage_notifications/', payload={'sender_id': await sync_to_async(get_user_id_by_username)(request.user.username), 'type': 'change_sender_name'})
         if request.POST.get('email') and request.user.email != request.POST.get('email'):
             response.update(await self.change_email(User, request))
         if request.FILES.get('profile_image'):
