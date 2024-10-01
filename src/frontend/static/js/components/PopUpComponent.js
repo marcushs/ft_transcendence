@@ -1,5 +1,6 @@
 import { sendRequest } from "../utils/sendRequest.js";
 import getProfileImage from "../utils/getProfileImage.js";
+import { getString } from "../utils/languageManagement.js";
 
 class PopUpComponent extends HTMLElement {
 	static get observedAttributes() {
@@ -23,7 +24,7 @@ class PopUpComponent extends HTMLElement {
 			this.innerHTML = `
 				<div class="pop-up-content">
 					<i class="fa-solid fa-xmark"></i>
-					<h2>Paste link to an image</h2>
+					<h2>${getString('popUpComponent/pasteImageLink')}</h2>
 					<input type="url" name="image-link" autofocus>
 					<button-component label="Save" class="generic-btn-disabled"></button-component>
 				</div>
@@ -32,12 +33,12 @@ class PopUpComponent extends HTMLElement {
 			this.innerHTML = `
 				<div class="pop-up-content">
 					<i class="fa-solid fa-xmark"></i>
-					<h2>Add new contact</h2>
+					<h2>${getString('popUpComponent/addNewContact')}</h2>
 					<div class="add-contact-search-bar">
                 		<form action="#" autocomplete="off">
                 		    <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
                 		    <div class="add-friend-search-bar-input-container">
-                		        <input type="text" placeholder="Search contacts" id="searchBarInput"/>
+                		        <input type="text" placeholder="${getString('popUpComponent/searchContactPlaceHolder')}" id="searchBarInput"/>
                 		        <ul id="searchResults" class="search-results">
 								</ul>
                 		    </div>
@@ -101,7 +102,7 @@ class PopUpComponent extends HTMLElement {
 				resultList.splice(currentUserIndex, 1);
 				
 				if (resultList.length === 0) {
-					this.querySelector('ul').innerHTML = 'No contacts found...';
+					this.querySelector('ul').innerHTML = getString('popUpComponent/noContacts');
 					this.querySelector('ul').classList.add('no-add-contacts');
 					return;
 				}
@@ -114,8 +115,7 @@ class PopUpComponent extends HTMLElement {
 		}
 		else {
 			this.clearSearchResult();
-			console.log('else: ', this.querySelector('ul'));
-			this.querySelector('ul').innerHTML = 'No contacts found...';
+			this.querySelector('ul').innerHTML = getString('popUpComponent/noContacts');
 			this.querySelector('ul').classList.add('no-add-contacts');
 		}
 	}
@@ -162,7 +162,7 @@ class PopUpComponent extends HTMLElement {
             	    <p>${user.username}</p>
             	</div>
 				<div class="add-friend-pop-up-button">
-                	<p>Add</p>
+                	<p>${getString('popUpComponent/noContacts')}</p>
 					<img src='../../../assets/add_friend.svg' alt='add_contact'></img>
             	</div>
         	`;
@@ -205,7 +205,6 @@ class PopUpComponent extends HTMLElement {
 
 
 	updateSaveButtonState(input) {
-		console.log('test')
 		const saveButton = this.querySelector('button-component');
 
 		if (input.value !== '') {

@@ -110,6 +110,30 @@
 	  "personalInformation": "Personal information",
 	  "security": "Security",
 	  "statistics": "Statistics"
+	},
+	"contactMenuComponent": {
+		"searchContactPlaceHolder": "Search contacts",
+		"contactsTitle": "Contacts",
+		"pendingContactsTitle": "Contacts Requests",
+		"noContacts": "No contacts found...",
+		"noContactsRequest": "No contacts request..."
+	},
+	"contactComponent": {
+		"onlineStatus": "online",
+		"awayStatus": "away",
+		"offlineStatus": "offline",
+		"inGameStatus": "in game",
+		"sendMessageAction": "Send Message",
+		"inviteToPlayAction": "Invite to play",
+		"removeContactsAction": "Remove contact",
+		"seeProfileAction": "See profile"
+	},
+	"popUpComponent": {
+		"pasteImageLink": "Paste link to an image",
+		"addNewContact": "Add new contact",
+		"searchContactPlaceHolder": "Search contacts",
+		"noContacts": "No contacts found...",
+		"add": "Add"
 	}
   },
 

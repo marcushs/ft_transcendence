@@ -1,4 +1,5 @@
 import './ContactComponent.js';
+import { getString } from '../utils/languageManagement.js';
 import { sendRequest } from "../utils/sendRequest.js";
 import './Friendship/FriendshipButtonComponent.js';
 import './PopUpComponent.js'
@@ -12,7 +13,7 @@ class FriendsMenuComponent extends HTMLElement {
     async initComponent() {
         this.innerHTML = `
             <div class='bottom-nav-contacts'>
-                <p>Contacts</p>
+                <p>${getString('contactMenuComponent/contactsTitle')}</p>
                 <img src='../../assets/contact.svg' alt='contact-icon'>
             </div>
             <div class='contact-menu partial-border'>
@@ -22,7 +23,7 @@ class FriendsMenuComponent extends HTMLElement {
                     </div>
                     <form action="#" autocomplete="off">
                         <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
-                        <input type="text" placeholder="Search contacts" id="search-contact-input"/>
+                        <input type="text" placeholder="${getString('contactMenuComponent/searchContactPlaceHolder')}" id="search-contact-input"/>
                     </form>
                 </div>
                 <div class='contact-list-menu'>
@@ -140,9 +141,9 @@ class FriendsMenuComponent extends HTMLElement {
         const contactsData = await this.getDataRequest('users_data', contacts.friends);
         
         this.contactBottomNavDiv.style.display = 'flex';
-        this.contactSummary.innerHTML = `<p>Contacts</p>`;
+        this.contactSummary.innerHTML = `<p>${getString('contactMenuComponent/contactsTitle')}</p>`;
         if (!contactsData || contactsData.length === 0) {
-            this.contactList.innerHTML = `No contacts found...`;
+            this.contactList.innerHTML = `${getString('contactMenuComponent/noContacts')}`;
             this.contactList.classList.add('no-contacts');
         }
         else {
@@ -151,10 +152,10 @@ class FriendsMenuComponent extends HTMLElement {
         const receivedRequestUsersData = await this.getDataRequest('users_data', contacts.received_requests);
         const sentRequestUsersData = await this.getDataRequest('users_data', contacts.sent_requests);
         const requestsCount = contacts.received_requests.length + contacts.sent_requests.length;
-        this.pendingContactSummary.innerHTML = `<p>Contacts Requests - ${requestsCount}</p>`;
+        this.pendingContactSummary.innerHTML = `<p>${getString('contactMenuComponent/pendingContactsTitle')} - ${requestsCount}</p>`;
         if (requestsCount === 0) {
-            this.pendingContactSummary.innerHTML = `<p>Contacts Requests</p>`;
-            this.pendingContactList.innerHTML = `No contacts request...`
+            this.pendingContactSummary.innerHTML = `<p>${getString('contactMenuComponent/pendingContactsTitle')}</p>`;
+            this.pendingContactList.innerHTML = `${getString('contactMenuComponent/noContactsRequest')}`
             this.pendingContactList.classList.add('no-contacts');
         }
         else {
@@ -237,7 +238,7 @@ class FriendsMenuComponent extends HTMLElement {
         this.deleteObsoleteContact(searchValue);
         const newContactsToDisplay = this.getContactsToDisplay(contacts.friends, searchValue);
         if (newContactsToDisplay.length !== 0) {
-            if (this.contactList.innerHTML === 'No contacts found...') {
+            if (this.contactList.innerHTML === `${getString('contactMenuComponent/noContacts')}`) {
                 this.contactList.innerHTML = '';
                 this.contactList.classList.remove('no-contacts');
             }
@@ -247,7 +248,7 @@ class FriendsMenuComponent extends HTMLElement {
             let displayedUsername = this.getCurrentDisplayedContactUsername();
             if (displayedUsername.length === 0) {
                 this.contactList.innerHTML = '';
-                this.contactList.innerHTML = `No contacts found...`;
+                this.contactList.innerHTML = `${getString('contactMenuComponent/noContacts')}`;
                 this.contactList.classList.add('no-contacts');
             }
         }

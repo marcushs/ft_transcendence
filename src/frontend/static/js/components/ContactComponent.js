@@ -2,6 +2,7 @@ import { sendRequest } from "../utils/sendRequest.js";
 import getProfileImage from "../utils/getProfileImage.js";
 import './Friendship/FriendshipButtonComponent.js';
 import userProfile from "../views/user-profile.js";
+import { getString } from "../utils/languageManagement.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 
 class ContactComponent extends HTMLElement {
@@ -41,9 +42,17 @@ class ContactComponent extends HTMLElement {
             </div>
             <div class="contact-menu-info">
                 <p class='contact-username'>${this.userData.username}</p>
-                <p class='contact-status'>${this.userData.status}</p>
+                <p class='contact-status'></p>
             </div>
         `;
+        const status = this.querySelector('.contact-status');
+        
+        if (this.userData.status === 'online')
+            status.textContent = getString('contactComponent/onlineStatus');
+        else if (this.userData.status === 'away')
+            status.textContent = getString('contactComponent/awayStatus');
+        else if (this.userData.status === 'offline')
+            status.textContent = getString('contactComponent/offlineStatus');
         this.setContactActionHTML();
         this.setContactStatusCircleHTML();
     }
@@ -68,13 +77,13 @@ class ContactComponent extends HTMLElement {
                     <i class="fa-solid fa-caret-up"></i>
                     <div class='contact-action-list'>
                         <ul>
-                            <li class='contact-action-send-message'>Send Message</li>
+                            <li class='contact-action-send-message'>${getString('contactComponent/sendMessageAction')}</li>
                             <hr>
-                            <li class='contact-action-invite-play'>Invite to play</li>
+                            <li class='contact-action-invite-play'>${getString('contactComponent/inviteToPlayAction')}</li>
                             <hr>
-                            <li class='contact-action-remove-contact'>Remove contact</li>
+                            <li class='contact-action-remove-contact'>${getString('contactComponent/removeContactsAction')}</li>
                             <hr>
-                            <li class='contact-action-see-profile'>See profile</li>
+                            <li class='contact-action-see-profile'>${getString('contactComponent/seeProfileAction')}</li>
                         </ul>
                     </div>
                 </div>
@@ -153,10 +162,10 @@ class ContactComponent extends HTMLElement {
             action.addEventListener('click', () => {
                 switch (action.classList[0]) {
                     case 'contact-action-send-message':
-                        console.log(`Send message to contact \'${this.userData.username}\' successfully reached`);
+                        console.log(`TEST: Send message to contact \'${this.userData.username}\' successfully reached`);
                         break;
                     case 'contact-action-invite-play':
-                        console.log(`Invite contact \'${this.userData.username}\' to play successfully reached`);
+                        console.log(`TEST: Invite contact \'${this.userData.username}\' to play successfully reached`);
                         break;
                     case 'contact-action-remove-contact':
                         this.handleRequestIconClick('remove');
