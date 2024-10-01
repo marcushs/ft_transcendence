@@ -25,9 +25,11 @@ class ChangeUserInfosView(View):
             return JsonResponse({'error': 'User not found'}, status=201) 
 
         try:
-            self.check_update_error(User, request)
+            await self.check_update_error(User, request)
+        except ValueError as e:
+            return JsonResponse({'message': str(e)}, status=400)
         except ValidationError as e:
-            return JsonResponse(e.message_dict, status=409)
+            return JsonResponse({'message': e.message_dict['error']}, status=409)
 
         username = request.POST.get('username')
         
@@ -44,8 +46,6 @@ class ChangeUserInfosView(View):
         return JsonResponse(response, status=201)
         
 
-
-
     async def check_update_error(self, User, request):
         new_username = request.POST.get('username')
         new_email = request.POST.get('email')
@@ -53,9 +53,9 @@ class ChangeUserInfosView(View):
         new_profile_image_link = request.POST.get('profile_image_link')
 
         if new_username is not None:
-            self.check_username_errors(User, new_username, request)
+            await self.check_username_errors(User, new_username, request)
         if new_email is not None:
-            self.check_email_errors(User, new_email, request)
+            await self.check_email_errors(User, new_email, request)
         if new_profile_image is not None:
             self.check_profile_image_errors(new_profile_image)
         elif new_profile_image_link is not None:
@@ -65,26 +65,25 @@ class ChangeUserInfosView(View):
     async def check_username_errors(self, User, new_username, request):
         error = {}
 
-        if sync_to_async(lambda: User.objects.filter(username=new_username).exists()) and new_username != request.user.username:
-            error['username_error'] = f"Username '{new_username}' already exists"
+        if await sync_to_async(lambda: User.objects.filter(username=new_username).exists())() and new_username != request.user.username:
+            error['error'] = f"Username '{new_username}' already exists"
             raise ValidationError(error)
         if len(new_username) > 12:
-            error['username_error'] = f"Username must be less than 12 characters"
+            error['error'] = f"Username must be less than 12 characters"
             raise ValidationError(error)
         if re.search(r"^[a-zA-Z0-9_-]+$", new_username) is None:
-            error['username_error'] = f"Username must container only letters, numbers, _ , -"
+            error['error'] = f"Username must container only letters, numbers, _ , -"
             raise ValidationError(error)
 
 
     async def check_email_errors(self, User, new_email, request):
         error = {}
 
-        if sync_to_async(lambda: User.objects.filter(email=new_email).exists())() and new_email != request.user.email:
-            error['email_error'] = f'Email {new_email} is already associated with an account'
+        if await sync_to_async(lambda: User.objects.filter(email=new_email).exists())() and new_email != request.user.email:
+            error['error'] = f'Email {new_email} is already associated with an account'
             raise ValidationError(error)
-        if re.search(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", new_email) is None:
-            error['email_error'] = f'Invalid email format'
-            raise ValidationError(error)
+        if re.search(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', new_email) is None:
+            raise ValueError('Invalid email format')
 
 
     def check_profile_image_errors(self, new_profile_image):
@@ -94,7 +93,7 @@ class ChangeUserInfosView(View):
 
         valid_mime_type = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp']
         if myme_type not in valid_mime_type:
-            error['profile-image_error'] = f'Invalid profile image format, valid formats are: (png, jpg, jpeg, gif, svg, webp)'
+            error['error'] = f'Invalid profile image format, valid formats are: (png, jpg, jpeg, gif, svg, webp)'
             raise ValidationError(error)
 
 

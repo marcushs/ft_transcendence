@@ -159,9 +159,9 @@ class ChooseLanguageComponent extends HTMLElement {
 		const notificationsMenu = document.querySelector('.notifications-container-background');
 		const accountInfosMenu = document.querySelector('.account-menu-background');
 
-		if (getComputedStyle(notificationsMenu).display !== 'none')
+		if (notificationsMenu && getComputedStyle(notificationsMenu).display !== 'none')
 			this.throwCloseNotificationsContainerEvent();
-		if (getComputedStyle(accountInfosMenu).display !== 'none')
+		if (accountInfosMenu && getComputedStyle(accountInfosMenu).display !== 'none')
 			this.throwCloseAccountInfosComponentEvent();
 	}
 
@@ -200,11 +200,13 @@ class ChooseLanguageComponent extends HTMLElement {
 	// Animations
 
 	openListAnimation(list, chosenLanguageCaret) {
+		const notificationComponent = document.querySelector('notification-component');
 		this.style.zIndex = '3';
 		this.isOpen = true;
 
 		chosenLanguageCaret.style.animation = 'animate-caret-up 0.3s ease forwards';
-		document.querySelector('notification-component').style.zIndex = '2';
+		if (notificationComponent)
+			notificationComponent.style.zIndex = '2';
 
 		list.style.display = 'block';
 		list.style.animation = 'animate-list-open 0.3s ease forwards';

@@ -1,6 +1,7 @@
 import {sendRequest} from "../../utils/sendRequest.js";
 import {sendNotification} from "../../utils/sendNotification.js";
 import {convertDateFormat} from "../../utils/convertDateFormat.js";
+import {getString} from "../../utils/languageManagement.js";
 
 class PendingContactRequestNotificationComponent extends HTMLElement {
 	constructor() {
@@ -15,7 +16,7 @@ class PendingContactRequestNotificationComponent extends HTMLElement {
 
 		this.innerHTML = `
 			<li>			
-				<p>You have a new friend request from <span>${this.notificationObj.sender}</span></p>
+				<p>${getString('notificationsComponent/pendingNotificationPrefix')} <span>${this.notificationObj.sender}</span></p>
 				<i class="fa-solid fa-check"></i>
 				<i class="fa-solid fa-xmark"></i>
 				<p class="notification-date">${convertDateFormat(this.notificationCreateAt)}</p>

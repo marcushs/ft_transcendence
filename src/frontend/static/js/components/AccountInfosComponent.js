@@ -1,4 +1,5 @@
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
+import {getString} from "../utils/languageManagement.js";
 
 class AccountInfosComponent extends HTMLElement {
 	constructor() {
@@ -20,10 +21,10 @@ class AccountInfosComponent extends HTMLElement {
 			<div class="account-menu-background">			
 		         <ul>
 	                <li>
-	                    <p>Profile</p>
+	                    <p>${getString('accountInfosComponent/profile')}</p>
 	                </li>
 	                <li>
-	                    <p>Logout</p>
+	                    <p>${getString('accountInfosComponent/logout')}</p>
 	                </li>
 	            </ul>
 			</div>

@@ -19,7 +19,8 @@ clean: down
 fclean: clean
 	docker system prune -a -f --volumes
 
-re: 
+re:
+	rm -rf **/migrations/*
 	${MAKE} fclean
 	${MAKE}
 

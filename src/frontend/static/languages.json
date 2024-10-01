@@ -110,6 +110,14 @@
 	  "personalInformation": "Personal information",
 	  "security": "Security",
 	  "statistics": "Statistics"
+	},
+	"notificationsComponent": {
+	  "acceptedNotificationSuffix": "has accepted your friend request",
+	  "pendingNotificationPrefix": "You have a new friend request from"
+	},
+	"accountInfosComponent" : {
+	  "profile": "Profile",
+	  "logout": "Logout"
 	}
   },
 
@@ -223,8 +231,26 @@
 	  "personalInformation": "Informations personnelles",
 	  "security": "Sécurité",
 	  "statistics": "Statistiques"
+	},
+	"notificationsComponent": {
+	  "acceptedNotificationSuffix": "a accepté votre demande d'ami",
+	  "pendingNotificationPrefix": "Vous avez une nouvelle demande d'ami de"
+	},
+	"accountInfosComponent" : {
+	  "profile": "Profil",
+	  "logout": "Déconnexion"
 	}
   },
+
+
+
+
+
+
+
+
+
+
 
   "zh": {
 	"loginView": {

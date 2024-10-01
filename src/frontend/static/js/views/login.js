@@ -8,7 +8,6 @@ import {TwoFactorVerify} from './two-factor-verify.js';
 import {getString, loadLanguagesJson} from '../utils/languageManagement.js';
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {sendRequest} from "../utils/sendRequest.js";
-import { loadWebSocket } from "./websocket/loadWebSocket.js";
 
 export default () => {
 	const html = `

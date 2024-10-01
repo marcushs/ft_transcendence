@@ -1,4 +1,5 @@
 import {convertDateFormat} from "../../utils/convertDateFormat.js";
+import {getString} from "../../utils/languageManagement.js";
 
 class AcceptedContactRequestNotificationComponent extends HTMLElement {
 	constructor() {
@@ -12,8 +13,8 @@ class AcceptedContactRequestNotificationComponent extends HTMLElement {
 		this.notificationCreateAt = new Date(this.notificationObj.created_at);
 
 		this.innerHTML = `
-			<li>			
-				<p><span>${this.notificationObj.sender}</span> has accepted your friend request</p>
+			<li>
+				<p><span>${this.notificationObj.sender}</span> ${getString('notificationsComponent/acceptedNotificationSuffix')}</p>
 				<p class="notification-date">${convertDateFormat(this.notificationCreateAt)}</p>
 				<hr>
 			</li>

@@ -255,7 +255,7 @@ class UserInfosComponent extends HTMLElement {
 	}
 
 	isValidEmail(email) {
-		return email !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+		return email !== '' && /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 	}
 
 	isValidImageUploaded(imageFile) {
@@ -400,6 +400,6 @@ async function postNewUserInfos(newUserInfos) {
 		localStorage.setItem('userUpdateResponse', JSON.stringify(data));
 		throwRedirectionEvent('/profile');
 	} catch (error) {
-		console.error(error);
+		document.querySelector('.error-feedback').innerHTML = error.message;
 	}
 }
