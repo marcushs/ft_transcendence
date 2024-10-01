@@ -79,8 +79,8 @@ user-infos-component button-component {
 
 user-infos-component #genericErrorFeedback {
 	position: absolute;
-	top: 85%;
-	font-size: 1.5rem;
+	top: 90%;
+	font-size: 1.8rem;
 	color: red;
 }
 

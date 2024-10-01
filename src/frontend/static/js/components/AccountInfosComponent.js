@@ -93,6 +93,7 @@ class AccountInfosComponent extends HTMLElement {
 	closeMenu() {
 		const menu = this.querySelector('.account-menu-background');
 
+		this.style.zIndex = '2';
 		menu.style.animation = 'decreaseAccountMenuHeight 0.3s ease forwards';
 		menu.querySelectorAll('p').forEach((elem) => {
 			elem.style.animation = 'reduceTextOpacity 0.1s ease forwards';
@@ -103,6 +104,7 @@ class AccountInfosComponent extends HTMLElement {
 	openMenu() {
 		const menu = this.querySelector('.account-menu-background');
 
+		this.style.zIndex = '3';
 		menu.style.display = 'block';
 		menu.querySelectorAll('p').forEach((elem) => {
 			elem.style.animation = 'augmentTextOpacity 0.35s ease forwards';

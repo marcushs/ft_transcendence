@@ -136,7 +136,7 @@ class ChooseLanguageComponent extends HTMLElement {
 			localStorage.setItem('userLanguage', event.target.id);
 			await setUserLanguageInDb(event.target.id);
 			await loadLanguagesJson();
-			throwRedirectionEvent('/');
+			throwRedirectionEvent(`${localStorage.getItem('lastAuthorizedPage')}`);
 		}
 	}
 
