@@ -5,6 +5,7 @@
 
 nav-bar-component {
     height: 8vh;
+    position: relative;
     z-index: 3;
 }
 
