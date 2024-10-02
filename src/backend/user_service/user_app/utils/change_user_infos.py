@@ -111,10 +111,10 @@ class ChangeUserInfosView(View):
         old_username = request.user.username
         request.user.username = request.POST.get('username')
         payload = {'username': request.user.username}
-        await send_request(request_type='POST', request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
-        await send_request(request_type='POST', request=request, url='http://auth:8000/auth/update_user/', payload=payload)
-        await send_request(request_type='POST', request=request, url='http://notifications:8000/notifications/update_user/', payload=payload)
-        await send_request(request_type='POST', request=request, url='http://friends:8000/friends/update_user/', payload=payload)
+        await send_request(request_type='POST', request=request, url='http://twofactor:8000/api/twofactor/update_user/', payload=payload)
+        await send_request(request_type='POST', request=request, url='http://auth:8000/api/auth/update_user/', payload=payload)
+        await send_request(request_type='POST', request=request, url='http://notifications:8000/api/notifications/update_user/', payload=payload)
+        await send_request(request_type='POST', request=request, url='http://friends:8000/api/friends/update_user/', payload=payload)
         await sync_to_async(request.user.save)()
         await notify_user_info_display_change(request=request, change_info='username', old_value=old_username)
 
@@ -125,8 +125,8 @@ class ChangeUserInfosView(View):
         payload = {'email': request.user.email}
         
         try:
-            await send_request(request_type='POST',request=request, url='http://twofactor:8000/twofactor/update_user/', payload=payload)
-            await send_request(request_type='POST',request=request, url='http://auth:8000/auth/update_user/', payload=payload)
+            await send_request(request_type='POST',request=request, url='http://twofactor:8000/api/twofactor/update_user/', payload=payload)
+            await send_request(request_type='POST',request=request, url='http://auth:8000/api/auth/update_user/', payload=payload)
         except Exception:
             pass
         await sync_to_async(request.user.save)() 

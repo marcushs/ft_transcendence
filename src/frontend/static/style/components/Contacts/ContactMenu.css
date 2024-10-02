@@ -3,6 +3,7 @@
 @import './ContactList.css';
 @import './ContactComponent.css';
 @import './BottomNavContact.css';
+@import './ContactMenuSearchBar.css';
 
 contact-menu-component {
     position: absolute;
@@ -12,7 +13,7 @@ contact-menu-component {
     width: 100%;
 }
 
-.full-border {
+/* .full-border {
     border: 1px solid var(--light-grey);
     border-radius: 10px;
 }
@@ -23,17 +24,39 @@ contact-menu-component {
     border-bottom: 1px solid var(--light-grey);
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
-}
+} */
 
 .contact-menu {
     z-index: 3;
     position: absolute;
-    height: 46.8rem;
+    height: 48rem;
     width: 30rem;
-    right: 0;
+    right: 1rem;
     bottom: 5.4rem;
-    background-color: var(--background-color);
+    background-color: var(--contact-background-color);
+    border: 1px solid var(--light-grey);
+    border-radius: 10px;
+    overflow-x: hidden;
+    padding-top: 0.8rem;
     /*background-color: var(--component-background-color);*/
+}
+
+.contact-menu i {
+    font-size: 3rem;
+}
+
+#close-btn {
+    transform: translateX(1150%);
+    cursor: pointer;
+}
+
+#close-btn:hover {
+    transform: translateX(1150%) scale(1.1);
+    opacity: 0.8;
+}
+
+#close-btn:active {
+    transform: translateX(1150%) scale(0.98);
 }
 
 /*.contact-menu {*/

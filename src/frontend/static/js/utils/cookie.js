@@ -24,7 +24,7 @@ export async function generateCsrfToken() {
                 },
                 credentials: 'include' // Needed for send cookie
             };
-            const res = await fetch(`http://localhost:8000/user/csrf/`, config);
+            const res = await fetch(`/api/user/csrf/`, config);
             if (res.status == 403)
                 throw new Error('Access Denied')
             const data = await res.json();

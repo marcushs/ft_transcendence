@@ -41,7 +41,7 @@ class SearchBarComponent extends HTMLDivElement {
     }
 
     async getUsersList(value) {
-        const url = `http://localhost:8000/user/search_users/?q=${encodeURIComponent(this.searchInput.value)}`
+        const url = `/api/user/search_users/?q=${encodeURIComponent(this.searchInput.value)}`
         try {
             const data = await sendRequest('GET', url, null);
             if (data.status === 'success') {

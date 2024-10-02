@@ -1,7 +1,7 @@
 import {sendRequest} from "./sendRequest.js";
 
 export async function sendNotification(receiver, type){
-    const url = 'http://localhost:8004/notifications/manage_notifications/';
+    const url = '/api/notifications/manage_notifications/';
     const payload = {
         receiver: receiver,
         type: type

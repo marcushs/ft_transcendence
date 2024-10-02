@@ -41,7 +41,7 @@ function attachEvent() {
 
     yesBtn.addEventListener('click', async () => {
         try {
-            const data = await sendRequest('POST', 'http://localhost:8001/auth/logout/', null);
+            const data = await sendRequest('POST', '/api/auth/logout/', null);
             throwRedirectionEvent('/');
         } catch (error) {
             console.log(`${error}`);

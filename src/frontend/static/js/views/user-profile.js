@@ -4,6 +4,7 @@ import { sendRequest } from '../utils/sendRequest.js';
 import '../components/Friendship/FriendshipButtonComponent.js';
 import "../components/NavBarComponent.js";
 import { throwRedirectionEvent } from '../utils/throwRedirectionEvent.js';
+import "../components/Chat/ChatComponent.js";
 
 export default () => {
     const html = `
@@ -22,6 +23,7 @@ export default () => {
                 </div>
             </div>
 			<contact-menu-component></contact-menu-component>
+            <chat-component></chat-component>
         </section>
     `;
 
@@ -55,7 +57,7 @@ async function getInformation() {
     const targetUsername = localStorage.getItem('users-profile-target-username');
     if (targetUsername === null)
         return null;
-    const url = `http://localhost:8000/user/get_user/?q=${targetUsername}`;
+    const url = `/api/user/get_user/?q=${targetUsername}`;
     
     try {
         const data = await sendRequest('GET', url, null);
@@ -72,7 +74,7 @@ async function getInformation() {
 
 async function checkFriendshipStatus() {
     const targetUsername = localStorage.getItem('users-profile-target-username');
-    const url = `http://localhost:8003/friends/friendship_status/?q=${targetUsername}`
+    const url = `/api/friends/friendship_status/?q=${targetUsername}`
 
     try {
         const data = await sendRequest('GET', url, null);

@@ -1,0 +1,28 @@
+.chat-main-menu {
+	position: absolute;
+	height: 55rem;
+	width: 45rem;
+	right: 0;
+	bottom: 5.4rem;
+	background-color: var(--contact-background-color);
+	border: 1px solid var(--light-grey);
+	border-radius: 10px;
+	overflow-x: hidden;
+	padding-top: 1.5rem;
+}
+
+.chat-main-menu #chat-close-btn {
+	transform: translateX(1800%);
+    cursor: pointer;
+	font-size: 3rem;
+	opacity: 0.7;
+}
+
+.chat-main-menu #chat-close-btn:hover {
+	opacity: 1;
+	transform: translateX(1800%) scale(1.1);
+}
+
+.chat-main-menu #chat-close-btn:active {
+	transform: translateX(1800%) scale(0.98)
+}

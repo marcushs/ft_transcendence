@@ -13,9 +13,10 @@ class login_view(View):
     def __init__(self):
         super().__init__
     
-    
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
+        if 'logged_in_with_oauth' in data and data['logged_in_with_oauth'] is True:
+            return self._oauth_login(request, data)
         if 'twofactor' in data:
             return self._send_twofactor_request(data=data, csrf_token=request.headers.get('X-CSRFToken'), request=request)
         response = self._check_data(request=request, data=data)
@@ -33,6 +34,19 @@ class login_view(View):
             response = JsonResponse({'message': 'This username does not exist, please try again'}, status=400)
         return response
     
+    def _oauth_login(self, request, data):
+        if 'twofactor' in data:
+            return self._send_twofactor_request(data=data, csrf_token=request.headers.get('X-CSRFToken'))
+        if request.COOKIES.get('jwt'):
+            return JsonResponse({'message': 'You are already logged in'}, status=400)
+        try:
+            user = User.objects.get(username=data['username']) 
+            if user.is_verified is True:
+                return JsonResponse({'message': '2FA activated on this account, need to verify before log', 'is_verified': user.is_verified}, status=200)
+            response = self._create_user_session(user=user)
+        except User.DoesNotExist:
+            response = JsonResponse({'message': 'Invalid username, please try again'}, status=400)
+        return response
     
     def _check_data(self, request, data):
         if not data['username']:
@@ -58,7 +72,7 @@ class login_view(View):
             'last_active': '',
         }
         try:
-            send_request_with_token(request_type='POST', request=request, url='http://user:8000/user/update_user/', jwt_token=token, jwt_refresh_token=refresh_token, payload=payload)
+            send_request_with_token(request_type='POST', request=request, url='http://user:8000/api/user/update_user/', jwt_token=token, jwt_refresh_token=refresh_token, payload=payload)
             return response 
         except Exception as e:
             print(e)
@@ -68,7 +82,7 @@ class login_view(View):
     def _send_twofactor_request(self, data, csrf_token, request):   
         try:
             user = User.objects.get(username=data['username'])
-            response = send_request_without_token(request_type='POST', url='http://twofactor:8000/twofactor/twofactor_login/', payload=data, csrf_token=csrf_token)
+            response = send_request_without_token(request_type='POST', url='http://twofactor:8000/api/twofactor/twofactor_login/', payload=data, csrf_token=csrf_token)
             if response.status_code != 200:
                 return response
             return self._create_user_session(user=user, request=request)

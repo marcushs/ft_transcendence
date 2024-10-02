@@ -188,7 +188,7 @@ class ContactComponent extends HTMLElement {
             target_username: this.userData.username,
         };
         try {
-            await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
+            await sendRequest('POST', '/api/friends/manage_friendship/', payload);
         } catch (error) {
             console.error('catch: ', error);
         }

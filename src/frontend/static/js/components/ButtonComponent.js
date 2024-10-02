@@ -2,7 +2,7 @@ import {getString} from "../utils/languageManagement.js";
 
 class ButtonComponent extends HTMLElement {
 	static get observedAttributes() {
-		return ['disabled', 'label', 'class', 'href'];
+		return ['disabled', 'label', 'class', 'href', 'icon'];
 	}
 
 	constructor() {
@@ -10,16 +10,36 @@ class ButtonComponent extends HTMLElement {
 
 		this.label = null;
 		this.class = null;
+		this.icon = null;
 	}
 
 	connectedCallback() {
-		this.innerHTML = `
+		this.icon = this.getAttribute('icon');
+
+		// oauth button with 42 icon
+		if (this.icon) {
+			this.innerHTML = `
 			<div class="button-background">
-				<button>${getString('buttonComponent/' + this.getAttribute('label')) || this.getAttribute('label')}</button>
+				<button>
+					${this.getAttribute('label')}
+					<img src="../../assets/${this.icon}.png" class="${this.icon} ">
+				</button>
 			</div>
-		`;
+			`;
+		} else {
+			this.innerHTML = `
+				<button>${getString('buttonComponent/' + this.getAttribute('label')) || this.getAttribute('label')}
+				</button>
+			`;
+		}
 
 		this.button = this.querySelector('button');
+		if (this.icon) {
+			this.style.width = '40%';
+			this.button.style.display = 'flex';
+			this.button.style.alignItems = 'center';
+			this.button.style.justifyContent = 'center';
+		}
 		this.button.label = this.label;
 		this.button.className = this.class;
 	}

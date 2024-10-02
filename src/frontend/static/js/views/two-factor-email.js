@@ -53,7 +53,7 @@ export default () => {
 }
 
 async function enableTwoFactorRequest() {
-	const url = `http://localhost:8002/twofactor/enable/`;
+	const url = `/api/twofactor/enable/`;
 
 	try {
 		await sendRequest('POST', url, { method: 'email' });
@@ -63,7 +63,7 @@ async function enableTwoFactorRequest() {
 }
 
 async function VerifyTwoFactorRequest(verificationCode) {
-	const url = `http://localhost:8002/twofactor/enable/`;
+	const url = `/api/twofactor/enable/`;
 
 	try {
 		const data = await sendRequest('POST', url, { twofactor: verificationCode, method: 'email' });

@@ -2,8 +2,9 @@ import os
 
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
+import uuid
 
-def user_directory_path(instance, filename):
+def user_directory_path(instance, filename):# uu
     return f'profile_images/{instance.id}/{filename}'
 
 class UserManager(BaseUserManager):
@@ -19,13 +20,23 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+    
+    def create_oauth_user(self, data):
+        id = data['user_id']
+        email = data['email']
+        username = data['username']
+        user = self.model(id=id, email=email, username=username, logged_in_with_oauth=True)
+        user.save(using=self._db)
+        return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=12, unique=True, default='default')
     email = models.EmailField(unique=True)
     is_verified = models.BooleanField(default=False)
     two_factor_method = models.CharField(max_length=20,  choices=[('email', 'Email'), ('authenticator', 'Authenticator App')], blank=True)
+    logged_in_with_oauth = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -38,8 +49,11 @@ class User(AbstractBaseUser, PermissionsMixin):
   
     def to_dict(self):
         return {
+            'user_id': self.id,
             'username': self.username,
             'email': self.email,
             'is_verified': self.is_verified,
-            'two_factor_method': self.two_factor_method
+            'two_factor_method': self.two_factor_method,
+            'logged_in_with_oauth': self.logged_in_with_oauth
         }
+ 

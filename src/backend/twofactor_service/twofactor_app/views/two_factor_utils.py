@@ -14,8 +14,8 @@ def send_update_request(request):
     }
     
     try:
-        response = send_request(request_type='POST', request=request, url='http://user:8000/user/update_user/', payload=payload)
-        response = send_request(request_type='POST', request=request, url='http://auth:8000/auth/update_user/', payload=payload)
+        response = send_request(request_type='POST', request=request, url='http://user:8000/api/user/update_user/', payload=payload)
+        response = send_request(request_type='POST', request=request, url='http://auth:8000/api/auth/update_user/', payload=payload)
         return response
     except Exception:
         pass

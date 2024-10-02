@@ -88,12 +88,12 @@ class PendingContactRequestNotificationComponent extends HTMLElement {
         };
 
         try {
-            const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
+            const data = await sendRequest('POST', '/api/friends/manage_friendship/', payload);
             if (data.status === 'success') {
                 if (action === 'accept')
                     sendNotification(this.notificationObj.sender, 'friend-request-accepted');
 
-				await sendRequest('DELETE', 'http://localhost:8004/notifications/manage_notifications/', { uuid: this.notificationObj.uuid.replace('notif-', '') });
+				await sendRequest('DELETE', '/api/notifications/manage_notifications/', { uuid: this.notificationObj.uuid.replace('notif-', '') });
 				this.throwDeleteNotificationEvent();
 				this.throwCloseNotificationsContainerEvent();
 				this.remove();

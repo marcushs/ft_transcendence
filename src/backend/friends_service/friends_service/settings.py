@@ -48,7 +48,7 @@ REFRESH_TOKEN_LIFETIME = 86400 # 1 day
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True 
 
-ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'friends']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
  
@@ -129,13 +129,13 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
+    'https://localhost:3000',
 	'http://frontend',
 	'http://friends'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-	'http://localhost:3000',
+	'https://localhost:3000',
 	'http://frontend',
 	'http://friends'
 ]

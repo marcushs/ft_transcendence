@@ -8,6 +8,7 @@ import {TwoFactorVerify} from './two-factor-verify.js';
 import {getString, loadLanguagesJson} from '../utils/languageManagement.js';
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {sendRequest} from "../utils/sendRequest.js";
+import { redirectToOauth } from "../utils/oauthUtils.js";
 
 export default () => {
 	const html = `
@@ -24,6 +25,13 @@ export default () => {
 						<i class="fa-solid fa-eye" id="password-eye"></i>
 						<a href="/change-password" id="forgotten-password">${getString('loginView/forgottenPassword')}</a>
 					</div>
+					<button-component id="loginBtn" label="Login" class="generic-auth-btn-disabled"></button-component>
+					<button-component id="oauth42LoginBtn" label="Login with " class="generic-auth-btn" icon="logo_42">
+					</button-component>
+					<button-component id="oauthGoogleLoginBtn" label="Login with " class="generic-auth-btn" icon="logo_google">
+					</button-component>
+					<button-component id="oauthGithubLoginBtn" label="Login with " class="generic-auth-btn" icon="logo_github">
+					</button-component>
 					<button-component id="loginBtn" label="login" class="generic-auth-btn-disabled"></button-component>
 					<p>${getString('loginView/noAccountSentence')} <a href="/signup">${getString('loginView/signup')}</a></p>
 					<span id="feedbackElement" class="input-feedback"></span>
@@ -33,12 +41,19 @@ export default () => {
 
 	setTimeout(() => {
 		const loginBtn = document.querySelector('#loginBtn');
+		const oauth42LoginBtn = document.getElementById('oauth42LoginBtn');
+		const oauthGoogleLoginBtn = document.getElementById('oauthGoogleLoginBtn');
+		const oauthGithubLoginBtn = document.getElementById('oauthGithubLoginBtn');
 
 		loginBtn.addEventListener('click', event => {
 			event.preventDefault();
 			if (loginBtn.className === 'generic-auth-btn')
 				postData(event, loginBtn);
 		});
+
+		oauth42LoginBtn.addEventListener('click', () => redirectToOauth("oauth_42"));
+		oauthGoogleLoginBtn.addEventListener('click', () => redirectToOauth("oauth_google"));
+		oauthGithubLoginBtn.addEventListener('click', () => redirectToOauth("oauth_github"));
 
 		document.addEventListener('input', event => {
 			if (event.target.className === 'login-input')
@@ -80,7 +95,7 @@ async function postData(event, loginBtn) {
 	const form = loginBtn.closest('form');
 	const formData = new FormData(form);
 	const formValues = Object.fromEntries(formData.entries());
-	const url = `http://localhost:8001/auth/login/`;
+	const url = `/api/auth/login/`;
 
 	try {
 		const data = await sendRequest('POST', url, formValues);

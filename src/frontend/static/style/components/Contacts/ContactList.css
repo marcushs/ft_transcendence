@@ -5,6 +5,8 @@
     margin-top: 1rem;
     height: calc(5 * 7rem + 2 * 2.5rem);
     overflow-y: auto;
+    border-top: 1px solid var(--neon-blue);
+    padding-top: 1rem;
     /* scrollbar-gutter: stable; */
 }
 
@@ -17,10 +19,10 @@
 
  .contact-list-menu p:not(ul p) {
     margin-left: 0.5rem;
+    margin-bottom: 0.5rem;
     font-size: 1.7rem;
     font-weight: bold;
     cursor: pointer;
-    margin-bottom: 0.5rem;
 }
 
  /* ------------>>> contact list display section <<<------------*/

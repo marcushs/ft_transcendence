@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # /-----> Django key <-----\
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("AUTH_SECRET_KEY")
+SECRET_KEY = env("TWOFACTOR_SECRET_KEY")
 
 # /-----> JWT keys && algorithm <-----\
 
@@ -55,7 +55,7 @@ EMAIL_HOST_PASSWORD = 'mlxe bkoa gjue tigk'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'twofactor']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -131,15 +131,17 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
+    'https://localhost:3000',
 	'http://frontend',
-	'http://twofactor'
+	'http://twofactor',
+	'https://192.168.1.37:3000',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-	'http://localhost:3000',
+	'https://localhost:3000',
 	'http://frontend',
-	'http://twofactor'
+	'http://twofactor',
+	'https://192.168.1.37:3000',
 ]
 
 # Database

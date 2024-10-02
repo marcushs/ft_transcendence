@@ -11,7 +11,17 @@ services:
       - ./frontend/static:/var/www/static
       - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - "3000:80"
+      - "3000:443"
+    depends_on:
+      - auth
+      - user
+      - chat
+      - friends
+      - notifications
+      - twofactor
+      - oauth_42
+      - oauth_github
+      - oauth_google
     networks:
       - transcendence-network
 
@@ -273,6 +283,211 @@ services:
       retries: 5
 
 
+  # -----> OAUTH_42 <----- #
+
+  # Service
+  oauth_42:
+    container_name: oauth_42
+    restart: always
+    build:
+      context: ./backend/oauth_42_service
+      dockerfile: docker/Dockerfile
+    image: oauth_42
+    env_file:
+      - ./backend/.env
+    command: >
+      sh -c "
+          python3 manage.py makemigrations &&
+          python3 manage.py migrate &&
+          python3 manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./backend/oauth_42_service:/app
+    ports:
+      - "8005:8000"
+    depends_on:
+      oauth_42_db:
+        condition: service_healthy
+    networks:
+      - transcendence-network
+
+  # DB
+  oauth_42_db:
+    container_name: oauth_42_db
+    image: postgres
+    restart: always
+    env_file: ./backend/.env
+    environment:
+      - POSTGRES_USER=${OAUTH_42_DB_USER}
+      - POSTGRES_DB=${OAUTH_42_DB_NAME}
+      - POSTGRES_PASSWORD=${OAUTH_42_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - oauth_42_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+     - "5436:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${OAUTH_42_DB_USER} -d ${OAUTH_42_DB_NAME}"]
+      interval: 4s
+      timeout: 3s
+      retries: 5
+
+  # -----> OAUTH_GOOGLE <----- #
+
+  # Service
+  oauth_google:
+    container_name: oauth_google
+    restart: always
+    build:
+      context: ./backend/oauth_google_service
+      dockerfile: docker/Dockerfile
+    image: oauth_google
+    env_file:
+      - ./backend/.env
+    command: >
+      sh -c "
+          python3 manage.py makemigrations &&
+          python3 manage.py migrate &&
+          python3 manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./backend/oauth_google_service:/app
+    ports:
+      - "8006:8000"
+    depends_on:
+      oauth_google_db:
+        condition: service_healthy
+    networks:
+      - transcendence-network
+
+  # DB
+  oauth_google_db:
+    container_name: oauth_google_db
+    image: postgres
+    restart: always
+    env_file: ./backend/.env
+    environment:
+      - POSTGRES_USER=${OAUTH_GOOGLE_DB_USER}
+      - POSTGRES_DB=${OAUTH_GOOGLE_DB_NAME}
+      - POSTGRES_PASSWORD=${OAUTH_GOOGLE_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - oauth_google_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+     - "5437:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${OAUTH_GOOGLE_DB_USER} -d ${OAUTH_GOOGLE_DB_NAME}"]
+      interval: 4s
+      timeout: 3s
+      retries: 5
+
+  # -----> OAUTH_GITHUB <----- #
+
+  # Service
+  oauth_github:
+    container_name: oauth_github
+    restart: always
+    build:
+      context: ./backend/oauth_github_service
+      dockerfile: docker/Dockerfile
+    image: oauth_github
+    env_file:
+      - ./backend/.env
+    command: >
+      sh -c "
+          python3 manage.py makemigrations &&
+          python3 manage.py migrate &&
+          python3 manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./backend/oauth_github_service:/app
+    ports:
+      - "8007:8000"
+    depends_on:
+      oauth_github_db:
+        condition: service_healthy
+    networks:
+      - transcendence-network
+
+  # DB
+  oauth_github_db:
+    container_name: oauth_github_db
+    image: postgres
+    restart: always
+    env_file: ./backend/.env
+    environment:
+      - POSTGRES_USER=${OAUTH_GITHUB_DB_USER}
+      - POSTGRES_DB=${OAUTH_GITHUB_DB_NAME}
+      - POSTGRES_PASSWORD=${OAUTH_GITHUB_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - oauth_github_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+     - "5438:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${OAUTH_GITHUB_DB_USER} -d ${OAUTH_GITHUB_DB_NAME}"]
+      interval: 4s
+      timeout: 3s
+      retries: 5
+
+  # -----> CHAT <----- #
+
+  # Service
+  chat:
+    container_name: chat
+    restart: always
+    build:
+      context: ./backend/chat_service
+      dockerfile: docker/Dockerfile
+    image: chat
+    env_file:
+      - ./backend/.env
+    command: >
+      sh -c "
+          python3 manage.py makemigrations &&
+          python3 manage.py migrate &&
+          python3 manage.py runserver 0.0.0.0:8000 &&
+          daphne chat.asgi:application
+      "
+    volumes:
+      - ./backend/chat_service:/app
+    ports:
+      - "8008:8000"
+    depends_on:
+      - chat_redis
+      - chat_db
+    networks:
+      - transcendence-network
+
+  # DB
+  chat_db:
+    container_name: chat_db
+    image: postgres
+    restart: always
+    env_file: ./backend/.env
+    environment:
+      - POSTGRES_USER=${CHAT_DB_USER}
+      - POSTGRES_DB=${CHAT_DB_NAME}
+      - POSTGRES_PASSWORD=${CHAT_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - chat_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+     - "5439:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${CHAT_DB_USER} -d ${CHAT_DB_NAME}"]
+      interval: 8s
+      timeout: 5s
+      retries: 5
+
   # ---------------> REDIS <---------------
 
   # Service
@@ -283,7 +498,19 @@ services:
     networks:
       - transcendence-network
     ports:
-      - "6380:6379"
+      - "6381:6379"
+
+  # --> CHANNEL LAYER REDIS <-- #
+
+  # Service
+  chat_redis:
+    container_name: chat_redis
+    image: redis
+    restart: always
+    ports:
+     - "6480:6379"
+    networks:
+    - transcendence-network
 
 
 volumes:
@@ -297,6 +524,14 @@ volumes:
     name: friends_data
   notifications_pgdata:
     name: notifications_data
+  oauth_42_pgdata:
+    name: oauth_42_data
+  oauth_google_pgdata:
+    name: oauth_google_data
+  oauth_github_pgdata:
+    name: oauth_github_data
+  chat_pgdata:
+    name: chat_data
 
 networks:
   transcendence-network:
