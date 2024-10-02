@@ -8,6 +8,6 @@ export async function isTwoFactorActivated() {
 
         return data.is_verified;
     } catch (error) {
-        console.error(error);
+        console.log('Error: ' + error.message);
     }
 }

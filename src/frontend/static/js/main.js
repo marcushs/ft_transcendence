@@ -14,25 +14,11 @@ import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
 import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
 import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
 import { PingStatus } from "./views/pingStatus.js";
-import {loadWebSocket} from "./utils/loadWebSocket.js";
+import { loadWebSocket } from "./views/websocket/loadWebSocket.js";
 
 let languageJson;
 
-new PingStatus();
-
-loadWebSocket();
-
 localStorage.setItem('lastAuthorizedPage', '/');
-
-(async () => {
-    if (await isTwoFactorActivated()) {
-        localStorage.setItem('isTwoFactorActivated', 'true');
-        localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
-    } else {
-        localStorage.setItem('isTwoFactorActivated', 'false');
-        localStorage.removeItem('twoFactorMethod');
-    }
-})();
 
 const routes = {
     "/": { title: "Home", render: home },
@@ -46,8 +32,33 @@ const routes = {
     "/two-factor-deactivation": { title: "TwoFactorDeactivate", render: twoFactorDeactivation },
 };
 
-// create the csrf token if it does not already exist
-generateCsrfToken();
+async function setUserRender() {
+    await generateCsrfToken();
+    const isUserConnected = await checkAuthentication();
+    
+    if (isUserConnected) {
+        console.log('User session');
+        await loadWebSocket();
+        await setTwoFactorUserData();
+        new PingStatus();
+    } else
+        console.log('Guest session');
+
+}
+
+setUserRender();
+
+// set twoFactor needed data
+async function setTwoFactorUserData() {
+    if (await isTwoFactorActivated()) {
+        localStorage.setItem('isTwoFactorActivated', 'true');
+        localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
+    } else {
+        localStorage.setItem('isTwoFactorActivated', 'false');
+        localStorage.removeItem('twoFactorMethod');
+    }
+}
+
 async function router() {
     if (!languageJson)
         languageJson = await loadLanguagesJson();
@@ -111,6 +122,10 @@ async function isViewAccessible(view) {
         localStorage.setItem('lastAuthorizedPage', location.pathname);
     return true;
 }
+
+// Handle user connection
+document.addEventListener("userLoggedIn", setUserRender)
+// document.addEventListener("userLoggedOut", setGuestRender)
 
 
 // Handle navigation

@@ -22,12 +22,12 @@ class Notification(models.Model):
         return {
             'sender': self.sender.username,
             'receiver': self.receiver.username,
-            'message': self.message,
             'type': self.type,
             'is_read': self.is_read,
-            'uuid': str(self.uuid),
+            'uuid': 'notif-' + str(self.uuid),
             'created_at': self.created_at.isoformat()
         }
+        
 
 class UserManager(BaseUserManager):
     def create_user(self, username, user_id):

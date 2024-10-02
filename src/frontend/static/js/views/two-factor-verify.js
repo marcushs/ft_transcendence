@@ -97,6 +97,8 @@ async function VerifyTwoFactorRequest(verificationCode, userCredentials) {
 
 		await loadLanguagesJson();
 		throwRedirectionEvent('/');
+		const event = new CustomEvent('userLoggedIn');
+		document.dispatchEvent(event);
 		setTwoFactorLocalStorage();
 	} catch (error) {
 		document.querySelector('.feedbackInformation').innerHTML = error.message;

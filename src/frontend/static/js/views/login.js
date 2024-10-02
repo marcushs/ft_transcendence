@@ -8,7 +8,6 @@ import {TwoFactorVerify} from './two-factor-verify.js';
 import {getString, loadLanguagesJson} from '../utils/languageManagement.js';
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {sendRequest} from "../utils/sendRequest.js";
-import {loadWebSocket} from "../utils/loadWebSocket.js";
 
 export default () => {
 	const html = `
@@ -18,10 +17,10 @@ export default () => {
 				<form>
 					<h1>${getString('loginView/loginTitle')}</h1>
 					<div class="form-fields">
-						<input type="text" placeholder="${getString('loginView/username')}" name="username" autofocus required>
+						<input class="login-input" type="text" placeholder="${getString('loginView/username')}" name="username" autofocus required>
 					</div>
 					<div class="form-fields">
-						<input type="password" placeholder="${getString('loginView/password')}" name="password" required>
+						<input class="login-input" type="password" placeholder="${getString('loginView/password')}" name="password" required>
 						<i class="fa-solid fa-eye" id="password-eye"></i>
 						<a href="/change-password" id="forgotten-password">${getString('loginView/forgottenPassword')}</a>
 					</div>
@@ -42,7 +41,8 @@ export default () => {
 		});
 
 		document.addEventListener('input', event => {
-			document.querySelector('#feedbackElement').innerHTML = '';
+			if (event.target.className === 'login-input')
+				document.querySelector('#feedbackElement').innerHTML = '';
 		});
 
 		displayFeedback();
@@ -89,8 +89,9 @@ async function postData(event, loginBtn) {
 			new TwoFactorVerify(formValues, data);
 		else {
 			await loadLanguagesJson();
+			const event = new CustomEvent('userLoggedIn');
+			document.dispatchEvent(event);
 			throwRedirectionEvent('/');
-			loadWebSocket();
 		}
 	} catch (error) {
 		localStorage.setItem('errorFeedback', error.message);

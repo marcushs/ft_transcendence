@@ -1,39 +1,64 @@
-from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
+from asgiref.sync import async_to_sync, sync_to_async
+from django.http import JsonResponse
 from django.utils import timezone
 from django.db.models import Q
 from django.views import View
 from ..models import User
+from django.contrib.auth import get_user_model
+import httpx
 import json
-import requests
+
+
+User = get_user_model()
+
+
+def get_user_id_by_username(username):
+    user = User.objects.get(username=username)
+    
+    return user.id
 
 class set_offline_user(View):
     def __init__(self):
         super().__init__   
 
-    def post(self, request):
+    async def post(self, request):
+        from .websocket_utils import notify_user_info_display_change
+        
+        
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'User not found'}, status=400)
-        if request.user.status == 'online' or request.user.status == 'away':
-            request.user.status = 'offline'
         request.user.last_active = timezone.now()
-        request.user.save()
+        if request.user.status == 'online' or request.user.status == 'away':
+            old_status = request.user.status
+            request.user.status = 'offline'
+            await sync_to_async(request.user.save)()
+            await notify_user_info_display_change(request=request, change_info='status', old_value=old_status)
+        else:
+            await sync_to_async(request.user.save)()
         return JsonResponse(status=200)
-
+ 
 class ping_status_user(View):
     def __init__(self):
         super().__init__   
 
-    def post(self, request):
+    async def post(self, request):
+        from .websocket_utils import notify_user_info_display_change
+        
+        
         if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'message': 'User not found'}, status=400)
-        if request.user.status == 'offline' or request.user.status == 'away':
-            request.user.status = 'online'
+            return JsonResponse({'status': 'fail', 'message': 'User not found'}, status=200)
         request.user.last_active = timezone.now()
-        request.user.save()
-        return JsonResponse({"message": 'pong'}, status=200)
-    
+        if request.user.status == 'offline' or request.user.status == 'away':
+            old_status = request.user.status
+            request.user.status = 'online'
+            await sync_to_async(request.user.save)()
+            await notify_user_info_display_change(request=request, change_info='status', old_value=old_status)
+        else:
+            await sync_to_async(request.user.save)()
+        return JsonResponse({'status': 'success', "message": 'pong'}, status=200) 
+
 
 class add_new_user(View):
     def __init__(self):
@@ -55,42 +80,71 @@ class update_user(View):
         super().__init__
         
     def get(self, request):
-        return JsonResponse({"message": 'get request successfully reached'}, status=200)
+        return JsonResponse({"message": 'get request successfully reached'}, status=200) 
     
     def post(self, request):
+        from .websocket_utils import notify_user_info_display_change
+        
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'User not found'}, status=400)
         data = json.loads(request.body.decode('utf-8'))
+        old_status = None
         for field in ['username', 'email', 'is_verified', 'two_factor_method', 'status', 'last_active']:
             if field in data:
+                print('-----------> field:')
                 if field == 'last_active':
                     setattr(request.user, field, timezone.now())
-                else:
+                elif field == 'status':
+                    old_status = request.user.status
                     setattr(request.user, field, data[field])
+                else:
+                    setattr(request.user, field, data[field]) 
         request.user.save()
-        return JsonResponse({'message': 'User updated successfully'}, status=200)
+        if 'status' in data:
+            async_to_sync(notify_user_info_display_change)(request=request, change_info='status', old_value=old_status)
+        return JsonResponse({'message': 'User updated successfully'}, status=200) 
 
 
-def send_post_request(request, url, payload):
+async def send_request(request_type, url, request=None, payload=None):
+    if request:
+        headers, cookies = set_headers_cookies_request(request=request)
+    else:
+        headers, cookies = set_headers_cookies_request()
+    try:
+        async with httpx.AsyncClient() as client:
+            if request_type == 'GET':
+                response = await client.get(url, headers=headers, cookies=cookies)
+            elif request_type == 'PUT':
+                response = await client.put(url, headers=headers, cookies=cookies, content=json.dumps(payload))
+            else:
+                response = await client.post(url, headers=headers, cookies=cookies, content=json.dumps(payload))
+            response.raise_for_status()  # Raise an exception for HTTP errors
+            return response
+    except httpx.HTTPStatusError as e:
+        raise Exception(f"HTTP error occurred: {e}")
+    except httpx.RequestError as e:
+        raise Exception(f"An error occurred while requesting: {e}")
+        
+def set_headers_cookies_request(request=None):
+    if request:
         headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'X-CSRFToken': request.COOKIES.get('csrftoken')
-            }
+            } 
         cookies = {
             'csrftoken': request.COOKIES.get('csrftoken'),
             'jwt': request.COOKIES.get('jwt'),
             'jwt_refresh': request.COOKIES.get('jwt_refresh'),
             }
-        response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
-        if response.status_code == 200:
-            return JsonResponse({'message': 'success'}, status=200)
-        else:
-            response_data = json.loads(response.text)
+    else:
+        headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            } 
+        cookies = None
+    return headers, cookies
 
-            message = response_data.get('message')
-            return JsonResponse({'message': message}, status=400)
-        
 class searchUsers(View):
     def __init__(self):
         super().__init__
@@ -119,7 +173,7 @@ class getUserInfos(View):
     def get(self, request):
         try:
             username = request.GET.get('q', '')
-            users = User.objects.get(username=username)
+            users = User.objects.get(username=username) 
             users_data = {
                 'username': users.username,
                 'profile_image': users.profile_image.url if users.profile_image else None,
@@ -127,6 +181,7 @@ class getUserInfos(View):
                 'status': users.status
             }
             return JsonResponse({'status': 'success', 'message': users_data}, safe=False, status=200)
+        
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
  
@@ -151,33 +206,5 @@ class getUsersInfo(View):
                 }
                 users_list.append(users_info)
             return JsonResponse({'status': 'success', 'message': users_list}, safe=False, status=200)
-        except ObjectDoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
- 
-class getUsersByStatus(View):
-    def __init__(self):
-        super().__init__
- 
-    def get(self, request):
-        try:
-            if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'User not found'}, status=400)
-            users_target = json.loads(request.GET.get('q', ''))
-            users_online = []
-            users_offline = []
-            for user in users_target:
-                username = user.get('username')
-                user_data = User.objects.get(username=username)
-                users_info = {
-                    'username': user_data.username,
-                    'profile_image': user_data.profile_image.url if user_data.profile_image else None,
-                    'profile_image_link': user_data.profile_image_link,
-                    'status': user_data.status
-                }
-                if user_data.status == 'online':
-                    users_online.append(users_info)
-                else:
-                    users_offline.append(users_info)
-            return JsonResponse({'status': 'success', 'message': {'online': users_online, 'offline': users_offline}}, safe=False, status=200)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)

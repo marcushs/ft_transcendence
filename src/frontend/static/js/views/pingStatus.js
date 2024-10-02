@@ -1,7 +1,10 @@
 import { sendRequest } from "../utils/sendRequest.js"
 
+let pingInstance = null;
 export class PingStatus {
     constructor() {
+        if (pingInstance)
+            return pingInstance;
         this.timeoutDuration = 60000; // 1 minute
         this.isHandlingInactivity = false;
 
@@ -22,12 +25,15 @@ export class PingStatus {
 
     async sendPingStatus() {
         const url = 'http://localhost:8000/user/ping_status/';
-        console.log('ping sent to back');
+        // console.log('ping backend');
         try {
             const data = await sendRequest('POST', url, null);
-            console.log('back response: ', data.message);
+            // if (data.status === ' success')
+                // console.log('backend: ', data.message);
+            // else
+                // console.log('backend: ', data.message);
         } catch (error) {
-            console.log(error);
+            console.log(error.message); 
         }
     }
 

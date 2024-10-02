@@ -1,5 +1,6 @@
 import { sendRequest } from "../utils/sendRequest.js";
 import getProfileImage from "../utils/getProfileImage.js";
+import { getString } from "../utils/languageManagement.js";
 
 class PopUpComponent extends HTMLElement {
 	static get observedAttributes() {
@@ -23,21 +24,21 @@ class PopUpComponent extends HTMLElement {
 			this.innerHTML = `
 				<div class="pop-up-content">
 					<i class="fa-solid fa-xmark"></i>
-					<h2>Paste link to an image</h2>
+					<h2>${getString('popUpComponent/pasteImageLink')}</h2>
 					<input type="url" name="image-link" autofocus>
-					<button-component label="Save" class="generic-btn-disabled"></button-component>
+					<button-component label="${getString('buttonComponent/save')}" class="generic-btn-disabled"></button-component>
 				</div>
 			`;
 		} else if (this.className === 'add-new-contact-pop-up') {
 			this.innerHTML = `
 				<div class="pop-up-content">
 					<i class="fa-solid fa-xmark"></i>
-					<h2>Add new contact</h2>
+					<h2>${getString('popUpComponent/addNewContact')}</h2>
 					<div class="add-contact-search-bar">
                 		<form action="#" autocomplete="off">
                 		    <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
                 		    <div class="add-friend-search-bar-input-container">
-                		        <input type="text" placeholder="Search contacts" id="searchBarInput"/>
+                		        <input type="text" placeholder="${getString('popUpComponent/searchContactPlaceHolder')}" id="searchBarInput"/>
                 		        <ul id="searchResults" class="search-results">
 								</ul>
                 		    </div>
@@ -97,14 +98,24 @@ class PopUpComponent extends HTMLElement {
 			}, []);
 			const currentUser = document.querySelector('.account-infos p').textContent;
 			const currentUserIndex = resultList.findIndex(user => user.username === currentUser)
-			if (currentUserIndex !== -1)
+			if (currentUserIndex !== -1) {
 				resultList.splice(currentUserIndex, 1);
-			this.displaySearchResult(resultList);
+				
+				if (resultList.length === 0) {
+					this.querySelector('ul').innerHTML = getString('popUpComponent/noContacts');
+					this.querySelector('ul').classList.add('no-add-contacts');
+					return;
+				}
+
+			}
+			const sortedList = resultList.sort((a, b) => a.username.localeCompare(b.username));
+			
+			this.displaySearchResult(sortedList);
 			this.addContactButtonEventListener();
 		}
 		else {
 			this.clearSearchResult();
-			this.querySelector('ul').innerHTML = 'No contacts found...';
+			this.querySelector('ul').innerHTML = getString('popUpComponent/noContacts');
 			this.querySelector('ul').classList.add('no-add-contacts');
 		}
 	}
@@ -127,7 +138,6 @@ class PopUpComponent extends HTMLElement {
 		};
 		try {
 			const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
-			console.log(data.message);
 			if (data.status === 'success') {
 				await this.sendNotification(username, 'friend-request-pending');
 				return true;
@@ -152,7 +162,7 @@ class PopUpComponent extends HTMLElement {
             	    <p>${user.username}</p>
             	</div>
 				<div class="add-friend-pop-up-button">
-                	<p>Add</p>
+                	<p>${getString('popUpComponent/add')}</p>
 					<img src='../../../assets/add_friend.svg' alt='add_contact'></img>
             	</div>
         	`;
@@ -195,7 +205,6 @@ class PopUpComponent extends HTMLElement {
 
 
 	updateSaveButtonState(input) {
-		console.log('test')
 		const saveButton = this.querySelector('button-component');
 
 		if (input.value !== '') {
@@ -210,8 +219,7 @@ class PopUpComponent extends HTMLElement {
         const payload = {
             receiver: receiver,
             type: type
-        };
-
+        };		
         try {
             const data = await sendRequest('POST', url, payload);
             if (data.status === 'error')

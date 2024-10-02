@@ -26,22 +26,31 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
+# /-----> Django key <-----\
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-j#^my))q=i+hv25751fa2d!&h&v&7glpu*1i2645n1(a8$zch5'
+SECRET_KEY = env("AUTH_SECRET_KEY")
 
-# /--> JWT <--\      
-JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
-JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
-JWT_EXP_DELTA_SECONDS = 3000 # 15 minutes
-JWT_REFRESH_EXP_DELTA_SECONDS = 6000 # 1day
+# /-----> JWT keys && algorithm <-----\
 
-# /--> MAIL CONFIG <--\
+JWT_VERIFYING_KEY = env("PUBLIC_JWT_KEY")
+JWT_ALGORITHM = env("JWT_ALGORITHM")
+
+# /-----> JWT token lifetime in seconds <-----\
+
+ACCESS_TOKEN_LIFETIME = 120 # 2 minutes
+REFRESH_TOKEN_LIFETIME = 86400 # 1 day
+
+# /-----> Email settings <-----\
+    
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'kingpong.info@gmail.com'
 EMAIL_HOST_PASSWORD = 'mlxe bkoa gjue tigk'
+
+# /-----><-----\
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

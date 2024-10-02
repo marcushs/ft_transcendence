@@ -14,7 +14,7 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
             if self.user.is_anonymous:
                 await self.close()
             else:
-                self.group_name = f'user_{self.user.id}'
+                self.group_name = f'notifications_user_{self.user.id}'
                 await self.channel_layer.group_add(self.group_name, self.channel_name)
                 await self.accept()
         except Exception as e:
@@ -30,16 +30,26 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
     async def new_notification(self, event):
         notification = event['notification']
         
+        
         await self.send(text_data=json.dumps({
             'type': 'new_notification',
             'notification': notification
         }))
         
-    
-    # async def delete_notification(self, event):
-    #     notification = event['notification']
         
-    #     await self.send(text_data=json.dumps({
-    #         'type': 'delete_notification',
-    #         'notification': notification
-    #     }))
+    async def change_notification_sender(self, event):
+        notification = event['notification']
+        
+        await self.send(text_data=json.dumps({
+            'type': 'change_notification_sender',
+            'notification': notification
+        }))
+        
+        
+    async def delete_notification(self, event):
+        notification = event['notification']
+        
+        await self.send(text_data=json.dumps({
+            'type': 'delete_notification',
+            'notification': notification
+        }))

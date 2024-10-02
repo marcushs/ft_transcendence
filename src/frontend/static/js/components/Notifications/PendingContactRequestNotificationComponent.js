@@ -1,6 +1,7 @@
 import {sendRequest} from "../../utils/sendRequest.js";
 import {sendNotification} from "../../utils/sendNotification.js";
 import {convertDateFormat} from "../../utils/convertDateFormat.js";
+import {getString} from "../../utils/languageManagement.js";
 
 class PendingContactRequestNotificationComponent extends HTMLElement {
 	constructor() {
@@ -15,7 +16,7 @@ class PendingContactRequestNotificationComponent extends HTMLElement {
 
 		this.innerHTML = `
 			<li>			
-				<p>${this.notificationObj.message}</p>
+				<p>${getString('notificationsComponent/pendingNotificationPrefix')} <span>${this.notificationObj.sender}</span></p>
 				<i class="fa-solid fa-check"></i>
 				<i class="fa-solid fa-xmark"></i>
 				<p class="notification-date">${convertDateFormat(this.notificationCreateAt)}</p>
@@ -79,6 +80,8 @@ class PendingContactRequestNotificationComponent extends HTMLElement {
 
 
 	async handleClickContactRequest(action) {
+		this.notificationObj = JSON.parse(this.getAttribute('notificationObj'));
+
 		const payload = {
 	            status: action,
 	            target_username: this.notificationObj.sender,
@@ -89,7 +92,8 @@ class PendingContactRequestNotificationComponent extends HTMLElement {
             if (data.status === 'success') {
                 if (action === 'accept')
                     sendNotification(this.notificationObj.sender, 'friend-request-accepted');
-				await sendRequest('DELETE', 'http://localhost:8004/notifications/manage_notifications/', { uuid: this.notificationObj.uuid });
+
+				await sendRequest('DELETE', 'http://localhost:8004/notifications/manage_notifications/', { uuid: this.notificationObj.uuid.replace('notif-', '') });
 				this.throwDeleteNotificationEvent();
 				this.throwCloseNotificationsContainerEvent();
 				this.remove();

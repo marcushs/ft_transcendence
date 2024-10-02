@@ -1,11 +1,15 @@
-from .utils.jwt_utils import get_user_from_jwt, Refresh_jwt_token
 from django.utils.deprecation import MiddlewareMixin # assure the retro-compability for recent django middleware
 from django.contrib.auth.models import AnonymousUser
+from .utils.jwt_utils import get_user_from_jwt
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+from .models import Notification
+from datetime import timedelta
 from django.http import JsonResponse
 from django.conf import settings
-from .models import Notification
-from django.utils import timezone
+
+# Middleware for jwt authentication
+from .utils.user_utils import send_request
 from datetime import timedelta, datetime
 from asgiref.sync import sync_to_async
 from channels.layers import get_channel_layer
@@ -15,47 +19,59 @@ from .utils.user_utils import get_user_id_by_username
 User = get_user_model()
 
 class JWTAuthMiddleware(MiddlewareMixin):
+    
     async def __call__(self, request):
         response = await self.process_request(request)
         response = await self.process_response(request, response)
         return response
-
+    
     async def process_request(self, request):
         token = request.COOKIES.get('jwt')
         if token:
             jwt_user = await get_user_from_jwt(token)
-            if jwt_user:
-                request.user = jwt_user
-            else:
+            if jwt_user == 'expired':
+                await self.send_new_token_request(request=request, jwt_user=jwt_user)
+            elif jwt_user == None: 
                 request.jwt_failed = True
                 request.user = AnonymousUser()
+            else:
+                request.user = jwt_user
         else:
             refresh_token = request.COOKIES.get('jwt_refresh')
             if refresh_token:
                 jwt_user = await get_user_from_jwt(refresh_token)
-                if jwt_user:
-                    token = Refresh_jwt_token(refresh_token, 'access')
-                    request.new_jwt = token
-                    token_refresh = Refresh_jwt_token(refresh_token, 'refresh')
-                    request.new_jwt_refresh = token_refresh
-                    request.user = jwt_user
-                else:
+                if jwt_user == 'expired' or jwt_user == None:
                     request.jwt_failed = True
                     request.user = AnonymousUser()
+                else:
+                    await self.send_new_token_request(request=request, jwt_user=jwt_user)
             else:
-                    request.user = AnonymousUser()
-        response = await self.get_response(request)
-        return response
-
-    async def process_response(self, request, response):
+                    request.user = AnonymousUser() 
+        response = await self.get_response(request) 
+        return response 
+    
+    async def send_new_token_request(self, request, jwt_user):
+        try:
+            request_response = await send_request(request_type='GET',request=request, url='http://auth:8000/auth/update-tokens/')
+            if request_response and request_response.cookies:
+                request.new_token = request_response.cookies.get('jwt')
+                request.new_token_refresh =  request_response.cookies.get('jwt_refresh')
+                request.user = jwt_user
+            else:
+                request.user = AnonymousUser()
+        except Exception:
+            request.jwt_failed = True
+            request.user = AnonymousUser() 
+    
+    async def process_response(self, request, response):  
         if hasattr(request, 'jwt_failed'):
-            response = JsonResponse({'message': 'session has expired, please log in again'}, status=401)
+            response = JsonResponse({'error': 'invalid session token'}, status=401)
             response.delete_cookie('jwt')
             response.delete_cookie('jwt_refresh')
-        if hasattr(request, 'new_jwt'):
-            response.set_cookie('jwt', request.new_jwt, httponly=True, max_age=settings.JWT_EXP_DELTA_SECONDS)
-        if hasattr(request, 'new_jwt_refresh'):
-            response.set_cookie('jwt_refresh', request.new_jwt_refresh, httponly=True, max_age=settings.JWT_REFRESH_EXP_DELTA_SECONDS)
+        if hasattr(request, 'new_token'):
+            response.set_cookie('jwt', request.new_token, httponly=True, max_age=settings.ACCESS_TOKEN_LIFETIME)
+        if hasattr(request, 'new_token_refresh'):
+            response.set_cookie('jwt_refresh', request.new_token_refresh, httponly=True, max_age=settings.REFRESH_TOKEN_LIFETIME)
         return response
 
  
@@ -80,7 +96,7 @@ class NotificationMiddleware(MiddlewareMixin):
         user_notifications = await sync_to_async(list)(Notification.objects.filter(receiver=request.user))
         senders = set(await sync_to_async(lambda: [notification.sender for notification in user_notifications])())
         for sender in senders:
-            notifications_by_sender = Notification.objects.filter(sender=sender)
+            notifications_by_sender = Notification.objects.filter(sender=sender, receiver=request.user)
             await self.remove_duplicate_notifications_by_sender(request, notifications_by_sender)
 
 
@@ -97,7 +113,7 @@ class NotificationMiddleware(MiddlewareMixin):
 
     async def delete_notifications(self, request, notifications_to_delete):
         for notification in notifications_to_delete:
-            # await self.send_delete_notification_to_channel(request, notification)
+#             await self.send_delete_notification_to_channel(request, notification)
             await sync_to_async(notification.delete)()
 
     # async def send_delete_notification_to_channel(self, request, notification):
@@ -105,7 +121,7 @@ class NotificationMiddleware(MiddlewareMixin):
     #     user_id = await get_user_id_by_username(request.user)
         
     #     await channel_layer.group_send(
-    #         f'user_{user_id}',
+    #         f'notifications_user_{user_id}',
     #         {
     #             'type': 'delete_notification',
     #             'notification': await sync_to_async(notification.to_dict)()

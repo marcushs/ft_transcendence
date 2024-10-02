@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import environ
 import os
+from datetime import timedelta
 
 # Read from .env file
 env = environ.Env()
@@ -29,15 +30,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
+# /-----> Django key <-----\
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("AUTH_SECRET_KEY")
 
-    # /--> JWT <--\
-JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
-JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
-JWT_EXP_DELTA_SECONDS = 3000 # 15 minutes
-JWT_REFRESH_EXP_DELTA_SECONDS = 6000 # 1day
+# /-----> JWT keys && algorithm <-----\
 
+JWT_SIGNING_KEY = env("PRIVATE_JWT_KEY")
+JWT_VERIFYING_KEY = env("PUBLIC_JWT_KEY")
+JWT_ALGORITHM = env("JWT_ALGORITHM")
+
+# /-----> JWT token lifetime in seconds <-----\
+
+ACCESS_TOKEN_LIFETIME = 120 # 2 minutes
+REFRESH_TOKEN_LIFETIME = 86400 # 1 day
+
+# /-----><-----\
+    
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

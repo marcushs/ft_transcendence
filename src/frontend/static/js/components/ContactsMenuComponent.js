@@ -1,4 +1,5 @@
 import './ContactComponent.js';
+import { getString } from '../utils/languageManagement.js';
 import { sendRequest } from "../utils/sendRequest.js";
 import './Friendship/FriendshipButtonComponent.js';
 import './PopUpComponent.js'
@@ -12,7 +13,7 @@ class FriendsMenuComponent extends HTMLElement {
     async initComponent() {
         this.innerHTML = `
             <div class='bottom-nav-contacts'>
-                <p>Contacts</p>
+                <p>${getString('contactMenuComponent/contactsTitle')}</p>
                 <img src='../../assets/contact.svg' alt='contact-icon'>
             </div>
             <div class='contact-menu partial-border'>
@@ -22,7 +23,7 @@ class FriendsMenuComponent extends HTMLElement {
                     </div>
                     <form action="#" autocomplete="off">
                         <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
-                        <input type="text" placeholder="Search contacts" id="search-contact-input"/>
+                        <input type="text" placeholder="${getString('contactMenuComponent/searchContactPlaceHolder')}" id="search-contact-input"/>
                     </form>
                 </div>
                 <div class='contact-list-menu'>
@@ -137,25 +138,24 @@ class FriendsMenuComponent extends HTMLElement {
             this.remove();
             return;
         }
-        const contactsData = await this.getDataRequest('users_status', contacts.friends);
-        const contactsCount = contactsData.online.length + contactsData.offline.length;
+        const contactsData = await this.getDataRequest('users_data', contacts.friends);
+        
         this.contactBottomNavDiv.style.display = 'flex';
-        this.contactSummary.innerHTML = `<p>Contacts</p>`;
-        if (contactsCount === 0) {
-            this.contactList.innerHTML = `No contacts found...`;
+        this.contactSummary.innerHTML = `<p>${getString('contactMenuComponent/contactsTitle')}</p>`;
+        if (!contactsData || contactsData.length === 0) {
+            this.contactList.innerHTML = `${getString('contactMenuComponent/noContacts')}`;
             this.contactList.classList.add('no-contacts');
         }
         else {
-            this.createContactList(contactsData.online, 'contacts');
-            this.createContactList(contactsData.offline, 'contacts');
+            this.createContactList(contactsData, 'contacts');
         }
         const receivedRequestUsersData = await this.getDataRequest('users_data', contacts.received_requests);
         const sentRequestUsersData = await this.getDataRequest('users_data', contacts.sent_requests);
         const requestsCount = contacts.received_requests.length + contacts.sent_requests.length;
-        this.pendingContactSummary.innerHTML = `<p>Contacts Requests - ${requestsCount}</p>`;
+        this.pendingContactSummary.innerHTML = `<p>${getString('contactMenuComponent/pendingContactsTitle')} - ${requestsCount}</p>`;
         if (requestsCount === 0) {
-            this.pendingContactSummary.innerHTML = `<p>Contacts Requests</p>`;
-            this.pendingContactList.innerHTML = `No contacts request...`
+            this.pendingContactSummary.innerHTML = `<p>${getString('contactMenuComponent/pendingContactsTitle')}</p>`;
+            this.pendingContactList.innerHTML = `${getString('contactMenuComponent/noContactsRequest')}`
             this.pendingContactList.classList.add('no-contacts');
         }
         else {
@@ -165,7 +165,8 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     createContactList(contacts, status) {
-        contacts.forEach(contact => {
+        const sortedList = contacts.sort((a, b) => a.username.localeCompare(b.username));
+        sortedList.forEach(contact => {
             const li = document.createElement('li');
             li.innerHTML = `
                 <contact-component data-user='${JSON.stringify(contact)}' data-status='${status}'></contact-component>
@@ -187,10 +188,6 @@ class FriendsMenuComponent extends HTMLElement {
         let url = null;
         if (requestType === 'search_contacts')
             url = `http://localhost:8003/friends/search_contacts/`;
-        else if (requestType === 'users_status') {
-            const encodedList = encodeURIComponent(JSON.stringify(payload));
-            url = `http://localhost:8000/user/get_users_status/?q=${encodedList}`
-        }
         else if (requestType === 'users_data') {
             const encodedList = encodeURIComponent(JSON.stringify(payload));
             url = `http://localhost:8000/user/get_users_info/?q=${encodedList}`
@@ -226,7 +223,7 @@ class FriendsMenuComponent extends HTMLElement {
 
     async updateContactList() {
         const contacts = await this.getDataRequest('search_contacts');
-        const contactsData = await this.getDataRequest('users_status', contacts.friends);
+        const contactsData = await this.getDataRequest('users_data', contacts.friends);
         const searchValue = this.searchContactInput.value.toLowerCase();
         let displayedUsername = this.getCurrentDisplayedContactUsername();
 		if (!searchValue) {
@@ -234,26 +231,24 @@ class FriendsMenuComponent extends HTMLElement {
             if (!contactsUsername.every(username => displayedUsername.includes(username))) {
                 this.contactList.innerHTML = '';
                 this.contactList.classList.remove('no-contacts');
-                this.createContactList(contactsData.online, 'contacts');
-                this.createContactList(contactsData.offline, 'contacts');
+                this.createContactList(contactsData, 'contacts');
             }
 			return ;
 		}
         this.deleteObsoleteContact(searchValue);
         const newContactsToDisplay = this.getContactsToDisplay(contacts.friends, searchValue);
         if (newContactsToDisplay.length !== 0) {
-            if (this.contactList.innerHTML === 'No contacts found...') {
+            if (this.contactList.innerHTML === `${getString('contactMenuComponent/noContacts')}`) {
                 this.contactList.innerHTML = '';
                 this.contactList.classList.remove('no-contacts');
             }
-            const newContactsToDisplayData = await this.getDataRequest('users_status', newContactsToDisplay);
-            this.createContactList(newContactsToDisplayData.online, 'contacts');
-            this.createContactList(newContactsToDisplayData.offline, 'contacts');
+            const newContactsToDisplayData = await this.getDataRequest('users_data', newContactsToDisplay);
+            this.createContactList(newContactsToDisplayData, 'contacts');
         } else {
             let displayedUsername = this.getCurrentDisplayedContactUsername();
             if (displayedUsername.length === 0) {
                 this.contactList.innerHTML = '';
-                this.contactList.innerHTML = `No contacts found...`;
+                this.contactList.innerHTML = `${getString('contactMenuComponent/noContacts')}`;
                 this.contactList.classList.add('no-contacts');
             }
         }

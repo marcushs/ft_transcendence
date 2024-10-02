@@ -2,6 +2,7 @@ import { sendRequest } from "../utils/sendRequest.js";
 import getProfileImage from "../utils/getProfileImage.js";
 import './Friendship/FriendshipButtonComponent.js';
 import userProfile from "../views/user-profile.js";
+import { getString } from "../utils/languageManagement.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 
 class ContactComponent extends HTMLElement {
@@ -35,15 +36,23 @@ class ContactComponent extends HTMLElement {
         
         this.innerHTML = `
             <div class="contact-menu-picture">
-                <img src='${contactPictureUrl}' alt='contact picture'></img>
+                <img class='contact-picture' src='${contactPictureUrl}' alt='contact picture'></img>
             </div>
             <div class="status-circle">
             </div>
             <div class="contact-menu-info">
-                <p>${this.userData.username}</p>
-                <p>${this.userData.status}</p>
+                <p class='contact-username'>${this.userData.username}</p>
+                <p class='contact-status'></p>
             </div>
         `;
+        const status = this.querySelector('.contact-status');
+        
+        if (this.userData.status === 'online')
+            status.textContent = getString('contactComponent/onlineStatus');
+        else if (this.userData.status === 'away')
+            status.textContent = getString('contactComponent/awayStatus');
+        else if (this.userData.status === 'offline')
+            status.textContent = getString('contactComponent/offlineStatus');
         this.setContactActionHTML();
         this.setContactStatusCircleHTML();
     }
@@ -68,13 +77,13 @@ class ContactComponent extends HTMLElement {
                     <i class="fa-solid fa-caret-up"></i>
                     <div class='contact-action-list'>
                         <ul>
-                            <li class='contact-action-send-message'>Send Message</li>
+                            <li class='contact-action-send-message'>${getString('contactComponent/sendMessageAction')}</li>
                             <hr>
-                            <li class='contact-action-invite-play'>Invite to play</li>
+                            <li class='contact-action-invite-play'>${getString('contactComponent/inviteToPlayAction')}</li>
                             <hr>
-                            <li class='contact-action-remove-contact'>Remove contact</li>
+                            <li class='contact-action-remove-contact'>${getString('contactComponent/removeContactsAction')}</li>
                             <hr>
-                            <li class='contact-action-see-profile'>See profile</li>
+                            <li class='contact-action-see-profile'>${getString('contactComponent/seeProfileAction')}</li>
                         </ul>
                     </div>
                 </div>
@@ -116,14 +125,14 @@ class ContactComponent extends HTMLElement {
     }
 
     handleCloseActionMenuEvent() {
-        document.addEventListener('closeActionMenu', (event) => {
-            if (event.detail.senderInstance !== this && this.contactActionList.style.display === 'block') {
-                this.contactActionList.style.display = 'none';
-                this.showActionsList.classList.replace('fa-caret-down', 'fa-caret-up');
-            }
-        })
-
         if (this.contactActionList) {  
+            document.addEventListener('closeActionMenu', (event) => {
+                if (event.detail.senderInstance !== this && this.contactActionList.style.display === 'block') {
+                    this.contactActionList.style.display = 'none';
+                    this.showActionsList.classList.replace('fa-caret-down', 'fa-caret-up');
+                }
+            })
+
             document.addEventListener('click', () => {
                 if (getComputedStyle(this.contactActionList).display === 'block') {
                     this.contactActionList.style.display = 'none';
@@ -153,10 +162,10 @@ class ContactComponent extends HTMLElement {
             action.addEventListener('click', () => {
                 switch (action.classList[0]) {
                     case 'contact-action-send-message':
-                        console.log(`Send message to contact \'${this.userData.username}\' successfully reached`);
+                        console.log(`TEST: Send message to contact \'${this.userData.username}\' successfully reached`);
                         break;
                     case 'contact-action-invite-play':
-                        console.log(`Invite contact \'${this.userData.username}\' to play successfully reached`);
+                        console.log(`TEST: Invite contact \'${this.userData.username}\' to play successfully reached`);
                         break;
                     case 'contact-action-remove-contact':
                         this.handleRequestIconClick('remove');
@@ -179,33 +188,10 @@ class ContactComponent extends HTMLElement {
             target_username: this.userData.username,
         };
         try {
-            console.log(action);
-            
-            const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
-            if (data.status === 'success' && action !== 'remove') {
-                this.manageChangePendingContact();
-            }
-            console.log(data.message);
+            await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
         } catch (error) {
             console.error('catch: ', error);
         }
-    }
-
-    manageChangePendingContact() {
-        const pendingSummary = document.querySelector('.pending-contact-summary');
-        const pendingCountMatch = pendingSummary.textContent.match(/\d+/);
-        const newPendingCount = parseInt(pendingCountMatch[0], 10) - 1;
-        setTimeout(() => this.closest('li').remove(), 200);
-        let newPendingSummary = null;
-        if (newPendingCount === 0) {
-            const segment = pendingSummary.textContent.split(' -');
-            newPendingSummary = segment[0];
-            const pendingContactList = document.querySelector('.pending-contact-list-result')
-            pendingContactList.innerHTML = 'No contacts request...';
-            pendingContactList.classList.add('no-contacts');
-        } else
-            newPendingSummary = pendingSummary.textContent.replace(pendingCountMatch[0], newPendingCount);
-        pendingSummary.textContent = newPendingSummary;
     }
 
     throwCloseActionsMenuEvent (senderInstance) {

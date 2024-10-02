@@ -1,7 +1,7 @@
 import "../components/NavBarComponent.js"
 import "../components/Profile/ProfileComponent.js"
-import { getCookie } from "../utils/cookie.js";
 import "../components/NavBarComponent.js";
+import "../components/ContactsMenuComponent.js"
 
 export default () => {
     const html = `

@@ -12,7 +12,7 @@ class FriendList(models.Model):
         return self.user.username
 
     def add_friend(self, target_user):
-        if not target_user in self.friends.all():
+        if not target_user in self.friends.all(): 
             self.friends.add(target_user)
             self.save()
 
@@ -23,7 +23,7 @@ class FriendList(models.Model):
 
     def unfriend(self, target_user):
         self.remove_friend(target_user)
-        friend_list = FriendList.objects.get(user=target_user)
+        friend_list = FriendList.objects.get(user=target_user) 
         friend_list.remove_friend(self.user)
 
     def is_mutual_friend(self, friend):
@@ -32,12 +32,11 @@ class FriendList(models.Model):
         return False
     
     def to_dict(self):
-        return [{'username': friend.username} for friend in self.friends.all()]
+        return [{'username': friend.username, 'id': friend.id} for friend in self.friends.all()]
 
 class FriendRequest(models.Model):
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sender")
     receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="receiver")
-    is_active = models.BooleanField(blank=True, null=False, default=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -50,16 +49,13 @@ class FriendRequest(models.Model):
             sender_friend_list = FriendList.objects.get(user=self.sender)
             if sender_friend_list:
                 sender_friend_list.add_friend(self.receiver)
-                self.is_active = False
-                self.save()
+                self.delete()
                 
     def decline(self):
-        self.is_active = False
-        self.save()
+        self.delete()
         
     def cancel(self):
-        self.is_active = False
-        self.save()
+        self.delete()
     
 class UserManager(BaseUserManager):
     def create_user(self, username, user_id):

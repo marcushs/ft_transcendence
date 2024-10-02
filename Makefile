@@ -8,18 +8,19 @@ all: up
 up:
 	${DOCKER_COMPOSE} ${ENV} up --build --detach --quiet-pull
 
-down:
-	${DOCKER_COMPOSE} ${ENV} down --volumes
-
 restart:
 	${DOCKER_COMPOSE} ${ENV} down && ${DOCKER_COMPOSE} ${ENV} up --build --detach --quiet-pull
+
+down:
+	${DOCKER_COMPOSE} ${ENV} down --volumes
 
 clean: down
 
 fclean: clean
 	docker system prune -a -f --volumes
 
-re: 
+re:
+	@zsh -c 'find **/migrations -type f ! -name '__init__.py' | xargs rm'
 	${MAKE} fclean
 	${MAKE}
 

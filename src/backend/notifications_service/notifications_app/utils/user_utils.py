@@ -4,6 +4,7 @@ from django.views import View
 from ..models import User
 from asgiref.sync import sync_to_async
 import json
+import httpx
 
 
 async def get_user_id_by_username(username):
@@ -42,3 +43,28 @@ class update_user(View):
             setattr(request.user, 'username', data['username'])
         await sync_to_async(request.user.save)()
         return JsonResponse({'message': 'User updated successfully'}, status=200)
+
+async def send_request(request_type, request, url, payload=None):
+        headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': request.COOKIES.get('csrftoken')
+            } 
+        cookies = {
+            'csrftoken': request.COOKIES.get('csrftoken'),
+            'jwt': request.COOKIES.get('jwt'),
+            'jwt_refresh': request.COOKIES.get('jwt_refresh'),
+            }
+        try:
+            async with httpx.AsyncClient() as client:
+                if request_type == 'GET':
+                    response = await client.get(url, headers=headers, cookies=cookies)
+                else:
+                    response = await client.post(url, headers=headers, cookies=cookies, content=json.dumps(payload))
+
+                response.raise_for_status()  # Raise an exception for HTTP errors
+                return response
+        except httpx.HTTPStatusError as e:
+            raise Exception(f"HTTP error occurred: {e}")
+        except httpx.RequestError as e:
+            raise Exception(f"An error occurred while requesting: {e}")

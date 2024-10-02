@@ -17,10 +17,30 @@ import os
 
 SECRET_KEY = os.environ.get("USER_SECRET_KEY")
 
-JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
-JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
-JWT_EXP_DELTA_SECONDS = 3000 # 15 minutes
-JWT_REFRESH_EXP_DELTA_SECONDS = 6000 # 1day
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent 
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+
+# /-----> Django key <-----\
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get("NOTIFICATIONS_SECRET_KEY")
+
+# /-----> JWT keys && algorithm <-----\
+
+JWT_VERIFYING_KEY = os.environ.get("PUBLIC_JWT_KEY")
+JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")
+
+# /-----> JWT token lifetime in seconds <-----\
+
+ACCESS_TOKEN_LIFETIME = 120 # 2 minutes
+REFRESH_TOKEN_LIFETIME = 86400 # 1 day
+
+# /-----><-----\
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -30,6 +50,7 @@ ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'notifications']
 
 INSTALLED_APPS = [
 	'channels',
+    'daphne',
 	'corsheaders',
     'notifications_app',
     'django.contrib.auth',

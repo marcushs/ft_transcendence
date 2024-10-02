@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
 from django.views import View
 from ..models import User
-import json    
+import json
 
 class update_user(View):
     def __init__(self):
@@ -17,6 +17,7 @@ class update_user(View):
             return JsonResponse({'message': 'User not found'}, status=400)
         data = json.loads(request.body.decode('utf-8'))
         for field in ['username', 'email', 'is_verified', 'two_factor_method']:
+            print(f'----------- field = {field} ------------') 
             if field in data:
                 setattr(request.user, field, data[field])
         request.user.save()
