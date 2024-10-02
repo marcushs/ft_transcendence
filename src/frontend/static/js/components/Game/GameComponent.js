@@ -43,13 +43,11 @@ class GameComponent extends HTMLElement {
     }
 
     pushNewState(state) {
-                // <div class="left-player-paddle"></div>
-                // <div class="right-player-paddle"></div>
-                // <div class="middle-line"></div>`
-                // +
         this.statesContainer.innerHTML = `
-            ${state.render()}
-        `
+                <div class="left-player-paddle"></div>
+                <div class="right-player-paddle"></div>
+                <div class="middle-line"></div>` + state.render();
+        // this.statesContainer.innerHTML =
         this.statesContainer.classList.add(state.class);
     }
 

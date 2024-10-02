@@ -35,7 +35,7 @@ game-component .states-container {
     width: 100%;
     height: 100%;
     border-radius: 7px;
-    /*background: var(--component-background-color);*/
+    background: var(--component-background-color);
     padding: 3px;
     z-index: 1;
 }

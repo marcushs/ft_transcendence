@@ -7,7 +7,7 @@ class RankedComponent extends HTMLElement {
 		this.innerHTML = `
 			<div class="ranked-component-content">
 				<h4>${getString('gameComponent/ranked')}</h4>
-				${this.createRankContainer('silver')}
+				${this.createRankContainer('master')}
 				<button-component label="${getString('buttonComponent/play')}" class="generic-btn"></button>
 			</div>
 		`;
