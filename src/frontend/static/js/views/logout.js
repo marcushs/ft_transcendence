@@ -1,43 +1,48 @@
-import { getCookie } from "../utils/cookie.js";
 import "../components/NavBarComponent.js";
 import { throwRedirectionEvent } from "../utils/throwRedirectionEvent.js"
-import { sendRequest } from "../utils/sendRequest.js";
+// import { sendRequest } from "../utils/sendRequest.js";
+import rotatingGradient from "../anim/rotatingGradient.js";
+import "../components/ButtonComponent.js";
+import {sendRequest} from "../utils/sendRequest.js";
+
 
 export default () => {
-    // const status = checkStatus();
-    // console.log('status: ', status)
-    const html = `
-            <nav-bar auth="true"></nav-bar>
-            <div class="container">
-                <p>Are you sure you want to logout?</p>
-                <button type="button" id="yesBtn">Yes</button>
-                <button type="button" id="cancelBtn">Cancel</button>
-            </div>
-        `;
+	const html = `
+		<section class="logout-page">
+			<div class="logout-container-background"></div>
+			<div class="logout-container">
+				<div class="logout-content">
+					<h1>Are you sure you want to logout?</h1>
+					<div class="buttons-container">
+						<button-component label="Yes" class="generic-btn"></button-component>
+						<button-component label="Cancel" class="generic-btn-disabled"></button-component>
+					</div>
+				</div>
+			</div>
+		</section>`;
 
-    setTimeout(() => {
-		attachEvent(200);   
+	setTimeout(() => {
+		rotatingGradient('.logout-container-background', '#FF16C6', '#00D0FF');
+		rotatingGradient('.logout-container', '#FF16C6', '#00D0FF');
+		rotatingGradient('.logout-content', '#1c0015', '#001519');
+		attachEvent();
 	}, 0);
 
-    return html;
+	return html;
 }
 
-function attachEvent(status) {
-    if (status !== 200)
-        return ;
+function attachEvent() {
+    const yesBtn = document.querySelector('button-component[label="Yes"]');
+    const cancelBtn = document.querySelector('button-component[label="Cancel"]');
 
-    const yesBtn = document.getElementById('yesBtn');
-    const cancelBtn = document.getElementById('cancelBtn');
-
-    cancelBtn.addEventListener('click', () => {
-       window.location.replace('profile'); 
-    });
+	cancelBtn.addEventListener('click', () => {
+            throwRedirectionEvent(`${localStorage.getItem('lastAuthorizedPage')}`);
+	    });
 
     yesBtn.addEventListener('click', async () => {
         try {
             const data = await sendRequest('POST', 'http://localhost:8001/auth/logout/', null);
-            console.log(data.message);
-            throwRedirectionEvent('login');
+            throwRedirectionEvent('/');
         } catch (error) {
             console.log(`${error}`);
         }

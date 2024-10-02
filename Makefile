@@ -19,7 +19,8 @@ clean: down
 fclean: clean
 	docker system prune -a -f --volumes
 
-re: 
+re:
+	@zsh -c 'find **/migrations -type f ! -name '__init__.py' | xargs rm'
 	${MAKE} fclean
 	${MAKE}
 

@@ -18,6 +18,7 @@ async function manageBackgroundDisplay(event, gameComponent) {
 		}
 		document.querySelector('.game-fullscreen-background').style.display = 'none';
 		document.querySelector('.game-fullscreen-background').style.opacity = '1';
+		gameComponent.style.zIndex = '2';
 	}
 }
 

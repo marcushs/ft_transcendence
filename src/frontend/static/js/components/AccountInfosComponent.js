@@ -1,4 +1,5 @@
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
+import {getString} from "../utils/languageManagement.js";
 
 class AccountInfosComponent extends HTMLElement {
 	constructor() {
@@ -20,10 +21,10 @@ class AccountInfosComponent extends HTMLElement {
 			<div class="account-menu-background">			
 		         <ul>
 	                <li>
-	                    <p>Profile</p>
+	                    <p>${getString('accountInfosComponent/profile')}</p>
 	                </li>
 	                <li>
-	                    <p>Logout</p>
+	                    <p>${getString('accountInfosComponent/logout')}</p>
 	                </li>
 	            </ul>
 			</div>
@@ -92,6 +93,7 @@ class AccountInfosComponent extends HTMLElement {
 	closeMenu() {
 		const menu = this.querySelector('.account-menu-background');
 
+		this.style.zIndex = '2';
 		menu.style.animation = 'decreaseAccountMenuHeight 0.3s ease forwards';
 		menu.querySelectorAll('p').forEach((elem) => {
 			elem.style.animation = 'reduceTextOpacity 0.1s ease forwards';
@@ -102,6 +104,7 @@ class AccountInfosComponent extends HTMLElement {
 	openMenu() {
 		const menu = this.querySelector('.account-menu-background');
 
+		this.style.zIndex = '3';
 		menu.style.display = 'block';
 		menu.querySelectorAll('p').forEach((elem) => {
 			elem.style.animation = 'augmentTextOpacity 0.35s ease forwards';
