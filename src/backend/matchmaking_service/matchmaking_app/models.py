@@ -15,6 +15,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=12, unique=True, default='default')
+    is_ingame = models.BooleanField(default=False)
     rankPoints = models.IntegerField(default=0)
     gamesWin = models.IntegerField(default=0)
     gamesLoose = models.IntegerField(default=0)

@@ -73,7 +73,6 @@ MIDDLEWARE = [
 ]
 
 
-
 ROOT_URLCONF = 'user_service.urls'
 
 
