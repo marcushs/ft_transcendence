@@ -25,6 +25,7 @@
 }
 
 .logout-container .logout-content {
+	border-radius: 7px;
 	height: 100%;
 	width: 100%;
 	background: var(--component-background-color);
@@ -54,7 +55,7 @@
 }
 
 .logout-page h1 {
-	font-size: 5rem;
+	font-size: 3.5rem;
 	font-weight: 400;
 	letter-spacing: 1px;
 	margin-bottom: 7rem;
@@ -67,7 +68,7 @@
 
 .logout-page .generic-btn button {
 	font-size: 2.2rem;
-	padding: 1.25rem 2.5rem;
+	padding: 1rem 2.25rem;
 	background: rgba(0, 206, 255, 0.05);
 }
 
@@ -77,15 +78,12 @@
 
 .logout-page .generic-btn-disabled button {
 	font-size: 2.2rem;
-	padding: 1.25rem 2.5rem;
+	padding: 1rem 2.25rem;
 	background: var(--light-grey);
 	background: rgba(140, 143, 164, 0.05);
+	cursor: pointer;
 }
 
 .logout-page .generic-btn-disabled button:hover {
-	font-size: 2.2rem;
-	padding: 1.25rem 2.5rem;
-	background: var(--light-grey);
 	background: rgba(140, 143, 164, 0.10);
-	cursor: pointer;
 }
