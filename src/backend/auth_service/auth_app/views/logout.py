@@ -17,7 +17,7 @@ class logout_view(View):
     def post(self, request):
         try:
             payload = { 'status': 'offline' }
-            send_request_with_token(request_type='POST', request=request, url='http://user:8000/user/update_user/', payload=payload)
+            send_request_with_token(request_type='POST', request=request, url='http://user:8000/api/user/update_user/', payload=payload)
             response = JsonResponse({'message': 'Logout successfully', 'redirect_url': 'login'}, status=201)
             response.delete_cookie('jwt')
             response.delete_cookie('jwt_refresh')

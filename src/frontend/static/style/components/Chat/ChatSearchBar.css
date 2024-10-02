@@ -10,17 +10,18 @@ chat-search-bar {
 
 chat-search-bar p {
 	position: absolute;
-	top: 1.2rem;
+	top: 1rem;
 	left: 1rem;
-	font-size: 1.7rem;
+	font-size: 2rem;
 	font-weight: bold;
-	transition: opacity 0.2s ease
+	transition: opacity 0.2s ease;
 }
 
 chat-search-bar p.inactive {
 	opacity: 0;
-	transition: opacity 0.2s ease
+	transition: opacity 0.2s ease;
 }
+
 .chat-search-box {
 	background-color: var(--contact-background-color);
 	border-radius: 2px;
@@ -28,7 +29,7 @@ chat-search-bar p.inactive {
 	top: 0.5rem;
 	height: 80%;
 	right: 4.8rem;
-	max-width: 45%;
+	width: 60%;
 	opacity: 0;
 	transition: opacity 0.2s ease-in;
 }
@@ -40,8 +41,8 @@ chat-search-bar p.inactive {
 
 .chat-search-box.active{
 	opacity: 1;
-	max-width: 82%;
-	transition: max-width 0.2s ease-in;
+	width: 82%;
+	transition: width 0.2s ease-in;
 	box-shadow: inset 2px 2px #0B0B0B;
 }
 
@@ -53,7 +54,7 @@ chat-search-bar p.inactive {
 
 #search-contact-input.active {
 	width: 90%;
-	transform: translateX(15%);
+	transform: translateX(12%);
 	visibility: visible;
 }
 
@@ -84,7 +85,7 @@ chat-search-bar p.inactive {
 }
 
 #search-bar-icon.active {
-	transform: translateX(-1050%);
+	transform: translateX(-1650%);
 	opacity: 0.5;
 	transition: all 0.2s ease;
 	animation: fadeInOut 0.2s ease;

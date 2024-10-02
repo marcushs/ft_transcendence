@@ -11,7 +11,7 @@ class ChatSearchBar extends HTMLElement {
 			<div class="chat-search-bar">
 				<p class="contact-text">CONTACTS</p>
 				<div class='chat-search-box'>
-					<input type="text" placeholder="Search contacts" id="search-contact-input"/>
+					<input type="text" placeholder="Search contacts" id="search-contact-input" maxlength="12"/>
 				</div>
 				<i id="search-bar-close-btn" class="fa-solid fa-xmark" aria-hidden="true"></i>
 				<img id="search-bar-icon" src="../../assets/search-bar-icon.svg" alt="search-bar-icon">

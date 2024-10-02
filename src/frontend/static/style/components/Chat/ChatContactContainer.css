@@ -1,0 +1,64 @@
+.contact-container {
+	margin-top: 2rem;
+	border-top: 1px solid var(--neon-blue);
+}
+
+.online-list, .offline-list {
+	height: 7rem;
+	transition: height 0.3s ease-in-out;
+}
+
+.online-list.active, .offline-list.active {
+	height: fit-content;
+	padding-top: 1.7rem;
+	transition: height 0.3s ease-in-out;
+}
+
+.offline-list {
+	border-top: 1px solid var(--light-grey);
+}
+
+.list-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	width: 55%;
+	height: 100%;
+}
+
+.plus-sign {
+	position: relative;
+	height: 12px;
+	width: 12px;
+}
+
+.vertical-line {
+	position: absolute;
+	background-color: darkgray;
+	height: 100%;
+	width: 18%;
+	left: 50%;
+	transform: translateX(-50%);
+	border-radius: 10px;
+}
+
+.horizontal-line {
+	position: absolute;
+	top: 50%;
+	background-color: darkgray;
+	width: 100%;
+	height: 18%;
+	border-radius: 10px;
+	transform: translateY(-50%);
+}
+
+.title {
+	font-size: 2.5rem;
+	font-weight: 400;
+}
+
+.count {
+	font-size: 1.5rem;
+	color: darkgray;
+	transform: translateY(10%);
+}
