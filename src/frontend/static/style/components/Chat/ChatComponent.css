@@ -1,6 +1,7 @@
 @import './ChatMainMenu.css';
 @import './ChatSearchBar.css';
 @import './ChatContactContainer.css';
+@import './ChatContactComponent.css';
 
 chat-component {
 	position: absolute;

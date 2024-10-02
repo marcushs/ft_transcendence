@@ -1,3 +1,5 @@
+import "./ChatContactComponent.js"
+
 class ChatContactList extends HTMLElement {
 	static get observedAttributes() {
 		return ['title'];
@@ -24,7 +26,7 @@ class ChatContactList extends HTMLElement {
 					<p class="count">(${this.onlineCount})</p>
 				</div>
 				<ul>
-					<li>test</li>
+					<li><chat-contact-component></chat-contact-component></li>
 					<li>test2</li>
 					<li>test3</li>
 				</ul>
