@@ -29,7 +29,7 @@ class matchmaking_view(View):
     def is_valid_matchmaking_type(self, data):
         if not 'type' in data:
             return False
-        for field in ['unranked', 'ranked', 'tournament']: 
+        for field in ['unranked', 'ranked', 'tournament']:
             if field == data['type']:
                 return True 
         return False
