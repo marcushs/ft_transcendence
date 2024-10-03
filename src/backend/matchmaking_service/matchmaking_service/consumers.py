@@ -1,17 +1,30 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.layers import get_channel_layer
-from urllib.parse import parse_qs
-from asgiref.sync import sync_to_async
-from matchmaking_app.utils.user_utils import get_user_id_by_username
 
 
 class MatchmakingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        pass
+        self.user = self.scope["user"]
+        try:
+            if self.user.is_anonymous:
+                await self.close()
+            else:
+                self.group_name = f'matchmaking_game_connection'
+                await self.channel_layer.group_add(self.group_name, self.channel_name)
+                await self.accept()
+        except Exception as e:
+            print('Error: ', e)
 
     async def disconnect(self, close_code):
         pass
 
     async def receive(self, text_data):
         pass
+    
+    async def send_match_pair(self, event):
+        print(f'----------- SEND MATCH PAIR  {event}----------') 
+        self.send(text_data = json.dumps({
+            'game_type' : event['game_type'],
+            'player1': event['player1'],
+            'player2': event['player2']
+        }))
