@@ -75,7 +75,7 @@ export function UpdateContactInList(contactJSON, change_info, old_value) {
 }
 
 export async function addNewContactToList(contact, requestType, is_sender) {
-    const url = `http://localhost:8000/user/get_user/?q=${contact}`
+    const url = `http://localhost:8000/api/user/get_user/?q=${contact}`
     try {
         const data = await sendRequest('GET', url, null);
         const user = data.message;

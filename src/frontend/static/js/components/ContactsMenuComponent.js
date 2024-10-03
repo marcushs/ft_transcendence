@@ -2,9 +2,7 @@ import './ContactComponent.js';
 import { getString } from '../utils/languageManagement.js';
 import { sendRequest } from "../utils/sendRequest.js";
 import './Friendship/FriendshipButtonComponent.js';
-import './PopUpComponent.js';
-import './Contact/ContactBottomNav.js'
-import './Contact/ContactMenuSearchBar.js'
+import './PopUpComponent.js'
 
 class FriendsMenuComponent extends HTMLElement {
     constructor() {
@@ -35,23 +33,24 @@ class FriendsMenuComponent extends HTMLElement {
                     <ul class="pending-contact-list-result"></ul>
                 </div>
             </div>
-        ` ;
+        `;
 
+        this.addContact = this.querySelector('.add-contact');
         this.contactList = this.querySelector('.contact-list-result');
         this.pendingContactList = this.querySelector('.pending-contact-list-result');
         this.contactMenuDiv = this.querySelector('.contact-menu');
         this.contactSummary = this.querySelector('.contact-summary');
         this.pendingContactSummary = this.querySelector('.pending-contact-summary');
-        this.searchBar = this.querySelector('#search-bar');
+        this.searchContactInput = this.querySelector('#search-contact-input');
         this.contactBottomNavDiv = this.querySelector('.bottom-nav-contacts');
-        this.closeBtn = this.querySelector('#close-btn');
         
         this.contactMenuDiv.style.display = 'none';
         this.pendingContactList.style.display = 'none';
         this.contactBottomNavDiv.style.display = 'none';
         this.isMouseDown = false;
-        this.bottomNavLastClicked = 'none';
     }
+
+
 
 
     // -------------------------- //
@@ -189,10 +188,6 @@ class FriendsMenuComponent extends HTMLElement {
         let url = null;
         if (requestType === 'search_contacts')
             url = `/api/friends/search_contacts/`;
-        else if (requestType === 'users_status') {
-            const encodedList = encodeURIComponent(JSON.stringify(payload));
-            url = `/api/user/get_users_status/?q=${encodedList}`
-        }
         else if (requestType === 'users_data') {
             const encodedList = encodeURIComponent(JSON.stringify(payload));
             url = `/api/user/get_users_info/?q=${encodedList}`
@@ -210,9 +205,8 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     attachEventListener() {
-        this.closeBtn.addEventListener('click', () => this.contactMenuDiv.style.display = 'none');
-        this.contactBottomNavDiv.addEventListener('click', (e) => {
-            this.contactBottomNavCallback(e);
+        this.contactBottomNavDiv.addEventListener('click', () => {
+            this.contactMenuDiv.style.display = this.contactMenuDiv.style.display === 'none' ? 'block' : 'none';
         });
         this.pendingContactSummary.addEventListener('click', () => {
             this.pendingContactList.style.display = this.pendingContactList.style.display === 'none' ? 'block' : 'none';
@@ -220,7 +214,10 @@ class FriendsMenuComponent extends HTMLElement {
         this.contactSummary.addEventListener('click', () => {
             this.contactList.style.display = this.contactList.style.display === 'none' ? 'block' : 'none';
         });
-        // this.searchContactInput.addEventListener('input', () => this.updateContactList());
+        this.addContact.addEventListener('click', () => {
+            app.querySelector('section').innerHTML += '<pop-up-component class="add-new-contact-pop-up"></pop-up-component>' 
+        })
+        this.searchContactInput.addEventListener('input', () => this.updateContactList());
         this.attachTestEventListener();
     }
 
@@ -281,26 +278,6 @@ class FriendsMenuComponent extends HTMLElement {
             if (!username.includes(searchValue))
                 contactComponent.remove();
         })
-    }
-
-    contactBottomNavCallback(e) {
-        // if (e.target.id === 'bottom-nav-chat-icon') {
-        //     this.topBarChatIcon.src = '../../assets/contact.svg';
-        //     this.topBarChatIcon.classList.add('contact');
-
-        //     this.contactSummary.innerHTML = '<p>Messages</p>';
-        // } else {
-        //     this.topBarChatIcon.src = '../../assets/chat-icon.svg';
-        //     this.topBarChatIcon.classList.remove('contact');
-            
-        //     this.contactSummary.innerHTML = '<p>Contacts</p>';
-        // };
-        this.contactMenuDiv.style.display = this.contactMenuDiv.style.display === 'block' && this.bottomNavLastClicked === e.target.id ? 'none' : 'block';
-        this.bottomNavLastClicked = e.target.id;
-        // Finally fixed search-bar doubling bug!!! By adding a div and only render when contact meny has display block
-        if (this.contactMenuDiv.style.display === 'block') {
-            this.searchBar.innerHTML = "<contact-menu-search-bar></contact-menu-search-bar>"
-        };
     }
 }
 customElements.define("contact-menu-component", FriendsMenuComponent);
