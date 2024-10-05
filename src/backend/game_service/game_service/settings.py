@@ -13,13 +13,31 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# /-----> Django key <-----\
+
+# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("USER_SECRET_KEY")
 
-JWT_SECRET_KEY = 'aR[G~vTMe,qRP;)+`2x`gv3#IZ@&f!*f'
-JWT_ALGORITHM = 'HS256' # HMAC with SHA-256
-JWT_EXP_DELTA_SECONDS = 3000 # 15 minutes
-JWT_REFRESH_EXP_DELTA_SECONDS = 6000 # 1day
-BASE_DIR = Path(__file__).resolve().parent.parent
+# /-----> JWT keys && algorithm <-----\
+
+JWT_VERIFYING_KEY = os.environ.get("PUBLIC_JWT_KEY")
+JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")
+
+# /-----> JWT token lifetime in seconds <-----\
+
+ACCESS_TOKEN_LIFETIME = 120 # 2 minutes
+REFRESH_TOKEN_LIFETIME = 86400 # 1 day
+
+# /-----> Celery settings <-----\
+    
+
+CELERY_BROKER_URL = 'redis://redis:6379/0' #broker
+
+
+# /-----><-----\
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

@@ -284,6 +284,7 @@ services:
       sh -c "
         python3 manage.py makemigrations &&
         python3 manage.py migrate &&
+        celery -A game_service worker --loglevel=info &
         python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
@@ -292,7 +293,6 @@ services:
       - "8005:8000"
     networks:
       - transcendence-network
-
 
   # ---------------> REDIS <---------------
 
