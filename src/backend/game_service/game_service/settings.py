@@ -36,7 +36,6 @@ REFRESH_TOKEN_LIFETIME = 86400 # 1 day
 
 CELERY_BROKER_URL = 'redis://redis:6379/0' #broker
 
-
 # /-----><-----\
 
 # SECURITY WARNING: don't run with debug turned on in production!
