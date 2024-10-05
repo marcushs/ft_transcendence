@@ -5,7 +5,6 @@ import threading
 class UserAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'matchmaking_app'
-    print('----------- IS READY ? --------------') 
     
     def ready(self):
         from .tasks import background_task_unranked_matchmaking

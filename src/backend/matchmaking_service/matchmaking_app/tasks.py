@@ -4,9 +4,13 @@ from .views.MatchmakingView import unranked_queue
 import time
 import queue
 import random
+import redis
+import json
+from .models import User
+
+channel_layer = get_channel_layer()
 
 def background_task_unranked_matchmaking():
-    channel_layer = get_channel_layer()
     waiting_list = []
     task_queue = unranked_queue
     
@@ -15,23 +19,19 @@ def background_task_unranked_matchmaking():
         if new_user.is_ingame is True: 
             task_queue.task_done()
             continue
-        launch_proccess(channel_layer=channel_layer, waiting_list=waiting_list, user=new_user)
-        print(f'---------- waiting list === {waiting_list} -----------')
-        print(f'------- IS IN GAME SHOULD BE TRUE {new_user.is_ingame} ------------')    
+        launch_proccess(waiting_list=waiting_list, user=new_user)
         task_queue.task_done()
         
 def start_websocket_connection():
     pass
 
 
-def launch_proccess(channel_layer, waiting_list, user):
-    print(f'------------ TEST {user} -------------')
+def launch_proccess(waiting_list, user):
     if not check_duplicate_user_in_waiting_list(target_user=user, waiting_list=waiting_list):
         return
-    print(f'------- IS IN GAME SHOULD BE FALSE  {user.is_ingame}------------') 
     waiting_list.append(user)
     if len(waiting_list) > 1:
-            proccess_matchmaking(channel_layer=channel_layer, waiting_list=waiting_list)
+            proccess_matchmaking(waiting_list=waiting_list)
              
              
 def check_duplicate_user_in_waiting_list(target_user, waiting_list):
@@ -41,28 +41,36 @@ def check_duplicate_user_in_waiting_list(target_user, waiting_list):
     return True
     
 
-def proccess_matchmaking(channel_layer, waiting_list):
+def proccess_matchmaking(waiting_list):
     if len(waiting_list) >= 3:
         random.shuffle(waiting_list)
-    print(f'-------- waiting = {waiting_list} ------------') 
+        
     first_user = waiting_list.pop()
     second_user = waiting_list.pop()
     
-    first_user.is_ingame = True
-    first_user.save()
-    second_user.is_ingame = True
-    second_user.save()
+    change_is_ingame_state(value=True, user_instance=first_user)
+    change_is_ingame_state(value=True, user_instance=second_user)
     
-    match_users_pair = (first_user, second_user)
-    print(f'---------- MATCH = {match_users_pair} --------------')  
-    async_to_sync(channel_layer.group_send)( 
-        'matchmaking_game_connection',
-        {
-            'type': 'send_match_pair',
-            'game_type': 'unranked',
-            'player1': match_users_pair[0],
-            'player2': match_users_pair[1]
-        } 
-    )
+    redis_instance = redis.Redis(host='redis', port=6379, db=0)
+    redis_instance.publish('matchmaking_manager', json.dumps({
+        'game_type': 'unranked',
+        'player1': first_user.id,
+        'player2': second_user.id
+    }))
+    
     if len(waiting_list) > 1:
         proccess_matchmaking(waiting_list=waiting_list)  
+        
+
+def change_is_ingame_state(value, user_instance=None, user_id=None):
+    if user_id:
+        try:
+            user = User.objects.get(id=user_id)
+        except Exception as e:
+            print(f'Error : {e}')
+            return
+    else:
+        user = user_instance
+        
+    user.is_ingame = value
+    user.save()

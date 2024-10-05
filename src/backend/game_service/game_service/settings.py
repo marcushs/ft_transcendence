@@ -24,23 +24,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'game']
 
 
 INSTALLED_APPS = [
-	# 'channels',
-	# 'corsheaders',
-    # 'game_app',
-    # 'django.contrib.staticfiles',
+	'channels',
+	'corsheaders',
+    'game_app',
+    'django.contrib.staticfiles',
 ]
 
 
 MIDDLEWARE = [
-    # 'django.middleware.security.SecurityMiddleware',
-    # 'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
-	# 'corsheaders.middleware.CorsMiddleware',
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+	'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 

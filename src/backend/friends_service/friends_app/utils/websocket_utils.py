@@ -39,7 +39,7 @@ class handle_friend_info_change(View):
                 {
                     'type': 'contact_info_update',
                     'event': 'contact_update',
-                    'contact': json.dumps(data_contact), 
+                    'contact': json.dumps(data_contact),
                     'change_info': data['change_info'],
                     'old_value': data['old_value']
                 }
