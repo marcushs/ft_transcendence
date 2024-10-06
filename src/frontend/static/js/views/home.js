@@ -13,27 +13,27 @@ export default () => {
 			<section class="home-main-section">
 				<game-component></game-component>
 				<match-history-component></match-history-component>
-				<button label="test" style="z-index: 1000000">test</button>
-			</section>
-			<contact-menu-component></contact-menu-component>
-		</section>
-	`;
+				</section>
+				<contact-menu-component></contact-menu-component>
+				</section>
+		`;
+				// <button label="test" style="z-index: 1000000">test</button>
 
 	setTimeout(() =>{
-		test();
+		// test();
 	}, 0);
 
 	return homePage;
 }
 
-function test() {
-	document.querySelector('button[label="test"]').addEventListener("click", async () => {
-		try {
-			await sendRequest('POST', 'http://localhost:8006/matchmaking/matchmaking/', {
-				type: 'ranked',
-			});
-		} catch (error) {
-			console.error(error);
-		}
-	})
-}
+// function test() {
+// 	document.querySelector('button[label="test"]').addEventListener("click", async () => {
+// 		try {
+// 			await sendRequest('POST', 'http://localhost:8006/matchmaking/matchmaking/', {
+// 				type: 'ranked',
+// 			});
+// 		} catch (error) {
+// 			console.error(error);
+// 		}
+// 	})
+// }

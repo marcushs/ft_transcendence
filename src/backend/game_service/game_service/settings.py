@@ -41,19 +41,24 @@ CELERY_BROKER_URL = 'redis://redis:6379/0' #broker
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'game']
+ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'game'] 
 
 
 INSTALLED_APPS = [
 	'channels',
+    'daphne',
 	'corsheaders',
     'game_app',
+    'django.contrib.auth',
     'django.contrib.staticfiles',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
 ]
 
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.security.SecurityMiddleware',  
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
@@ -124,11 +129,13 @@ CORS_ALLOW_METHODS = [
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
 	'http://frontend',
+ 	'http://game'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
 	'http://localhost:3000',
 	'http://frontend',
+ 	'http://game'
 ]
 
 LANGUAGE_CODE = 'en-us'

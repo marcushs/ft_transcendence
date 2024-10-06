@@ -48,6 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
   
     def to_dict(self):
         return {
+            'id': self.id,
             'username': self.username,
             'email': self.email,
             'profile_image': self.profile_image.url if self.profile_image else None,

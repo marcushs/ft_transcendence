@@ -1,23 +1,26 @@
-import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from urllib.parse import parse_qs
+import json
 
 
 class GameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.user = self.scope["user"]
+        print('---------> websocket connection received')
+        query_string = parse_qs(self.scope['query_string'].decode())
+        self.user_id = str(query_string.get('user_id', [None])[0])
         try:
-            if self.user.is_anonymous:
+            if not self.user_id:
                 await self.close()
             else:
-                self.group_name = f'matchmaking_game_connection'
-                await self.channel_layer.group_add(self.group_name, self.channel_name)
+                self.group_name = f'game_{self.user_id}'
+                await self.channel_layer.group_add(self.group_name, self.channel_name) 
                 await self.accept()
         except Exception as e:
             print('Error: ', e)
 
     async def disconnect(self, close_code):
-        pass
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive(self, text_data):
-        print(f'------ game service receive = {text_data} ---------------')  
-        pass
+        data = json.loads(text_data)
+        print(f'------ game service receive = {data} ---------------') 
