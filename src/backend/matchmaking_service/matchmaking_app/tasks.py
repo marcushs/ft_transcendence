@@ -52,6 +52,8 @@ def proccess_matchmaking(waiting_list):
     # change_is_ingame_state(value=True, user_instance=second_user)
     
     redis_instance = redis.Redis(host='redis', port=6379, db=0)
+    print(f'--------------------> player1_id: {first_user.id}')  
+    print(f'--------------------> player2_id: {second_user.id}')
     redis_instance.publish('matchmaking_manager', json.dumps({ 
         'game_type': 'unranked',
         'player1': first_user.id,

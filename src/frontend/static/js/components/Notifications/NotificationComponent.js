@@ -322,7 +322,6 @@ class NotificationComponent extends HTMLElement {
 			const data = await sendRequest('GET', url, null);
 
 			this.notifications = data.message;
-			console.log('test = ', data)
 		} catch (error) {
 			console.error(error.message);
 		}
