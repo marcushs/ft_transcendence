@@ -9,4 +9,7 @@
     --component-background-color: #1E202B;
     --contact-background-color: #201a22;
     --error-color: #FF3D3D;
+    --online-status-color: #3AA0B7;
+    --offline-status-color: gray;
+    --away-status-color: rgb(184, 151, 60);
 }

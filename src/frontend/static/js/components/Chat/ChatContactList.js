@@ -27,8 +27,12 @@ class ChatContactList extends HTMLElement {
 				</div>
 				<ul>
 					<li><chat-contact-component></chat-contact-component></li>
-					<li>test2</li>
-					<li>test3</li>
+					<li><chat-contact-component></chat-contact-component></li>
+					<li><chat-contact-component></chat-contact-component></li>
+					<li><chat-contact-component></chat-contact-component></li>
+					<li><chat-contact-component></chat-contact-component></li>
+					<li><chat-contact-component></chat-contact-component></li>
+					<li><chat-contact-component></chat-contact-component></li>
 				</ul>
 			</div>
 		`;

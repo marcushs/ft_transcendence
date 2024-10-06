@@ -7,3 +7,4 @@ migrations
 check_create_user.sh
 .gitignore
 .docker
+check_chat_db.sh

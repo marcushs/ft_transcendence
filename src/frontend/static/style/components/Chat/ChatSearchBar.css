@@ -46,16 +46,17 @@ chat-search-bar p.inactive {
 	box-shadow: inset 2px 2px #0B0B0B;
 }
 
-#search-contact-input {
+#chat-search-contact-input {
 	height: 100%;
 	color: var(--light-grey);
 	visibility: hidden;
 }
 
-#search-contact-input.active {
+#chat-search-contact-input.active {
 	width: 90%;
 	transform: translateX(12%);
 	visibility: visible;
+	font-size: 1.5rem;
 }
 
 #add-friend-icon {

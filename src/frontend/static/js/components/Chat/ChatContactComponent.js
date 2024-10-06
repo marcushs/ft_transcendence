@@ -10,16 +10,25 @@ class ChatContactComponent extends HTMLElement {
 
 	render() {
 		this.innerHTML = `
-		<div class="contact-profile-picture">
+		<div class="chat-contact-profile-picture">
 			<img src='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg' alt='contact picture'></img>
+			<div class="chat-status-circle online"></div>
 		</div>
-		<div class="status-circle">
+		<div class="chat-contact-info">
+			<p>helloworld!!</p>
+			<p>This is an example message This is an example message This is an example message </p>
 		</div>
-		<div class="contact-info">
-			<p>Test</p>
-			<p>Online</p>
+		<div class="message-status">
+			<div class="last-message-datetime">
+				<span>18:39</span>
+			</div>
+			<div class="unread-message-count-circle"></div>
+			<i class="fa-solid fa-check"></i>
+			<div class="double-check">
+				<i class="fa-solid fa-check"></i>
+				<i class="fa-solid fa-check"></i>
+			</div>
 		</div>
-		<i class="fa-solid fa-angle-up"></i>
 		`;
 	};
 

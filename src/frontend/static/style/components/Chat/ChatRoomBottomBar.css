@@ -1,0 +1,24 @@
+chatroom-bottom-bar {
+	height: 3.5rem;
+	width: 100%;
+	display: flex;
+	justify-content: space-evenly;
+	position: sticky;
+	bottom: 0;
+}
+
+.chatroom-message-box {
+	width: 85%;
+	height: 100%;
+	background-color: lightgray;
+	border-radius: 10px;
+	position: relative;
+}
+
+.chatroom-message-input {
+	position: absolute;
+	right: 0;
+	width: 97%;
+	height: 100%;
+	font-size: 1.2rem;
+}

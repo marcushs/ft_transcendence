@@ -2,6 +2,9 @@
 @import './ChatSearchBar.css';
 @import './ChatContactContainer.css';
 @import './ChatContactComponent.css';
+@import './ChatRoomTopBar.css';
+@import './ChatRoomBottomBar.css';
+@import './ChatRoomConversation.css';
 
 chat-component {
 	position: absolute;

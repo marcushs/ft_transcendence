@@ -1,4 +1,4 @@
-export default () => {
+    export default () => {
 	const html = `
 		<h1>This is a chat component</h1>
 		<textarea id="chat-log" cols="100" rows="20"></textarea><br>

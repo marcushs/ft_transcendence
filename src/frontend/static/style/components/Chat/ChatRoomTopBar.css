@@ -1,0 +1,76 @@
+chatroom-top-bar {
+	display: inline-block;
+	margin: 0.8rem 0 0 0;
+	width: 100%;
+	height: 5rem;
+	position: relative;
+	background-color: #2a2d3b;
+	box-shadow: 0 8px 8px -4px #0B0B0B, 0 -8px 8px -4px #0B0B0B;
+	position: relative;
+}
+
+chatroom-top-bar i {
+	position: absolute;
+	top: 50%;
+	left: 1.2rem;
+	transform: translateY(-50%);
+	font-size: 2.2rem;
+}
+
+.chatroom-profile-picture {
+	position: relative;
+	width: 10%;
+	top: 50%;
+	left: 5rem;
+	transform: translateY(-45%);
+}
+
+.chatroom-profile-picture img {
+	width: 4rem;
+	border-radius: 50%;
+	border: 1px solid var(--light-grey);
+}
+
+.chatroom-profile-picture .chat-status-circle.online,
+.chatroom-profile-picture .chat-status-circle.offline,
+.chatroom-profile-picture .chat-status-circle.away {
+	width: 1.4rem;
+	height: 1.4rem;
+	top: 3rem;
+	left: 2.8rem;
+}
+
+.chat-contact-name-status {
+	width: 40%;
+	height: 90%;
+	display: flex;
+	flex-direction: column;
+	align-items: start;
+	justify-content: space-evenly;
+	position: absolute;
+	left: 10rem;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.chat-contact-name-status p:first-child {
+	font-weight: bold;
+	font-size: 1.5rem;
+}
+
+.chat-contact-name-status p:last-child {
+	font-style: italic;
+	font-size: 1.2rem;
+}
+
+.chat-contact-name-status p:last-child.online {
+	color: var(--online-status-color);
+}
+
+.chat-contact-name-status p:last-child.offline  {
+	color: var(--offline-status-color);
+}
+
+.chat-contact-name-status p:last-child.away {
+	color: var(--away-status-color);
+}

@@ -11,7 +11,7 @@ class ChatSearchBar extends HTMLElement {
 			<div class="chat-search-bar">
 				<p class="contact-text">CONTACTS</p>
 				<div class='chat-search-box'>
-					<input type="text" placeholder="Search contacts" id="search-contact-input" maxlength="12"/>
+					<input type="text" placeholder="Search contacts" id="chat-search-contact-input" maxlength="12"/>
 				</div>
 				<i id="search-bar-close-btn" class="fa-solid fa-xmark" aria-hidden="true"></i>
 				<img id="search-bar-icon" src="../../assets/search-bar-icon.svg" alt="search-bar-icon">
@@ -21,7 +21,7 @@ class ChatSearchBar extends HTMLElement {
 
 		this.contactText = document.querySelector('.contact-text');
 		this.chatSearchBox = document.querySelector('.chat-search-box');
-		this.searchContactInput = document.getElementById('search-contact-input');
+		this.searchContactInput = document.getElementById('chat-search-contact-input');
 		this.searchBarIcon = document.getElementById('search-bar-icon');
 		this.addFriendIcon = document.getElementById('add-friend-icon');
 		this.searchBarCloseBtn = document.getElementById('search-bar-close-btn');
@@ -46,7 +46,7 @@ class ChatSearchBar extends HTMLElement {
 	handleClick(e) {
 		if (e.target.id === 'search-bar-icon' && this.searchBarIcon.classList.contains("active")) return;
 		if (e.target.classList.contains("active") && e.target.classList.contains("chat-search-box")) return;
-		if (e.target.id === 'search-contact-input') return ;
+		if (e.target.id === 'chat-search-contact-input') return ;
 		this.contactText.classList.toggle('inactive');
 		this.chatSearchBox.classList.toggle('active');
 		this.searchContactInput.classList.toggle('active');

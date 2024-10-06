@@ -6,31 +6,104 @@ chat-contact-component {
   	align-items: center;
 }
 
-.contact-profile-picture {
+.chat-contact-profile-picture {
 	display: flex;
     justify-content: center;
 	align-items: center;
-    width: 25%;
+    width: 20%;
 	height: 100%;
+	position: relative;
 }
 
-.contact-profile-picture img {
-	width: 5.5rem;
-    height: 5.5rem;
+.chat-contact-profile-picture img {
+	width: 6rem;
+    height: 6rem;
     border-radius: 50%;
 	border: 1px solid var(--light-grey);
 }
 
-.status-circle {
+.chat-status-circle {
     position: absolute;
-    left: 4.6rem;
-    top: 4.1rem;
+    left: 5.7rem;
+    top: 4.5rem;
     border-radius: 50%;
     width: 1.8rem;
     height: 1.8rem;
+	border: 2px solid #121216;
 }
 
-.contact-info {
+
+.chat-contact-info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: "flex-start";
 	height: 100%;
-	width: 60%;
+	width: 65%;
+}
+
+.chat-contact-info p:first-child {
+	font-weight: 700;
+	font-size: 2rem;
+}
+
+.chat-contact-info p:last-child {
+	font-style: italic;
+	font-size: 1.2rem;
+	color: gray;
+}
+
+.chat-status-circle.online {
+	background-color: var(--online-status-color);
+}
+
+.chat-status-circle.offline {
+	background-color: var(--offline-status-color);
+}
+
+.chat-status-circle.away {
+	background-color: var(--away-status-color);
+}
+
+.message-status {
+	height: 80%;
+	width: 15%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+}
+.message-status .last-message-datetime span {
+	color: lightgray;
+	font-size: 1.2rem;
+}
+
+.message-status i {
+	font-size: 2rem;
+}
+
+.double-check {
+	display: none;
+}
+
+.double-check.active {
+	display: block;
+	position: relative;
+	height: 2.5rem;
+	width: 2.5rem;
+}
+
+.double-check.active i {
+	color: var(--online-status-color);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+}
+
+.double-check.active i:first-child {
+	translate: -50% -50%;
+}
+
+.double-check.active i:last-child {
+	translate: -80% -50%;
 }
