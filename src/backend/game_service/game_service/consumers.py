@@ -23,4 +23,13 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        print(f'------ game service receive = {data} ---------------') 
+        print(f'------ game service receive = {data} ---------------')
+        
+    async def game_starting(self, event):
+        print('-----> game_starting websocket function reached !')
+        await self.send(text_data=json.dumps( 
+            {
+                'type' : event['type'],
+                'message': event['message'],
+            }
+        ))

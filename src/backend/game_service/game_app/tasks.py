@@ -1,3 +1,6 @@
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from .game_manager import PongGameEngine
 from celery import shared_task
 from time import sleep
 import redis
@@ -34,5 +37,26 @@ def get_instance_info_from_data(raw_data):
 def start_game_instance(data):
     print('---------------->> CELERY WORKER: game_instance reached !')
     print(f'--------- Message data is : {data}')
-    sleep(5)
+    if isinstance(data, bytes):
+        data = json.loads(data.decode('utf-8'))
+    game_instance = PongGameEngine()
+    game_start_payload = {
+        'type': 'game_starting',
+        'message': 'game found ! Starts in 5seconds'
+    }
+    async_to_sync(send_websocket_info)(player_id=data['player1'], payload=game_start_payload)
+    async_to_sync(send_websocket_info)(player_id=data['player2'], payload=game_start_payload)
+    sleep(6)
+    game_instance.start_game()
     print('---------------->> CELERY WORKER: game_instance finished !')
+    
+async def send_websocket_info(player_id, payload):
+    try:
+        print('---------------->> CELERY WORKER: sending websocket info !') 
+        channel_layer = get_channel_layer()
+        await channel_layer.group_send(
+            f'game_{player_id}',
+            payload
+        )
+    except Exception as e:
+        print(f'---------------->> Error sending websocket info: {e}') 

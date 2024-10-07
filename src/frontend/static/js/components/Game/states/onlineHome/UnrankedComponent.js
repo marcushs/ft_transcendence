@@ -1,6 +1,7 @@
 import {getString} from "../../../../utils/languageManagement.js";
 import { sendRequest } from "../../../../utils/sendRequest.js";
 import getUserData from "../../../../utils/getUserData.js";
+import '../inGameComponent.js'
 
 let socket = null;
 class UnrankedComponent extends HTMLElement {
@@ -48,6 +49,8 @@ class UnrankedComponent extends HTMLElement {
 		socket.onmessage = (event) => {
 			const data = JSON.parse(event.data)
 			console.log('data received from game websocket : ', data);
+			if (data.type === 'game_starting')
+				this.startGame()
 		}
 
 		socket.onclose = () => {
@@ -64,6 +67,13 @@ class UnrankedComponent extends HTMLElement {
 			console.error(error);
 			return false;
 		}
+	}
+
+	async startGame() {
+		const onlineHomeDiv = document.querySelector('.online-home-container');
+		const oldDivContent = onlineHomeDiv.innerHTML;
+
+		onlineHomeDiv.innerHTML = '<in-game-component></in-game-component>'
 	}
 
 }
