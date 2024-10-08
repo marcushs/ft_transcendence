@@ -70,7 +70,7 @@ class UnrankedComponent extends HTMLElement {
 	}
 
 	async startGame() {
-		const onlineHomeDiv = document.querySelector('.online-home-container');
+		const onlineHomeDiv = document.querySelector('.states-container');
 		const oldDivContent = onlineHomeDiv.innerHTML;
 
 		onlineHomeDiv.innerHTML = '<in-game-component></in-game-component>'

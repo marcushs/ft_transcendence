@@ -39,6 +39,8 @@ class InGameComponent extends HTMLElement {
 	setCanvasSize() {
 		const devicePixelRatio = window.devicePixelRatio || 1;
 
+		console.log('device pixel ratio: ', devicePixelRatio);
+		
 		this.canvas.element.width = this.canvas.element.clientWidth * devicePixelRatio;
 		this.canvas.element.height = this.canvas.element.clientHeight * devicePixelRatio;
 	}

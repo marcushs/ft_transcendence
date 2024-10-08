@@ -12,7 +12,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
     def process_request(self, request):
         token = request.COOKIES.get('jwt')
         if token:
-            jwt_user = get_user_from_jwt(token)
+            jwt_user = get_user_from_jwt(token) 
             if jwt_user:
                 request.user = jwt_user
             else:

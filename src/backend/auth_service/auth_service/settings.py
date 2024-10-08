@@ -53,7 +53,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'auth']
 
-INSTALLED_APPS = [
+INSTALLED_APPS = [ 
 	'corsheaders',
 	'auth_app',
     'django.contrib.auth',
