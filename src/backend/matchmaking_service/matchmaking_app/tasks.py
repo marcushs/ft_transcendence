@@ -30,6 +30,7 @@ def launch_proccess(waiting_list, user):
     if not check_duplicate_user_in_waiting_list(target_user=user, waiting_list=waiting_list):
         return
     waiting_list.append(user)
+    print('------------> waiting_list: ', waiting_list)
     if len(waiting_list) > 1:
             proccess_matchmaking(waiting_list=waiting_list)
              

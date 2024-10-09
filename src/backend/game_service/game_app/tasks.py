@@ -1,4 +1,5 @@
 from channels.layers import get_channel_layer
+from .websocket_utils import send_websocket_info
 from asgiref.sync import async_to_sync
 from .game_manager import PongGameEngine
 from celery import shared_task
@@ -6,10 +7,12 @@ from time import sleep
 import redis
 import os
 import json
+import uuid
+
+redis_instance = redis.Redis(host='redis', port=6379, db=0)
 
 @shared_task
 def launch_games_listener():
-    redis_instance = redis.Redis(host='redis', port=6379, db=0)
     pubsub = redis_instance.pubsub()
     pubsub.subscribe('matchmaking_manager')
     print('----------> REDIS connected - starting to listen on channels \'matchmaking manager\'')
@@ -35,28 +38,20 @@ def get_instance_info_from_data(raw_data):
 
 @shared_task
 def start_game_instance(data):
-    print('---------------->> CELERY WORKER: game_instance reached !')
-    print(f'--------- Message data is : {data}')
+    print(f'--------- CELERY WORKER: game_instance reached ! data is : {data}')
     if isinstance(data, bytes):
         data = json.loads(data.decode('utf-8'))
-    game_instance = PongGameEngine()
-    game_start_payload = {
-        'type': 'game_starting',
-        'message': 'game found ! Starts in 5seconds' 
-    }
-    async_to_sync(send_websocket_info)(player_id=data['player1'], payload=game_start_payload)
-    async_to_sync(send_websocket_info)(player_id=data['player2'], payload=game_start_payload)
-    sleep(6)
-    game_instance.start_game()
-    print('---------------->> CELERY WORKER: game_instance finished !')
-    
-async def send_websocket_info(player_id, payload):
-    try:
-        print('---------------->> CELERY WORKER: sending websocket info !') 
-        channel_layer = get_channel_layer()
-        await channel_layer.group_send(
-            f'game_{player_id}',
-            payload
-        )
-    except Exception as e:
-        print(f'---------------->> Error sending websocket info: {e}') 
+    game_instance_id = str(uuid.uuid4())
+    async_to_sync(send_websocket_info)(player_id=data['player1'], payload={'type': 'game_found', 'game_id': game_instance_id}) 
+    async_to_sync(send_websocket_info)(player_id=data['player2'], payload={'type': 'game_found', 'game_id': game_instance_id})
+    pubsub = redis_instance.pubsub()
+    pubsub.subscribe(f'waiting_for_start:{game_instance_id}')
+    for message in pubsub.listen():
+        if message['type'] == 'message':
+            pubsub.close()
+            redis_data = json.loads(message['data'].decode('utf-8'))
+            print(f'redis data loaded in celery worker : {redis_data}') 
+            game_instance = PongGameEngine(game_id=game_instance_id, width=redis_data['width'], height=redis_data['height'], player_one_id=data['player1'], player_two_id=data['player2'])
+            break   
+    game_instance.game_loop()
+    print('---------------->> CELERY WORKER: game_instance finished !') 

@@ -1,6 +1,6 @@
 import { startGame } from "./Game.js";
 
-let socket = null;
+export let socket = null;
 
 export async function gameWebsocket(userId) {
 	if (socket !== null) {
@@ -16,8 +16,12 @@ export async function gameWebsocket(userId) {
 	socket.onmessage = (event) => {
 		const data = JSON.parse(event.data)
 		console.log('data received from game websocket : ', data);
-		if (data.type === 'game_starting')
+		if (data.type === 'game_found')
+			localStorage.setItem('currentGameId', data.game_id)
 			startGame()
+		if (data.type === ' data_update')
+			console.log('game data updated...');
+			return;
 	}
 
 	socket.onclose = () => {

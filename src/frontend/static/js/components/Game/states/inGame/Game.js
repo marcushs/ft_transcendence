@@ -1,6 +1,7 @@
 import Player from "./Player.js";
 import Ball from "./Ball.js";
 import Spark from "./Spark.js";
+import { socket } from "./gameWebsocket.js";
 
 export function startGame() {
 	const onlineHomeDiv = document.querySelector('.states-container');
@@ -10,15 +11,31 @@ export function startGame() {
 }
 
 export default class Game {
-	constructor(canvas) {
+	constructor(canvas, gameId) {
+		this.gameId = localStorage.getItem('currentGameId');
 		this.canvas = canvas;
-		this.speed = 15;
-		this.speedLimit = 45;
-		this.ball = new Ball(canvas, canvas.width / 2, canvas.height / 2, this.speed);
-		this.playerOne = new Player(canvas, true, '2dewf-23fsdv23-32fff');
-		this.playerTwo = new Player(canvas, false, '2dewf-23fsdv23-32fff');
-		this.playerOneScore = 0;
-		this.playerTwoScore = 0;
+		this.sendCanvasSize();
+		this.initGameRender();
+	}
+
+	sendCanvasSize() {
+		const message = {
+			type: 'init_game',
+			game_id: this.gameId,
+			width: this.canvas.width,
+			height: this.canvas.height,
+		}
+		socket.send(JSON.stringify(message))
+	}
+
+	initGameRender() {
+		// this.speed = 15;
+		// this.speedLimit = 45;
+		this.ball = new Ball(this.canvas, this.canvas.width / 2, this.canvas.height / 2, this.speed);
+		this.playerOne = new Player(this.canvas, true, '2dewf-23fsdv23-32fff');
+		this.playerTwo = new Player(this.canvas, false, '2dewf-23fsdv23-32fff');
+		// this.playerOneScore = 0;
+		// this.playerTwoScore = 0;
 		this.sparks = [];
 		this.lastTime = performance.now();
 		this.keysPlayerOne = {
@@ -29,10 +46,7 @@ export default class Game {
 			up: false,
 			down: false,
 		}
-		this.attachEventsListener();
-		this.gameLoop();
 	}
-
 
 	attachEventsListener() {
 		document.addEventListener('keydown', (event) => {
@@ -56,7 +70,7 @@ export default class Game {
 	}
 
 
-	gameLoop(currentTime) {
+	gameRender() {
 		this.deltaTime = (performance.now() - this.lastTime) / 1000;
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.canvas.ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
@@ -69,7 +83,6 @@ export default class Game {
 		this.movePlayers();
 		this.moveBall();
 		this.update();
-		requestAnimationFrame(() => this.gameLoop());
 	}
 
 
