@@ -34,13 +34,13 @@ class matchmaking_view(View):
                 return True 
         return False
 
-    def start_matchmaking_by_type(self, type, request):
+    def start_matchmaking_by_type(self, game_type, request):
         matchmaking_dict = {
             'unranked': self.add_player_to_unranked_queue,
-            'ranked': self.add_player_to_ranked_queue,
+            'ranked': self.add_player_to_ranked_queue, 
         }
         
-        matchmaking_dict[type](request)
+        matchmaking_dict[game_type](request)
         
         
     def add_player_to_unranked_queue(self, request):
@@ -52,5 +52,5 @@ class matchmaking_view(View):
     def add_player_to_ranked_queue(self, request):
         arr = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         random.shuffle(arr)
-        unranked_queue.put(request.user)
+        ranked_queue.put(request.user)
         print(f'--------- RANKED = {arr} ---------')  

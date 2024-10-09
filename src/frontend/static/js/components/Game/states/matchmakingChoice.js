@@ -1,4 +1,4 @@
-import './inGameComponent.js';
+import './inGame/inGameComponent.js';
 import {getString} from "../../../utils/languageManagement.js";
 
 class matchmakingChoice {
@@ -11,7 +11,6 @@ class matchmakingChoice {
 
 	render() {
 		return `
-<!--			<in-game-component></in-game-component>-->
 			<p state-redirect tournament-home>${getString('gameComponent/tournaments')}</p>
 			<p state-redirect online-home>${getString('gameComponent/online')}</p>
 			<p state-redirect local-home>${getString('gameComponent/local')}</p>

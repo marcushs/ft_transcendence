@@ -2,6 +2,13 @@ import Player from "./Player.js";
 import Ball from "./Ball.js";
 import Spark from "./Spark.js";
 
+export function startGame() {
+	const onlineHomeDiv = document.querySelector('.states-container');
+	const oldDivContent = onlineHomeDiv.innerHTML;
+
+	onlineHomeDiv.innerHTML = '<in-game-component></in-game-component>'
+}
+
 export default class Game {
 	constructor(canvas) {
 		this.canvas = canvas;

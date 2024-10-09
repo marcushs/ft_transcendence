@@ -58,7 +58,7 @@ def proccess_matchmaking(waiting_list):
         'game_type': 'unranked',
         'player1': first_user.id,
         'player2': second_user.id
-    }))
+    })) 
     
     if len(waiting_list) > 1:
         proccess_matchmaking(waiting_list=waiting_list)  

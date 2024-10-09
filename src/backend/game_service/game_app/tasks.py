@@ -19,7 +19,7 @@ def launch_games_listener():
             data = get_instance_info_from_data(message['data'])
             if not data:
                 continue
-            start_game_instance.delay(message['data'])  
+            start_game_instance.delay(message['data'])   
         
 def get_instance_info_from_data(raw_data):
     if isinstance(raw_data, bytes):
@@ -42,7 +42,7 @@ def start_game_instance(data):
     game_instance = PongGameEngine()
     game_start_payload = {
         'type': 'game_starting',
-        'message': 'game found ! Starts in 5seconds'
+        'message': 'game found ! Starts in 5seconds' 
     }
     async_to_sync(send_websocket_info)(player_id=data['player1'], payload=game_start_payload)
     async_to_sync(send_websocket_info)(player_id=data['player2'], payload=game_start_payload)
