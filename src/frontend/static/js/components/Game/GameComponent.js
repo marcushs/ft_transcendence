@@ -24,7 +24,7 @@ class GameComponent extends HTMLElement {
         this.innerHTML = `
             <div class="game-background"></div>
             <div class="states-container"></div>
-<!--            <game-top-bar></game-top-bar>-->
+            <game-top-bar></game-top-bar>
         `;
 
         this.statesContainer = this.querySelector('.states-container');
