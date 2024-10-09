@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from ..models import *
+from ..utils.jwt_utils import get_user_from_jwt
 import json
 
 User = get_user_model()
@@ -16,12 +17,17 @@ class chat_view(View):
 
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
-        chatroom_name = data['username']
-        # chat_group = get_object_or_404(ChatGroup, group_name=chatroom_name)
-        # message = GroupMessage.objects.create()
-        # message.author = 
-        print(data['username']) 
-        return JsonResponse({'message': f'received message: {data['message']}'}, status=200)
+        jwt = request.COOKIES.get('jwt')
+        author = get_user_from_jwt(jwt) 
+        target_user = User.objects.get(username=data['target_user'])
+
+        print(author)
+        print(target_user)
+
+        chat_room = ChatGroup.objects.create()
+        chat_room.members.add(author.id, target_user.id)
+        # return JsonResponse({'message': f'received message: {data['message']}'}, status=200)
+        return JsonResponse({'message': 'EVERYTHING WENT WELL'}, status=200)
 
 # def get_or_create_chatroom(request, username):
 #     # if request.user.username == username:

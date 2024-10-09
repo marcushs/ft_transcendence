@@ -87,7 +87,12 @@ class oauth42AccessResourceView(View):
             return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token) 
     
     def send_create_user_request_to_endpoints(self): 
-        urls = ['http://auth:8000/api/auth/add_oauth_user/', 'http://twofactor:8000/api/twofactor/add_user/', 'http://user:8000/api/user/add_user/', 'http://friends:8000/api/friends/add_user/', 'http://notifications:8000/api/notifications/add_user/'] 
+        urls = ['http://auth:8000/api/auth/add_oauth_user/', 
+                'http://twofactor:8000/api/twofactor/add_user/', 
+                'http://user:8000/api/user/add_user/', 
+                'http://friends:8000/api/friends/add_user/', 
+                'http://notifications:8000/api/notifications/add_user/',
+                'http://chat:8000/api/chat/add_user/'] 
         for url in urls: 
             response = send_post_request(url=url, payload=self.payload, csrf_token=self.csrf_token)
             if response.status_code == 400:

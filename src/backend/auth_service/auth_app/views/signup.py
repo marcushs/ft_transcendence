@@ -47,6 +47,9 @@ class signup_view(View):
         response = send_request_without_token(request_type='POST', url='http://friends:8000/api/friends/add_user/', payload=payload, csrf_token=csrf_token)
         if response.status_code != 200:
             return response
+        response = send_request_without_token(request_type='POST', url='http://chat:8000/api/chat/add_user/', payload=payload, csrf_token=csrf_token)
+        if response.status_code != 200:
+            return response
         response = send_request_without_token(request_type='POST', url='http://notifications:8000/api/notifications/add_user/', payload=payload, csrf_token=csrf_token)
         return response
  

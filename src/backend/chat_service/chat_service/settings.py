@@ -32,6 +32,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# /-----> JWT keys && algorithm <-----\
+
+JWT_VERIFYING_KEY = os.environ.get("PUBLIC_JWT_KEY")
+JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")
+
+# /-----> JWT token lifetime in seconds <-----\
+
+ACCESS_TOKEN_LIFETIME = 120 # 2 minutes
+REFRESH_TOKEN_LIFETIME = 86400 # 1 day
+
 
 # Application definition
 

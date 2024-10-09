@@ -1,6 +1,7 @@
 import '../components/Chat/ChatRoomTopBar.js';
+import { sendRequest } from "./sendRequest.js";
 
-export function sendMessageCallback(targetUserData) {
+export async function sendMessageCallback(targetUserData) {
 	const chatMainMenu = document.querySelector('.chat-main-menu');
 	const contactMenu = document.querySelector('.contact-menu');
 	const chatRoom = document.querySelector('.chatroom');
@@ -17,6 +18,11 @@ export function sendMessageCallback(targetUserData) {
 	ChatRoomTopBar.setAttribute('data-user', JSON.stringify(targetUserData));
 	if (oldChatRoomTopBar) oldChatRoomTopBar.remove();
 	chatRoom.prepend(ChatRoomTopBar);
+
+	const target_user = document.querySelector('.contact-username').innerText;
+	console.log(target_user)
+	let res = await sendRequest('POST', '/api/chat/chat_view/', {'target_user': target_user});
+	console.log("Posting user pairs to chat_view for chatroom creatiion" + res.message)
 
 	const chatSocket = new WebSocket(
 		'ws://'

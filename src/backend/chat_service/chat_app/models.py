@@ -23,7 +23,7 @@ class UserManager(BaseUserManager):
         username = data['username']
         profile_image_link = data['profile_image_link']
         user_id = data['user_id']
-        user = self.model(id=user_id, email=email, username=username, profile_image_link=profile_image_link, logged_in_with_oauth=True)
+        user = self.model(id=user_id, email=email, username=username, profile_image_link=profile_image_link)
         user.save(using=self._db)
         return user
 
@@ -35,8 +35,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_image = models.ImageField(upload_to=user_directory_path, null=True)
     profile_image_link = models.CharField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
     is_verified = models.BooleanField(default=False)
-    two_factor_method = models.CharField(max_length=20, blank=True)
-    logged_in_with_oauth = models.BooleanField(default=False)
     status = models.CharField(max_length=10, choices=[('online', 'Online'), ('away', 'Away'), ('ingame', 'In Game'), ('offline', 'Offline')], default='offline')
     last_active = models.DateTimeField(auto_now=True)
 
@@ -68,8 +66,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             'profile_image': self.profile_image.url if self.profile_image else None,
             'profile_image_link': self.profile_image_link,
             'is_verified': self.is_verified,
-            'two_factor_method': self.two_factor_method,
-            'logged_in_with_oauth': self.logged_in_with_oauth,
         }
         
     def get_status(self):
@@ -78,14 +74,11 @@ class User(AbstractBaseUser, PermissionsMixin):
             'last_active': self.last_active,
         }
     
-
 class ChatGroup(models.Model):
     group_name = models.CharField(max_length=128, unique=True, blank=True)
     groupchat_name = models.CharField(max_length=128, null=True, blank=True)
     users_online = models.ManyToManyField(User, related_name='online_in_groups', blank=True)
     members = models.ManyToManyField(User, related_name='chat_groups', blank=True)
-    is_private = models.BooleanField(default=False)
-    
 
 class GroupMessage(models.Model):
 	group = models.ForeignKey(ChatGroup, related_name='chat_messages', on_delete=models.CASCADE)
@@ -95,6 +88,3 @@ class GroupMessage(models.Model):
     
 	class Meta:
 		ordering = ['-created']
-
-
-# Create your models here.
