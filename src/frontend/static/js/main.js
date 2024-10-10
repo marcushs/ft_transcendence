@@ -44,7 +44,7 @@ async function setUserRender() {
     
     if (isUserConnected) {
         console.log('User session');
-        await loadWebSocket();
+        loadWebSocket();
         await setTwoFactorUserData();
         new PingStatus();
     } else

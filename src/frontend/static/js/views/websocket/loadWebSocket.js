@@ -2,15 +2,16 @@ import {removeContactFromList, addNewContactToList, UpdateContactInList} from '.
 
 let socket = null;
 
-export async function loadWebSocket() {
-    await loadContactsWebSocket();
-    await loadNotificationsWebSocket();
+export function loadWebSocket() {
+    loadContactsWebSocket();
+    loadNotificationsWebSocket();
+	loadChatWebSocket();
     // await loadNotificationWebSocket();
 }
 
 //--------------> CONTACT WEBSOCKET <--------------\\
 
-async function loadContactsWebSocket() {
+function loadContactsWebSocket() {
     if (socket !== null) {
         socket.close();
     }
@@ -108,4 +109,29 @@ function throwDeleteNotificationElementEvent(notification) {
 	});
 
 	document.dispatchEvent(event);
+}
+
+//--------------> CHAT WEBSOCKET <--------------\\
+
+function loadChatWebSocket() {
+	const chatSocket = new WebSocket('ws://localhost:8008/ws/chat/');
+
+	chatSocket.onopen = function (e) {
+		console.log(e)
+		console.log("The chat websocket connection was setup successfully !");
+	  };
+
+	  chatSocket.onmessage = function(e) {
+		const data = JSON.parse(e.data);
+		const newMsgElem = document.createElement('p');
+
+		newMsgElem.innerText = data.message;
+		console.log(`received message from websocket: ${data.message}`)
+		document.querySelector('.chatroom-conversation').appendChild(newMsgElem);
+		// document.querySelector('#chat-log').value += (data.message + '\n');
+	};
+
+	chatSocket.onclose = function(e) {
+		console.error(e);
+	};
 }

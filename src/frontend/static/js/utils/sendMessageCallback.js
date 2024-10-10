@@ -2,6 +2,12 @@ import '../components/Chat/ChatRoomTopBar.js';
 import { sendRequest } from "./sendRequest.js";
 
 export async function sendMessageCallback(targetUserData) {
+	displayChatroomComponent(targetUserData);
+	await fetchGetOrCreateChatroomView();
+	chatroomWebsocketConnection();
+};
+
+function displayChatroomComponent(targetUserData) {
 	const chatMainMenu = document.querySelector('.chat-main-menu');
 	const contactMenu = document.querySelector('.contact-menu');
 	const chatRoom = document.querySelector('.chatroom');
@@ -18,12 +24,21 @@ export async function sendMessageCallback(targetUserData) {
 	ChatRoomTopBar.setAttribute('data-user', JSON.stringify(targetUserData));
 	if (oldChatRoomTopBar) oldChatRoomTopBar.remove();
 	chatRoom.prepend(ChatRoomTopBar);
+}
 
+async function fetchGetOrCreateChatroomView() {
 	const target_user = document.querySelector('.contact-username').innerText;
-	console.log(target_user)
-	let res = await sendRequest('POST', '/api/chat/chat_view/', {'target_user': target_user});
-	console.log("Posting user pairs to chat_view for chatroom creatiion" + res.message)
 
+	console.log(target_user)
+	try {
+		let res = await sendRequest('POST', '/api/chat/chat_view/', {'target_user': target_user});
+		console.log("Posting user pairs to chat_view for chatroom creatiion" + res.message)
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+function chatroomWebsocketConnection() {
 	const chatSocket = new WebSocket(
 		'ws://'
 		+ 'localhost:8008'
@@ -33,24 +48,6 @@ export async function sendMessageCallback(targetUserData) {
 		+ '/'
 	);
 
-	chatSocket.onopen = function (e) {
-		console.log(e)
-		console.log("The chat websocket connection was setup successfully !");
-	  };
-
-	  chatSocket.onmessage = function(e) {
-		const data = JSON.parse(e.data);
-		const newMsgElem = document.createElement('p');
-
-		newMsgElem.innerText = data.message;
-		console.log(`received message from websocket: ${data.message}`)
-		document.querySelector('.chatroom-conversation').appendChild(newMsgElem);
-		// document.querySelector('#chat-log').value += (data.message + '\n');
-	};
-
-	chatSocket.onclose = function(e) {
-		console.error('Chat socket closed unexpectedly');
-	};
 
 	// const chatRoomTopBar = document.querySelector('chatroom-top-bar');
 	// let targetUserData = JSON.parse(chatRoomTopBar.getAttribute('data-user'));
@@ -66,5 +63,4 @@ export async function sendMessageCallback(targetUserData) {
 		}));
 		chatRoomMessageInput.value = '';
 	})
-};
-
+}

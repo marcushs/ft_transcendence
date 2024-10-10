@@ -4,7 +4,5 @@ __pycache__
 .vscode
 media
 migrations
-check_create_user.sh
 .gitignore
 .docker
-check_chat_db.sh
