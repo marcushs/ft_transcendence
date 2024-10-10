@@ -3,39 +3,37 @@ import Ball from "./Ball.js";
 import Spark from "./Spark.js";
 import { socket } from "./gameWebsocket.js";
 
-export function startGame() {
+export function startGame(gameId, initialGameState, map_dimension) {
 	const onlineHomeDiv = document.querySelector('.states-container');
 	const oldDivContent = onlineHomeDiv.innerHTML;
 
-	onlineHomeDiv.innerHTML = '<in-game-component></in-game-component>'
+	const inGameComponent = document.createElement('in-game-component');
+	inGameComponent.gameId = gameId;
+	inGameComponent.gameState = initialGameState;
+	inGameComponent.map_dimension = map_dimension;
+	onlineHomeDiv.innerHTML = '';
+	onlineHomeDiv.appendChild(inGameComponent);
 }
 
 export default class Game {
-	constructor(canvas, gameId) {
-		this.gameId = localStorage.getItem('currentGameId');
+	constructor(canvas, gameId, gameState) {
 		this.canvas = canvas;
-		this.sendCanvasSize();
+		this.gameId = gameId;
+		this.gameState = gameState;
 		this.initGameRender();
 	}
 
-	sendCanvasSize() {
-		const message = {
-			type: 'init_game',
-			game_id: this.gameId,
-			width: this.canvas.width,
-			height: this.canvas.height,
-		}
-		socket.send(JSON.stringify(message))
-	}
-
 	initGameRender() {
-		// this.speed = 15;
-		// this.speedLimit = 45;
-		this.ball = new Ball(this.canvas, this.canvas.width / 2, this.canvas.height / 2, this.speed);
+		console.log('initial game state in game class method initGameRender: ', this.gameState);
+		this.speed = this.gameState.ball_speed;
+		this.speedLimit = this.gameState.speedLimit;
+		console.log('canvas size width : ', this.canvas.width / 2, 'test width with back :', this.gameState.ball_position.x); 
+		
+		this.ball = new Ball(this.canvas, this.gameState.ball_position.x, this.gameState.ball_position.y, this.speed);
 		this.playerOne = new Player(this.canvas, true, '2dewf-23fsdv23-32fff');
 		this.playerTwo = new Player(this.canvas, false, '2dewf-23fsdv23-32fff');
-		// this.playerOneScore = 0;
-		// this.playerTwoScore = 0;
+		this.playerOneScore = this.gameState.player_one.score;
+		this.playerTwoScore = this.gameState.player_two.score;
 		this.sparks = [];
 		this.lastTime = performance.now();
 		this.keysPlayerOne = {
@@ -46,6 +44,7 @@ export default class Game {
 			up: false,
 			down: false,
 		}
+		this.drawFrame();
 	}
 
 	attachEventsListener() {

@@ -28,7 +28,6 @@ class UnrankedComponent extends HTMLElement {
 		const userData = await getUserData();
 		if (!userData)
 			return;
-		console.log('userdata: ', userData);
 		
 		gameWebsocket(userData.id);
 		if (!this.requestMatchmakingResearch())
@@ -37,8 +36,7 @@ class UnrankedComponent extends HTMLElement {
 
 	async requestMatchmakingResearch() {
 		try {
-			const data = await sendRequest('POST', 'http://localhost:8006/matchmaking/matchmaking/', {type: 'unranked'});
-			console.log('matchmaking successfully launched - back response : ', data);
+			await sendRequest('POST', 'http://localhost:8006/matchmaking/matchmaking/', {type: 'unranked'});
 			return true;
 		} catch (error) {
 			console.error(error);

@@ -29,24 +29,26 @@ class GameConsumer(AsyncWebsocketConsumer):
 		print(f'------ game parsed data = {parsed_data} ---------------')
 		if not parsed_data:
 			return
-		if data['type'] == 'init_game':
-			redis_instance.publish(f"waiting_for_start:{data['game_id']}", json.dumps(parsed_data))
-			print(f'------ init_game redis message published ! ---------------')
-		elif data['type'] == 'player_move':
+		if data['type'] == 'player_move':
 			update_players_state(data=parsed_data)
+		# if data['type'] == 'init_game':
+		# 	redis_instance.publish(f"waiting_for_start:{data['game_id']}", json.dumps(parsed_data))
+			# print(f"------ init_game redis message published for game_id : {data['game_id']} ---------------")
 		
-	async def game_found(self, event): 
+	async def game_ready_to_start(self, event): 
 		await self.send(text_data=json.dumps( 
 		{
 			'type' : event['type'], 
-			'game_id': event['game_id']
+			'game_id': event['game_id'],
+			'game_state': event['game_state'],
+   			'map_dimension': event['map_dimension']
 		}
 	))
   
 	async def data_update(self, event):
 		await self.send(text_data=json.dumps({
 			'type': event['type'],
-			'data': event['data']
+			'game_state': event['data']
 		}
     ))
   

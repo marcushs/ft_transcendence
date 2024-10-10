@@ -1,19 +1,28 @@
 import Game from './Game.js';
+import { sendRequest } from '../../../../utils/sendRequest.js';
 
 class InGameComponent extends HTMLElement {
 	constructor() {
 		super();
 
+		this.gameId = null;
+		this.gameState = null;
+		this.map_dimension = null;
 		this.canvas = {
 			element: null,
 			ctx: null,
-			height: 1000,
-			width: 1587.30
+			height: 0,
+			width: 0
 		}
 		this.angle = 0;
-		this.initializeComponent();
 	}
 
+	connectedCallback() {
+		this.initializeComponent();
+		this.setInitialMapSize();
+		this.initCanvas();
+		new Game(this.canvas, this.gameId, this.gameState);
+	}
 
 	initializeComponent() {
 		this.innerHTML = `
@@ -21,10 +30,9 @@ class InGameComponent extends HTMLElement {
 		`;
 	}
 
-
-	connectedCallback() {
-		this.initCanvas();
-		new Game(this.canvas);
+	setInitialMapSize() {
+		this.canvas.height = this.map_dimension.height;
+		this.canvas.width = this.map_dimension.width;
 	}
 
 	initCanvas() {
@@ -38,9 +46,7 @@ class InGameComponent extends HTMLElement {
 
 	setCanvasSize() {
 		const devicePixelRatio = window.devicePixelRatio || 1;
-
-		console.log('device pixel ratio: ', devicePixelRatio);
-		
+				
 		this.canvas.element.width = this.canvas.element.clientWidth * devicePixelRatio;
 		this.canvas.element.height = this.canvas.element.clientHeight * devicePixelRatio;
 	}

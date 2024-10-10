@@ -16,11 +16,13 @@ export async function gameWebsocket(userId) {
 	socket.onmessage = (event) => {
 		const data = JSON.parse(event.data)
 		console.log('data received from game websocket : ', data);
-		if (data.type === 'game_found')
-			localStorage.setItem('currentGameId', data.game_id)
-			startGame()
-		if (data.type === ' data_update')
-			console.log('game data updated...');
+		if (data.type === 'game_ready_to_start')
+			if (data.game_id && data.game_state && data.map_dimension)
+				startGame(data.game_id, data.game_state, data.map_dimension);
+			else
+				console.log('Error while starting game: incorrect data from back');
+		if (data.type === 'data_update')
+			console.log('game data updated...'); 
 			return;
 	}
 

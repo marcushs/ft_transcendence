@@ -1,27 +1,29 @@
-from time import sleep
 from .websocket_utils import send_websocket_info
 from asgiref.sync import async_to_sync
+from django.http import JsonResponse
+from time import sleep
 import redis
 import json
 
 redis_instance = redis.Redis(host='redis', port=6379, db=0)
 
 class PongGameEngine:
-    def __init__(self, game_id, width, height, player_one_id, player_two_id):
+    def __init__(self, game_id, player_one_id, player_two_id):
         self.game_id = game_id
         self.player_one_id = player_one_id
         self.player_two_id = player_two_id
         self.game_active = False
+        self.ball_speed = 5 
+        self.speed_limit = 45
+        map_dimension = get_map_dimension()
         self.map = {
-            'width': float(width),
-            'height': float(height)
+            'width': float(map_dimension['width']),
+            'height': float(map_dimension['height'])
         }
         self.player_size = {
             'width': self.map['width'] * 0.005,
             'height': self.map['height'] * 0.2,
         }
-        self.ball_speed = 5 
-        self.speed_limit = 45
         self.state = {
             'player_one': {
                 'score': 0,
@@ -37,10 +39,16 @@ class PongGameEngine:
                     'y' : self.map['height'] * 0.5,
                 },
             },
+            'player_size': {
+                'width': self.map['width'] * 0.005,
+                'height': self.map['height'] * 0.2,
+            },
             'ball_position': {
                 'x': self.map['width'] * 0.5,
                 'y': self.map['height'] * 0.5,
             },
+            'ball_speed': self.ball_speed,
+            'speed_limit': self.speed_limit
         }
         print('Pong game initialisation done !')
         redis_instance.set(self.game_id, json.dumps(self.state))
@@ -52,9 +60,9 @@ class PongGameEngine:
             game_state = json.loads(redis_instance.get(self.game_id))
             self.move_player(game_state=game_state)
             self.move_ball(game_state=game_state)
-            self.send_update()
+            # self.send_update()
             redis_instance.set(self.game_id, json.dumps(self.state))
-            sleep(0.3)
+            sleep(0.5)
             
     def move_player(self, game_state):
         pass
@@ -70,10 +78,13 @@ class PongGameEngine:
     def send_update(self):
         payload = json.dumps({
             'type': 'data_update',
-            'game_info': self.state 
+            'data': self.state 
         })
         async_to_sync(send_websocket_info)(player_id=self.player_one_id, payload=payload)
         async_to_sync(send_websocket_info)(player_id=self.player_two_id, payload=payload)
+        
+    def get_game_state(self): 
+        return self.state
     
     def check_collisions(self):
         pass
@@ -93,3 +104,10 @@ def update_players_state(data):
     # set new value for players concerned by the websocket here
     # need for have it in the game loop upper
         pass
+    
+def get_map_dimension():
+    return {'width': 1587.30, 'height': 1000}
+
+def send_map_dimension():
+    map_dimension = get_map_dimension()
+    return JsonResponse({'message': json.dumps(map_dimension)}, status=200)
