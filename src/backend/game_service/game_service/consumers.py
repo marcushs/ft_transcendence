@@ -8,7 +8,7 @@ redis_instance = redis.Redis(host='redis', port=6379, db=0)
 
 class GameConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
-		query_string = parse_qs(self.scope['query_string'].decode()) 
+		query_string = parse_qs(self.scope['query_string'].decode())
 		self.user_id = str(query_string.get('user_id', [None])[0])
 		try:
 			if not self.user_id:

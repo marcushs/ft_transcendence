@@ -59,4 +59,3 @@ def send_game_ready(players_id, game_id):
     })
     async_to_sync(send_websocket_info)(player_id=players_id['player1'], payload=payload)
     async_to_sync(send_websocket_info)(player_id=players_id['player2'], payload=payload)
-    print(f'--------- CELERY WORKER: websocket message to indicate the game is ready sent')

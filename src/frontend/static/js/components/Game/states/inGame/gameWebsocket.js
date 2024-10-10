@@ -1,5 +1,5 @@
 import { startGame } from "./Game.js";
-
+import { gameInstance } from "./inGameComponent.js";
 export let socket = null;
 
 export async function gameWebsocket(userId) {
@@ -15,15 +15,12 @@ export async function gameWebsocket(userId) {
 
 	socket.onmessage = (event) => {
 		const data = JSON.parse(event.data)
-		console.log('data received from game websocket : ', data);
+		// console.log('data received from game websocket : ', data);
 		if (data.type === 'game_ready_to_start')
-			if (data.game_id && data.game_state && data.map_dimension)
 				startGame(data.game_id, data.game_state, data.map_dimension);
-			else
-				console.log('Error while starting game: incorrect data from back');
 		if (data.type === 'data_update')
-			console.log('game data updated...'); 
-			return;
+			if (gameInstance)
+				gameInstance.updateGameRender(data.game_state);
 	}
 
 	socket.onclose = () => {

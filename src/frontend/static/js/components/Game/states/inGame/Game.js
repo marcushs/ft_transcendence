@@ -69,7 +69,7 @@ export default class Game {
 	}
 
 
-	gameRender() {
+	updateGameRender(newState) {
 		this.deltaTime = (performance.now() - this.lastTime) / 1000;
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.canvas.ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
@@ -78,12 +78,28 @@ export default class Game {
 		this.canvas.ctx.textBaseline = 'middle';
 		this.canvas.ctx.fillText(`${this.playerTwoScore}`, this.canvas.width / 4, this.canvas.height / 2 + 35);
 		this.canvas.ctx.fillText(`${this.playerOneScore}`, this.canvas.width / 4 * 3, this.canvas.height / 2 + 35);
+		this.updatePlayerPosition(newState);
+		this.updateBallPosition(newState);
 		this.drawFrame();
 		this.movePlayers();
 		this.moveBall();
 		this.update();
 	}
 
+
+	updatePlayerPosition(newState) {
+		this.playerOne.state = newState.player_one;
+		this.playerOne.x = newState.x;
+		this.playerOne.y = newState.y;
+		this.playerTwo.state = newState.player_two;
+		this.playerTwo.x = newState.x;
+		this.playerTwo.y = newState.y;
+	}
+
+	updateBallPosition(newState) {
+		this.ball.x = newState.ball_position.x;
+		this.ball.y = newState.ball_position.y;
+	}
 
 	drawFrame(gameInfos) {
 		this.drawMiddleLine();

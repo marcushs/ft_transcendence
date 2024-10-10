@@ -69,8 +69,8 @@ class manage_notification_view(View):
                 case 'canceled_friend_request_notification':
                     # transform into function to get and delete notification
                     notifications = await sync_to_async(Notification.objects.filter)(type='friend-request-pending',
-                                                                                 sender=await get_user_id_by_username(data['sender']),
-                                                                                 receiver=await get_user_id_by_username(data['receiver']))
+                    sender=await get_user_id_by_username(data['sender']),
+                    receiver=await get_user_id_by_username(data['receiver']))
                     async for notification in notifications:
                         print('---------- NOTIF --------------- ') 
                         await self.send_delete_notification_to_channel(notification, data)

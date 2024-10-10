@@ -60,15 +60,15 @@ class PongGameEngine:
             game_state = json.loads(redis_instance.get(self.game_id))
             self.move_player(game_state=game_state)
             self.move_ball(game_state=game_state)
-            # self.send_update()
+            self.send_update()
             redis_instance.set(self.game_id, json.dumps(self.state))
-            sleep(0.5)
+            sleep(0.01)
             
     def move_player(self, game_state):
         pass
       
     def move_ball(self, game_state):
-        ball = self.state['ball_position']  
+        ball = self.state['ball_position']
         ball['x'] += self.ball_speed
         ball['y'] += self.ball_speed
         

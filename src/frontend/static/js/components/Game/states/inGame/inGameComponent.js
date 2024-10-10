@@ -1,6 +1,8 @@
 import Game from './Game.js';
 import { sendRequest } from '../../../../utils/sendRequest.js';
 
+export let gameInstance;
+
 class InGameComponent extends HTMLElement {
 	constructor() {
 		super();
@@ -21,7 +23,7 @@ class InGameComponent extends HTMLElement {
 		this.initializeComponent();
 		this.setInitialMapSize();
 		this.initCanvas();
-		new Game(this.canvas, this.gameId, this.gameState);
+		gameInstance = new Game(this.canvas, this.gameId, this.gameState);
 	}
 
 	initializeComponent() {
@@ -46,7 +48,7 @@ class InGameComponent extends HTMLElement {
 
 	setCanvasSize() {
 		const devicePixelRatio = window.devicePixelRatio || 1;
-				
+
 		this.canvas.element.width = this.canvas.element.clientWidth * devicePixelRatio;
 		this.canvas.element.height = this.canvas.element.clientHeight * devicePixelRatio;
 	}
