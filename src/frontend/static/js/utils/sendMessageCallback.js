@@ -1,10 +1,11 @@
 import '../components/Chat/ChatRoomTopBar.js';
 import { sendRequest } from "./sendRequest.js";
+import { chatSocket } from '../views/websocket/loadWebSocket.js';
 
 export async function sendMessageCallback(targetUserData) {
 	displayChatroomComponent(targetUserData);
-	await fetchGetOrCreateChatroomView();
-	chatroomWebsocketConnection();
+	// await fetchGetOrCreateChatroomView();
+	// chatroomWebsocketConnection();
 };
 
 function displayChatroomComponent(targetUserData) {
@@ -14,6 +15,7 @@ function displayChatroomComponent(targetUserData) {
 	const chatLobby = document.querySelector('.chat-lobby');
 	const ChatRoomTopBar = document.createElement('chatroom-top-bar');
 	const oldChatRoomTopBar = chatRoom.querySelector('chatroom-top-bar');
+	const sendMessageBtn = document.querySelector('.send-message-btn');
 
 	chatMainMenu.style.display = 'block';
 	contactMenu.style.display = 'none';
@@ -24,6 +26,10 @@ function displayChatroomComponent(targetUserData) {
 	ChatRoomTopBar.setAttribute('data-user', JSON.stringify(targetUserData));
 	if (oldChatRoomTopBar) oldChatRoomTopBar.remove();
 	chatRoom.prepend(ChatRoomTopBar);
+
+	sendMessageBtn.addEventListener('click', () => {
+		sendPrivateMessage();
+	})
 }
 
 async function fetchGetOrCreateChatroomView() {
@@ -38,29 +44,15 @@ async function fetchGetOrCreateChatroomView() {
 	}
 }
 
-function chatroomWebsocketConnection() {
-	const chatSocket = new WebSocket(
-		'ws://'
-		+ 'localhost:8008'
-		+ '/ws/chat/'
-		// + chatUUID
-		+ 'hleung'
-		+ '/'
-	);
+function sendPrivateMessage() {
+	const target_user = document.querySelector('.contact-username').innerText;
+	const message = document.querySelector('.chatroom-message-input').value;
 
-
-	// const chatRoomTopBar = document.querySelector('chatroom-top-bar');
-	// let targetUserData = JSON.parse(chatRoomTopBar.getAttribute('data-user'));
-	const sendMessageBtn = document.querySelector('.send-message-btn');
-	
-	sendMessageBtn.addEventListener('click', ()=> {
-		console.log('here	')
-		const chatRoomMessageInput = document.querySelector('.chatroom-message-input');
-		const message = chatRoomMessageInput.value;
-		console.log('input value is:' + message);
-		chatSocket.send(JSON.stringify({
-			'message': message
-		}));
-		chatRoomMessageInput.value = '';
-	})
+	const data = {
+		'message': message,
+		'target_user': target_user,
+		// 'target_user': target_user,
+	}
+	console.log(data);
+	chatSocket.send(JSON.stringify(data));
 }

@@ -2,10 +2,12 @@ import {removeContactFromList, addNewContactToList, UpdateContactInList} from '.
 
 let socket = null;
 
+export let chatSocket;
+
 export function loadWebSocket() {
     loadContactsWebSocket();
     loadNotificationsWebSocket();
-	loadChatWebSocket();
+	chatSocket = loadChatWebSocket();
     // await loadNotificationWebSocket();
 }
 
@@ -132,6 +134,8 @@ function loadChatWebSocket() {
 	};
 
 	chatSocket.onclose = function(e) {
-		console.error(e);
+		console.log(e);
 	};
+
+	return chatSocket;
 }
