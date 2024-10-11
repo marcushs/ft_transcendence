@@ -21,14 +21,12 @@ export default class Game {
 		this.gameId = gameId;
 		this.gameState = gameState;
 		this.initGameRender();
+		this.renderLoop();
 	}
 
 	initGameRender() {
-		console.log('initial game state in game class method initGameRender: ', this.gameState);
 		this.speed = this.gameState.ball_speed;
-		this.speedLimit = this.gameState.speedLimit;
-		console.log('canvas size width : ', this.canvas.width / 2, 'test width with back :', this.gameState.ball_position.x); 
-		
+		this.speedLimit = this.gameState.speedLimit;		
 		this.ball = new Ball(this.canvas, this.gameState.ball_position.x, this.gameState.ball_position.y, this.speed);
 		this.playerOne = new Player(this.canvas, true, '2dewf-23fsdv23-32fff');
 		this.playerTwo = new Player(this.canvas, false, '2dewf-23fsdv23-32fff');
@@ -44,7 +42,15 @@ export default class Game {
 			up: false,
 			down: false,
 		}
+	}
+
+	renderLoop() {
+		this.deltaTime = (performance.now() - this.lastTime) / 1000;
+		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		// console.log('data player: ', this.playerOne);
 		this.drawFrame();
+		this.update();
+		requestAnimationFrame(() => this.renderLoop());
 	}
 
 	attachEventsListener() {
@@ -70,30 +76,17 @@ export default class Game {
 
 
 	updateGameRender(newState) {
-		this.deltaTime = (performance.now() - this.lastTime) / 1000;
-		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.canvas.ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-		this.canvas.ctx.font = '500px Russo One';
-		this.canvas.ctx.textAlign = 'center';
-		this.canvas.ctx.textBaseline = 'middle';
-		this.canvas.ctx.fillText(`${this.playerTwoScore}`, this.canvas.width / 4, this.canvas.height / 2 + 35);
-		this.canvas.ctx.fillText(`${this.playerOneScore}`, this.canvas.width / 4 * 3, this.canvas.height / 2 + 35);
 		this.updatePlayerPosition(newState);
 		this.updateBallPosition(newState);
-		this.drawFrame();
-		this.movePlayers();
-		this.moveBall();
-		this.update();
+		this.updateScore(newState);
 	}
 
 
 	updatePlayerPosition(newState) {
-		this.playerOne.state = newState.player_one;
-		this.playerOne.x = newState.x;
-		this.playerOne.y = newState.y;
-		this.playerTwo.state = newState.player_two;
-		this.playerTwo.x = newState.x;
-		this.playerTwo.y = newState.y;
+		this.playerOne.x = newState.player_one.position.x;
+		this.playerOne.y = newState.player_one.position.y;
+		this.playerTwo.x = newState.player_two.position.x;
+		this.playerTwo.y = newState.player_two.position.y;
 	}
 
 	updateBallPosition(newState) {
@@ -101,13 +94,27 @@ export default class Game {
 		this.ball.y = newState.ball_position.y;
 	}
 
+	updateScore(newstate) {
+		this.playerOneScore = newstate.player_one.score;
+		this.playerTwoScore = newstate.player_two.score;
+	}
+
 	drawFrame(gameInfos) {
+		this.drawScore();
 		this.drawMiddleLine();
 		this.playerOne.draw();
 		this.playerTwo.draw();
 		this.ball.draw('rgb(255, 22, 198)', 'rgb(146, 0, 117)');
 	}
 
+	drawScore() {
+		this.canvas.ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+		this.canvas.ctx.font = '500px Russo One';
+		this.canvas.ctx.textAlign = 'center';
+		this.canvas.ctx.textBaseline = 'middle';
+		this.canvas.ctx.fillText(`${this.playerTwoScore}`, this.canvas.width / 4, this.canvas.height / 2 + 35);
+		this.canvas.ctx.fillText(`${this.playerOneScore}`, this.canvas.width / 4 * 3, this.canvas.height / 2 + 35);
+	}
 
 	drawMiddleLine() {
 		this.canvas.fillStyle = '#fff';
@@ -132,7 +139,6 @@ export default class Game {
 		this.checkBallHitBox();
 	}
 
-
 	checkBallHitBox() {
 		this.playerCollision(this.playerOne, this.speed, () => this.ball.x + this.ball.ballDirectionX - this.ball.ballRadius < this.playerOne.x + this.playerOne.width / 2, true);
 		this.playerCollision(this.playerTwo, -this.speed, () => this.ball.x + this.ball.ballDirectionX + this.ball.ballRadius > this.playerTwo.x - this.playerTwo.width / 2, false);
@@ -148,19 +154,12 @@ export default class Game {
 			this.ball.y + this.ball.ballDirectionY + this.ball.ballRadius >  player.y - player.height / 2 - this.ball.ballRadius / 2) && calculateXPosition()) {
 			player.hitTime = performance.now();
 			player.isPlayerHit = true;
-			// if (isPlayerOne)ss
-			// 	this.generateSparks(this.ball.x, this.ball.y, 'left', true, false, 'rgb(0, 206, 255)');
-			// else
-			// 	this.generateSparks(this.ball.x, this.ball.y, 'right', false, true, 'rgb(255, 22, 198)');
 
 			this.ball.ballDirectionX = speed;
 
 			let collidePoint = this.ball.y - player.y;
 
 			collidePoint = collidePoint / (player.height / 2); // Return a value between 1 and -1 which 1 is bottom and -1 is top
-
-			// if (collidePoint < 0.50 && collidePoint > 0.10 || collidePoint > -0.50 && collidePoint < -0.10) // Increase low angle between 0.25 and 0.50 to 0.5 to increase afressivity
-			// 	(collidePoint >= 0) ? collidePoint = 0.50 : collidePoint = -0.50;
 
 			let angleRad = collidePoint * (Math.PI / 4); // Angle in radiant between 45 and -45deg
 
@@ -241,7 +240,7 @@ export default class Game {
 		}
 		if (this.ball.x - this.ball.ballRadius < 15) {
 
-			this.speed = 15;
+			this.speed = 5;
 			this.ball.x = this.canvas.width / 2;
 			this.ball.y = this.canvas.height / 2;
 			this.playerOneScore++;
@@ -255,7 +254,7 @@ export default class Game {
 		}
 		if (this.ball.x + this.ball.ballRadius > this.canvas.width - 15) {
 
-			this.speed = 15;
+			this.speed = 5;
 			this.ball.x = this.canvas.width / 2;
 			this.ball.y = this.canvas.height / 2;
 			this.playerTwoScore++;

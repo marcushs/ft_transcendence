@@ -1,5 +1,6 @@
 import { startGame } from "./Game.js";
 import { gameInstance } from "./inGameComponent.js";
+
 export let socket = null;
 
 export async function gameWebsocket(userId) {
