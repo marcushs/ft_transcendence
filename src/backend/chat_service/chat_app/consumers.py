@@ -22,34 +22,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Receive message from WebSocket
     async def receive(self, text_data):
         data = json.loads(text_data)
-        message = data['message']
+        message_type = data['type']
 
-        try:
-            print("executed here?") 
-            target_user = await aget_object_or_404(User, username=data['target_user'])
-            chatroom = await self.get_or_create_chat_room(author=self.user, target_user=target_user)
-            await self.save_message(chatroom=chatroom, author=self.user, message=message)
-        except Http404:
-            return
-
-        # if message_type == 'private_message':
-        #     await self.handle_private_message(data)
-        # elif message_type == 'join_room':
-        #     await self.join_room(data['room'])
-
-    async def handle_private_message(self, data):
-        target_user = data['target_user']
-        message = data['message']
-        room_name = self.get_room_name(self.user.id, target_user)
-        
-        await self.channel_layer.group_send(
-            room_name,
-            {
-                'type': 'chat_message',
-                'message': message,
-                'sender': self.user.username,
-            } 
-        )
+        if message_type == 'chat_message':
+            try:
+                message = data['message']
+                target_user = await aget_object_or_404(User, username=data['target_user'])
+                chatroom = await self.get_or_create_chatroom(author=self.user, target_user=target_user)
+                await self.join_room(str(chatroom.group_id))
+                await self.channel_layer.group_send(str(chatroom.group_id), {'type': 'chat.message','message': message, 'author': self.user.username})
+                await self.save_message(chatroom=chatroom, author=self.user, message=message)
+            except Http404:
+                return
 
     async def join_room(self, room):
         await self.channel_layer.group_add(room, self.channel_name)
@@ -61,12 +45,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'type': 'chat_message',
             'message': event['message'],
-            'sender': event['sender'],
+            'author': event['author'],
         }))
 
     @database_sync_to_async
-    def get_or_create_chat_room(self, author, target_user):
-        print('get or create ')
+    def get_or_create_chatroom(self, author, target_user):
         try:
             chatroom = ChatGroup.objects.filter(
                 is_private=True
@@ -87,5 +70,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def save_message(self, chatroom, author, message):
-        print('save message')
         GroupMessage.objects.create(group=chatroom, author=author, body=message)
