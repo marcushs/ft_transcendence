@@ -60,6 +60,7 @@ class ChatGroup(models.Model):
     members = models.ManyToManyField(User, related_name='chat_groups', blank=True)
     is_private = models.BooleanField(default=True)
 
+
 class GroupMessage(models.Model):
 	group = models.ForeignKey(ChatGroup, related_name='chat_messages', on_delete=models.CASCADE)
 	author = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -2,6 +2,7 @@ import json
 from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import aget_object_or_404
 from django.http import Http404
+from django.db.models import Count, Q
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -24,9 +25,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = data['message']
 
         try:
+            print("executed here?") 
             target_user = await aget_object_or_404(User, username=data['target_user'])
-            print(message)
-            print(target_user)
+            chatroom = await self.get_or_create_chat_room(author=self.user, target_user=target_user)
+            await self.save_message(chatroom=chatroom, author=self.user, message=message)
         except Http404:
             return
 
@@ -46,7 +48,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'type': 'chat_message',
                 'message': message,
                 'sender': self.user.username,
-            }
+            } 
         )
 
     async def join_room(self, room):
@@ -64,14 +66,26 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_or_create_chat_room(self, author, target_user):
-        chatroom, created = ChatGroup.objects.get_or_create(
-            is_private=True,
-            members__in=[author, target_user]
-        )
-
-        if created is True:
+        print('get or create ')
+        try:
+            chatroom = ChatGroup.objects.filter(
+                is_private=True
+            ).annotate(
+                author_count=Count('members', filter=Q(members=author)),
+                target_count=Count('members', filter=Q(members=target_user)),
+                member_count=Count('members')
+            ).filter(
+                author_count=1,
+                target_count=1,
+                member_count=2
+            ).get()
+        except ChatGroup.DoesNotExist:
+            chatroom = ChatGroup.objects.create()
             chatroom.members.add(author, target_user)
 
-    # @database_sync_to_async
-    # def save_message(self, chat_room, sender, message):
-    #     Message.objects.create(chat_room=chat_room, sender=sender, content=message)
+        return chatroom
+
+    @database_sync_to_async
+    def save_message(self, chatroom, author, message):
+        print('save message')
+        GroupMessage.objects.create(group=chatroom, author=author, body=message)
