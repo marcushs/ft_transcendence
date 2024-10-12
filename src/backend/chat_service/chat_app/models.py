@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
-import os
 import uuid
 
 def user_directory_path(instance, filename):
@@ -59,7 +58,6 @@ class ChatGroup(models.Model):
     users_online = models.ManyToManyField(User, related_name='online_in_groups', blank=True)
     members = models.ManyToManyField(User, related_name='chat_groups', blank=True)
     is_private = models.BooleanField(default=True)
-
 
 class GroupMessage(models.Model):
 	group = models.ForeignKey(ChatGroup, related_name='chat_messages', on_delete=models.CASCADE)

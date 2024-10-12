@@ -15,6 +15,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.close()
         else:
             await self.accept()
+            await self.channel_layer.group_add('chatgroup_updates', self.channel_name)
 
     async def disconnect(self, close_code):
         pass
@@ -28,12 +29,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             try:
                 message = data['message']
                 target_user = await aget_object_or_404(User, username=data['target_user'])
-                chatroom = await self.get_or_create_chatroom(author=self.user, target_user=target_user)
-                await self.join_room(str(chatroom.group_id))
+                chatroom, created = await self.get_or_create_chatroom(author=self.user, target_user=target_user)
+                if created is True:
+                    await self.channel_layer.group_send('chatgroup_updates', {'type': 'chatgroup.update', 'chatroom': str(chatroom.group_id), 'target_user': str(target_user.id)})
+                    await self.join_room(str(chatroom.group_id))
                 await self.channel_layer.group_send(str(chatroom.group_id), {'type': 'chat.message','message': message, 'author': self.user.username})
                 await self.save_message(chatroom=chatroom, author=self.user, message=message)
             except Http404:
                 return
+        elif message_type == 'join_room':
+            chatroom_id = data['chatroom_id']
+            await self.join_room(chatroom_id)
 
     async def join_room(self, room):
         await self.channel_layer.group_add(room, self.channel_name)
@@ -48,8 +54,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'author': event['author'],
         }))
 
+    async def chatgroup_update(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'chatgroup_update',
+            'chatroom': event['chatroom'],
+            'target_user': event['target_user'],
+        }))
+
     @database_sync_to_async
     def get_or_create_chatroom(self, author, target_user):
+        created = False
+
         try:
             chatroom = ChatGroup.objects.filter(
                 is_private=True
@@ -65,8 +80,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         except ChatGroup.DoesNotExist:
             chatroom = ChatGroup.objects.create()
             chatroom.members.add(author, target_user)
+            created = True
 
-        return chatroom
+        return chatroom, created
+    
 
     @database_sync_to_async
     def save_message(self, chatroom, author, message):

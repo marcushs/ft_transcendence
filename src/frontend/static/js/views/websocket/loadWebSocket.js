@@ -1,13 +1,15 @@
+import { sendRequest } from '../../utils/sendRequest.js';
 import {removeContactFromList, addNewContactToList, UpdateContactInList} from './updateContactWebsocket.js'
+import { receiveChatgroupUpdate } from '../../utils/chatUtils/receiveChatgroupUpdate.js';
 
 let socket = null;
 
 export let chatSocket;
 
-export function loadWebSocket() {
+export async function loadWebSocket() {
     loadContactsWebSocket();
     loadNotificationsWebSocket();
-	chatSocket = loadChatWebSocket();
+	chatSocket = await loadChatWebSocket();
     // await loadNotificationWebSocket();
 }
 
@@ -115,7 +117,7 @@ function throwDeleteNotificationElementEvent(notification) {
 
 //--------------> CHAT WEBSOCKET <--------------\\
 
-function loadChatWebSocket() {
+async function loadChatWebSocket() {
 	const chatSocket = new WebSocket('ws://localhost:8008/ws/chat/');
 
 	chatSocket.onopen = function (e) {
@@ -123,14 +125,18 @@ function loadChatWebSocket() {
 		console.log("The chat websocket connection was setup successfully !");
 	  };
 
-	  chatSocket.onmessage = function(e) {
+	chatSocket.onmessage = async function(e) {
 		const data = JSON.parse(e.data);
-		const newMsgElem = document.createElement('p');
-
-		newMsgElem.innerText = data.message;
-		console.log(`received message from websocket: ${data.message}`)
-		document.querySelector('.chatroom-conversation').appendChild(newMsgElem);
-		// document.querySelector('#chat-log').value += (data.message + '\n');
+		
+		if (data.type === 'chat_message') {
+			const newMsgElem = document.createElement('p');
+			newMsgElem.innerText = data.message;
+			console.log(`received message from websocket: ${data.message}`)
+			document.querySelector('.chatroom-conversation').appendChild(newMsgElem);
+		}
+		else if (data.type === 'chatgroup_update') {
+			await receiveChatgroupUpdate(data);
+		}
 	};
 
 	chatSocket.onclose = function(e) {

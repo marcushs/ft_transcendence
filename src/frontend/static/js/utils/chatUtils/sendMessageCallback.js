@@ -1,11 +1,9 @@
-import '../components/Chat/ChatRoomTopBar.js';
-import { sendRequest } from "./sendRequest.js";
-import { chatSocket } from '../views/websocket/loadWebSocket.js';
+import '../../components/Chat/ChatRoomTopBar.js';
+import { sendRequest } from "../sendRequest.js";
+import { sendPrivateMessage } from './sendPrivateMessage.js';
 
 export async function sendMessageCallback(targetUserData) {
 	displayChatroomComponent(targetUserData);
-	// await fetchGetOrCreateChatroomView();
-	// chatroomWebsocketConnection();
 };
 
 function displayChatroomComponent(targetUserData) {
@@ -42,17 +40,4 @@ async function fetchGetOrCreateChatroomView() {
 	} catch (error) {
 		console.log(error);
 	}
-}
-
-function sendPrivateMessage() {
-	const target_user = document.querySelector('.contact-username').innerText;
-	const message = document.querySelector('.chatroom-message-input').value;
-
-	const data = {
-		'type': 'chat_message', 
-		'message': message,
-		'target_user': target_user,
-	}
-	console.log(data);
-	chatSocket.send(JSON.stringify(data));
 }

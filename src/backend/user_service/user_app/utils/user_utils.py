@@ -9,6 +9,8 @@ from ..models import User
 from django.contrib.auth import get_user_model
 import httpx
 import json
+import jwt
+from django.conf import settings
 
 
 User = get_user_model()
@@ -214,3 +216,18 @@ class getUsersInfo(View):
             return JsonResponse({'status': 'success', 'message': users_list}, safe=False, status=200)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+        
+class getUserId(View):
+    def __init__(self):
+        super().__init__
+
+    def get(self, request):
+        jwt_token = request.COOKIES.get('jwt')
+        if jwt_token:
+            user_id = jwt.decode(jwt_token, settings.JWT_VERIFYING_KEY,  algorithms=[settings.JWT_ALGORITHM])['user_id']
+            if User.objects.filter(id=user_id).exists():
+                return JsonResponse({'user_id': str(user_id), 'status': 'Success'}, status=200)
+            else:
+                return JsonResponse({'message': 'User does not exist', 'status': 'Error'}, status=401)
+        else:
+            return JsonResponse({'message': 'Cannot parse jwt', 'status': 'Error'}, status=401)

@@ -4,7 +4,7 @@ import './Friendship/FriendshipButtonComponent.js';
 import userProfile from "../views/user-profile.js";
 import { getString } from "../utils/languageManagement.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
-import { sendMessageCallback } from "../utils/sendMessageCallback.js";
+import { sendMessageCallback } from "../utils/chatUtils/sendMessageCallback.js";
 
 class ContactComponent extends HTMLElement {
     
