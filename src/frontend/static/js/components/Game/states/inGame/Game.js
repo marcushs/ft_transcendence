@@ -2,6 +2,7 @@ import Player from "./Player.js";
 import Ball from "./Ball.js";
 import Spark from "./Spark.js";
 import { socket } from "./gameWebsocket.js";
+import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
 
 export function startGame(gameId, initialGameState, map_dimension) {
 	const onlineHomeDiv = document.querySelector('.states-container');
@@ -24,12 +25,15 @@ export default class Game {
 		this.renderLoop();
 	}
 
+// --------------------------------------- Constructor method -------------------------------------- //
+
 	initGameRender() {
+		this.isGameRunning = false
 		this.speed = this.gameState.ball_speed;
 		this.speedLimit = this.gameState.speedLimit;		
 		this.ball = new Ball(this.canvas, this.gameState.ball_position.x, this.gameState.ball_position.y, this.speed);
-		this.playerOne = new Player(this.canvas, true, '2dewf-23fsdv23-32fff');
-		this.playerTwo = new Player(this.canvas, false, '2dewf-23fsdv23-32fff');
+		this.playerOne = new Player(this.canvas, true, this.gameState.player_one.id);
+		this.playerTwo = new Player(this.canvas, false, this.gameState.player_two.id);
 		this.playerOneScore = this.gameState.player_one.score;
 		this.playerTwoScore = this.gameState.player_two.score;
 		this.sparks = [];
@@ -44,62 +48,39 @@ export default class Game {
 		}
 	}
 
+// --------------------------------------- Render loop -------------------------------------- //
+
 	renderLoop() {
 		this.deltaTime = (performance.now() - this.lastTime) / 1000;
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		// console.log('data player: ', this.playerOne);
+		this.movePlayer();
 		this.drawFrame();
 		this.update();
 		requestAnimationFrame(() => this.renderLoop());
 	}
 
-	attachEventsListener() {
-		document.addEventListener('keydown', (event) => {
-			if (event.key === 'w') this.keysPlayerOne.up = true;
-			if (event.key === 's') this.keysPlayerOne.down = true;
-			if (event.key === 'W') this.keysPlayerOne.up = true;
-			if (event.key === 'S') this.keysPlayerOne.down = true;
-			if (event.key === 'ArrowUp') this.keysPlayerTwo.up = true;
-			if (event.key === 'ArrowDown') this.keysPlayerTwo.down = true;
-		});
+// --------------------------------------- Render loop Method -------------------------------------- //
 
-
-		document.addEventListener('keyup', (event) => {
-			if (event.key === 'w') this.keysPlayerOne.up = false;
-			if (event.key === 's') this.keysPlayerOne.down = false;
-			if (event.key === 'W') this.keysPlayerOne.up = false;
-			if (event.key === 'S') this.keysPlayerOne.down = false;
-			if (event.key === 'ArrowUp') this.keysPlayerTwo.up = false;
-			if (event.key === 'ArrowDown') this.keysPlayerTwo.down = false;
-		});
+	// send websocket message for updating player position
+	movePlayer() {
+		let action = null;
+		if (this.keysPlayerOne.up)
+			action = 'move_up';
+		if (this.keysPlayerOne.down)
+			action = 'move_down'
+		if (action) {
+			console.log('action sent');
+			socket.send(JSON.stringify({
+				'type': 'player_action',
+				'game_id': this.gameId,
+				'player_id': this.playerOne.playerId,
+				'action' : action
+			}));		
+		}
 	}
 
-
-	updateGameRender(newState) {
-		this.updatePlayerPosition(newState);
-		this.updateBallPosition(newState);
-		this.updateScore(newState);
-	}
-
-
-	updatePlayerPosition(newState) {
-		this.playerOne.x = newState.player_one.position.x;
-		this.playerOne.y = newState.player_one.position.y;
-		this.playerTwo.x = newState.player_two.position.x;
-		this.playerTwo.y = newState.player_two.position.y;
-	}
-
-	updateBallPosition(newState) {
-		this.ball.x = newState.ball_position.x;
-		this.ball.y = newState.ball_position.y;
-	}
-
-	updateScore(newstate) {
-		this.playerOneScore = newstate.player_one.score;
-		this.playerTwoScore = newstate.player_two.score;
-	}
-
-	drawFrame(gameInfos) {
+	// Draw new frame render
+	drawFrame() {
 		this.drawScore();
 		this.drawMiddleLine();
 		this.playerOne.draw();
@@ -132,47 +113,108 @@ export default class Game {
 
 	}
 
+	// !! need refactoring to match with the remote game !!
+	update() {
+		for (let i = 0; i < this.sparks.length; i++) {
+			this.sparks[i].update(this.deltaTime);
 
-	// --------------------------------------- Move ball -------------------------------------- //
-
-	moveBall() {
-		this.checkBallHitBox();
-	}
-
-	checkBallHitBox() {
-		this.playerCollision(this.playerOne, this.speed, () => this.ball.x + this.ball.ballDirectionX - this.ball.ballRadius < this.playerOne.x + this.playerOne.width / 2, true);
-		this.playerCollision(this.playerTwo, -this.speed, () => this.ball.x + this.ball.ballDirectionX + this.ball.ballRadius > this.playerTwo.x - this.playerTwo.width / 2, false);
-		this.wallCollision();
-
-		this.ball.x += this.ball.ballDirectionX;
-		this.ball.y += this.ball.ballDirectionY;
-	}
-
-
-	playerCollision(player, speed, calculateXPosition, isPlayerOne) {
-		if ((this.ball.y + this.ball.ballDirectionY - this.ball.ballRadius < player.y + player.height / 2 + this.ball.ballRadius / 2 &&
-			this.ball.y + this.ball.ballDirectionY + this.ball.ballRadius >  player.y - player.height / 2 - this.ball.ballRadius / 2) && calculateXPosition()) {
-			player.hitTime = performance.now();
-			player.isPlayerHit = true;
-
-			this.ball.ballDirectionX = speed;
-
-			let collidePoint = this.ball.y - player.y;
-
-			collidePoint = collidePoint / (player.height / 2); // Return a value between 1 and -1 which 1 is bottom and -1 is top
-
-			let angleRad = collidePoint * (Math.PI / 4); // Angle in radiant between 45 and -45deg
-
-			let direction = (this.ball.x < this.canvas.width / 2) ? 1 : -1; // To reverse x direction
-
-			if (this.speed < this.speedLimit)
-				this.speed += 0.5;
-
-			this.ball.ballDirectionX = direction * this.speed * Math.cos(angleRad);
-			this.ball.ballDirectionY = this.speed * Math.sin(angleRad);
-			(direction === 1) ? this.ball.changeBallInfos(false) : this.ball.changeBallInfos(true);
+			this.sparks[i].draw(this.canvas.ctx);
+			if (!this.sparks[i].isAlive())
+				this.sparks.splice(i, 1);
 		}
 	}
+
+// --------------------------------------- Update render -------------------------------------- //
+
+	updateGameRender(newState) {
+		if (!this.isGameRunning) {
+			this.attachEventsListener();
+			this.isGameRunning = true;
+		}
+		this.updatePlayersPosition(newState);
+		this.updateBallPosition(newState);
+		this.updateScore(newState);
+	}
+
+// --------------------------------------- Update render method -------------------------------------- //
+
+	attachEventsListener() {
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'w') this.keysPlayerOne.up = true;
+			if (event.key === 's') this.keysPlayerOne.down = true;
+			if (event.key === 'W') this.keysPlayerOne.up = true;
+			if (event.key === 'S') this.keysPlayerOne.down = true;
+		});
+		document.addEventListener('keyup', (event) => {
+			if (event.key === 'w') this.keysPlayerOne.up = false;
+			if (event.key === 's') this.keysPlayerOne.down = false;
+			if (event.key === 'W') this.keysPlayerOne.up = false;
+			if (event.key === 'S') this.keysPlayerOne.down = false;
+		});
+	}
+
+	updatePlayersPosition(newState) {
+		this.playerOne.x = newState.player_one.position.x;
+		this.playerOne.y = newState.player_one.position.y;
+		this.playerTwo.x = newState.player_two.position.x;
+		this.playerTwo.y = newState.player_two.position.y;
+	}
+
+	updateBallPosition(newState) {
+		this.ball.x = newState.ball_position.x;
+		this.ball.y = newState.ball_position.y;
+	}
+
+	updateScore(newstate) {
+		this.playerOneScore = newstate.player_one.score;
+		this.playerTwoScore = newstate.player_two.score;
+	}
+
+// --------------------------------------- Game finished render -------------------------------------- //
+
+	gameFinished(winner) {
+		alert(`Game finished, id of the winner is : ${winner}`);
+		throwRedirectionEvent('/');
+	}
+
+	// moveBall() {
+	// 	this.checkBallHitBox();
+	// }
+
+	// checkBallHitBox() {
+	// 	this.playerCollision(this.playerOne, this.speed, () => this.ball.x + this.ball.ballDirectionX - this.ball.ballRadius < this.playerOne.x + this.playerOne.width / 2, true);
+	// 	this.playerCollision(this.playerTwo, -this.speed, () => this.ball.x + this.ball.ballDirectionX + this.ball.ballRadius > this.playerTwo.x - this.playerTwo.width / 2, false);
+	// 	this.wallCollision();
+
+	// 	this.ball.x += this.ball.ballDirectionX;
+	// 	this.ball.y += this.ball.ballDirectionY;
+	// }
+
+
+	// playerCollision(player, speed, calculateXPosition, isPlayerOne) {
+	// 	if ((this.ball.y + this.ball.ballDirectionY - this.ball.ballRadius < player.y + player.height / 2 + this.ball.ballRadius / 2 &&
+	// 		this.ball.y + this.ball.ballDirectionY + this.ball.ballRadius >  player.y - player.height / 2 - this.ball.ballRadius / 2) && calculateXPosition()) {
+	// 		player.hitTime = performance.now();
+	// 		player.isPlayerHit = true;
+
+	// 		this.ball.ballDirectionX = speed;
+
+	// 		let collidePoint = this.ball.y - player.y;
+
+	// 		collidePoint = collidePoint / (player.height / 2); // Return a value between 1 and -1 which 1 is bottom and -1 is top
+
+	// 		let angleRad = collidePoint * (Math.PI / 4); // Angle in radiant between 45 and -45deg
+
+	// 		let direction = (this.ball.x < this.canvas.width / 2) ? 1 : -1; // To reverse x direction
+
+	// 		if (this.speed < this.speedLimit)
+	// 			this.speed += 0.5;
+
+	// 		this.ball.ballDirectionX = direction * this.speed * Math.cos(angleRad);
+	// 		this.ball.ballDirectionY = this.speed * Math.sin(angleRad);
+	// 		(direction === 1) ? this.ball.changeBallInfos(false) : this.ball.changeBallInfos(true);
+	// 	}
+	// }
 
 
 	generateSparks(x, y, side, isPlayerOne, isPlayerTwo, color) {
@@ -230,117 +272,77 @@ export default class Game {
 	}
 
 
-	update() {
-		for (let i = 0; i < this.sparks.length; i++) {
-			this.sparks[i].update(this.deltaTime);
+	// wallCollision() {
+	// 	// X should be deleted to score a goal
+	// 	if (this.ball.x + this.ball.ballRadius > this.canvas.width)
+	// 		this.ball.ballDirectionX = this.ball.ballDirectionX * -1;
+	// 	if (this.ball.x - this.ball.ballRadius < 0)
+	// 		this.ball.ballDirectionX = this.ball.ballDirectionX * -1;
 
-			this.sparks[i].draw(this.canvas.ctx);
-			if (!this.sparks[i].isAlive())
-				this.sparks.splice(i, 1);
-		}
-		if (this.ball.x - this.ball.ballRadius < 15) {
-
-			this.speed = 5;
-			this.ball.x = this.canvas.width / 2;
-			this.ball.y = this.canvas.height / 2;
-			this.playerOneScore++;
-			// document.querySelector('.player2').innerHTML = `${this.playerOneScore}`;
-			this.ball.offsetTrailHeight = -12;
-			this.ball.offsetTrailWidth = -10;
-			this.ball.ballDirectionY = 0;
-			this.ball.ballDirectionX = this.speed;
-			this.playerOne.y = this.canvas.height / 2;
-			this.playerTwo.y = this.canvas.height / 2;
-		}
-		if (this.ball.x + this.ball.ballRadius > this.canvas.width - 15) {
-
-			this.speed = 5;
-			this.ball.x = this.canvas.width / 2;
-			this.ball.y = this.canvas.height / 2;
-			this.playerTwoScore++;
-			// document.querySelector('.player1').innerHTML = `${this.playerTwoScore}`;
-			this.ball.offsetTrailHeight = -12;
-			this.ball.offsetTrailWidth = -10;
-			this.ball.ballDirectionY = 0;
-			this.ball.ballDirectionX = this.speed;
-			this.playerOne.y = this.canvas.height / 2;
-			this.playerTwo.y = this.canvas.height / 2;
-		}
-
-
-	}
-
-
-	wallCollision() {
-		// X should be deleted to score a goal
-		if (this.ball.x + this.ball.ballRadius > this.canvas.width)
-			this.ball.ballDirectionX = this.ball.ballDirectionX * -1;
-		if (this.ball.x - this.ball.ballRadius < 0)
-			this.ball.ballDirectionX = this.ball.ballDirectionX * -1;
-
-		if (this.ball.y + this.ball.ballRadius > this.canvas.height) {
-			this.ball.ballDirectionY = this.ball.ballDirectionY * -1;
-			this.generateSparks(this.ball.x, this.ball.y, 'bottom', false, false, 'rgb(255, 165, 0)')
-		}
-		if (this.ball.y - this.ball.ballRadius < 0) {
-			this.ball.ballDirectionY = this.ball.ballDirectionY * -1;
-			this.generateSparks(this.ball.x, this.ball.y, 'top', false, false, 'rgb(255, 165, 0)');
-		}
-	}
+	// 	if (this.ball.y + this.ball.ballRadius > this.canvas.height) {
+	// 		this.ball.ballDirectionY = this.ball.ballDirectionY * -1;
+	// 		this.generateSparks(this.ball.x, this.ball.y, 'bottom', false, false, 'rgb(255, 165, 0)')
+	// 	}
+	// 	if (this.ball.y - this.ball.ballRadius < 0) {
+	// 		this.ball.ballDirectionY = this.ball.ballDirectionY * -1;
+	// 		this.generateSparks(this.ball.x, this.ball.y, 'top', false, false, 'rgb(255, 165, 0)');
+	// 	}
+	// }
 
 
 	// ------------------------------------- Move players ------------------------------------- //
 
-	movePlayers() {
-		this.movePlayerOne();
-		this.movePlayerTwo();
-	}
+
+	// movePlayerOne() {
+	// 	let key = null;
+	// 	if (this.keysPlayerOne.up)
+	// 		key = 'key_up';
+	// 	if (this.keysPlayerOne.down)
+	// 		key = 'key_down'
+	// 	if (key) {
+	// 		socket.send(JSON.stringify({
+	// 			'type': 'player_move',
+	// 			'player_id': this.playerOne.id,
+	// 			'key' : key
+	// 		}));		
+	// 	}
+
+	// 	// this.movePlayerDelay(newPosY, this.playerOne, () => this.playerOne.y += newPosY);
+	// }
 
 
-	movePlayerOne() {
-		let newPosY = 0;
+	// movePlayerTwo() {
+	// 	let newPosY = 0;
 
-		if (this.keysPlayerOne.up)
-			newPosY = -2;
-		if (this.keysPlayerOne.down)
-			newPosY = 2;
-		this.movePlayerDelay(newPosY, this.playerOne, () => this.playerOne.y += newPosY);
-	}
-
-
-	movePlayerTwo() {
-		let newPosY = 0;
-
-		if (this.keysPlayerTwo.up)
-			newPosY = -2;
-		if (this.keysPlayerTwo.down)
-			newPosY = 2;
-		this.movePlayerDelay(newPosY, this.playerTwo, () => this.playerTwo.y += newPosY);
-	}
+	// 	if (this.keysPlayerTwo.up)
+	// 		newPosY = -2;
+	// 	if (this.keysPlayerTwo.down)
+	// 		newPosY = 2;
+	// 	this.movePlayerDelay(newPosY, this.playerTwo, () => this.playerTwo.y += newPosY);
+	// }
 
 
-	movePlayerDelay(newPosY, player, callback) {
-		let i = 0;
+	// movePlayerDelay(newPosY, player, callback) {
+	// 	let i = 0;
 
-		const intervalId = setInterval(() => {
-			if (this.checkPlayerHitBox(newPosY, player)) {
-				clearInterval(intervalId);
-				return ;
-			}
-			callback();
-			i++;
-			if (i === 10)
-				clearInterval(intervalId);
-		}, 1);
-	}
+	// 	const intervalId = setInterval(() => {
+	// 		if (this.checkPlayerHitBox(newPosY, player)) {
+	// 			clearInterval(intervalId);
+	// 			return ;
+	// 		}
+	// 		callback();
+	// 		i++;
+	// 		if (i === 10)
+	// 			clearInterval(intervalId);
+	// 	}, 1);
+	// }
 
-
-	checkPlayerHitBox(newPosY, player) {
-		if (player.y + newPosY + player.height / 2 + 5 > this.canvas.height)
-			return true;
-		if (player.y + newPosY - player.height / 2 - 5 < 0)
-			return true;
-		return false;
-	}
+	// checkPlayerHitBox(newPosY, player) {
+	// 	if (player.y + newPosY + player.height / 2 + 5 > this.canvas.height)
+	// 		return true;
+	// 	if (player.y + newPosY - player.height / 2 - 5 < 0)
+	// 		return true;
+	// 	return false;
+	// }
 
 }

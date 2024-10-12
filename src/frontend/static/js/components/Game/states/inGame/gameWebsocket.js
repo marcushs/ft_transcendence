@@ -16,12 +16,14 @@ export async function gameWebsocket(userId) {
 
 	socket.onmessage = (event) => {
 		const data = JSON.parse(event.data)
-		// console.log('data received from game websocket : ', data);
 		if (data.type === 'game_ready_to_start')
 				startGame(data.game_id, data.game_state, data.map_dimension);
 		if (data.type === 'data_update')
 			if (gameInstance)
 				gameInstance.updateGameRender(data.game_state);
+		if (data.type === 'game_finished')
+			if (gameInstance)
+				gameInstance.gameFinished(data.winner)
 	}
 
 	socket.onclose = () => {

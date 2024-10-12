@@ -44,7 +44,7 @@ def start_game_instance(data):
     game_id = str(uuid.uuid4())
     game_instance = PongGameEngine(game_id=game_id, player_one_id=data['player1'], player_two_id=data['player2'])
     send_game_ready(players_id={'player1': data['player1'], 'player2': data['player2']}, game_id=game_id)
-    sleep(7)
+    sleep(5)
     game_instance.game_loop()
     print('---------------->> CELERY WORKER: game_instance finished !')
     
