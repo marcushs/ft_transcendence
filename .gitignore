@@ -6,3 +6,5 @@ media
 migrations
 .gitignore
 .docker
+chat_models.txt
+result.txt

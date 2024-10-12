@@ -1,7 +1,7 @@
 import { chatSocket } from '../../views/websocket/loadWebSocket.js';
 
 export function sendPrivateMessage() {
-	const target_user = document.querySelector('.contact-username').innerText;
+	const target_user = document.querySelector('.chat-contact-name-status').firstElementChild.innerText;
 	const message = document.querySelector('.chatroom-message-input').value;
 
 	const data = {

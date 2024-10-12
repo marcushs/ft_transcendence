@@ -1,6 +1,7 @@
 import { sendRequest } from '../../utils/sendRequest.js';
 import {removeContactFromList, addNewContactToList, UpdateContactInList} from './updateContactWebsocket.js'
 import { receiveChatgroupUpdate } from '../../utils/chatUtils/receiveChatgroupUpdate.js';
+import { fetchChatroomsList } from '../../utils/chatUtils/fetchChatroomsList.js';
 
 let socket = null;
 
@@ -120,14 +121,16 @@ function throwDeleteNotificationElementEvent(notification) {
 async function loadChatWebSocket() {
 	const chatSocket = new WebSocket('ws://localhost:8008/ws/chat/');
 
-	chatSocket.onopen = function (e) {
+	chatSocket.onopen = async function (e) {
 		console.log(e)
 		console.log("The chat websocket connection was setup successfully !");
+		let chatroomsList = await fetchChatroomsList()
 	  };
 
 	chatSocket.onmessage = async function(e) {
 		const data = JSON.parse(e.data);
 		
+		console.log(data)
 		if (data.type === 'chat_message') {
 			const newMsgElem = document.createElement('p');
 			newMsgElem.innerText = data.message;

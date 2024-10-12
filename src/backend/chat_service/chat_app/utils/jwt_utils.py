@@ -15,3 +15,14 @@ async def get_user_from_jwt(token):
         return 'expired'
     except Exception:
         return None
+
+def get_user_from_jwt_sync(token):
+    try:
+        payload = jwt.decode(token, settings.JWT_VERIFYING_KEY,  algorithms=[settings.JWT_ALGORITHM])
+        user = User.objects.get(id=payload['user_id'])
+        return user
+    except jwt.ExpiredSignatureError:
+        # call auth jwt endpoint for refresh attempt here
+        return None
+    except Exception:
+        return None

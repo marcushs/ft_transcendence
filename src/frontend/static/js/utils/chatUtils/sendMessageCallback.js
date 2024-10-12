@@ -1,4 +1,5 @@
 import '../../components/Chat/ChatRoomTopBar.js';
+import '../../components/Chat/ChatRoomBottomBar.js';
 import { sendRequest } from "../sendRequest.js";
 import { sendPrivateMessage } from './sendPrivateMessage.js';
 
@@ -11,27 +12,31 @@ function displayChatroomComponent(targetUserData) {
 	const contactMenu = document.querySelector('.contact-menu');
 	const chatRoom = document.querySelector('.chatroom');
 	const chatLobby = document.querySelector('.chat-lobby');
-	const ChatRoomTopBar = document.createElement('chatroom-top-bar');
+	const chatRoomTopBar = document.createElement('chatroom-top-bar');
 	const oldChatRoomTopBar = chatRoom.querySelector('chatroom-top-bar');
-	const sendMessageBtn = document.querySelector('.send-message-btn');
-
+	
 	chatMainMenu.style.display = 'block';
 	contactMenu.style.display = 'none';
 	chatRoom.classList.add('active');
 	chatLobby.classList.remove('active');
-
+	
 	console.log(targetUserData)
-	ChatRoomTopBar.setAttribute('data-user', JSON.stringify(targetUserData));
+	chatRoomTopBar.setAttribute('data-user', JSON.stringify(targetUserData));
 	if (oldChatRoomTopBar) oldChatRoomTopBar.remove();
-	chatRoom.prepend(ChatRoomTopBar);
+	chatRoom.prepend(chatRoomTopBar);
 
+	if (chatRoom.querySelector('chatroom-bottom-bar')) chatRoom.querySelector('chatroom-bottom-bar').remove();
+	
+	chatRoom.innerHTML += '<chatroom-bottom-bar></chatroom-bottom-bar>';
+	const sendMessageBtn = document.querySelector('.send-message-btn');
+	
 	sendMessageBtn.addEventListener('click', () => {
 		sendPrivateMessage();
 	})
 }
 
 async function fetchGetOrCreateChatroomView() {
-	const target_user = document.querySelector('.contact-username').innerText;
+	const target_user = document.querySelector('.chat-contact-name-status').firstChild.innerText;
 
 	console.log(target_user)
 	try {

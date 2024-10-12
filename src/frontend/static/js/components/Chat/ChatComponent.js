@@ -23,7 +23,7 @@ class ChatComponent extends HTMLElement {
 						<chat-contact-list title="offline"></chat-contact-list>
 					</div>
 				</div>
-				<div class="chatroom active">
+				<div class="chatroom">
 					<chatroom-conversation></chatroom-conversation>
 					<chatroom-bottom-bar></chatroom-bottom-bar>
 				</div>
@@ -36,6 +36,7 @@ class ChatComponent extends HTMLElement {
 		this.chatCloseBtn = this.querySelector('#chat-close-btn');
 		this.contactContainer = this.querySelector('.chat-contact-container');
 		this.chatRoomTopBarDiv = this.querySelector('#chatroom-top-bar-div');
+		this.chatLobby = this.querySelector('.chat-lobby');
 
 		this.chatMainMenu.style.display = 'none';
 		this.chatRoom = this.querySelector('.chatroom');
@@ -44,7 +45,10 @@ class ChatComponent extends HTMLElement {
 	addEventListeners() {
 		this.chatIcon.addEventListener('click', () => {
 			this.chatMainMenu.style.display = this.chatMainMenu.style.display === 'none' ? 'block' : 'none';
+			if (this.chatRoom.classList.contains('active')) this.chatRoom.classList.remove('active');
+			this.chatLobby.classList.add('active');
 			this.chatSearchBarDiv.innerHTML = this.chatMainMenu.style.display === 'block' ? "<chat-search-bar></chat-search-bar>" : '';
+			
 		});
 		this.chatCloseBtn.addEventListener('click', () => this.chatMainMenu.style.display = 'none');
 	}
