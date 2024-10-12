@@ -7,6 +7,7 @@ class InGameComponent extends HTMLElement {
 	constructor() {
 		super();
 
+		this.userId = null;
 		this.gameId = null;
 		this.gameState = null;
 		this.map_dimension = null;
@@ -23,7 +24,7 @@ class InGameComponent extends HTMLElement {
 		this.initializeComponent();
 		this.setInitialMapSize();
 		this.initCanvas();
-		gameInstance = new Game(this.canvas, this.gameId, this.gameState);
+		gameInstance = new Game(this.canvas, this.gameId, this.gameState, this.userId);
 	}
 
 	initializeComponent() {

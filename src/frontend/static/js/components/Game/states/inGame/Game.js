@@ -3,8 +3,10 @@ import Ball from "./Ball.js";
 import Spark from "./Spark.js";
 import { socket } from "./gameWebsocket.js";
 import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
+import getUserId from "../../../../utils/getUserId.js";
 
-export function startGame(gameId, initialGameState, map_dimension) {
+export async function startGame(gameId, initialGameState, map_dimension) {
+	const userId = await getUserId();
 	const onlineHomeDiv = document.querySelector('.states-container');
 	const oldDivContent = onlineHomeDiv.innerHTML;
 
@@ -12,12 +14,14 @@ export function startGame(gameId, initialGameState, map_dimension) {
 	inGameComponent.gameId = gameId;
 	inGameComponent.gameState = initialGameState;
 	inGameComponent.map_dimension = map_dimension;
+	inGameComponent.userId = userId;
 	onlineHomeDiv.innerHTML = '';
 	onlineHomeDiv.appendChild(inGameComponent);
 }
 
 export default class Game {
-	constructor(canvas, gameId, gameState) {
+	constructor(canvas, gameId, gameState, userId) {
+		this.userId = userId;
 		this.canvas = canvas;
 		this.gameId = gameId;
 		this.gameState = gameState;
@@ -32,8 +36,13 @@ export default class Game {
 		this.speed = this.gameState.ball_speed;
 		this.speedLimit = this.gameState.speedLimit;		
 		this.ball = new Ball(this.canvas, this.gameState.ball_position.x, this.gameState.ball_position.y, this.speed);
-		this.playerOne = new Player(this.canvas, true, this.gameState.player_one.id);
-		this.playerTwo = new Player(this.canvas, false, this.gameState.player_two.id);
+		if (this.userId === this.gameState.player_one.id) {
+			this.playerOne = new Player(this.canvas, true, this.gameState.player_one.id);
+			this.playerTwo = new Player(this.canvas, false, this.gameState.player_two.id);
+		} else {
+			this.playerOne = new Player(this.canvas, true, this.gameState.player_two.id);
+			this.playerTwo = new Player(this.canvas, false, this.gameState.player_one.id);
+		}
 		this.playerOneScore = this.gameState.player_one.score;
 		this.playerTwoScore = this.gameState.player_two.score;
 		this.sparks = [];
@@ -55,7 +64,7 @@ export default class Game {
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.movePlayer();
 		this.drawFrame();
-		this.update();
+		// this.update();
 		requestAnimationFrame(() => this.renderLoop());
 	}
 
@@ -69,7 +78,6 @@ export default class Game {
 		if (this.keysPlayerOne.down)
 			action = 'move_down'
 		if (action) {
-			console.log('action sent');
 			socket.send(JSON.stringify({
 				'type': 'player_action',
 				'game_id': this.gameId,
@@ -154,20 +162,20 @@ export default class Game {
 	}
 
 	updatePlayersPosition(newState) {
-		this.playerOne.x = newState.player_one.position.x;
-		this.playerOne.y = newState.player_one.position.y;
-		this.playerTwo.x = newState.player_two.position.x;
-		this.playerTwo.y = newState.player_two.position.y;
+		this.playerOne.x = newState.player_one_x;
+		this.playerOne.y = newState.player_one_y;
+		this.playerTwo.x = newState.player_two_x;
+		this.playerTwo.y = newState.player_two_y;
 	}
 
 	updateBallPosition(newState) {
-		this.ball.x = newState.ball_position.x;
-		this.ball.y = newState.ball_position.y;
+		this.ball.x = newState.ball_x;
+		this.ball.y = newState.ball_y;
 	}
 
 	updateScore(newstate) {
-		this.playerOneScore = newstate.player_one.score;
-		this.playerTwoScore = newstate.player_two.score;
+		this.playerOneScore = newstate.player_one_score;
+		this.playerTwoScore = newstate.player_two_score;
 	}
 
 // --------------------------------------- Game finished render -------------------------------------- //

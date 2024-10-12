@@ -166,6 +166,16 @@ class searchUsers(View):
         else:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
 
+class getUserId(View):
+    def __init__(self):
+        super().__init__
+    
+    def get(self, request):
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'message': 'User not found'}, status=400)
+            return JsonResponse({'status': 'success', 'id': request.user.id}, status=200)
+
+
 class getUserInfos(View):
     def __init__(self):
         super().__init__

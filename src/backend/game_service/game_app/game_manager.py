@@ -68,19 +68,25 @@ class PongGameEngine:
         
     def game_loop(self):
         self.game_active = True
+        last_update_time = time.perf_counter()
         while self.game_active:
-            self.state = json.loads(redis_instance.get(self.game_id))
-            self.process_commands()
-            self.move_ball()
-            update_state = self.update_score()
-            self.send_update()
-            if update_state == 'reset':
-                sleep(1)
-            elif update_state == 'finish':
-                self.end_game()
-                break
-            redis_instance.set(self.game_id, json.dumps(self.state))
-            sleep(0.016)
+            current_time = time.perf_counter()
+            elapsed_time = current_time - last_update_time
+            if elapsed_time >=  0.01667: # 60 fps render
+                self.state = json.loads(redis_instance.get(self.game_id))
+                self.process_commands()
+                self.move_ball()
+                update_state = self.update_score()
+                self.send_update()
+                if update_state == 'reset':
+                    sleep(1)
+                elif update_state == 'finish':
+                    self.end_game()
+                    break
+                redis_instance.set(self.game_id, json.dumps(self.state))
+                last_update_time = current_time
+            else:
+                sleep(0.01)
             
     def update_score(self):
         update_state = 'running'
@@ -150,17 +156,20 @@ class PongGameEngine:
 
     
     def player_collision(self, ball, player, isPlayerOne):
-        if ((ball['y'] + self.ball_direction_y - self.ball_radius < player['position']['y'] + self.player_size['height'] * 0.5 + self.ball_radius * 0.5) and
-        (ball['y'] + self.ball_direction_y + self.ball_radius > player['position']['y'] - self.player_size['height'] * 0.5 - self.ball_radius * 0.5) and
-        self.calculate_x_position(isPlayerOne)):
-            collide_point = ball['y'] - player['position']['y']
-            collide_point /= (self.player_size['height'] * 0.5)
-            angle_rad = collide_point * (math.pi * 0.25)
-            direction = 1 if isPlayerOne else -1
-            if self.ball_speed < self.speed_limit:
-                self.ball_speed += 0.5
-            self.ball_direction_x = direction * (self.ball_speed * math.cos(angle_rad))
-            self.ball_direction_y = self.ball_speed * math.sin(angle_rad)
+        ball_y_next = ball['y'] + self.ball_direction_y
+        player_y = player['position']['y']
+        player_height_half = self.player_size['height'] * 0.5
+        ball_radius_half = self.ball_radius * 0.5
+        if (ball_y_next - ball_radius_half < player_y + player_height_half) and (ball_y_next + ball_radius_half > player_y - player_height_half):
+            if self.calculate_x_position(isPlayerOne):
+                collide_point = (ball['y'] - player_y) / player_height_half
+                angle_rad = collide_point * (math.pi * 0.25)
+                direction = 1 if isPlayerOne else -1
+                if self.ball_speed < self.speed_limit:
+                    self.ball_speed += 0.5
+
+                self.ball_direction_x = direction * (self.ball_speed * math.cos(angle_rad))
+                self.ball_direction_y = self.ball_speed * math.sin(angle_rad)
 
 
     def calculate_x_position(self, isPlayerOne):
@@ -180,11 +189,19 @@ class PongGameEngine:
     def send_update(self):
         payload = json.dumps({
             'type': 'data_update',
-            'data': self.state 
+            'data': {
+                'player_one_score': self.player_one_score,
+                'player_one_x': self.state['player_one']['position']['x'],
+                'player_one_y': self.state['player_one']['position']['y'],
+                'player_two_score': self.player_two_score,
+                'player_two_x': self.state['player_two']['position']['x'],
+                'player_two_y': self.state['player_two']['position']['y'],
+                'ball_x': self.state['ball_position']['x'],
+                'ball_y': self.state['ball_position']['y'],   
+            }
         })
         async_to_sync(send_websocket_info)(player_id=self.player_one_id, payload=payload)
         async_to_sync(send_websocket_info)(player_id=self.player_two_id, payload=payload)
-    
 # ---------------------- utils ----------------------------- #
     
 def get_map_dimension():

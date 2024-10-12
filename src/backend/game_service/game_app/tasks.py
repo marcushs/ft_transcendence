@@ -46,7 +46,6 @@ def start_game_instance(data):
     send_game_ready(players_id={'player1': data['player1'], 'player2': data['player2']}, game_id=game_id)
     sleep(5)
     game_instance.game_loop()
-    print('---------------->> CELERY WORKER: game_instance finished !')
     
 def send_game_ready(players_id, game_id):
     map_dimension = get_map_dimension()
