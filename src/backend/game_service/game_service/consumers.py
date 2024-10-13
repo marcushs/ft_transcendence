@@ -28,7 +28,9 @@ class GameConsumer(AsyncWebsocketConsumer):
 		if data['type'] == 'player_action':
 			parsed_data = get_valid_data_websocket(data=data) 
 			if parsed_data:
-				redis_instance.rpush(f"{str(data['game_id'])}:commands", json.dumps(parsed_data))
+				game_instance = PongGameEngine.get_active_game(str(data['game_id']))
+				if game_instance: 
+					game_instance.update_player_position(player_id=parsed_data['player_id'], action=parsed_data['action'])
 		
 	async def game_ready_to_start(self, event): 
 		await self.send(text_data=json.dumps( 

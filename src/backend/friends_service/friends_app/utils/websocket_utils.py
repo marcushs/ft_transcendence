@@ -16,7 +16,6 @@ class handle_friend_info_change(View):
         super()
     
     def post(self, request):
-        print('--------------------------TEST--------------------------') 
         try:
             data = json.loads(request.body.decode('utf-8'))
             if isinstance(request.user, AnonymousUser):
@@ -44,8 +43,6 @@ class handle_friend_info_change(View):
                     'old_value': data['old_value']
                 }
             )
-        print(f'contacts_list: \'{contacts_id_list}\' -- data: \'{data}\'')
-        print('--------------------------------------------------------') 
         return JsonResponse({'status': 'success', 'message': 'contacts info successfully changed'}, status=200)
         
         

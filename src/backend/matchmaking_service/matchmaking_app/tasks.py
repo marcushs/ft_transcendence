@@ -1,6 +1,7 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from .views.MatchmakingView import unranked_queue
+from .utils.user_utils import send_request
 import time
 import queue
 import random
@@ -52,14 +53,16 @@ def proccess_matchmaking(waiting_list):
     # change_is_ingame_state(value=True, user_instance=first_user)
     # change_is_ingame_state(value=True, user_instance=second_user)
     
-    redis_instance = redis.Redis(host='redis', port=6379, db=0)
-    print(f'--------------------> player1_id: {first_user.id}')  
-    print(f'--------------------> player2_id: {second_user.id}')
-    redis_instance.publish('matchmaking_manager', json.dumps({ 
+    payload = { 
         'game_type': 'unranked',
         'player1': first_user.id,
         'player2': second_user.id
-    })) 
+    }
+    try:
+        async_to_sync(send_request)(request_type='POST', url='http://game:8000/game/start_game/', payload=payload)
+        print('game_instance launched')
+    except Exception as e:
+        print(f'problem with requesting game_instance: {e}')
     
     if len(waiting_list) > 1:
         proccess_matchmaking(waiting_list=waiting_list)  

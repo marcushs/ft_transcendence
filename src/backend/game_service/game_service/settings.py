@@ -34,7 +34,7 @@ REFRESH_TOKEN_LIFETIME = 86400 # 1 day
 # /-----> Celery settings <-----\
     
 
-CELERY_BROKER_URL = 'redis://redis:6379/0' #broker
+# CELERY_BROKER_URL = 'redis://redis:6379/0' #broker
 
 # /-----><-----\
 

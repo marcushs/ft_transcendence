@@ -1,15 +1,18 @@
 from .websocket_utils import send_websocket_info
-from asgiref.sync import async_to_sync
+from .redis_utils import init_redis
+# from asgiref.sync import async_to_sync
 from django.http import JsonResponse
-from time import sleep
-import redis
+# from time import sleep
+# import aioredis
+import asyncio
+# import redis
 import json
 import time
 import math
 
-redis_instance = redis.Redis(host='redis', port=6379, db=0)
-
 class PongGameEngine:
+    active_games = []
+    
     def __init__(self, game_id, player_one_id, player_two_id):
         self.game_id = game_id
         self.player_one_id = player_one_id
@@ -33,7 +36,23 @@ class PongGameEngine:
             'height': self.map['height'] * 0.2,
         }
         self.set_initial_game_state(player_one_score=self.player_one_score, player_two_score=self.player_two_score)
-        redis_instance.set(self.game_id, json.dumps(self.state))
+        PongGameEngine.add_active_games(self)
+    
+    
+    @classmethod
+    def add_active_games(cls, game_instance):
+        cls.active_games.append(game_instance)
+        
+        
+    @classmethod
+    def get_active_game(cls, game_id):
+        for game in cls.active_games:
+            if game.game_id == game_id:
+                return game
+        return None
+    
+    def get_game_state(self):
+        return self.state
     
     def set_initial_game_state(self, player_one_score, player_two_score):
         self.state = {
@@ -66,27 +85,27 @@ class PongGameEngine:
         }
         
         
-    def game_loop(self):
+    async def game_loop(self):
         self.game_active = True
         last_update_time = time.perf_counter()
         while self.game_active:
             current_time = time.perf_counter()
             elapsed_time = current_time - last_update_time
             if elapsed_time >=  0.01667: # 60 fps render
-                self.state = json.loads(redis_instance.get(self.game_id))
-                self.process_commands()
+                # self.state = json.loads(await self.redis_instance.get(self.game_id))
+                # await self.process_commands()
                 self.move_ball()
                 update_state = self.update_score()
-                self.send_update()
+                await self.send_update()
                 if update_state == 'reset':
-                    sleep(1)
+                    await asyncio.sleep(1)
                 elif update_state == 'finish':
-                    self.end_game()
+                    await self.end_game()
                     break
-                redis_instance.set(self.game_id, json.dumps(self.state))
+                # await self.redis_instance.set(self.game_id, json.dumps(self.state))
                 last_update_time = current_time
             else:
-                sleep(0.01)
+                await asyncio.sleep(0.01)
             
     def update_score(self):
         update_state = 'running'
@@ -109,24 +128,26 @@ class PongGameEngine:
         return update_state
 
 
-    def end_game(self):
+    async def end_game(self):
+        self.game_active = False
+        PongGameEngine.active_games.remove(self)
         winner_id = self.player_one_id if self.player_one_score == self.max_score else self.player_two_id
         payload = json.dumps({
             'type': 'game_finished',
             'winner': winner_id
         })
-        async_to_sync(send_websocket_info)(player_id=self.player_one_id, payload=payload)
-        async_to_sync(send_websocket_info)(player_id=self.player_two_id, payload=payload)
+        await send_websocket_info(player_id=self.player_one_id, payload=payload)
+        await send_websocket_info(player_id=self.player_two_id, payload=payload)
     
     
-    def process_commands(self):
-        commands = redis_instance.lrange(f"{self.game_id}:commands", 0, -1)
-        redis_instance.delete(f"{self.game_id}:commands")
-        for json_command in commands:
-            command = json.loads(json_command)
-            if not 'action' in command or not 'player_id' in command:
-                continue
-            self.update_player_position(player_id=int(command['player_id']),action=command['action'])
+    # async def process_commands(self):
+    #     commands = await self.redis_instance.lrange(f"{self.game_id}:commands", 0, -1)
+    #     await self.redis_instance.delete(f"{self.game_id}:commands")
+    #     for json_command in commands:
+    #         command = json.loads(json_command)
+    #         if not 'action' in command or not 'player_id' in command:
+    #             continue
+    #         self.update_player_position(player_id=int(command['player_id']),action=command['action'])
             
         
     def update_player_position(self, player_id, action):
@@ -186,7 +207,7 @@ class PongGameEngine:
             self.ball_direction_y = self.ball_direction_y * -1
     
     
-    def send_update(self):
+    async def send_update(self):
         payload = json.dumps({
             'type': 'data_update',
             'data': {
@@ -200,8 +221,8 @@ class PongGameEngine:
                 'ball_y': self.state['ball_position']['y'],   
             }
         })
-        async_to_sync(send_websocket_info)(player_id=self.player_one_id, payload=payload)
-        async_to_sync(send_websocket_info)(player_id=self.player_two_id, payload=payload)
+        await send_websocket_info(player_id=self.player_one_id, payload=payload)
+        await send_websocket_info(player_id=self.player_two_id, payload=payload)
 # ---------------------- utils ----------------------------- #
     
 def get_map_dimension():
