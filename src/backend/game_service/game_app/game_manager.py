@@ -21,7 +21,7 @@ class PongGameEngine:
         self.player_two_score = 0
         self.game_active = False
         self.ball_radius = 16
-        self.ball_speed = 10
+        self.ball_speed = 15
         self.speed_limit = 45
         self.ball_direction_x = self.ball_speed
         self.ball_direction_y = 0;
@@ -92,34 +92,36 @@ class PongGameEngine:
             current_time = time.perf_counter()
             elapsed_time = current_time - last_update_time
             if elapsed_time >=  0.01667: # 60 fps render
-                # self.state = json.loads(await self.redis_instance.get(self.game_id))
-                # await self.process_commands()
                 self.move_ball()
-                update_state = self.update_score()
-                await self.send_update()
-                if update_state == 'reset':
-                    await asyncio.sleep(1)
-                elif update_state == 'finish':
-                    await self.end_game()
-                    break
-                # await self.redis_instance.set(self.game_id, json.dumps(self.state))
+                await self.manage_game_update()
                 last_update_time = current_time
             else:
                 await asyncio.sleep(0.01)
-            
+
+
+    async def manage_game_update(self):
+        update_state = self.update_score()
+        await self.send_client_update()
+        if update_state == 'reset':
+            await asyncio.sleep(1)
+        elif update_state == 'finish':
+            await self.end_game()
+            self.game_active = False
+
+
     def update_score(self):
         update_state = 'running'
         if self.state['ball_position']['x'] - self.ball_radius < 15:
             self.ball_direction_x = self.ball_speed
             self.ball_direction_y = 0
-            self.ball_speed = 10
+            self.ball_speed = 15
             self.player_one_score += 1
             update_state = 'reset'
             self.set_initial_game_state(player_one_score=self.player_one_score, player_two_score=self.player_two_score)
         elif self.state['ball_position']['x'] + self.ball_radius > self.map['width'] - 15:
             self.ball_direction_x = self.ball_speed
             self.ball_direction_y = 0
-            self.ball_speed = 10
+            self.ball_speed = 15
             self.player_two_score += 1
             update_state = 'reset'
             self.set_initial_game_state(player_one_score=self.player_one_score, player_two_score=self.player_two_score)
@@ -149,9 +151,9 @@ class PongGameEngine:
             return
         player = self.state[player_key]
         if action == 'move_up':
-            player['position']['y'] = max(player['position']['y'] - 2, self.player_size['height'] * 0.5)
+            player['position']['y'] = max(player['position']['y'] - 4, self.player_size['height'] * 0.5)
         elif action == 'move_down':
-            player['position']['y'] = min(player['position']['y'] + 2, self.map['height'] - self.player_size['height'] * 0.5)
+            player['position']['y'] = min(player['position']['y'] + 4, self.map['height'] - self.player_size['height'] * 0.5)
             
     def move_ball(self):
         self.check_ball_hitbox(self.state['ball_position'])
@@ -196,7 +198,7 @@ class PongGameEngine:
             self.ball_direction_y = self.ball_direction_y * -1
     
     
-    async def send_update(self):
+    async def send_client_update(self):
         payload = json.dumps({
             'type': 'data_update',
             'data': {
@@ -212,6 +214,8 @@ class PongGameEngine:
         })
         await send_websocket_info(player_id=self.player_one_id, payload=payload)
         await send_websocket_info(player_id=self.player_two_id, payload=payload)
+
+
 # ---------------------- utils ----------------------------- #
     
 def get_map_dimension():

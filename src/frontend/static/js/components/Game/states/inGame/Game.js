@@ -36,13 +36,16 @@ export default class Game {
 		this.speed = this.gameState.ball_speed;
 		this.speedLimit = this.gameState.speedLimit;		
 		this.ball = new Ball(this.canvas, this.gameState.ball_position.x, this.gameState.ball_position.y, this.speed);
-		if (this.userId === this.gameState.player_one.id) {
-			this.playerOne = new Player(this.canvas, true, this.gameState.player_one.id);
-			this.playerTwo = new Player(this.canvas, false, this.gameState.player_two.id);
+		const playerOneBackId = Number(this.gameState.player_one.id)
+		const playerTwoBackId = Number(this.gameState.player_two.id)
+
+		if (this.userId === playerOneBackId) {
+			this.playerOne = new Player(this.canvas, true, playerOneBackId);
+			this.playerTwo = new Player(this.canvas, false, playerTwoBackId);
 		} else {
-			this.playerOne = new Player(this.canvas, true, this.gameState.player_two.id);
-			this.playerTwo = new Player(this.canvas, false, this.gameState.player_one.id);
-		}
+			this.playerOne = new Player(this.canvas, true, playerTwoBackId);
+			this.playerTwo = new Player(this.canvas, false, playerOneBackId);
+		}		
 		this.playerOneScore = this.gameState.player_one.score;
 		this.playerTwoScore = this.gameState.player_two.score;
 		this.sparks = [];
@@ -55,6 +58,7 @@ export default class Game {
 			up: false,
 			down: false,
 		}
+		this.attachEventsListener();
 	}
 
 // --------------------------------------- Render loop -------------------------------------- //
@@ -136,36 +140,40 @@ export default class Game {
 
 	updateGameRender(newState) {
 		if (!this.isGameRunning) {
-			this.attachEventsListener();
 			this.isGameRunning = true;
 		}
 		this.updatePlayersPosition(newState);
 		this.updateBallPosition(newState);
-		this.updateScore(newState);
+		if (this.playerOneScore !== newState.player_one_score || this.playerTwoScore !== newState.player_two_score)
+			this.updateScore(newState);
 	}
 
 // --------------------------------------- Update render method -------------------------------------- //
 
 	attachEventsListener() {
 		document.addEventListener('keydown', (event) => {
-			if (event.key === 'w') this.keysPlayerOne.up = true;
-			if (event.key === 's') this.keysPlayerOne.down = true;
-			if (event.key === 'W') this.keysPlayerOne.up = true;
-			if (event.key === 'S') this.keysPlayerOne.down = true;
+			if (this.isGameRunning) {
+				if (event.key === 'w') this.keysPlayerOne.up = true;
+				if (event.key === 's') this.keysPlayerOne.down = true;
+				if (event.key === 'W') this.keysPlayerOne.up = true;
+				if (event.key === 'S') this.keysPlayerOne.down = true;
+			}
 		});
 		document.addEventListener('keyup', (event) => {
-			if (event.key === 'w') this.keysPlayerOne.up = false;
-			if (event.key === 's') this.keysPlayerOne.down = false;
-			if (event.key === 'W') this.keysPlayerOne.up = false;
-			if (event.key === 'S') this.keysPlayerOne.down = false;
+			if (this.isGameRunning) {
+				if (event.key === 'w') this.keysPlayerOne.up = false;
+				if (event.key === 's') this.keysPlayerOne.down = false;
+				if (event.key === 'W') this.keysPlayerOne.up = false;
+				if (event.key === 'S') this.keysPlayerOne.down = false;
+			}
 		});
 	}
 
 	updatePlayersPosition(newState) {
-		this.playerOne.x = newState.player_one_x;
-		this.playerOne.y = newState.player_one_y;
-		this.playerTwo.x = newState.player_two_x;
-		this.playerTwo.y = newState.player_two_y;
+		if (this.playerOne.y !== newState.player_one_y)
+			this.playerOne.y = newState.player_one_y;
+		if (this.playerTwo.y !== newState.player_two_y)
+			this.playerTwo.y = newState.player_two_y;
 	}
 
 	updateBallPosition(newState) {
@@ -174,8 +182,11 @@ export default class Game {
 	}
 
 	updateScore(newstate) {
-		this.playerOneScore = newstate.player_one_score;
-		this.playerTwoScore = newstate.player_two_score;
+		if (this.playerOneScore !== newstate.player_one_score || this.playerTwoScore !== newstate.player_two_score) {
+			this.isGameRunning = false;
+			this.playerOneScore = newstate.player_one_score;
+			this.playerTwoScore = newstate.player_two_score;
+		}
 	}
 
 // --------------------------------------- Game finished render -------------------------------------- //

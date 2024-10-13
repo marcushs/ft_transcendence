@@ -15,7 +15,6 @@ class startGameEngine(View):
 
     async def post(self, request):
         data = json.loads(request.body.decode('utf-8')) 
-        print('startgameengine reached !')
 
         if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
             return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400) 
@@ -30,7 +29,7 @@ async def start_game_instance(data):
     game_instance = PongGameEngine(game_id=game_id, player_one_id=data['player1'], player_two_id=data['player2'])
     await send_game_ready(players_id={'player1': data['player1'], 'player2': data['player2']}, game_id=game_id, game_instance=game_instance) 
     await asyncio.sleep(5)
-    await game_instance.game_loop()
+    result = await game_instance.game_loop()
     
     
 async def send_game_ready(players_id, game_id, game_instance): 
