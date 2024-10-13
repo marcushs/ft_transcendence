@@ -14,9 +14,9 @@ class PongGameEngine:
     active_games = []
     
     def __init__(self, game_id, player_one_id, player_two_id):
-        self.game_id = game_id
-        self.player_one_id = player_one_id
-        self.player_two_id = player_two_id
+        self.game_id = str(game_id)
+        self.player_one_id = str(player_one_id)
+        self.player_two_id = str(player_two_id)
         self.player_one_score = 0
         self.player_two_score = 0
         self.game_active = False
@@ -138,20 +138,9 @@ class PongGameEngine:
         })
         await send_websocket_info(player_id=self.player_one_id, payload=payload)
         await send_websocket_info(player_id=self.player_two_id, payload=payload)
-    
-    
-    # async def process_commands(self):
-    #     commands = await self.redis_instance.lrange(f"{self.game_id}:commands", 0, -1)
-    #     await self.redis_instance.delete(f"{self.game_id}:commands")
-    #     for json_command in commands:
-    #         command = json.loads(json_command)
-    #         if not 'action' in command or not 'player_id' in command:
-    #             continue
-    #         self.update_player_position(player_id=int(command['player_id']),action=command['action'])
             
         
-    def update_player_position(self, player_id, action):
-        # print(f"id received: {player_id} -- id player1 : {self.player_one_id} -- id player2: {self.player_two_id}")
+    async def update_player_position(self, player_id, action):
         if player_id == self.player_one_id:
             player_key = 'player_one'
         elif player_id == self.player_two_id:

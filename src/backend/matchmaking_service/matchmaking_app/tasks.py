@@ -5,7 +5,6 @@ from .utils.user_utils import send_request
 import time
 import queue
 import random
-import redis
 import json
 from .models import User
 
@@ -60,7 +59,6 @@ def proccess_matchmaking(waiting_list):
     }
     try:
         async_to_sync(send_request)(request_type='POST', url='http://game:8000/game/start_game/', payload=payload)
-        print('game_instance launched')
     except Exception as e:
         print(f'problem with requesting game_instance: {e}')
     
