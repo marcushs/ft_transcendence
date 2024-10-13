@@ -17,7 +17,6 @@ import { PingStatus } from "./views/pingStatus.js";
 import { loadWebSocket } from "./views/websocket/loadWebSocket.js";
 import oauthRedirect from './views/oauthRedirect.js';
 import oauthUsername from "./views/oauthUsername.js";
-import chatRoom from "./views/chatRoom.js";
 
 let languageJson;
 
@@ -35,7 +34,6 @@ const routes = {
     "/two-factor-deactivation": { title: "TwoFactorDeactivate", render: twoFactorDeactivation },
     "/oauth-redirect": { title: "OauthRedirect", render: oauthRedirect },
     "/oauth-username": { title: "OauthUsername", render: oauthUsername},
-    "/chatroom": { title: "chatRoom", render: chatRoom},
 };
 
 async function setUserRender() {

@@ -3,12 +3,19 @@ import "./ChatContactList.js";
 import "./ChatRoomTopBar.js";
 import "./ChatRoomBottomBar.js";
 import "./ChatRoomConversation.js";
+import checkAuthentication from "../../utils/checkAuthentication.js"
 
 class ChatComponent extends HTMLElement {
 	constructor() {
 		super();
-		this.render();
-		this.addEventListeners();
+		this.init();
+	}
+	
+	async init() {
+		if (await checkAuthentication()) {
+			this.render()
+			this.addEventListeners();
+		}
 	}
 
 	render() {
