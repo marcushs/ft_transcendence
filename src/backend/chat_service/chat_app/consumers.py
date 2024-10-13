@@ -33,23 +33,34 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 if created is True:
                     await self.channel_layer.group_send('chatgroup_updates', {'type': 'chatgroup.update', 'chatroom': str(chatroom.group_id), 'target_user': str(target_user.id)})
                     await self.join_room(str(chatroom.group_id))
-                await self.channel_layer.group_send(str(chatroom.group_id), {'type': 'chat.message','message': message, 'author': self.user.username})
                 await self.save_message(chatroom=chatroom, author=self.user, message=message)
+                await self.channel_layer.group_send(str(chatroom.group_id), {'type': 'chat.message','chatroom': str(chatroom.group_id),'message': message, 'author': self.user.username})
             except Http404:
                 return
         elif message_type == 'join_room':
             chatroom_id = data['chatroom_id']
             await self.join_room(chatroom_id)
 
-    async def join_room(self, room):
-        await self.channel_layer.group_add(room, self.channel_name)
+            # Retrieve and send recent messages
+            recent_messages = await self.get_recent_messages(chatroom_id)
+            for message in recent_messages:
+                await self.send(text_data=json.dumps({
+                    'type': 'chat_message',
+                    'chatroom': chatroom_id,
+                    'message': message.body,
+                    'author': await self.get_message_author_username(message)
+                }))
 
-    async def leave_room(self, room):
-        await self.channel_layer.group_discard(room, self.channel_name)
+    async def join_room(self, chatroom):
+        await self.channel_layer.group_add(chatroom, self.channel_name)
+
+    async def leave_room(self, chatroom):
+        await self.channel_layer.group_discard(chatroom, self.channel_name)
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps({
             'type': 'chat_message',
+            'chatroom': event['chatroom'],
             'message': event['message'],
             'author': event['author'],
         }))
@@ -84,7 +95,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         return chatroom, created
     
-
     @database_sync_to_async
     def save_message(self, chatroom, author, message):
         GroupMessage.objects.create(group=chatroom, author=author, body=message)
+
+    @database_sync_to_async
+    def get_recent_messages(self, chatroom_id):
+        return list(GroupMessage.objects.filter(group_id=chatroom_id)[:30])
+    
+    @database_sync_to_async
+    def get_message_author_username(self, message):
+        return message.author.username
+

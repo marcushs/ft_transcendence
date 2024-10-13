@@ -1,7 +1,6 @@
 import { sendRequest } from '../../utils/sendRequest.js';
 import {removeContactFromList, addNewContactToList, UpdateContactInList} from './updateContactWebsocket.js'
-import { receiveChatgroupUpdate } from '../../utils/chatUtils/receiveChatgroupUpdate.js';
-import { fetchChatroomsList } from '../../utils/chatUtils/fetchChatroomsList.js';
+import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms } from '../../utils/chatUtils/joinRoomUtils.js';
 
 let socket = null;
 
@@ -124,7 +123,10 @@ async function loadChatWebSocket() {
 	chatSocket.onopen = async function (e) {
 		console.log(e)
 		console.log("The chat websocket connection was setup successfully !");
-		let chatroomsList = await fetchChatroomsList()
+
+		let chatroomsList = await fetchChatroomsList();
+
+		joinAllInvitedChatrooms(chatroomsList);
 	  };
 
 	chatSocket.onmessage = async function(e) {

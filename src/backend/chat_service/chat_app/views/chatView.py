@@ -4,7 +4,6 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from ..models import *
 from ..utils.jwt_utils import get_user_from_jwt
-import shortuuid
 import json
 
 User = get_user_model()
