@@ -31,11 +31,6 @@ JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")
 ACCESS_TOKEN_LIFETIME = 120 # 2 minutes
 REFRESH_TOKEN_LIFETIME = 86400 # 1 day
 
-# /-----> Celery settings <-----\
-    
-
-# CELERY_BROKER_URL = 'redis://redis:6379/0' #broker
-
 # /-----><-----\
 
 # SECURITY WARNING: don't run with debug turned on in production!
