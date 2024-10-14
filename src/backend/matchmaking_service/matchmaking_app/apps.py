@@ -7,7 +7,9 @@ class UserAppConfig(AppConfig):
     name = 'matchmaking_app'
     
     def ready(self):
-        from .tasks import background_task_unranked_matchmaking
+        from .tasks import background_task_unranked_matchmaking, periodic_check_ingame_status
         
-        thread = threading.Thread(target=background_task_unranked_matchmaking, daemon=True)
-        thread.start()
+        matchmaking_thread = threading.Thread(target=background_task_unranked_matchmaking, daemon=True)
+        matchmaking_thread.start()
+        ingame_check_thread = threading.Thread(target=periodic_check_ingame_status, daemon=True)
+        ingame_check_thread.start()

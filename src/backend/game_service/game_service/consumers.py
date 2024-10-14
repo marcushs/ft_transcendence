@@ -4,9 +4,9 @@ from urllib.parse import parse_qs
 import json
 
 class GameConsumer(AsyncWebsocketConsumer):
-    
+
  #//---------------------------------------> Connector <--------------------------------------\\#
- 
+
 	async def connect(self):
 		query_string = parse_qs(self.scope['query_string'].decode())
 		self.user_id = str(query_string.get('user_id', [None])[0])
@@ -18,7 +18,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 				await self.channel_layer.group_add(self.group_name, self.channel_name) 
 				await self.accept()
 		except Exception as e:
-			print('Error: ', e)
+			print('Error: ', e) 
 
  #//---------------------------------------> Disconnector <--------------------------------------\\#
 
@@ -29,15 +29,41 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
+		print(f'data received: {data}')
 		if data['type'] == 'player_action':
-			parsed_data = self.get_valid_data_websocket(data=data) 
-			if parsed_data:
-				game_instance = PongGameEngine.get_active_game(str(data['game_id']))
-				if game_instance:
-					await game_instance.update_player_position(player_id=parsed_data['player_id'], action=parsed_data['action'])
+			await self.handle_player_action(data)
+		elif data['type'] == 'surrender':
+			await self.handle_surrender(data)
+
+
+	async def handle_player_action(self, data): 
+		print('test')
+		parsed_data = self.get_valid_action(data=data)
+		if parsed_data:
+			game_instance = PongGameEngine.get_active_game(str(data['game_id']))
+			if game_instance:
+				await game_instance.update_player_position(player_id=parsed_data['player_id'], action=parsed_data['action']) 
     
+
+	async def handle_surrender(self, data):
+		try:
+			player_id = int(data['player_id'])
+			if player_id != self.user_id:
+				raise Exception('player ID does not match the user')
+			game_id = int(data['game_id'])
+			game_instance = PongGameEngine.get_active_game(game_id)
+			if not (game_instance.player_is_in_game(player_id)):
+				raise Exception('player is not in the game')
+			game_instance.player_surrender(player_id)
+		except Exception as e:
+			await self.send(text_data=json.dumps({
+				'type': 'error',
+				'message': str(e)
+			}))
+
+
     # Valid and extract data from websocket message
-	def get_valid_data_websocket(self, data):
+	def get_valid_action(self, data):
 		if 'player_id' not in data or 'game_id' not in data:
 			return None
 		if 'action' not in data:

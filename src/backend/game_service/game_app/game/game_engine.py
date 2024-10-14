@@ -25,6 +25,8 @@ class PongGameEngine:
         self.player_one_score = 0
         self.player_two_score = 0
         self.game_active = False
+        self.winner_id = None
+        self.loser_id = None
         self.ball_radius = 16
         self.ball_speed = 15
         self.speed_limit = 45
@@ -101,6 +103,28 @@ class PongGameEngine:
                 last_update_time = current_time
             else:
                 await asyncio.sleep(0.01)
+        return self.get_game_result()
+    
+    def get_game_result(self):
+        if self.winner_id == self.player_one_id:
+            winner = {
+                'id': self.player_one_id,
+                'score': self.player_one_score
+            }
+            loser = {
+                'id': self.player_two_id,
+                'score': self.player_two_score
+            }
+        else:
+            winner = {
+                'id': self.player_two_id,
+                'score': self.player_two_score
+            }
+            loser = {
+                'id': self.player_one_id,
+                'score': self.player_one_score
+            }
+        return winner, loser
 
  #//---------------------------------------> Ball movement <--------------------------------------\\#
 
@@ -144,7 +168,7 @@ class PongGameEngine:
         if (ball['x'] + self.ball_radius > self.map['width'] or ball['x'] - self.ball_radius < 0):
             self.ball_direction_x = self.ball_direction_x * -1
         if (ball['y'] + self.ball_radius > self.map['height'] or ball['y'] - self.ball_radius < 0):
-            self.ball_direction_y = self.ball_direction_y * -1
+            self.ball_direction_y = self.ball_direction_y * -1 
 
 
  #//---------------------------------------> Game update <--------------------------------------\\#
@@ -200,19 +224,26 @@ class PongGameEngine:
         
 
     async def end_game(self):
+        if self.player_one_score == self.max_score:
+            self.winner_id = self.player_one_id
+        else:
+            self.winner_id = self.player_two_id
+        loser_id = self.player_one_id if self.winner_id == self.player_two_id else self.player_two_id
         self.game_active = False
         PongGameEngine.active_games.remove(self)
-        winner_id = self.player_one_id if self.player_one_score == self.max_score else self.player_two_id
-        payload = json.dumps({
+        payload = {
             'type': 'game_finished',
-            'winner': winner_id
-        })
+            'winner': self.winner_id,
+            'loser': loser_id,
+            'message': f'Player {self.winner_id} wins!'
+        }
         await send_websocket_info(player_id=self.player_one_id, payload=payload)
         await send_websocket_info(player_id=self.player_two_id, payload=payload)
 
  #//---------------------------------------> Player movement-(websocket receiver) <--------------------------------------\\#     
         
     async def update_player_position(self, player_id, action):
+        print('test4')
         if player_id == self.player_one_id:
             player_key = 'player_one'
         elif player_id == self.player_two_id:
@@ -224,3 +255,26 @@ class PongGameEngine:
             player['position']['y'] = max(player['position']['y'] - 4, self.player_size['height'] * 0.5)
         elif action == 'move_down':
             player['position']['y'] = min(player['position']['y'] + 4, self.map['height'] - self.player_size['height'] * 0.5)
+            
+ #//---------------------------------------> Utils method <--------------------------------------\\#
+
+    async def player_surrender(self, surrend_id):
+        loser_id = surrend_id
+        self.winner_id = self.player_one_id if surrend_id == self.player_two_id else self.player_two_id
+        self.game_active = False
+        PongGameEngine.active_games.remove(self)
+        payload = {
+            'type': 'game_finished',
+            'winner': self.winner_id,
+            'loser': loser_id,
+            'message': f'Player {loser_id} has surrendered. {self.winner_id} wins!'
+        }
+        await send_websocket_info(player_id=self.player_one_id, payload=payload)
+        await send_websocket_info(player_id=self.player_two_id, payload=payload)
+
+        
+    async def player_is_in_game(self, player_id):
+        if (player_id == self.player_one_id or player_id == self.player_two_id):
+            return True
+        return False
+
