@@ -11,7 +11,7 @@ class ChatRoomBottomBar extends HTMLElement {
 			<div class="chatroom-message-box">
 				<input class="chatroom-message-input" type="text">
 			</div>
-			<button class="send-message-btn" type="submit">submit</button>
+			<button class="send-message-btn" type="submit"><i class="fa-regular fa-paper-plane"></i></button>
 		`;
 	};
 };

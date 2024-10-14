@@ -1,5 +1,5 @@
 chatroom-bottom-bar {
-	height: 3.5rem;
+	height: 3.2rem;
 	width: 100%;
 	display: flex;
 	justify-content: space-evenly;
@@ -21,4 +21,16 @@ chatroom-bottom-bar {
 	width: 97%;
 	height: 100%;
 	font-size: 1.2rem;
+}
+
+.send-message-btn {
+	background: none;
+	border: none;
+	transform: translateX(-10%);
+	cursor: pointer;
+}
+
+.send-message-btn i {
+	font-size: 2.6rem;
+	color: lightgray;
 }

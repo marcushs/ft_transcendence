@@ -1,0 +1,3 @@
+class ChatMessageComponent extends HTMLElement {
+	
+}

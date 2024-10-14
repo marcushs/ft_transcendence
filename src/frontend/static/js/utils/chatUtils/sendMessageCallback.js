@@ -24,25 +24,16 @@ function displayChatroomComponent(targetUserData) {
 	chatRoomTopBar.setAttribute('data-user', JSON.stringify(targetUserData));
 	if (oldChatRoomTopBar) oldChatRoomTopBar.remove();
 	chatRoom.prepend(chatRoomTopBar);
-
+	
 	if (chatRoom.querySelector('chatroom-bottom-bar')) chatRoom.querySelector('chatroom-bottom-bar').remove();
 	
 	chatRoom.innerHTML += '<chatroom-bottom-bar></chatroom-bottom-bar>';
+
+	const chatroomMessageInput = document.querySelector('.chatroom-message-input');
 	const sendMessageBtn = document.querySelector('.send-message-btn');
 	
+	chatroomMessageInput.focus();
 	sendMessageBtn.addEventListener('click', () => {
 		sendPrivateMessage();
 	})
-}
-
-async function fetchGetOrCreateChatroomView() {
-	const target_user = document.querySelector('.chat-contact-name-status').firstChild.innerText;
-
-	console.log(target_user)
-	try {
-		let res = await sendRequest('POST', '/api/chat/chat_view/', {'target_user': target_user});
-		console.log("Posting user pairs to chat_view for chatroom creatiion" + res.message)
-	} catch (error) {
-		console.log(error);
-	}
 }
