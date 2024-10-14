@@ -1,21 +1,34 @@
+import getProfileImage from "../../utils/getProfileImage.js";
+
 class ChatContactComponent extends HTMLElement {
 	static get observedAttributes() {
         return ["data-user", "data-status"];
     };
 
+	attributeChangedCallback(name, oldValue, newValue) {
+		if (name === 'data-user') {
+			this.userData = JSON.parse(newValue);
+			this.render();
+		}
+		if (name === 'data-status')
+			this.status = newValue;
+	}
+
 	constructor() {
 		super();
-		this.render();
+		this.userData = null;
 	};
 
-	render() {
+	async render() {
+		let profileImage = await getProfileImage(this.userData);
+
 		this.innerHTML = `
 		<div class="chat-contact-profile-picture">
-			<img src='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg' alt='contact picture'></img>
+			<img src=${profileImage} alt='contact picture'></img>
 			<div class="chat-status-circle online"></div>
 		</div>
 		<div class="chat-contact-info">
-			<p>helloworld!!</p>
+			<p>${this.userData.username}</p>
 			<p>This is an example message This is an example message This is an example message </p>
 		</div>
 		<div class="message-status">

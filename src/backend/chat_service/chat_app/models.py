@@ -21,7 +21,8 @@ class UserManager(BaseUserManager):
         email = data['email']
         username = data['username']
         user_id = data['user_id']
-        user = self.model(id=user_id, email=email, username=username)
+        profile_image_link = data['profile_image_link']
+        user = self.model(id=user_id, email=email, username=username,  profile_image_link=profile_image_link)
         user.save(using=self._db)
         return user
 
@@ -29,6 +30,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=12, unique=True, default='default')
     email = models.EmailField(unique=True)
+    profile_image = models.ImageField(upload_to=user_directory_path, null=True)
+    profile_image_link = models.CharField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
     status = models.CharField(max_length=10, choices=[('online', 'Online'), ('away', 'Away'), ('ingame', 'In Game'), ('offline', 'Offline')], default='offline')
     last_active = models.DateTimeField(auto_now=True)
 
@@ -45,6 +48,8 @@ class User(AbstractBaseUser, PermissionsMixin):
             'id': self.id,
             'username': self.username,
             'email': self.email,
+            'profile_image': self.profile_image.url if self.profile_image else None,
+            'profile_image_link': self.profile_image_link,
         }
         
     def get_status(self):

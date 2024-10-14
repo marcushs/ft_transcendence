@@ -16,50 +16,55 @@
 	overflow-y: scroll;
 }
 
-.online-list, .offline-list {
-	height: 7rem;
-	transition: height 0.3s ease-in-out;
+.contacted-list {
+	height: 7.3rem;
+	border-bottom: 1px solid darkgray;
 }
 
-.online-list ul, .offline-list ul {
+.contacted-list ul {
 	display: none;
 }
 
-.online-list.active, .offline-list.active {
+.contacted-list.active {
 	height: fit-content;
 	padding-top: 1.7rem;
-	transition: height 0.3s ease-in-out;
+	border-bottom: 0;
 }
 
-.online-list.active ul, .offline-list.active ul {
+.contacted-list.active ul {
 	display: block;
 }
 
-.online-list ul li, .offline-list ul li {
+.contacted-list ul li {
 	width: 100%;
 	height: 7rem;
 }
 
-.online-list.active ul li, .offline-list.active ul li {
+.contacted-list.active ul li {
 	margin: 1.2rem 0 1.2rem 0;
-}
-
-.offline-list {
-	border-top: 1px solid var(--light-grey);
-}
+} 
 
 .list-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-evenly;
-	width: 55%;
+	width: 45%;
 	height: 100%;
+	cursor: pointer;
 }
 
 .plus-sign {
 	position: relative;
-	height: 12px;
-	width: 12px;
+	height: 16px;
+	width: 16px;
+	opacity: 0.5;
+	transition: opacity 0.2s ease-in;
+	cursor: pointer;
+}
+
+.plus-sign.hover {
+	opacity: 1;
+	transition: opacity 0.2s ease-in;
 }
 
 .vertical-line {
@@ -70,6 +75,12 @@
 	left: 50%;
 	transform: translateX(-50%);
 	border-radius: 10px;
+	transition: height 0.1s ease-in;
+}
+
+.contacted-list.active .vertical-line {
+	height: 0;
+	transition: height 0.1s ease-in;
 }
 
 .horizontal-line {

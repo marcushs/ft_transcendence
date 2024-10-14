@@ -101,7 +101,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_recent_messages(self, chatroom_id):
-        return list(GroupMessage.objects.filter(group_id=chatroom_id)[:30])
+        return list(GroupMessage.objects.filter(group_id=chatroom_id)[:10])
     
     @database_sync_to_async
     def get_message_author_username(self, message):

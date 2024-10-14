@@ -1,10 +1,11 @@
 import { sendRequest } from '../../utils/sendRequest.js';
 import {removeContactFromList, addNewContactToList, UpdateContactInList} from './updateContactWebsocket.js'
-import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms } from '../../utils/chatUtils/joinRoomUtils.js';
+import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms, updateChatContactListDOM } from '../../utils/chatUtils/joinRoomUtils.js';
 
 let socket = null;
 
 export let chatSocket;
+export let chatroomsList;
 
 export async function loadWebSocket() {
     loadContactsWebSocket();
@@ -124,11 +125,11 @@ async function loadChatWebSocket() {
 		console.log(e)
 		console.log("The chat websocket connection was setup successfully !");
 
-		let chatroomsList = await fetchChatroomsList();
-
+		chatroomsList = await fetchChatroomsList();
+		console.log(chatroomsList);
 		joinAllInvitedChatrooms(chatroomsList);
-	  };
-
+	};
+	
 	chatSocket.onmessage = async function(e) {
 		const data = JSON.parse(e.data);
 		
@@ -137,10 +138,11 @@ async function loadChatWebSocket() {
 			const newMsgElem = document.createElement('p');
 			newMsgElem.innerText = data.message;
 			console.log(`received message from websocket: ${data.message}`)
-			document.querySelector('.chatroom-conversation').appendChild(newMsgElem);
+			// document.querySelector('.chatroom-conversation').appendChild(newMsgElem);
 		}
 		else if (data.type === 'chatgroup_update') {
 			await receiveChatgroupUpdate(data);
+			chatroomsList = await fetchChatroomsList();
 		}
 	};
 

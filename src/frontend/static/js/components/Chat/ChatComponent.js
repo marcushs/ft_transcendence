@@ -4,6 +4,7 @@ import "./ChatRoomTopBar.js";
 import "./ChatRoomBottomBar.js";
 import "./ChatRoomConversation.js";
 import checkAuthentication from "../../utils/checkAuthentication.js"
+import { updateChatContactListDOM } from "../../utils/chatUtils/joinRoomUtils.js";
 
 class ChatComponent extends HTMLElement {
 	constructor() {
@@ -26,8 +27,7 @@ class ChatComponent extends HTMLElement {
 				<div class="chat-lobby ">
 					<div id="chat-search-bar-div"></div>
 					<div class="chat-contact-container">
-						<chat-contact-list title="online"></chat-contact-list>
-						<chat-contact-list title="offline"></chat-contact-list>
+						<chat-contact-list></chat-contact-list>
 					</div>
 				</div>
 				<div class="chatroom">
@@ -55,7 +55,7 @@ class ChatComponent extends HTMLElement {
 			if (this.chatRoom.classList.contains('active')) this.chatRoom.classList.remove('active');
 			this.chatLobby.classList.add('active');
 			this.chatSearchBarDiv.innerHTML = this.chatMainMenu.style.display === 'block' ? "<chat-search-bar></chat-search-bar>" : '';
-			
+			if (this.chatMainMenu.style.display === 'block') updateChatContactListDOM();
 		});
 		this.chatCloseBtn.addEventListener('click', () => this.chatMainMenu.style.display = 'none');
 	}
