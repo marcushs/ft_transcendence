@@ -14,19 +14,23 @@ function displayChatroomComponent(targetUserData) {
 	const chatLobby = document.querySelector('.chat-lobby');
 	const chatRoomTopBar = document.createElement('chatroom-top-bar');
 	const oldChatRoomTopBar = chatRoom.querySelector('chatroom-top-bar');
+	const userData = JSON.stringify(targetUserData);
 	
 	chatMainMenu.style.display = 'block';
 	contactMenu.style.display = 'none';
 	chatRoom.classList.add('active');
 	chatLobby.classList.remove('active');
 	
-	console.log(targetUserData)
-	chatRoomTopBar.setAttribute('data-user', JSON.stringify(targetUserData));
+	chatRoomTopBar.setAttribute('data-user', userData);
+
 	if (oldChatRoomTopBar) oldChatRoomTopBar.remove();
 	chatRoom.prepend(chatRoomTopBar);
+
+	if (chatRoom.querySelector('chatroom-conversation')) chatRoom.querySelector('chatroom-conversation').remove();
+	chatRoom.innerHTML += '<chatroom-conversation></chatroom-conversation>';
+	document.querySelector('chatroom-conversation').setAttribute('data-user', userData);
 	
 	if (chatRoom.querySelector('chatroom-bottom-bar')) chatRoom.querySelector('chatroom-bottom-bar').remove();
-	
 	chatRoom.innerHTML += '<chatroom-bottom-bar></chatroom-bottom-bar>';
 
 	const chatroomMessageInput = document.querySelector('.chatroom-message-input');

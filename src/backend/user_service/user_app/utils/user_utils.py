@@ -225,6 +225,7 @@ class getUsersInfo(View):
                 username = user.get('username')
                 user_data = User.objects.get(username=username)
                 users_info = {
+                    'id': user_data.id,
                     'username': user_data.username,
                     'profile_image': user_data.profile_image.url if user_data.profile_image else None,
                     'profile_image_link': user_data.profile_image_link,

@@ -30,10 +30,7 @@ class ChatComponent extends HTMLElement {
 						<chat-contact-list></chat-contact-list>
 					</div>
 				</div>
-				<div class="chatroom">
-					<chatroom-conversation></chatroom-conversation>
-					<chatroom-bottom-bar></chatroom-bottom-bar>
-				</div>
+				<div class="chatroom"></div>
 			</div>
 		`;
 
@@ -57,7 +54,12 @@ class ChatComponent extends HTMLElement {
 			this.chatSearchBarDiv.innerHTML = this.chatMainMenu.style.display === 'block' ? "<chat-search-bar></chat-search-bar>" : '';
 			if (this.chatMainMenu.style.display === 'block') updateChatContactListDOM();
 		});
-		this.chatCloseBtn.addEventListener('click', () => this.chatMainMenu.style.display = 'none');
+		this.chatCloseBtn.addEventListener('click', () => {
+			this.chatMainMenu.style.display = 'none';
+			if (document.querySelector('chatroom-top-bar')) document.querySelector('chatroom-top-bar').remove();
+			if (document.querySelector('chatroom-conversation')) document.querySelector('chatroom-conversation').remove();
+			if (document.querySelector('chatroom-bottom-bar')) document.querySelector('chatroom-bottom-bar').remove();
+		});
 	}
 }
 
