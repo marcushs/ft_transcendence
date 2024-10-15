@@ -4,6 +4,7 @@ import Spark from "./Spark.js";
 import { socket } from "./gameWebsocket.js";
 import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
 import getUserId from "../../../../utils/getUserId.js";
+import { disconnectWebSocket } from "./gameWebsocket.js"
 
 export async function startGame(gameId, initialGameState, map_dimension) {
 	const userId = await getUserId();
@@ -21,6 +22,7 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 
 export default class Game {
 	constructor(canvas, gameId, gameState, userId) {
+		this.gameInProgress = true;
 		this.userId = userId;
 		this.canvas = canvas;
 		this.gameId = gameId;
@@ -64,6 +66,8 @@ export default class Game {
 // --------------------------------------- Render loop -------------------------------------- //
 
 	renderLoop() {
+		if (!this.gameInProgress)
+			return;
 		this.deltaTime = (performance.now() - this.lastTime) / 1000;
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.movePlayer();
@@ -191,9 +195,22 @@ export default class Game {
 
 // --------------------------------------- Game finished render -------------------------------------- //
 
-	gameFinished(winner) {
-		alert(`Game finished, id of the winner is : ${winner}`);
+	gameFinished(message) {
+		this.gameInProgress = false
+		alert(message);
+		disconnectWebSocket();
 		throwRedirectionEvent('/');
+	}
+
+	canceledGame(message) {
+		this.gameInProgress = false
+		alert(`Game canceled: ${message}`);
+		disconnectWebSocket();
+		throwRedirectionEvent('/');
+	}
+
+	updateMessage(message) {
+		console.log(message);
 	}
 
 	// moveBall() {

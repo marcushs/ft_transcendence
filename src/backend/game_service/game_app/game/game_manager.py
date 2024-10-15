@@ -40,6 +40,8 @@ async def running_game_instance(instance, game_type):
     await asyncio.sleep(5)
     winner, loser = await instance.game_loop()
     print(f'-> async_tasks: Game <{instance.game_id}> stopping...')
+    if not (winner and loser):
+        return
     await ending_game_instance(winner=winner, loser=loser, game_type=game_type)
 
 async def ending_game_instance(winner, loser, game_type):

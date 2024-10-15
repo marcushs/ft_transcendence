@@ -28,56 +28,76 @@ class GameConsumer(AsyncWebsocketConsumer):
  #//---------------------------------------> Receiver <--------------------------------------\\#
 
 	async def receive(self, text_data):
-		data = json.loads(text_data)
-		if data['type'] == 'player_action':
-			await self.handle_player_action(data)
-		elif data['type'] == 'surrender':
-			await self.handle_surrender(data)
-
-
-	async def handle_player_action(self, data): 
-		parsed_data = self.get_valid_action(data=data)
-		if parsed_data:
-			game_instance = PongGameEngine.get_active_game(str(data['game_id']))
-			if game_instance:
-				await game_instance.update_player_position(player_id=parsed_data['player_id'], action=parsed_data['action']) 
-    
-
-	async def handle_surrender(self, data):
 		try:
-			player_id = int(data['player_id'])
-			if player_id != self.user_id:
-				raise Exception('player ID does not match the user')
-			game_id = int(data['game_id'])
-			game_instance = PongGameEngine.get_active_game(game_id)
-			if not (game_instance.player_is_in_game(player_id)):
-				raise Exception('player is not in the game')
-			game_instance.player_surrender(player_id)
+			data = json.loads(text_data)
+			print(f'data received: {data}')
+			self.check_received_id(data)
+			match str(data['type']):
+				case 'player_action':
+					await self.handle_player_action(data)
+				case 'client_surrended':
+					await self.handle_player_surrender()
+				case 'client_disconnected':
+					await self.handle_player_disconnect()
+				case 'client_reconnected':
+					await self.handle_player_reconnect()
+				case _:
+					return
 		except Exception as e:
 			await self.send(text_data=json.dumps({
-				'type': 'error',
-				'message': str(e)
+				'type': 'error_log',
+				'message': f'websocket error: {str(e)}'
 			}))
 
 
-    # Valid and extract data from websocket message
-	def get_valid_action(self, data):
-		if 'player_id' not in data or 'game_id' not in data:
-			return None
-		if 'action' not in data:
-			return None
+	def check_received_id(self, data):
+		if not 'type' in data:
+			raise Exception('No type provided')
+		if not ('player_id' in data or data['player_id'].isdigit()):
+			raise Exception('invalid player ID')
+		if not 'game_id' in data:
+			raise Exception('game ID does not match any current game')
+		self.player_id = int(data['player_id'])
+		self.game_id = str(data['game_id'])
+		self.game_instance = PongGameEngine.get_active_game(str(data['game_id']))
+		if not self.game_instance:
+			raise Exception('invalid game ID')
+
+
+	async def handle_player_action(self, data):  
+		if not 'action' in data :
+			raise Exception('no action received')
 		action = str(data['action'])
-		if action != 'move_up' and action != 'move_down': 
-			return None
-		action_info = {
-			'player_id': str(data['player_id']),
-			'action': action
-		}
-		return action_info
+		if action != 'move_up' and action != 'move_down':
+			raise Exception('invalid action received')
+		await self.game_instance.update_player_position(player_id=self.player_id, action=action)
+
+
+	async def handle_player_surrender(self):
+		if self.player_id != self.user_id:
+			raise Exception('player ID does not match the user')
+		if not (self.game_instance.player_is_in_game(self.player_id)):
+			raise Exception('player is not in the game')
+		self.game_instance.player_surrender(self.player_id)
+
+	async def handle_player_reconnect(self):
+		if self.player_id != self.user_id:
+			raise Exception('player ID does not match the user')
+		if not (self.game_instance.player_is_in_game(self.player_id)):
+			raise Exception('player is not in the game')
+		self.game_instance.handle_player_reconnect(self.player_id)
+   
+   
+	async def handle_player_disconnect(self):
+		if self.player_id != self.user_id:
+			raise Exception('player ID does not match the user')
+		if not (self.game_instance.player_is_in_game(self.player_id)):
+			raise Exception('player is not in the game')
+		self.game_instance.handle_player_disconnect(self.player_id)
 
  #//---------------------------------------> Sender <--------------------------------------\\#
 
-	# Sender for start game in front
+	# Sender for start game client
 	async def game_ready_to_start(self, event): 
 		await self.send(text_data=json.dumps( 
 		{
@@ -88,7 +108,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 		}
 	))
 
-	# Sender for updating game in front
+	# Sender for updating game client
 	async def data_update(self, event):
 		await self.send(text_data=json.dumps({
 			'type': event['type'],
@@ -96,10 +116,19 @@ class GameConsumer(AsyncWebsocketConsumer):
 		}
 	))
 
-	# Sender for end game in front
-	async def game_finished(self, event):
+	# Sender for inform client game info has changed
+	async def game_update_info(self, event):
 		await self.send(text_data=json.dumps({
-			'type': event['type'],
-			'winner': event['winner']
+			'type': event['event'],
+			'message': event['message']
+		}
+	))
+  
+  
+	# Sender for websocket error message
+	async def error_log(self, event):
+		await self.send(text_data=json.dumps({
+			'type': event['event'],
+			'message': event['message']
 		}
 	))

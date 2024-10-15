@@ -1,4 +1,7 @@
+from django.contrib.auth.models import AnonymousUser
 from channels.layers import get_channel_layer
+from django.http import JsonResponse
+from django.views import View
 import json
 
 def get_map_dimension():
@@ -18,7 +21,7 @@ async def send_client_game_init(game_id_data, game_instance):
     await send_websocket_info(player_id=game_id_data['player_two'], payload=payload)
 
 
-async def send_websocket_info(player_id, payload):   
+async def send_websocket_info(player_id, payload):
     try:
         if isinstance(payload, str):
             payload = json.loads(payload)
@@ -29,3 +32,21 @@ async def send_websocket_info(player_id, payload):
         )
     except Exception as e:
         print(f'---------------->> Error sending websocket info: {e}')
+        
+class CheckGameStillActive(View):
+    def __init__(self):
+        super()
+
+    async def get(self, request):
+        from .game_engine import PongGameEngine
+        
+        game_id_string = request.GET.get('q', '')
+        
+        if not (game_id_string or game_id_string.isdigit()):
+             return JsonResponse({'status': 'error', 'message': 'Invalid game_id'}, status=200)
+        game_id = int(game_id_string)
+        game_instance = PongGameEngine.get_active_game(game_id)
+        if not game_instance:
+            return JsonResponse({'status': 'success', 'message': 'game still active'}, status=200)
+        else:
+            return JsonResponse({'status': 'error', 'message': 'game not found'}, status=200)
