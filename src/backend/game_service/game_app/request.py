@@ -14,11 +14,11 @@ async def send_request(request_type, url, payload=None):
             response.raise_for_status()  # Raise an exception for HTTP errors
             return response
     except httpx.HTTPStatusError as e:
-        raise Exception(f"HTTP error occurred: {e}")
+        raise Exception(f"HTTP error occurred: {str(e)}")
     except httpx.RequestError as e:
-        raise Exception(f"An error occurred while requesting: {e}")
+        raise Exception(f"An error occurred while requesting: {str(e)}")
         
-def set_headers_cookies_request(request=None):
+def set_headers_cookies_request(request=None): 
     headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',

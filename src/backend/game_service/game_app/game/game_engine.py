@@ -243,7 +243,6 @@ class PongGameEngine:
  #//---------------------------------------> Player movement-(websocket receiver) <--------------------------------------\\#     
         
     async def update_player_position(self, player_id, action):
-        print('test4')
         if player_id == self.player_one_id:
             player_key = 'player_one'
         elif player_id == self.player_two_id:

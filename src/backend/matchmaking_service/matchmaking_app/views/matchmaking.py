@@ -51,7 +51,6 @@ class MatchmakingQueueManager(View):
         
         
     def add_player_to_unranked_queue(self, request):
-        print('--------- UNRANKED ---------')
         unranked_queue.put(request.user)
         
         
@@ -65,7 +64,7 @@ class MatchmakingQueueManager(View):
 
 # --------> Handle result of matchmaking game done <-------------- #
 
-@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch') 
 class MatchmakingResultManager(View):
     def __init__(self):
         super()
@@ -76,9 +75,11 @@ class MatchmakingResultManager(View):
             if not self.is_valid_data(data):
                 raise(Exception('Invalid matchmaking result'))
             self.update_match_result_data(data)
+            return JsonResponse({'status': 'success', 'message': 'match data updated'}, status=200)  
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': e})
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=200)
         
+
     def is_valid_data(self, data):
         if 'winner' not in data or 'loser' not in data:
             return False
@@ -97,7 +98,7 @@ class MatchmakingResultManager(View):
 
 
     def update_match_result_data(self, data):
-        winner, loser = self.get_user_from_result(self, data)
+        winner, loser = self.get_user_from_result(data)
         change_is_ingame_state(value=False, user_instance=winner)
         change_is_ingame_state(value=False, user_instance=loser)
         change_user_games_count(is_game_win=True, user_instance=winner)
@@ -109,8 +110,8 @@ class MatchmakingResultManager(View):
         
         
     def get_user_from_result(self, data):
-        winner = User.objects.get(id=int(data['winner_id']))
-        loser = User.objects.get(id=int(data['loser_id']))
+        winner = User.objects.get(id=int(data['winner']['id']))
+        loser = User.objects.get(id=int(data['loser']['id']))
         return winner, loser
 
  #//---------------------------------------> matchmaking utils <--------------------------------------\\#

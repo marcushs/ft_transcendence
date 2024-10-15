@@ -7,30 +7,29 @@ from time import sleep
 import random
 
 def periodic_check_ingame_status():
-    sleep(5)
+    sleep(10)
     while True:
         try:
             users_ingame = User.objects.filter(is_ingame=True)
             response = async_to_sync(send_request)(request_type='GET', url='http://game:8000/game/get_games_instance/')
             games_data = response.json().get('games_instance', [])
-            users = get_users_to_update_list(users=users_ingame, games_data=games_data)
-            print(f'Users in game: {users_ingame}')
-            print(f'games: {games_data}')
+            users = get_users_to_update_list(users=users_ingame, games_data=games_data) 
+            # print(f'Users in game: {users_ingame}')
+            # print(f'games: {games_data}')
             for user in users:
-                print(f'user : {user} -- status {user.is_ingame}')
                 user.is_ingame = False
                 user.save()
-            sleep(30)
+            sleep(60)
         except Exception as e:
             print(f'Error: {e}')
-            sleep(5)
+            sleep(15) 
 
-def get_users_to_update_list(users, games_data):  
+
+def get_users_to_update_list(users, games_data):
     is_in_game = False
     users_not_in_game = []
     for user in users:
         for game in games_data:
-            print(f'user_id: {user.id} -- player1_id: {game['player_one_id']} -- player2_id: {game['player_two_id']}')
             if user.id == int(game['player_one_id']) or user.id == int(game['player_two_id']):
                 is_in_game = True
                 break
@@ -50,11 +49,9 @@ def background_task_unranked_matchmaking():
     
     while True:
         new_user = task_queue.get() 
-        print('new_user: ', new_user)
         if new_user.is_ingame is True: 
             task_queue.task_done()
             continue
-        print('new_user: ', new_user)
         launch_proccess(waiting_list=waiting_list, user=new_user)
         task_queue.task_done()
 
@@ -62,7 +59,6 @@ def launch_proccess(waiting_list, user):
     if not check_duplicate_user_in_waiting_list(target_user=user, waiting_list=waiting_list):
         return
     waiting_list.append(user)
-    print('------------> waiting_list: ', waiting_list)
     if len(waiting_list) > 1:
             proccess_matchmaking(waiting_list=waiting_list)
              

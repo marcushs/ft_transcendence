@@ -26,7 +26,6 @@ class startGameEngine(View):
  #//---------------------------------------> game instance <--------------------------------------\\#
 
 async def starting_game_instance(data):
-    print(f'---------> async tasks : Game starting...')
     game_id_data = {
         'game': str(uuid.uuid4()),
         'player_one': data['player1'],
@@ -37,22 +36,27 @@ async def starting_game_instance(data):
     await running_game_instance(instance=game_instance, game_type=data['game_type'])
 
 async def running_game_instance(instance, game_type):
-    print(f'---------> async tasks : Game running...')
+    print(f'-> async_tasks: Game <{instance.game_id}> running...') 
     await asyncio.sleep(5)
     winner, loser = await instance.game_loop()
-    ending_game_instance(winner=winner, loser=loser, game_type=game_type)
+    print(f'-> async_tasks: Game <{instance.game_id}> stopping...')
+    await ending_game_instance(winner=winner, loser=loser, game_type=game_type)
 
 async def ending_game_instance(winner, loser, game_type):
-    payload = {
-        'winner': winner,
-        'loser': loser,
-        'type': game_type
-    }
-    print(f'---------> async tasks : Game ending...')
+    try:
+        payload = {
+            'winner': winner,
+            'loser': loser,
+            'type': game_type
+        }
+        response = await send_request(request_type='POST', url='http://matchmaking:8000/matchmaking/matchmaking_result/', payload=payload)
+        print(f'-> async_tasks: Matchmaking update result responded with: {response.json()}') 
+    except Exception as e:
+        print(f'-> async_tasks: {e}')
     
 #//---------------------------------------> get games instance Endpoint <--------------------------------------\\#
 
-@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch') 
 class GetGameList(View):
     def __init__(self):
         super()

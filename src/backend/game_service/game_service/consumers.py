@@ -29,7 +29,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
-		print(f'data received: {data}')
 		if data['type'] == 'player_action':
 			await self.handle_player_action(data)
 		elif data['type'] == 'surrender':
@@ -37,7 +36,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 
 	async def handle_player_action(self, data): 
-		print('test')
 		parsed_data = self.get_valid_action(data=data)
 		if parsed_data:
 			game_instance = PongGameEngine.get_active_game(str(data['game_id']))
