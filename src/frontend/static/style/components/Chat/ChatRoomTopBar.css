@@ -1,6 +1,6 @@
 chatroom-top-bar {
 	display: inline-block;
-	margin: 0.8rem 0 0 0;
+	margin: 0.8rem 0 0.8rem 0;
 	width: 100%;
 	height: 5rem;
 	position: relative;
@@ -41,7 +41,7 @@ chatroom-top-bar i {
 }
 
 .chat-contact-name-status {
-	width: 40%;
+	width: 55%;
 	height: 90%;
 	display: flex;
 	flex-direction: column;
@@ -73,4 +73,33 @@ chatroom-top-bar i {
 
 .chat-contact-name-status p:last-child.away {
 	color: var(--away-status-color);
+}
+
+.chat-block-user {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	top: 0;
+	right: 0;
+	height: 100%;
+	width: 17%;	
+	opacity: 0.5;
+	color: red;
+	cursor: pointer;	
+	transition: opacity 0.2s ease-in;
+}
+
+.chat-block-user:hover {
+	opacity: 1;
+	transition: opacity 0.2s ease-in;
+}
+
+.chat-block-user i {
+	transform: translateY(-80%);
+}
+
+.chat-block-user p {
+	height: fit-content;
+	transform: translateY(100%);
 }

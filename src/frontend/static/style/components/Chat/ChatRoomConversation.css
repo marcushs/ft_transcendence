@@ -2,3 +2,9 @@ chatroom-conversation {
 	height: 82%;
 	overflow-y: scroll;
 }
+
+.chatroom-conversation-message-container ul li{
+	width: 100%;
+	min-height: 6rem;
+	max-height: 9rem;
+}

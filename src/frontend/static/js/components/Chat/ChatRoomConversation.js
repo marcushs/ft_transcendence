@@ -1,4 +1,5 @@
 import { sendRequest } from "../../utils/sendRequest.js";
+import "./ChatMessageComponent.js";
 
 class ChatRoomConversation extends HTMLElement {
 	static get observedAttributes() {
@@ -24,7 +25,26 @@ class ChatRoomConversation extends HTMLElement {
 
 	render() {
 		this.innerHTML = `
-		<div class="chatroom-conversation-message-container"></div>
+		<div class="chatroom-conversation-message-container">
+			<ul>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component></chat-message-component></li>
+			</ul>
+		</div>
 		`;
 	};
 	

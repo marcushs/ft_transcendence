@@ -37,6 +37,10 @@ class ChatRoomTopBar extends HTMLElement {
 				<p>${this.userData.username}</p>
 				<p class="${status}">${status}</p>
 			</div>
+			<div class="chat-block-user">
+				<i class="fa-solid fa-ban"></i>
+				<p>Block ${this.userData.username}</p>
+			</div>
 		`;
 	};
 }

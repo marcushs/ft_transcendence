@@ -5,6 +5,7 @@
 @import './ChatRoomTopBar.css';
 @import './ChatRoomBottomBar.css';
 @import './ChatRoomConversation.css';
+@import './ChatMessageComponent.css';
 
 chat-component {
 	position: absolute;

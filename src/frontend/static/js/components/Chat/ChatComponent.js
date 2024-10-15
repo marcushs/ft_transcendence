@@ -49,6 +49,7 @@ class ChatComponent extends HTMLElement {
 	addEventListeners() {
 		this.chatIcon.addEventListener('click', () => {
 			this.chatMainMenu.style.display = this.chatMainMenu.style.display === 'none' ? 'block' : 'none';
+			if (this.chatMainMenu.style.display === 'none') this.removeChatroomDOM();
 			if (this.chatRoom.classList.contains('active')) this.chatRoom.classList.remove('active');
 			this.chatLobby.classList.add('active');
 			this.chatSearchBarDiv.innerHTML = this.chatMainMenu.style.display === 'block' ? "<chat-search-bar></chat-search-bar>" : '';
@@ -56,10 +57,14 @@ class ChatComponent extends HTMLElement {
 		});
 		this.chatCloseBtn.addEventListener('click', () => {
 			this.chatMainMenu.style.display = 'none';
-			if (document.querySelector('chatroom-top-bar')) document.querySelector('chatroom-top-bar').remove();
-			if (document.querySelector('chatroom-conversation')) document.querySelector('chatroom-conversation').remove();
-			if (document.querySelector('chatroom-bottom-bar')) document.querySelector('chatroom-bottom-bar').remove();
+			this.removeChatroomDOM();
 		});
+	}
+
+	removeChatroomDOM() {
+		if (document.querySelector('chatroom-top-bar')) document.querySelector('chatroom-top-bar').remove();
+		if (document.querySelector('chatroom-conversation')) document.querySelector('chatroom-conversation').remove();
+		if (document.querySelector('chatroom-bottom-bar')) document.querySelector('chatroom-bottom-bar').remove();
 	}
 }
 
