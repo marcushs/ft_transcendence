@@ -1,21 +1,20 @@
 class ChatMessageComponent extends HTMLElement {
-	static get observedAttributes() {
-        return ["data-message"];
-    }
-
-	constructor() {
+	constructor(messageData) {
 		super();
+		this.messageData = messageData;
 		this.render();
 	}
 
 	render() {
 		this.innerHTML = `
 		<div class="chat-message-container">
-			<div class="chat-message-bubble">
-				<p>Message</p>
-			</div>
+			<p class="chat-message-bubble">${messageData.message}</p>
 			<div class="chat-message-info">
-				<p>18:22</p>
+				<p class="chat-message-time">${messageData.timestamp}</p>
+				<div class="chat-message-read unread">
+					<i class="fa-solid fa-check"></i>
+					<i class="fa-solid fa-check"></i>
+				</div>
 			</div>
 		</div>
 		`;

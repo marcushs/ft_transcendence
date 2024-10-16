@@ -27,14 +27,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if message_type == 'chat_message':
             try:
-                message = data['message']
                 target_user = await aget_object_or_404(User, id=data['target_user'])
                 chatroom, created = await self.get_or_create_chatroom(author=self.user, target_user=target_user)
                 if created is True:
-                    await self.channel_layer.group_send('chatgroup_updates', {'type': 'chatgroup.update', 'chatroom': str(chatroom.group_id), 'target_user': str(target_user.id)})
+                    await self.channel_layer.group_send('chatgroup_updates', 
+                                                        {'type': 'chatgroup.update', 
+                                                         'chatroom': str(chatroom.group_id), 
+                                                         'target_user': str(target_user.id)})
                     await self.join_room(str(chatroom.group_id))
-                await self.save_message(chatroom=chatroom, author=self.user, message=message)
-                await self.channel_layer.group_send(str(chatroom.group_id), {'type': 'chat.message','chatroom': str(chatroom.group_id),'message': message, 'author': self.user.username})
+                message = await self.save_message(chatroom=chatroom, author=self.user, message=message)
+                await self.channel_layer.group_send(str(chatroom.group_id), 
+                                                    {'type': 'chat.message', 
+                                                     'chatroom': str(chatroom.group_id), 
+                                                     'message': message.body, 
+                                                     'author': self.user.username, 
+                                                     'timestamp': message.created})
             except Http404:
                 return
         elif message_type == 'join_room':
@@ -48,6 +55,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'chatroom': chatroom_id,
                     'message': message.body,
+                    'timestamp': message.created,
                     'author': await self.get_message_author_username(message)
                 }))
 
@@ -97,7 +105,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     
     @database_sync_to_async
     def save_message(self, chatroom, author, message):
-        GroupMessage.objects.create(group=chatroom, author=author, body=message)
+        return GroupMessage.objects.create(group=chatroom, author=author, body=message)
 
     @database_sync_to_async
     def get_recent_messages(self, chatroom_id):

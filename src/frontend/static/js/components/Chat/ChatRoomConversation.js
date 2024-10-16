@@ -27,22 +27,21 @@ class ChatRoomConversation extends HTMLElement {
 		this.innerHTML = `
 		<div class="chatroom-conversation-message-container">
 			<ul>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
-				<li><chat-message-component></chat-message-component></li>
+				<li><chat-message-component class="sent"></chat-message-component></li>
+				<li><chat-message-component class="received"></chat-message-component></li>
+				<li><chat-message-component class="sent"></chat-message-component></li>
+				<li><chat-message-component class="received"></chat-message-component></li>
+				<li><chat-message-component class="sent"></chat-message-component></li>
+				<li><chat-message-component class="received"></chat-message-component></li>
+				<li><chat-message-component class="sent"></chat-message-component></li>
+				<li><chat-message-component class="received"></chat-message-component></li>
+				<li><chat-message-component class="sent"></chat-message-component></li>
+				<li><chat-message-component class="received"></chat-message-component></li>
+				<li><chat-message-component class="sent"></chat-message-component></li>
+				<li><chat-message-component class="received"></chat-message-component></li>
+				<li><chat-message-component class="sent"></chat-message-component></li>
+				<li><chat-message-component class="received"></chat-message-component></li>
+				<li><chat-message-component class="sent"></chat-message-component></li>
 			</ul>
 		</div>
 		`;

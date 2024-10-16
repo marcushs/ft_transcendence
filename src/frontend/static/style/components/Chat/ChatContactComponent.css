@@ -29,7 +29,7 @@ chat-contact-component {
     border-radius: 50%;
     width: 1.8rem;
     height: 1.8rem;
-	border: 2px solid #121216;
+	border: 1px solid #121216;
 }
 
 .chat-contact-info {

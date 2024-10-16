@@ -5,12 +5,73 @@ chat-message-component {
 }
 
 .chat-message-container {
-	height: inherit;
+	max-width: 75%;
+	height: 100%;
 }
 
 .chat-message-bubble {
-	min-height: 80;
-	border-radius: 7% 30% 30% 30%;
-	background-color: var(--steel-gray);
-	padding: 1rem;
+	border-radius: 1rem;
+	line-height: 1.25;
+	padding: 0.5rem .875rem;
+	position: relative;
+	word-wrap: break-word;
+	text-wrap: wrap;
+	color: black;
+	font-family: inherit;
+	height: 100%;
+	font-size: 1.3rem;
 }
+
+.chat-message-info {
+	display: flex;
+	margin-top: 1rem;
+}
+
+chat-message-component.received .chat-message-bubble {
+	background-color: #e5e5ea;
+}
+
+chat-message-component.received .chat-message-info .chat-message-read {
+	visibility: hidden;
+}
+
+chat-message-component.sent {
+	justify-content: flex-end;
+}
+
+chat-message-component.sent .chat-message-bubble {
+	background-color: #248bf5;
+}
+
+chat-message-component.sent .chat-message-info {
+	justify-content: flex-end;
+}
+
+chat-message-component.sent .chat-message-info .chat-message-time {
+	margin-right: 1.5rem;
+}
+
+chat-message-component.sent .chat-message-info .chat-message-read i {
+	font-size: 1.3rem;
+}
+
+chat-message-component.sent .chat-message-info .chat-message-read.unread i:first-child {
+	visibility: hidden;
+}
+
+chat-message-component.sent .chat-message-info .chat-message-read.unread i:last-child {
+	transform: translateX(-65%);
+}
+
+chat-message-component.sent .chat-message-info .chat-message-read.read i {
+	color: #248bf5;
+}
+
+chat-message-component.sent .chat-message-info .chat-message-read.read i:first-child {
+	transform: translateX(20%);
+}
+
+chat-message-component.sent .chat-message-info .chat-message-read.read i:last-child {
+	transform: translateX(-45%);
+}
+
