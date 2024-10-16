@@ -1,13 +1,13 @@
-import { startGame } from "./Game.js";
-import { gameInstance } from "./inGameComponent.js";
 import { sendRequest } from "../../../../utils/sendRequest.js";
+import { gameInstance, resetGameInstance } from "./inGameComponent.js";
+import { surrenderHandler } from "./gameNetworkManager.js";
+import { startGame } from "./Game.js";
 
 export let socket = null;
-let gameInProgress = false;
-let isConnected = false;
+let reconnectTimeout;
+
 
 export async function gameWebsocket(userId) {
-
 	if (socket && socket.readyState === WebSocket.OPEN) {
 		console.log('already connected to game Websocket');
 		return;
@@ -17,25 +17,22 @@ export async function gameWebsocket(userId) {
 
 	socket.onopen = () => {
 		console.log('Connected to game websocket');
-		isConnected = true
 	}
 
 	socket.onmessage = (event) => {
 		const data = JSON.parse(event.data)
 		const actions = {
 			'game_ready_to_start': (data) => {
-				gameInProgress = true;
 				startGame(data.game_id, data.game_state, data.map_dimension)
 			},
 			'data_update': (data) => {
 				if (gameInstance) gameInstance.updateGameRender(data.game_state) 
 			},
 			'game_finished': (data) => {
-				gameInProgress = false
+				console.log('finished game received : ', data);
 				if (gameInstance) gameInstance.gameFinished(data.message) 
 			},
 			'game_canceled': (data) => {
-				gameInProgress = false
 				if (gameInstance) gameInstance.canceledGame(data.message) 
 			},
 			'player_disconnected': (data) => {
@@ -55,14 +52,14 @@ export async function gameWebsocket(userId) {
 	}
 
 	socket.onclose = async () => {
-		isConnected = false
-		sendDisconnectMessage(userId);
-		if (gameInProgress)
+		if (gameInstance) {
+			sendDisconnectMessage(userId);
 			await websocketReconnection(userId);
+
+		}
 	}
 
     socket.onerror = function(event) {
-		isConnected = false
         console.log("Websocket error: ", event);
     };
 }
@@ -70,68 +67,105 @@ export async function gameWebsocket(userId) {
 //---------------------------------------> Game Reconnect method <--------------------------------------\\
 
 function sendDisconnectMessage(userId) {
-    if (socket) {
-        const payload = {
-            type: 'client_disconnected',
-            user_id: userId,
-        };
-        socket.send(JSON.stringify(payload));
+    if (socket && socket.readyState === WebSocket.OPEN) {
+		socket.send(JSON.stringify({
+			'type': 'client_disconnected',
+			'game_id': gameInstance.gameId,
+			'player_id': userId,
+		}));	
     }
 }
 
-function sendReconnectMessage(userId) {
-    if (socket) {
-        const payload = {
-            type: 'client_reconnected',
-            user_id: userId,
-        };
-        socket.send(JSON.stringify(payload));
+function sendReconnectMessage(userId, gameId) {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+		socket.send(JSON.stringify({
+			'type': 'client_reconnected',
+			'game_id': gameId,
+			'player_id': userId,
+		}));
     }
 }
 
 //---------------------------------------> Game Reconnect method <--------------------------------------\\
 
-async function websocketReconnection(userId) {
+export async function websocketReconnection(userId) {
 	let count = 0;
 	const maxRetries = 12;
 	const reconnectionInterval = 5000;
 
-	await attemptReconnect(count, maxRetries, reconnectionInterval, userId);
+	const isReconnected = await attemptReconnect(count, maxRetries, reconnectionInterval, userId);
+	return isReconnected;
 }
 
 async function attemptReconnect(count, maxRetries, reconnectionInterval, userId) {
+	const savedState = localStorage.getItem('inGameComponentState');
+	const gameState = savedState ? JSON.parse(savedState) : null;
 	if (count >= maxRetries) {
+		clearTimeout(reconnectTimeout);
 		console.error('Max reconnect attempts reached. Please check your connection');
-		return;
+		surrenderHandler();
+		localStorage.removeItem('inGameComponentState');
+		resetGameInstance();
+		return false;
 	}
-	if (!gameInstance) {
+	if (!gameState) {
+		clearTimeout(reconnectTimeout);
 		console.log('Cant reconnect to the game, instance not found');
-		return;
-	}
-	const isGameActive = await GameStillActive(gameInstance.game_id);
-	if (isGameActive !== 'active') {
-		console.log(`Error: ${isGameActive}`);
-		return;
-	}
-	console.log('Attempting to reconnect to game websocket...');
-	await gameWebsocket(userId);
-	if (isConnected) {
-		console.log('Reconnected to the game!');
-		sendReconnectMessage(userId);
-		return;
+		return false;
+	}	
+	const gameStatus = await GameStillActive(gameState.gameId);
+	if (gameStatus === 'active') {
+		console.log(`Attempt[${count}]: reconnecting to the game's websocket...`);
+		try {
+			await gameWebsocket(userId);
+			const result = await waitForOpenWebsocketConnection();
+			if (result) {
+				console.log('Reconnected to the game!');
+				sendReconnectMessage(userId, gameState.gameId);
+				clearTimeout(reconnectTimeout);
+				return true;
+			} else {
+				if (count !== maxRetries)
+					console.log('reconnection failed, retry...');
+			}
+		} catch (error)  {
+			console.error("Reconnection attempt failed with error:", error);
+		}
+	} else if (gameStatus === 'game not found') {
+		console.log('the game you are trying to join is over');
+		localStorage.removeItem('inGameComponentState');
+		resetGameInstance();
+		return false;
+	} else {
+		console.log(gameStatus);
+		return false;
 	}
 	count++;
-	setTimeout(() => attemptReconnect(count, maxRetries, reconnectionInterval, userId), reconnectionInterval);
+	reconnectTimeout = setTimeout(() => attemptReconnect(count, maxRetries, reconnectionInterval, userId), reconnectionInterval);
+}
+
+export function waitForOpenWebsocketConnection(maxChecks = 20, interval = 500) {
+	return new Promise((resolve, reject) => {
+		let checkCount = 0;
+		const waitOpenConnection = setInterval(() => {
+			if (socket && socket.readyState === WebSocket.OPEN) {
+				clearInterval(waitOpenConnection);
+				resolve(true);
+			}  else if (checkCount >= maxChecks) {
+				if (socket && socket.readyState !== WebSocket.CLOSED)
+                    disconnectWebSocket();
+                clearInterval(waitOpenConnection);
+				reject(false);
+            }
+		}, interval)
+	})
 }
 
 async function GameStillActive(game_id) {
-	if (!Number.isInteger(game_id)) {
-		return 'Invalid game_id provided';
-	}
 	try {
-		const dataResponse = await sendRequest('GET', `http://localhost:8005/game/game_is_active/?q=${game_id}`)
+		const dataResponse = await sendRequest('GET', `http://localhost:8005/game/game_is_active/?q=${game_id}`, null)
 		if (dataResponse.status === 'error')
-			return String(data.message);
+			return String(dataResponse.message);
 		return 'active';
 	} catch (error) {
 		return `fetch error: ${String(error)}`
@@ -140,11 +174,12 @@ async function GameStillActive(game_id) {
 
  //---------------------------------------> Utils export method <--------------------------------------\\
 
-export function disconnectWebSocket() {
-	if (socket) {
-		gameInProgress = false;
+export function disconnectWebSocket(userId, sendMessage) {
+	if (socket && socket.readyState === WebSocket.OPEN) {
+		if (sendMessage)
+			sendDisconnectMessage(userId);
 		socket.onclose = () => {};
 		socket.close();
+		console.log('Game connection closed');
 	}
-	console.log('WebSocket connection closed');
 }

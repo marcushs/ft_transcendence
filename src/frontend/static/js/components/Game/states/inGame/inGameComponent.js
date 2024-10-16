@@ -1,7 +1,7 @@
+import { throwGameDisconnectEvent } from '../../../../utils/throwGameDisconnectEvent.js';
 import Game from './Game.js';
-import { sendRequest } from '../../../../utils/sendRequest.js';
 
-export let gameInstance;
+export let gameInstance = null;
 
 class InGameComponent extends HTMLElement {
 	constructor() {
@@ -24,7 +24,28 @@ class InGameComponent extends HTMLElement {
 		this.initializeComponent();
 		this.setInitialMapSize();
 		this.initCanvas();
+		console.log('init instance : ', this.gameId);
 		gameInstance = new Game(this.canvas, this.gameId, this.gameState, this.userId);
+		console.log('game instance : ', gameInstance);
+		localStorage.setItem('inGameComponentState', JSON.stringify(this.saveState()))
+	}
+
+	setState(newState) {
+		console.log('newstate reached: ', newState);
+		
+		this.userId = newState.userId;
+		this.gameId = newState.gameId;
+		this.gameState = newState.gameState;
+		this.map_dimension = newState.map_dimension
+	}
+
+	saveState() {
+		return {
+			userId: this.userId,
+			gameId: this.gameId,
+			gameState: this.gameState,
+			map_dimension: this.map_dimension,
+		}
 	}
 
 	initializeComponent() {
@@ -61,6 +82,16 @@ class InGameComponent extends HTMLElement {
 
 		this.canvas.ctx.scale(scaleX, scaleY);
 	}
+
+	async disconnectedCallback() {
+		console.log('GAME INSTANCE: ', gameInstance);
+		if (gameInstance)
+			throwGameDisconnectEvent(this.userId);
+	}
 }
 
 customElements.define('in-game-component', InGameComponent);
+
+export function resetGameInstance() {
+	gameInstance = null;
+}

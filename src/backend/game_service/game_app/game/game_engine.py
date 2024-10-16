@@ -17,11 +17,11 @@ class PongGameEngine:
 
  #//---------------------------------------> Initial game attributes <--------------------------------------\\#
 
-    def init_game_attributes(self, game_id_data): 
+    def init_game_attributes(self, game_id_data):  
         map_dimension = get_map_dimension()
         self.game_id = str(game_id_data['game'])
-        self.player_one_id = int(game_id_data['player_one'])
-        self.player_two_id = int(game_id_data['player_two'])
+        self.player_one_id = str(game_id_data['player_one'])
+        self.player_two_id = str(game_id_data['player_two'])
         self.player_one_connected = True
         self.player_two_connected = True
         self.player_one_score = 0
@@ -184,7 +184,8 @@ class PongGameEngine:
           
 
     async def manage_game_update(self):
-        if not (self.player_one_connected and self.player_two_connected):
+        if not self.player_one_connected and not self.player_two_connected:
+            print(f'game Paused -- player1_active : {self.player_one_connected} -- player2_active : {self.player_two_connected}')
             return await self.handle_game_pause()
         update_state = self.update_score()
         await self.send_game_update()
@@ -338,14 +339,14 @@ class PongGameEngine:
             'event': 'player_reconnected',
             'message': f'player {player_id} has reconnected',
         }
-        await self.websocket_sender(payload)
+        await self.websocket_sender(payload) 
 
 
     async def send_resume_update(self):
         payload = {
             'type': 'game_update_info',
             'event': 'game_resumed',
-            'message': 'break is over, play resumes',
+            'message': 'break is over, prepare to Pong !',
         }
         await self.websocket_sender(payload)
 

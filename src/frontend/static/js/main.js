@@ -12,8 +12,11 @@ import checkAuthentication from "./utils/checkAuthentication.js";
 import twoFactorDeactivation from "./views/two-factor-deactivation.js";
 import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
 import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
+import { throwGameDisconnectEvent } from "./utils/throwGameDisconnectEvent.js";
+import { GameInactivityHandler } from "./components/Game/states/inGame/gameNetworkManager.js";
 import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
 import { PingStatus } from "./views/pingStatus.js";
+import { unloadManager } from "./utils/unloadManager.js";
 import { loadWebSocket } from "./views/websocket/loadWebSocket.js";
 
 let languageJson;
@@ -41,9 +44,13 @@ async function setUserRender() {
         await loadWebSocket();
         await setTwoFactorUserData();
         new PingStatus();
+        const savedState = localStorage.getItem('inGameComponentState');
+        const gameState = savedState ? JSON.parse(savedState) : null;
+        console.log('gameState: ', gameState);
+        if (gameState)
+			throwGameDisconnectEvent(gameState.userId);
     } else
         console.log('Guest session');
-
 }
 
 setUserRender();
@@ -125,8 +132,16 @@ async function isViewAccessible(view) {
 
 // Handle user connection
 document.addEventListener("userLoggedIn", setUserRender)
-// document.addEventListener("userLoggedOut", setGuestRender)
 
+// Handle game reconnection
+document.addEventListener("gameDisconnect", event => {
+    const userId = event.detail.userId;
+    const disconnectHandler = new GameInactivityHandler(userId);
+    disconnectHandler.handleDisconnect();
+})
+
+// Handle reloading or quit app
+window.addEventListener('beforeunload', unloadManager)
 
 // Handle navigation
 window.addEventListener("click", e => {

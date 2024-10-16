@@ -7,4 +7,3 @@ requests==2.32.3
 daphne==4.1.2
 channels-redis==4.2.0
 httpx
-# celery==5.3

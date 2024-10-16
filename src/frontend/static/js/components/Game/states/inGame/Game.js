@@ -1,10 +1,11 @@
-import Player from "./Player.js";
-import Ball from "./Ball.js";
-import Spark from "./Spark.js";
-import { socket } from "./gameWebsocket.js";
 import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
+import { disconnectWebSocket } from "./gameWebsocket.js";
 import getUserId from "../../../../utils/getUserId.js";
-import { disconnectWebSocket } from "./gameWebsocket.js"
+import { resetGameInstance } from "./inGameComponent.js";
+import { socket } from "./gameWebsocket.js";
+import Player from "./Player.js";
+import Spark from "./Spark.js";
+import Ball from "./Ball.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
 	const userId = await getUserId();
@@ -21,13 +22,14 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 }
 
 export default class Game {
-	constructor(canvas, gameId, gameState, userId) {
+	constructor(canvas, gameId, gameState, userId) {		
 		this.gameInProgress = true;
 		this.userId = userId;
 		this.canvas = canvas;
 		this.gameId = gameId;
 		this.gameState = gameState;
 		this.initGameRender();
+		console.log('game constructor : ', this);
 		this.renderLoop();
 	}
 
@@ -66,8 +68,10 @@ export default class Game {
 // --------------------------------------- Render loop -------------------------------------- //
 
 	renderLoop() {
-		if (!this.gameInProgress)
+		if (!this.gameInProgress) {
+			this.cleanup();
 			return;
+		}
 		this.deltaTime = (performance.now() - this.lastTime) / 1000;
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.movePlayer();
@@ -86,12 +90,14 @@ export default class Game {
 		if (this.keysPlayerOne.down)
 			action = 'move_down'
 		if (action) {
-			socket.send(JSON.stringify({
-				'type': 'player_action',
-				'game_id': this.gameId,
-				'player_id': this.playerOne.playerId,
-				'action' : action
-			}));		
+			if (socket && socket.readyState === WebSocket.OPEN) {
+				socket.send(JSON.stringify({
+					'type': 'player_action',
+					'game_id': this.gameId,
+					'player_id': this.playerOne.playerId,
+					'action' : action
+				}));		
+			}
 		}
 	}
 
@@ -196,16 +202,27 @@ export default class Game {
 // --------------------------------------- Game finished render -------------------------------------- //
 
 	gameFinished(message) {
-		this.gameInProgress = false
+		this.gameInProgress = false;
 		alert(message);
-		disconnectWebSocket();
+		disconnectWebSocket(this.userId, false);
 		throwRedirectionEvent('/');
 	}
 
+	cleanup() {
+		this.detachEventsListener();
+		localStorage.removeItem('inGameComponentState')
+		resetGameInstance();
+	}
+	
+	detachEventsListener() {
+		document.removeEventListener('keydown', this.handleKeyDown);
+		document.removeEventListener('keyup', this.handleKeyUp);
+	}
+	
 	canceledGame(message) {
-		this.gameInProgress = false
+		this.gameInProgress = false;
 		alert(`Game canceled: ${message}`);
-		disconnectWebSocket();
+		disconnectWebSocket(this.userId, false);
 		throwRedirectionEvent('/');
 	}
 

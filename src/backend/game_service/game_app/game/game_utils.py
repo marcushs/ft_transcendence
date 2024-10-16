@@ -1,4 +1,5 @@
-from django.contrib.auth.models import AnonymousUser
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from channels.layers import get_channel_layer
 from django.http import JsonResponse
 from django.views import View
@@ -38,15 +39,35 @@ class CheckGameStillActive(View):
         super()
 
     async def get(self, request):
-        from .game_engine import PongGameEngine
+        from .game_engine import PongGameEngine 
         
         game_id_string = request.GET.get('q', '')
         
         if not (game_id_string or game_id_string.isdigit()):
              return JsonResponse({'status': 'error', 'message': 'Invalid game_id'}, status=200)
-        game_id = int(game_id_string)
+        game_id = str(game_id_string)
         game_instance = PongGameEngine.get_active_game(game_id)
         if not game_instance:
-            return JsonResponse({'status': 'success', 'message': 'game still active'}, status=200)
-        else:
             return JsonResponse({'status': 'error', 'message': 'game not found'}, status=200)
+        return JsonResponse({'status': 'success'}, status=200)
+
+#//---------------------------------------> get games instance Endpoint <--------------------------------------\\#
+
+@method_decorator(csrf_exempt, name='dispatch') 
+class GetGameList(View):
+    def __init__(self):
+        super()
+
+    async def get(self, request):
+        from .game_engine import PongGameEngine
+        
+        games_data = [
+            {
+                'game_id': game.game_id,
+                'player_one_id': game.player_one_id,
+                'player_two_id': game.player_two_id,
+                'game_active': game.game_active,
+            }
+            for game in PongGameEngine.active_games 
+        ]
+        return JsonResponse({'games_instance': games_data}, status=200)

@@ -1,6 +1,7 @@
 import {getString} from "../../../../utils/languageManagement.js";
 import { sendRequest } from "../../../../utils/sendRequest.js";
 import getUserData from "../../../../utils/getUserData.js";
+import { waitForOpenWebsocketConnection } from "../inGame/gameWebsocket.js";
 import '../inGame/inGameComponent.js'
 import { gameWebsocket } from "../inGame/gameWebsocket.js";
 
@@ -28,10 +29,16 @@ class UnrankedComponent extends HTMLElement {
 		const userData = await getUserData();
 		if (!userData)
 			return;
-		
-		gameWebsocket(userData.id);
-		if (!this.requestMatchmakingResearch())
-			return;
+		try {
+			await gameWebsocket(userData.id);
+			const result =  await waitForOpenWebsocketConnection();
+			if (!result)
+				console.log('Connection to game websocket timeout');
+			if (!this.requestMatchmakingResearch())
+				return;
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	async requestMatchmakingResearch() {
