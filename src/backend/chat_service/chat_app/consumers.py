@@ -45,7 +45,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                                                      'chatroom': str(chatroom.group_id),
                                                      'message': saved_message.body,
                                                      'author': str(self.user.id),
-                                                     'timestamp': saved_message.created.strftime("%Y-%m-%d %H:%M:%S")})
+                                                     'timestamp': saved_message.created.strftime("%d/%m/%Y %H:%M:%S")})
             except Http404:
                 return
         elif message_type == 'join_room':
@@ -59,7 +59,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'chatroom': chatroom_id,
                     'message': message.body,
-                    'timestamp': message.created.strftime("%Y-%m-%d %H:%M:%S"),
+                    'timestamp': message.created.strftime("%d/%m/%Y %H:%M:%S"),
                     'author': await self.get_message_author_username(message)
                 }))
 

@@ -8,7 +8,7 @@ export function sendPrivateMessage() {
 	const chatroomMessageInput = document.querySelector('.chatroom-message-input');
 	const message = chatroomMessageInput.value.trim();
 
-	if (message === '') {
+	if (!isMessageValid(message)) {
 		chatroomMessageInput.value = '';
 		chatroomMessageInput.focus();
 		return ;
@@ -69,7 +69,9 @@ function isTargetChatroom(currentChatroomId, targetChatroomId) {
 async function isSentOrReceivedMessage(authorId) {
 	const userId = await getUserId();
 
-	console.log('userId is: ', userId)
-	console.log('authorId is: ', authorId)
 	return userId === authorId ? 'sent' : 'received';
+}
+
+function isMessageValid(message) {
+	return (message === '' || message.length > 300) ? false : true;
 }
