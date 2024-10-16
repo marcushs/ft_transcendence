@@ -8,7 +8,7 @@ from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import *
-import datetime 
+import datetime
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -33,18 +33,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 target_user = await aget_object_or_404(User, id=data['target_user'])
                 chatroom, created = await self.get_or_create_chatroom(author=self.user, target_user=target_user)
                 if created is True:
-                    await self.channel_layer.group_send('chatgroup_updates', 
-                                                        {'type': 'chatgroup.update', 
-                                                         'chatroom': str(chatroom.group_id), 
+                    await self.channel_layer.group_send('chatgroup_updates',
+                                                        {'type': 'chatgroup.update',
+                                                         'chatroom': str(chatroom.group_id),
                                                          'target_user': str(target_user.id)})
                     await self.join_room(str(chatroom.group_id))
-                message = await self.save_message(chatroom=chatroom, author=self.user, message=message_body)
-                await self.channel_layer.group_send(str(chatroom.group_id), 
-                                                    {'type': 'chat.message', 
-                                                     'chatroom': str(chatroom.group_id), 
-                                                     'message': message.body, 
-                                                     'author': self.user.username, 
-                                                     'timestamp': message.created.strftime("%Y-%m-%d %H:%M:%S")})
+                saved_message = await self.save_message(chatroom=chatroom, author=self.user, message=message_body)
+                print(saved_message.created) 
+                await self.channel_layer.group_send(str(chatroom.group_id),
+                                                    {'type': 'chat.message',
+                                                     'chatroom': str(chatroom.group_id),
+                                                     'message': saved_message.body,
+                                                     'author': str(self.user.id),
+                                                     'timestamp': saved_message.created.strftime("%Y-%m-%d %H:%M:%S")})
             except Http404:
                 return
         elif message_type == 'join_room':
@@ -74,6 +75,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'chatroom': event['chatroom'],
             'message': event['message'],
             'author': event['author'],
+            'timestamp': event['timestamp']
         }))
 
     async def chatgroup_update(self, event):
@@ -108,7 +110,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     
     @database_sync_to_async
     def save_message(self, chatroom, author, message):
-        return GroupMessage.objects.create(group=chatroom, author=author, body=message)
+        return GroupMessage.objects.create(group=chatroom, author=author, body=message, created=datetime.datetime.now())
 
     @database_sync_to_async
     def get_recent_messages(self, chatroom_id):

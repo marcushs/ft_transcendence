@@ -9,7 +9,6 @@ class ChatRoomConversation extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'data-user') {
 			const userData = JSON.parse(newValue);
-
 			this.findMatchingChatroom(userData.id);
 		}
 		if (name === 'data-chatroom') {
@@ -26,23 +25,7 @@ class ChatRoomConversation extends HTMLElement {
 	render() {
 		this.innerHTML = `
 		<div class="chatroom-conversation-message-container">
-			<ul>
-				<li><chat-message-component class="sent"></chat-message-component></li>
-				<li><chat-message-component class="received"></chat-message-component></li>
-				<li><chat-message-component class="sent"></chat-message-component></li>
-				<li><chat-message-component class="received"></chat-message-component></li>
-				<li><chat-message-component class="sent"></chat-message-component></li>
-				<li><chat-message-component class="received"></chat-message-component></li>
-				<li><chat-message-component class="sent"></chat-message-component></li>
-				<li><chat-message-component class="received"></chat-message-component></li>
-				<li><chat-message-component class="sent"></chat-message-component></li>
-				<li><chat-message-component class="received"></chat-message-component></li>
-				<li><chat-message-component class="sent"></chat-message-component></li>
-				<li><chat-message-component class="received"></chat-message-component></li>
-				<li><chat-message-component class="sent"></chat-message-component></li>
-				<li><chat-message-component class="received"></chat-message-component></li>
-				<li><chat-message-component class="sent"></chat-message-component></li>
-			</ul>
+			<ul></ul>
 		</div>
 		`;
 	};
@@ -57,7 +40,5 @@ class ChatRoomConversation extends HTMLElement {
 		this.setAttribute('data-chatroom', this.chatroom);
 	}
 };
-
-
 
 customElements.define('chatroom-conversation', ChatRoomConversation);

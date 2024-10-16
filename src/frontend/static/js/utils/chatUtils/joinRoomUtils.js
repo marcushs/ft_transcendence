@@ -75,7 +75,7 @@ async function getUserInfoById(userId) {
 	}
 }
 
-async function getUserId() {
+export async function getUserId() {
 	let res = await sendRequest('GET', '/api/user/user_info/', null, false);
 
 	if (res.status === 'error') {

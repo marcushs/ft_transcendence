@@ -1,4 +1,4 @@
-class ChatMessageComponent extends HTMLElement {
+export default class ChatMessageComponent extends HTMLElement {
 	constructor(messageData) {
 		super();
 		this.messageData = messageData;
@@ -8,9 +8,9 @@ class ChatMessageComponent extends HTMLElement {
 	render() {
 		this.innerHTML = `
 		<div class="chat-message-container">
-			<p class="chat-message-bubble">${messageData.message}</p>
+			<p class="chat-message-bubble">${this.messageData.message}</p>
 			<div class="chat-message-info">
-				<p class="chat-message-time">${messageData.timestamp}</p>
+				<p class="chat-message-time">${this.messageData.timestamp}</p>
 				<div class="chat-message-read unread">
 					<i class="fa-solid fa-check"></i>
 					<i class="fa-solid fa-check"></i>
