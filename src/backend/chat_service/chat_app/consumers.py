@@ -3,10 +3,12 @@ from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import aget_object_or_404
 from django.http import Http404
 from django.db.models import Count, Q
+from django.core.serializers.json import DjangoJSONEncoder
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import *
+import datetime 
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -27,6 +29,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if message_type == 'chat_message':
             try:
+                message_body = data['message']
                 target_user = await aget_object_or_404(User, id=data['target_user'])
                 chatroom, created = await self.get_or_create_chatroom(author=self.user, target_user=target_user)
                 if created is True:
@@ -35,13 +38,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
                                                          'chatroom': str(chatroom.group_id), 
                                                          'target_user': str(target_user.id)})
                     await self.join_room(str(chatroom.group_id))
-                message = await self.save_message(chatroom=chatroom, author=self.user, message=message)
+                message = await self.save_message(chatroom=chatroom, author=self.user, message=message_body)
                 await self.channel_layer.group_send(str(chatroom.group_id), 
                                                     {'type': 'chat.message', 
                                                      'chatroom': str(chatroom.group_id), 
                                                      'message': message.body, 
                                                      'author': self.user.username, 
-                                                     'timestamp': message.created})
+                                                     'timestamp': message.created.strftime("%Y-%m-%d %H:%M:%S")})
             except Http404:
                 return
         elif message_type == 'join_room':
@@ -55,7 +58,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'chatroom': chatroom_id,
                     'message': message.body,
-                    'timestamp': message.created,
+                    'timestamp': message.created.strftime("%Y-%m-%d %H:%M:%S"),
                     'author': await self.get_message_author_username(message)
                 }))
 

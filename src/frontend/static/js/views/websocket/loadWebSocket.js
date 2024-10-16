@@ -136,6 +136,7 @@ async function loadChatWebSocket() {
 		
 		console.log(data)
 		if (data.type === 'chat_message') {
+			const liElem = document.createElement('li');
 			const newMsgElem = document.createElement('p');
 			newMsgElem.innerText = data.message;
 			console.log(`received message from websocket: ${data.message}`)
