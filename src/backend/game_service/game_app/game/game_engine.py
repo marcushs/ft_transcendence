@@ -185,7 +185,6 @@ class PongGameEngine:
 
     async def manage_game_update(self):
         if not self.player_one_connected and not self.player_two_connected:
-            print(f'game Paused -- player1_active : {self.player_one_connected} -- player2_active : {self.player_two_connected}')
             return await self.handle_game_pause()
         update_state = self.update_score()
         await self.send_game_update()
@@ -196,7 +195,7 @@ class PongGameEngine:
             self.game_active = False
 
     async def handle_game_pause(self):
-        if not self.is_paused:
+        if not self.is_paused: 
             self.is_paused = True
             self.pause_start_time = time.perf_counter()
         else:
@@ -267,7 +266,7 @@ class PongGameEngine:
         elif player_id == self.player_two_id:
             self.player_two_connected = True
         await self.send_reconnect_update(player_id)
-        if self.is_paused and not (self.player_one_connected or self.player_two_connected):
+        if self.is_paused and not (self.player_one_connected and self.player_two_connected):
             self.is_paused = False
             self.pause_start_time = None
             await self.send_resume_update()

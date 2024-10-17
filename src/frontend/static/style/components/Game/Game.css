@@ -1,5 +1,6 @@
 @import './GameTopBar.css';
 @import './states/matchmakingChoice.css';
+@import './states/inGame.css';
 @import './states/tournamentHome/tournamentHome.css';
 @import './states/onlineHome/onlineHome.css';
 @import './states/localHome/localHome.css';

@@ -35,15 +35,27 @@ export class GameInactivityHandler {
     }
 
     async handleReconnection() {
+        const container = document.querySelector('.states-container');
+        if (!container)
+            return;
         const isReconnected = await websocketReconnection(this.userId);
         if (!isReconnected)
             return;
-        const container = document.querySelector('.states-container');
-	    const inGameComponent = document.createElement('in-game-component');
+        let statesContainerDiv = document.querySelector('.states-container');
+        if (!statesContainerDiv) {
+            throwRedirectionEvent('/');
+            statesContainerDiv = document.querySelector('.states-container');
+        }
+        statesContainerDiv.innerHTML = '';
+        for (let i = 0; i < statesContainerDiv.classList.length; i++) {
+            console.log(`classlist: ${statesContainerDiv.classList[i]} -- type: ${typeof(statesContainerDiv.classList[i])}`);
+            if (statesContainerDiv.classList[i] === 'states-container')
+                continue;
+            statesContainerDiv.classList.remove(statesContainerDiv.classList[i])
+        }
+        const inGameComponent = document.createElement('in-game-component');
         inGameComponent.setState(this.gameState)
-        console.log('in game component: ',inGameComponent);
-        container.replaceChildren();
-        container.appendChild(inGameComponent);
+        statesContainerDiv.appendChild(inGameComponent);
         this.isRunningHandler = false;
     }
 

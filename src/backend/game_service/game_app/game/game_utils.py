@@ -1,6 +1,7 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from channels.layers import get_channel_layer
+from ..decorators import jwt_required
 from django.http import JsonResponse
 from django.views import View
 import json
@@ -33,23 +34,26 @@ async def send_websocket_info(player_id, payload):
         )
     except Exception as e:
         print(f'---------------->> Error sending websocket info: {e}')
-        
+
+@method_decorator(jwt_required, name='dispatch') 
 class CheckGameStillActive(View):
     def __init__(self):
         super()
 
-    async def get(self, request):
+    async def get(self, request, user_id):
         from .game_engine import PongGameEngine 
         
         game_id_string = request.GET.get('q', '')
         
-        if not (game_id_string or game_id_string.isdigit()):
-             return JsonResponse({'status': 'error', 'message': 'Invalid game_id'}, status=200)
+        if not game_id_string:
+             return JsonResponse({'status': 'error', 'message': 'invalid_id'}, status=200)
         game_id = str(game_id_string)
         game_instance = PongGameEngine.get_active_game(game_id)
         if not game_instance:
-            return JsonResponse({'status': 'error', 'message': 'game not found'}, status=200)
-        return JsonResponse({'status': 'success'}, status=200)
+            return JsonResponse({'status': 'error', 'message': 'not_found'}, status=200)
+        if not game_instance.player_is_in_game(user_id):
+            return JsonResponse({'status': 'success', 'user_in': False}, status=200)
+        return JsonResponse({'status': 'success', 'user_in': True}, status=200)
 
 #//---------------------------------------> get games instance Endpoint <--------------------------------------\\#
 

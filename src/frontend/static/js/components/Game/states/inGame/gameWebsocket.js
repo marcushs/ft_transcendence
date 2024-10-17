@@ -89,59 +89,60 @@ function sendReconnectMessage(userId, gameId) {
 //---------------------------------------> Game Reconnect method <--------------------------------------\\
 
 export async function websocketReconnection(userId) {
-	let count = 0;
-	const maxRetries = 12;
-	const reconnectionInterval = 5000;
-
-	const isReconnected = await attemptReconnect(count, maxRetries, reconnectionInterval, userId);
-	return isReconnected;
-}
-
-async function attemptReconnect(count, maxRetries, reconnectionInterval, userId) {
 	const savedState = localStorage.getItem('inGameComponentState');
 	const gameState = savedState ? JSON.parse(savedState) : null;
-	if (count >= maxRetries) {
-		clearTimeout(reconnectTimeout);
-		console.error('Max reconnect attempts reached. Please check your connection');
-		surrenderHandler();
-		localStorage.removeItem('inGameComponentState');
-		resetGameInstance();
+	try {
+		await attemptReconnect(userId, gameState);
+		return true;
+	} catch (error) {
+		console.log(`Error: reconnecting: ${error.message}`);
+		if (gameState)
+			localStorage.removeItem('inGameComponentState');
+		if (gameInstance)
+			resetGameInstance();
 		return false;
 	}
-	if (!gameState) {
-		clearTimeout(reconnectTimeout);
-		console.log('Cant reconnect to the game, instance not found');
-		return false;
-	}	
-	const gameStatus = await GameStillActive(gameState.gameId);
-	if (gameStatus === 'active') {
-		console.log(`Attempt[${count}]: reconnecting to the game's websocket...`);
+}
+
+async function attemptReconnect(userId, gameState, count = 0, maxRetries = 12, reconnectionInterval = 5000) {
+	try {
+		await checkReconnectCondition(count, maxRetries, gameState);
+		console.log(`reconnecting to the game's websocket... attempt[${count + 1}]`);
 		try {
 			await gameWebsocket(userId);
 			const result = await waitForOpenWebsocketConnection();
 			if (result) {
-				console.log('Reconnected to the game!');
 				sendReconnectMessage(userId, gameState.gameId);
 				clearTimeout(reconnectTimeout);
 				return true;
-			} else {
-				if (count !== maxRetries)
-					console.log('reconnection failed, retry...');
 			}
 		} catch (error)  {
-			console.error("Reconnection attempt failed with error:", error);
+			console.log('failed...');
 		}
-	} else if (gameStatus === 'game not found') {
-		console.log('the game you are trying to join is over');
-		localStorage.removeItem('inGameComponentState');
-		resetGameInstance();
-		return false;
-	} else {
-		console.log(gameStatus);
-		return false;
+		count++;
+		reconnectTimeout = setTimeout(() => attemptReconnect(userId, gameState, count, maxRetries, reconnectionInterval));
 	}
-	count++;
-	reconnectTimeout = setTimeout(() => attemptReconnect(count, maxRetries, reconnectionInterval, userId), reconnectionInterval);
+	catch (error) {
+		if (error.message === "Max reconnect attempts reached. Please check your connection")
+			surrenderHandler();
+		clearTimeout(reconnectTimeout);
+		throw new Error(error.message);
+	}
+}
+
+async function checkReconnectCondition(count, maxRetries, gameState) {
+	console.log('gameState: ', gameState);
+	if (count >= maxRetries)
+		throw new Error("Max reconnect attempts reached. Please check your connection")
+	if (!gameState)
+		throw new Error('instance not found')
+	const gameStatus = await GameStillActive(gameState.gameId);
+	if (gameStatus.status === 'error' && gameStatus.message === 'invalid_id')
+		throw new Error('invalid game id')
+	if (gameStatus.status === 'error' && gameStatus.message === 'not_found')
+		throw new Error('the game you are trying to join is over')
+	if (gameStatus.status === 'success' && gameStatus.user_in === false)
+		throw new Error('you are not a player in this game')
 }
 
 export function waitForOpenWebsocketConnection(maxChecks = 20, interval = 500) {
@@ -161,18 +162,16 @@ export function waitForOpenWebsocketConnection(maxChecks = 20, interval = 500) {
 	})
 }
 
-async function GameStillActive(game_id) {
+export async function GameStillActive(game_id) {
 	try {
 		const dataResponse = await sendRequest('GET', `http://localhost:8005/game/game_is_active/?q=${game_id}`, null)
-		if (dataResponse.status === 'error')
-			return String(dataResponse.message);
-		return 'active';
+		return dataResponse;
 	} catch (error) {
 		return `fetch error: ${String(error)}`
 	}
 }
 
- //---------------------------------------> Utils export method <--------------------------------------\\
+//---------------------------------------> Utils export method <--------------------------------------\\
 
 export function disconnectWebSocket(userId, sendMessage) {
 	if (socket && socket.readyState === WebSocket.OPEN) {

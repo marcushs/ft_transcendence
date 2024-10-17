@@ -14,7 +14,9 @@ import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
 import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
 import { throwGameDisconnectEvent } from "./utils/throwGameDisconnectEvent.js";
 import { GameInactivityHandler } from "./components/Game/states/inGame/gameNetworkManager.js";
+import { GameStillActive } from "./components/Game/states/inGame/gameWebsocket.js";
 import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
+import { gameInstance, resetGameInstance } from "./components/Game/states/inGame/inGameComponent.js";
 import { PingStatus } from "./views/pingStatus.js";
 import { unloadManager } from "./utils/unloadManager.js";
 import { loadWebSocket } from "./views/websocket/loadWebSocket.js";
@@ -44,16 +46,29 @@ async function setUserRender() {
         await loadWebSocket();
         await setTwoFactorUserData();
         new PingStatus();
-        const savedState = localStorage.getItem('inGameComponentState');
-        const gameState = savedState ? JSON.parse(savedState) : null;
-        console.log('gameState: ', gameState);
-        if (gameState)
-			throwGameDisconnectEvent(gameState.userId);
+        await setGameState();
     } else
         console.log('Guest session');
 }
 
 setUserRender();
+
+async function setGameState() {
+    const savedState = localStorage.getItem('inGameComponentState');
+    const gameState = savedState ? JSON.parse(savedState) : null;
+    console.log('gameState: ', gameState);
+    if (gameState) {
+        const gameStatus = await GameStillActive(gameState.gameId);
+        console.log('gameStatus: ', gameStatus);
+        if (gameStatus.status === 'success' && gameStatus.user_in === true) {
+            throwGameDisconnectEvent(gameState.userId);
+        } else {
+            localStorage.removeItem('inGameComponentState');
+            if (gameInstance)
+                resetGameInstance();
+        }
+    }
+}
 
 // set twoFactor needed data
 async function setTwoFactorUserData() {

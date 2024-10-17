@@ -24,7 +24,6 @@ class InGameComponent extends HTMLElement {
 		this.initializeComponent();
 		this.setInitialMapSize();
 		this.initCanvas();
-		console.log('init instance : ', this.gameId);
 		gameInstance = new Game(this.canvas, this.gameId, this.gameState, this.userId);
 		console.log('game instance : ', gameInstance);
 		localStorage.setItem('inGameComponentState', JSON.stringify(this.saveState()))

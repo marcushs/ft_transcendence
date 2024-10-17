@@ -9,17 +9,39 @@ import Ball from "./Ball.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
 	const userId = await getUserId();
-	const onlineHomeDiv = document.querySelector('.states-container');
-	const oldDivContent = onlineHomeDiv.innerHTML;
-
+	let statesContainerDiv = document.querySelector('.states-container');
+	if (!statesContainerDiv) {
+		throwRedirectionEvent('/');
+		statesContainerDiv = document.querySelector('.states-container');
+	}
+	statesContainerDiv.innerHTML = '';
+	for (let i = 0; i < statesContainerDiv.classList.length; i++) {
+		console.log(`classlist: ${statesContainerDiv.classList[i]} -- type: ${typeof(statesContainerDiv.classList[i])}`);
+		if (statesContainerDiv.classList[i] === 'states-container')
+			continue;
+		statesContainerDiv.classList.remove(statesContainerDiv.classList[i])
+	}
 	const inGameComponent = document.createElement('in-game-component');
 	inGameComponent.gameId = gameId;
 	inGameComponent.gameState = initialGameState;
 	inGameComponent.map_dimension = map_dimension;
 	inGameComponent.userId = userId;
-	onlineHomeDiv.innerHTML = '';
-	onlineHomeDiv.appendChild(inGameComponent);
+	statesContainerDiv.appendChild(inGameComponent);
 }
+
+// export async function startGame(gameId, initialGameState, map_dimension) {
+// 	const userId = await getUserId();
+// 	const onlineHomeDiv = document.querySelector('.states-container');
+// 	const oldDivContent = onlineHomeDiv.innerHTML;
+
+// 	const inGameComponent = document.createElement('in-game-component');
+// 	inGameComponent.gameId = gameId;
+// 	inGameComponent.gameState = initialGameState;
+// 	inGameComponent.map_dimension = map_dimension;
+// 	inGameComponent.userId = userId;
+// 	onlineHomeDiv.innerHTML = '';
+// 	onlineHomeDiv.appendChild(inGameComponent);
+// }
 
 export default class Game {
 	constructor(canvas, gameId, gameState, userId) {		
