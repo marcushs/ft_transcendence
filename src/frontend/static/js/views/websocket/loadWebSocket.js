@@ -140,7 +140,6 @@ async function loadChatWebSocket() {
 
 			await putMessageToChatroomConversation(data);
 			console.log(`received message from websocket: ${data.message}`)
-			// document.querySelector('.chatroom-conversation').appendChild(newMsgElem);
 		}
 		else if (data.type === 'chatgroup_update') {
 			await receiveChatgroupUpdate(data);

@@ -55,8 +55,13 @@ chat-message-component.sent .chat-message-info {
 	justify-content: flex-end;
 }
 
+.chat-message-time {
+	font-size: 1.2rem;
+	font-style: italic;
+}
+
 chat-message-component.sent .chat-message-info .chat-message-time {
-	margin-right: 1.5rem;
+	margin-right: 1rem;
 }
 
 chat-message-component.sent .chat-message-info .chat-message-read i {

@@ -1,5 +1,6 @@
-import '../../components/Chat/ChatRoomTopBar.js';
-import '../../components/Chat/ChatRoomBottomBar.js';
+import ChatRoomTopBar from '../../components/Chat/ChatRoomTopBar.js';
+import ChatRoomBottomBar from '../../components/Chat/ChatRoomBottomBar.js';
+import ChatRoomConversation from '../../components/Chat/ChatRoomConversation.js';
 import { sendRequest } from "../sendRequest.js";
 import { sendPrivateMessage } from './sendPrivateMessage.js';
 
@@ -7,7 +8,7 @@ export async function sendMessageCallback(targetUserData) {
 	displayChatroomComponent(targetUserData);
 };
 
-function displayChatroomComponent(targetUserData) {
+async function displayChatroomComponent(targetUserData) {
 	const userData = JSON.stringify(targetUserData);
 	
 	toggleContactMenuToChatMainMenu();
@@ -28,21 +29,24 @@ function toggleContactMenuToChatMainMenu() {
 }
 
 function displayChatroomLayout(userData) {
-	const chatRoom = document.querySelector('.chatroom');
-	const chatRoomTopBar = document.createElement('chatroom-top-bar');
-	const oldChatRoomTopBar = chatRoom.querySelector('chatroom-top-bar');
+    const chatRoom = document.querySelector('.chatroom');
+    
+    // Clear existing content
+    chatRoom.innerHTML = '';
 
+	// Create and append chatroom-top-bar
+	const chatRoomTopBar = new ChatRoomTopBar()
 	chatRoomTopBar.setAttribute('data-user', userData);
+	chatRoom.appendChild(chatRoomTopBar);
 
-	if (oldChatRoomTopBar) oldChatRoomTopBar.remove();
-	chatRoom.prepend(chatRoomTopBar);
+	// Create and append chatroom-conversation
+	const chatRoomConversation = new ChatRoomConversation();
+	chatRoomConversation.setAttribute('data-user', userData);
+	chatRoom.appendChild(chatRoomConversation);
 
-	if (chatRoom.querySelector('chatroom-conversation')) chatRoom.querySelector('chatroom-conversation').remove();
-	chatRoom.innerHTML += '<chatroom-conversation></chatroom-conversation>';
-	document.querySelector('chatroom-conversation').setAttribute('data-user', userData);
-	
-	if (chatRoom.querySelector('chatroom-bottom-bar')) chatRoom.querySelector('chatroom-bottom-bar').remove();
-	chatRoom.innerHTML += '<chatroom-bottom-bar></chatroom-bottom-bar>';
+	// Create and append chatroom-bottom-bar
+	const chatRoomBottomBar = new ChatRoomBottomBar();
+	chatRoom.appendChild(chatRoomBottomBar);
 }
 
 function addEventListenersToMessageInput() {

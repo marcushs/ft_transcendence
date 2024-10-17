@@ -1,6 +1,6 @@
 import { sendRequest } from "../../utils/sendRequest.js";
 
-class ChatRoomBottomBar extends HTMLElement {
+export default class ChatRoomBottomBar extends HTMLElement {
 	constructor() {
 		super();
 		this.render();

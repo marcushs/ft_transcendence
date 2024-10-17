@@ -60,13 +60,14 @@ export async function putMessageToChatroomConversation(messageData) {
  	messageComponent.classList.add(isSent);
 	liElem.appendChild(messageComponent);
 	chatroomConversationUl.appendChild(liElem);
+	chatroomConversation.scrollTop = chatroomConversation.scrollHeight;
 }
 
 function isTargetChatroom(currentChatroomId, targetChatroomId) {
 	return targetChatroomId === currentChatroomId;
 }
 
-async function isSentOrReceivedMessage(authorId) {
+export async function isSentOrReceivedMessage(authorId) {
 	const userId = await getUserId();
 
 	return userId === authorId ? 'sent' : 'received';

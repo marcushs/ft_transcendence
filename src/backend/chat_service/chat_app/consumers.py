@@ -1,6 +1,7 @@
 import json
 from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import aget_object_or_404
+from django.utils import timezone
 from django.http import Http404
 from django.db.models import Count, Q
 from django.core.serializers.json import DjangoJSONEncoder
@@ -8,7 +9,8 @@ from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import *
-import datetime
+from django.utils import timezone
+from datetime import timedelta
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -45,7 +47,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                                                      'chatroom': str(chatroom.group_id),
                                                      'message': saved_message.body,
                                                      'author': str(self.user.id),
-                                                     'timestamp': saved_message.created.strftime("%d/%m/%Y %H:%M:%S")})
+                                                     'timestamp': self.format_datetime(saved_message.created)})
             except Http404:
                 return
         elif message_type == 'join_room':
@@ -59,8 +61,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'chatroom': chatroom_id,
                     'message': message.body,
-                    'timestamp': message.created.strftime("%d/%m/%Y %H:%M:%S"),
-                    'author': await self.get_message_author_username(message)
+                    'timestamp': self.format_datetime(message.created),
+                    'author': str(await self.get_message_author_id(message))
                 }))
 
     async def join_room(self, chatroom):
@@ -84,6 +86,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'chatroom': event['chatroom'],
             'target_user': event['target_user'],
         }))
+
+
+    def format_datetime(self, timestamp):
+        now = timezone.now()
+        today_midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        yesterday_midnight = today_midnight - timedelta(days=1)
+
+        if timestamp >= today_midnight:
+            # Today, display hour and minute
+            return timestamp.strftime("%H:%M")
+        elif yesterday_midnight <= timestamp < today_midnight:
+            # Yesterday
+            return 'Yesterday'
+        else:
+            # Before yesterday, display date
+            return timestamp.strftime('%d/%m/%Y')
 
     @database_sync_to_async
     def get_or_create_chatroom(self, author, target_user):
@@ -110,13 +128,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     
     @database_sync_to_async
     def save_message(self, chatroom, author, message):
-        return GroupMessage.objects.create(group=chatroom, author=author, body=message, created=datetime.datetime.now())
+        return GroupMessage.objects.create(group=chatroom, author=author, body=message, created=timezone.now())
 
     @database_sync_to_async
     def get_recent_messages(self, chatroom_id):
-        return list(GroupMessage.objects.filter(group_id=chatroom_id)[:10])
+        return list(GroupMessage.objects.filter(group_id=chatroom_id)[:5])
     
     @database_sync_to_async
-    def get_message_author_username(self, message):
-        return message.author.username
+    def get_message_author_id(self, message):
+        return message.author.id
 

@@ -1,6 +1,6 @@
 import getProfileImage from "../../utils/getProfileImage.js";
 
-class ChatRoomTopBar extends HTMLElement {
+export default class ChatRoomTopBar extends HTMLElement {
 	static get observedAttributes() {
         return ["data-user", "data-status"];
     }
@@ -20,6 +20,7 @@ class ChatRoomTopBar extends HTMLElement {
 	};
 
 	async connectedCallback() {
+		console.log('topbar rendered')
         await this.render();
     }
 
