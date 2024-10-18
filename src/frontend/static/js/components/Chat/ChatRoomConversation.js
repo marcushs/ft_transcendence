@@ -61,8 +61,9 @@ export default class ChatRoomConversation extends HTMLElement {
 		console.log('in displayLast20Messages', res);
 
 		const last20Messages = res.last20Messages;
-		last20Messages.forEach(async (message) => {
-			const messageData = message.fields;
+
+		for (let i = last20Messages.length - 1; i >= 0; --i) {
+			const messageData = last20Messages[i].fields;
 			const chatroomConversationUl = this.querySelector('.chatroom-conversation-message-container > ul');
 			const liElem = document.createElement('li');
 			const messageComponent = new ChatMessageComponent(messageData);
@@ -71,7 +72,19 @@ export default class ChatRoomConversation extends HTMLElement {
 			messageComponent.classList.add(isSent);
 			liElem.appendChild(messageComponent);
 			chatroomConversationUl.appendChild(liElem);
-		});
+
+		}
+		// last20Messages.forEach(async (message) => {
+		// 	const messageData = message.fields;
+		// 	const chatroomConversationUl = this.querySelector('.chatroom-conversation-message-container > ul');
+		// 	const liElem = document.createElement('li');
+		// 	const messageComponent = new ChatMessageComponent(messageData);
+
+		// 	const isSent = await isSentOrReceivedMessage(messageData.author);
+		// 	messageComponent.classList.add(isSent);
+		// 	liElem.appendChild(messageComponent);
+		// 	chatroomConversationUl.appendChild(liElem);
+		// });
 	}
 };
 

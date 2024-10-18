@@ -27,11 +27,11 @@ export default class ChatMessageComponent extends HTMLElement {
 		yesterday.setDate(yesterday.getDate() - 1);
 	  
 		if (this.isSameDay(date, now)) {
-		  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+		  return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 		} else if (this.isSameDay(date, yesterday)) {
 		  return 'Yesterday';
 		} else {
-		  return date.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
+		  return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 		}
 	  }
 	  

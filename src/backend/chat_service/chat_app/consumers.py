@@ -128,7 +128,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     
     @database_sync_to_async
     def save_message(self, chatroom, author, message):
-        return GroupMessage.objects.create(group=chatroom, author=author, body=message, created=timezone.now())
+        return GroupMessage.objects.create(group=chatroom, author=author, body=message, created=timezone.localtime(timezone.now()))
 
     @database_sync_to_async
     def get_recent_messages(self, chatroom_id):

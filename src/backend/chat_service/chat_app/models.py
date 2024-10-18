@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
 import uuid
+from django.utils import timezone
 
 def user_directory_path(instance, filename):
     return f'profile_images/{instance.id}/{filename}'
@@ -33,7 +34,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_image = models.ImageField(upload_to=user_directory_path, null=True)
     profile_image_link = models.CharField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
     status = models.CharField(max_length=10, choices=[('online', 'Online'), ('away', 'Away'), ('ingame', 'In Game'), ('offline', 'Offline')], default='offline')
-    last_active = models.DateTimeField(auto_now=True)
+    last_active = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -68,7 +69,7 @@ class GroupMessage(models.Model):
 	group = models.ForeignKey(ChatGroup, related_name='chat_messages', on_delete=models.CASCADE)
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
 	body = models.CharField(max_length=300)
-	created = models.DateTimeField(auto_now_add=True)
+	created = models.DateTimeField(default=timezone.now)
     
 	class Meta:
 		ordering = ['-created']

@@ -183,6 +183,7 @@ class getUserInfos(View):
             username = request.GET.get('q', '')
             users = User.objects.get(username=username) 
             users_data = {
+                'id': str(users.id),
                 'username': users.username,
                 'profile_image': users.profile_image.url if users.profile_image else None,
                 'profile_image_link': users.profile_image_link,
@@ -202,6 +203,7 @@ class getUserInfoById(View):
             id = request.GET.get('q', '')
             user = User.objects.get(id=id)
             user_data = {
+                'id': str(user.id),
                 'username': user.username,
                 'profile_image': user.profile_image.url if user.profile_image else None,
                 'profile_image_link': user.profile_image_link,
