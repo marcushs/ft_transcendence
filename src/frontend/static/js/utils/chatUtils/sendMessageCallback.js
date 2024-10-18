@@ -43,7 +43,7 @@ function displayChatroomLayout(userData) {
 	const chatRoomConversation = new ChatRoomConversation();
 	chatRoomConversation.setAttribute('data-user', userData);
 	chatRoom.appendChild(chatRoomConversation);
-
+	
 	// Create and append chatroom-bottom-bar
 	const chatRoomBottomBar = new ChatRoomBottomBar();
 	chatRoom.appendChild(chatRoomBottomBar);

@@ -25,7 +25,6 @@ export default class ChatRoomConversation extends HTMLElement {
                 this.chatroom = newValue;
                 if (this.chatroom && this.chatroom !== '') {
                     this.displayLast20Messages();
-					this.scrollTop = this.scrollHeight;
                 }
                 break;
         }
@@ -72,7 +71,7 @@ export default class ChatRoomConversation extends HTMLElement {
 			messageComponent.classList.add(isSent);
 			liElem.appendChild(messageComponent);
 			chatroomConversationUl.appendChild(liElem);
-
+			this.scrollTop = this.scrollHeight;
 		}
 		// last20Messages.forEach(async (message) => {
 		// 	const messageData = message.fields;
