@@ -16,7 +16,6 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 	}
 	statesContainerDiv.innerHTML = '';
 	for (let i = 0; i < statesContainerDiv.classList.length; i++) {
-		console.log(`classlist: ${statesContainerDiv.classList[i]} -- type: ${typeof(statesContainerDiv.classList[i])}`);
 		if (statesContainerDiv.classList[i] === 'states-container')
 			continue;
 		statesContainerDiv.classList.remove(statesContainerDiv.classList[i])
@@ -51,7 +50,6 @@ export default class Game {
 		this.gameId = gameId;
 		this.gameState = gameState;
 		this.initGameRender();
-		console.log('game constructor : ', this);
 		this.renderLoop();
 	}
 
@@ -111,7 +109,7 @@ export default class Game {
 			action = 'move_up';
 		if (this.keysPlayerOne.down)
 			action = 'move_down'
-		if (action) {
+		if (action) {			
 			if (socket && socket.readyState === WebSocket.OPEN) {
 				socket.send(JSON.stringify({
 					'type': 'player_action',
@@ -192,12 +190,10 @@ export default class Game {
 			}
 		});
 		document.addEventListener('keyup', (event) => {
-			if (this.isGameRunning) {
 				if (event.key === 'w') this.keysPlayerOne.up = false;
 				if (event.key === 's') this.keysPlayerOne.down = false;
 				if (event.key === 'W') this.keysPlayerOne.up = false;
 				if (event.key === 'S') this.keysPlayerOne.down = false;
-			}
 		});
 	}
 
@@ -231,9 +227,9 @@ export default class Game {
 	}
 
 	cleanup() {
-		this.detachEventsListener();
-		localStorage.removeItem('inGameComponentState')
 		resetGameInstance();
+		this.gameInProgress = false;
+		this.detachEventsListener();
 	}
 	
 	detachEventsListener() {

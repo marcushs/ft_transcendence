@@ -12,11 +12,8 @@ import checkAuthentication from "./utils/checkAuthentication.js";
 import twoFactorDeactivation from "./views/two-factor-deactivation.js";
 import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
 import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
-import { throwGameInactivityEvent } from "./utils/throwGameInactivityEvent.js";
-import { GameInactivityHandler } from "./components/Game/states/inGame/gameNetworkManager.js";
-import { GameStillActive } from "./components/Game/states/inGame/gameWebsocket.js";
+import { GameInactivityHandler, checkInactiveGame } from "./components/Game/states/inGame/gameNetworkManager.js";
 import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
-import { gameInstance, resetGameInstance } from "./components/Game/states/inGame/inGameComponent.js";
 import { PingStatus } from "./views/pingStatus.js";
 import { unloadManager } from "./utils/unloadManager.js";
 import { loadWebSocket } from "./views/websocket/loadWebSocket.js";
@@ -46,29 +43,12 @@ async function setUserRender() {
         await loadWebSocket();
         await setTwoFactorUserData();
         new PingStatus();
-        await setGameState();
+        // await checkInactiveGame();
     } else
         console.log('Guest session');
 }
 
 setUserRender();
-
-async function setGameState() {
-    const savedState = localStorage.getItem('inGameComponentState');
-    const gameState = savedState ? JSON.parse(savedState) : null;
-    console.log('gameState: ', gameState);
-    if (gameState) {
-        const gameStatus = await GameStillActive(gameState.gameId);
-        console.log('gameStatus: ', gameStatus);
-        if (gameStatus.status === 'success' && gameStatus.user_in === true) {
-            throwGameInactivityEvent(gameState.userId);
-        } else {
-            localStorage.removeItem('inGameComponentState');
-            if (gameInstance)
-                resetGameInstance();
-        }
-    }
-}
 
 // set twoFactor needed data
 async function setTwoFactorUserData() {
@@ -104,6 +84,7 @@ async function router() {
 
     document.title = view.title;
     app.innerHTML = await view.render();
+    await checkInactiveGame();
 }
 
 function handleDynamicURL() {
@@ -151,8 +132,8 @@ document.addEventListener("userLoggedIn", setUserRender)
 // Handle game reconnection
 document.addEventListener("inactiveGame", event => {
     const userId = event.detail.userId;
-    const disconnectHandler = new GameInactivityHandler(userId);
-    disconnectHandler.startReconnectChoice();
+    const inactivityHandler = new GameInactivityHandler(userId);
+    inactivityHandler.listenChoices();
 })
 
 // Handle reloading or quit app

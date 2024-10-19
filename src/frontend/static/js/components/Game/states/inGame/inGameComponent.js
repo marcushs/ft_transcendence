@@ -1,5 +1,6 @@
 import { throwGameInactivityEvent } from '../../../../utils/throwGameInactivityEvent.js';
 import Game from './Game.js';
+import { disconnectWebSocket } from './gameWebsocket.js';
 
 export let gameInstance = null;
 
@@ -25,13 +26,10 @@ class InGameComponent extends HTMLElement {
 		this.setInitialMapSize();
 		this.initCanvas();
 		gameInstance = new Game(this.canvas, this.gameId, this.gameState, this.userId);
-		console.log('game instance : ', gameInstance);
 		localStorage.setItem('inGameComponentState', JSON.stringify(this.saveState()))
 	}
 
-	setState(newState) {
-		console.log('newstate reached: ', newState);
-		
+	setState(newState) {		
 		this.userId = newState.userId;
 		this.gameId = newState.gameId;
 		this.gameState = newState.gameState;
@@ -83,9 +81,11 @@ class InGameComponent extends HTMLElement {
 	}
 
 	async disconnectedCallback() {
-		console.log('GAME INSTANCE: ', gameInstance);
-		if (gameInstance)
+		if (gameInstance) {
+			disconnectWebSocket();
+			gameInstance.cleanup();
 			throwGameInactivityEvent(this.userId);
+		}
 	}
 }
 

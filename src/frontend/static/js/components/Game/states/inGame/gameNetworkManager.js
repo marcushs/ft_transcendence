@@ -1,28 +1,58 @@
-import { disconnectWebSocket, websocketReconnection } from "./gameWebsocket.js";
 import { sendRequest } from "../../../../utils/sendRequest.js";
-import { gameInstance, resetGameInstance } from "./inGameComponent.js";
+import { websocketReconnection } from "./gameWebsocket.js";
+import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
+import { throwGameInactivityEvent } from "../../../../utils/throwGameInactivityEvent.js"
+
+export async function checkInactiveGame() {
+    const savedState = localStorage.getItem('inGameComponentState');
+    const gameState = savedState ? JSON.parse(savedState) : null;
+    console.log('gameState: ', gameState);
+    if (gameState) {
+        try {
+            const gameStatus = await GameStillActive(gameState.gameId);
+            if (gameStatus.status === 'success' && gameStatus.user_in === true)
+                throwGameInactivityEvent(gameState.userId);
+            else
+                localStorage.removeItem('inGameComponentState');
+        } catch (error) {
+            console.log(error.message);
+            return;
+        }
+    }
+}
+
+export async function GameStillActive(game_id) {
+	try {
+		const dataResponse = await sendRequest('GET', `http://localhost:8005/game/game_is_active/?q=${game_id}`, null)
+		return dataResponse;
+	} catch (error) {
+		throw new Error(error.message)
+	}
+}
 
 export class GameInactivityHandler {
     constructor(userId) {
         if (GameInactivityHandler.instance) {
             return GameInactivityHandler.instance;
         }
+        GameInactivityHandler.instance = this;
         
-        const savedState = localStorage.getItem('inGameComponentState');
-        this.gameState = savedState ? JSON.parse(savedState) : null;
         this.userId = userId;
         this.isRunningHandler = false;
-        this.inactivityTimeout = null;
-        GameInactivityHandler.instance = this;
+        const savedState = localStorage.getItem('inGameComponentState');
+        this.gameState = savedState ? JSON.parse(savedState) : null;
     }
 
-    async startReconnectChoice() {
+    async listenChoices() {
+        console.log('inactivity handler reached !');
+        console.log(`this.gameState: ${this.gameState} -- this.isRunningHandler: ${this.isRunningHandler}`);
         if (!this.gameState || this.isRunningHandler)
             return;
-        this.isRunningHandler = true;
-        disconnectWebSocket(this.userId, true);
-        this.render();
-        this.attachEventsListener();
+            this.isRunningHandler = true;
+            console.log('render set!');
+            
+            this.render();
+            this.attachEventsListener();
     }
 
     render() {
@@ -43,17 +73,13 @@ export class GameInactivityHandler {
     }
 
     attachEventsListener() {
-        this.reconnectChoice.addEventListener('click', () => {
-            console.log('event reached !');
-            
-            this.handleReconnection();
-        })
-        this.LeaveChoice.addEventListener('click', () => {
-            console.log('event reached !');
-            
-            surrenderHandler();
+        this.reconnectChoice.addEventListener('click', async () => {            
+            await this.handleReconnection();
             this.inactivePopUp.remove();
-            this.isRunningHandler = false;
+        })
+        this.LeaveChoice.addEventListener('click', async () => {            
+            await this.handleSurrender();
+            this.inactivePopUp.remove();
         })
     }
 
@@ -65,14 +91,15 @@ export class GameInactivityHandler {
         if (!isReconnected)
             return;
         this.inactivePopUp.remove();
-        let statesContainerDiv = document.querySelector('.states-container');
-        if (!statesContainerDiv) {
+        if (window.location.pathname !== '/') {
             throwRedirectionEvent('/');
-            statesContainerDiv = document.querySelector('.states-container');
+            await this.waitForStatesContainer();
         }
+        const statesContainerDiv = document.querySelector('.states-container');
+        console.log('statesContainerDiv: ', statesContainerDiv);
+        
         statesContainerDiv.innerHTML = '';
         for (let i = 0; i < statesContainerDiv.classList.length; i++) {
-            console.log(`classlist: ${statesContainerDiv.classList[i]} -- type: ${typeof(statesContainerDiv.classList[i])}`);
             if (statesContainerDiv.classList[i] === 'states-container')
                 continue;
             statesContainerDiv.classList.remove(statesContainerDiv.classList[i])
@@ -83,9 +110,21 @@ export class GameInactivityHandler {
         statesContainerDiv.appendChild(inGameComponent);
     }
 
+    async waitForStatesContainer() {
+        await new Promise(resolve => {
+            const observer = new MutationObserver(() => {
+                const newContainer = document.querySelector('.states-container');
+                if (newContainer) {
+                    observer.disconnect();
+                    resolve();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+
     async handleSurrender() {
-        disconnectWebSocket();
-        surrenderHandler();
+        await surrenderHandler();
         this.isRunningHandler = false;
     }
 }
@@ -93,7 +132,7 @@ export class GameInactivityHandler {
 export async function surrenderHandler() {
     const savedState = localStorage.getItem('inGameComponentState');
     const gameState = savedState ? JSON.parse(savedState) : null;
-    if (!gameState || !gameInstance)
+    if (!gameState)
         return;
     try {
         const payload = {
@@ -101,7 +140,7 @@ export async function surrenderHandler() {
             player_id: gameState.userId
         };
         const response = await sendRequest('POST', 'http://localhost:8005/game/surrend_game/', payload);
-        gameInstance.cleanup();
+		localStorage.removeItem('inGameComponentState');
         console.log(response);
     } catch (error) {
         console.log(error);
