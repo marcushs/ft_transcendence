@@ -41,7 +41,7 @@ export function UpdateContactInList(contactJSON, change_info, old_value) {
                 
                 if (contactUsername.textContent === contact.username) {
                     console.log(`old_status = ${old_value}`);
-                    console.log(`new_status = ${contact.status}`);   
+                    console.log(`new_status = ${contact.status}`);
                     const statusCircle = contactElement.querySelector('.status-circle');
                     contactElement.querySelector('.contact-status').textContent = contact.status;
                     if (old_value === 'online') {

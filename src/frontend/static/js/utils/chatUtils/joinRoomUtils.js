@@ -1,8 +1,6 @@
 import { sendRequest } from "../sendRequest.js";
 import { chatSocket, chatroomsList } from "../../views/websocket/loadWebSocket.js";
 
-let userId;
-
 export async function receiveChatgroupUpdate(data) {
 	const userId = await getUserId();
 	let res = await sendRequest('GET', '/api/user/user_info/', null, false);
@@ -10,7 +8,7 @@ export async function receiveChatgroupUpdate(data) {
 	if (res.status === 'error') return console.log(res.message);
 
 	if (userId === data.target_user) {
-		sendJoinRoomMsg(data.chatroom, chatSocket);
+		sendJoinRoomMsg(data.chatroom, chatSocket, true);
 		console.log(`${userId} joined ${data.chatroom}`);
 	}
 }
@@ -20,17 +18,17 @@ export function joinAllInvitedChatrooms(chatrooms) {
 	chatrooms.forEach(chatroom => {
 		const chatroomId = chatroom.id
 		console.log('chatroom id is: ' + chatroomId);
-		sendJoinRoomMsg(chatroomId, chatSocket);
+		sendJoinRoomMsg(chatroomId, chatSocket, false);
 		console.log('joined chatgroup: ' + chatroomId);
 	});
 }
 
-export function sendJoinRoomMsg(chatroom, chatSocket) {
+export function sendJoinRoomMsg(chatroom, chatSocket, newRoom) {
 	const message = {
-		'type': 'join_room',
+		'type': `${newRoom ? 'join_new_room' : 'join_old_room'}`,
 		'chatroom_id': chatroom,
 	}
-	
+
 	chatSocket.send(JSON.stringify(message));
 }
 
@@ -40,14 +38,18 @@ export async function fetchChatroomsList() {
 	return res.chatrooms;
 }
 
-
 export async function updateChatContactListDOM() {
-	if (chatroomsList.length === 0) return ;
+	let contactCount = chatroomsList.length;
+
+	if (contactCount === 0) return ;
 	
 	const userId = await getUserId();
-	const contactedList = document.querySelector('.contacted-list > ul');
+	const contactedListUl = document.querySelector('.contacted-list > ul');
+	const chatContactCountEl = document.getElementById('chat-contact-count');
 
-	contactedList.innerHTML = '';
+	chatContactCountEl.innerText = `(${contactCount})`;
+	contactedListUl.innerHTML = '';
+	console.log(chatroomsList)
 
 	chatroomsList.forEach(chatroom => { 
 		console.log('userId: ', userId, 'chatroom.members[0].id: ', chatroom.members[0].id, 'chatroom.members[1].id: ', chatroom.members[1].id)
@@ -58,10 +60,9 @@ export async function updateChatContactListDOM() {
 		const contactComp = document.createElement('chat-contact-component');
 
 		contactComp.setAttribute('data-user', user_data);
+		contactComp.setAttribute('data-chatroom', chatroom.id);
 		listElem.appendChild(contactComp);
-		contactedList.appendChild(listElem);
-		// console.log('chatroom members: ' + chatroom.user_id);
-		// let userData = await getUserInfoById(chatroom.)
+		contactedListUl.appendChild(listElem);
 	});
 }
 
@@ -85,5 +86,3 @@ export async function getUserId() {
 	
 	return res.user.id;
 }
-
-	

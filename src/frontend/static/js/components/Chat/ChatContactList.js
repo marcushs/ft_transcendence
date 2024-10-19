@@ -2,21 +2,25 @@ import "./ChatContactComponent.js"
 import { sendRequest } from "../../utils/sendRequest.js";
 
 class ChatContactList extends HTMLElement {
-	static get observedAttributes() {
-        return ["data-count"];
-    };
-
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (name === 'data-count')
-			this.count = parseInt(newValue, 10);
-	}
-
+	// static get observedAttributes() {
+    //     return ["data-count"];
+    // };
+	
 	constructor() {
 		super();
-		this.count = 0;
+		// this.count = 0;
 		this.render();
 		this.addEventListeners();
 	}
+
+	// attributeChangedCallback(name, oldValue, newValue) {
+	// 	if (name === 'data-count')
+	// 		{
+	// 			console.log('in chatcontactlist count is: ', this.count)
+	// 			this.count = parseInt(newValue, 10);
+	// 			console.log('in chatcontactlist count is: ', this.count)
+	// 	}
+	// }
 
 	render() {
 		this.innerHTML = `
@@ -27,7 +31,7 @@ class ChatContactList extends HTMLElement {
 						<div class="vertical-line"></div>
 					</div>
 					<p class="title">Contacted</p>
-					<p id="chat-contact-count" class="count" data-count="0">(${this.count})</p>
+					<p id="chat-contact-count" class="count">(0)</p>
 					</div>
 				<ul>
 					<p class="no-contact-text">No recent message</p>

@@ -22,6 +22,9 @@ class ChatComponent extends HTMLElement {
 	render() {
 		this.innerHTML = `
 			<img class='chat-icon' src='../../assets/chat-icon.svg' alt='chat-icon'>
+			<div class="chat-unread-message-notif">
+				<div class="ping"></div>
+			</div>
 			<div class="chat-main-menu ">
 				<i id="chat-close-btn" class="fa-solid fa-xmark" aria-hidden="true"></i>
 				<div class="chat-lobby ">

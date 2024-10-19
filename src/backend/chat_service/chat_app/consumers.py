@@ -50,7 +50,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                                                      'timestamp': self.format_datetime(saved_message.created)})
             except Http404:
                 return
-        elif message_type == 'join_room':
+        elif message_type == 'join_new_room':
             chatroom_id = data['chatroom_id']
             await self.join_room(chatroom_id)
 
@@ -64,6 +64,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'timestamp': self.format_datetime(message.created),
                     'author': str(await self.get_message_author_id(message))
                 }))
+        elif message_type == 'join_old_room':
+            chatroom_id = data['chatroom_id']
+            await self.join_room(chatroom_id)
 
     async def join_room(self, chatroom):
         await self.channel_layer.group_add(chatroom, self.channel_name)

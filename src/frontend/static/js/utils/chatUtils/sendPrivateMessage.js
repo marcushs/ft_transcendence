@@ -34,18 +34,21 @@ async function findMatchingChatroom(userId) {
 
 export async function updateCurrentChatroomId(userId) {
 	const chatroomConversation = document.querySelector('chatroom-conversation');
+	if (!chatroomConversation) return ;
+
 	const chatroomId = await findMatchingChatroom(userId);
 
 	if (!chatroomId) return ;
 
-	if (chatroomConversation) {
-		chatroomConversation.setAttribute('data-chatroom', chatroomId);
-	}
+	chatroomConversation.setAttribute('data-chatroom', chatroomId);
 }
 
 export async function putMessageToChatroomConversation(messageData) {
 	const chatroomConversation = document.querySelector('chatroom-conversation');
-	if (!chatroomConversation) return ;
+	if (!chatroomConversation) {
+		unreadMessageNotifOn();
+		return ;
+	} 
 	
 	const currentChatroomId = chatroomConversation.getAttribute('data-chatroom');
 	if (!isTargetChatroom(currentChatroomId, messageData.chatroom)) return ;
@@ -75,4 +78,16 @@ export async function isSentOrReceivedMessage(authorId) {
 
 function isMessageValid(message) {
 	return (message === '' || message.length > 300) ? false : true;
+}
+
+function unreadMessageNotifOn() {
+	const chatUnreadNotif = document.querySelector('.chat-unread-message-notif');
+
+	chatUnreadNotif.classList.add('active');
+}
+
+function unreadMessageNotifOff() {
+	const chatUnreadNotif = document.querySelector('.chat-unread-message-notif');
+
+	chatUnreadNotif.classList.remove('active');
 }

@@ -71,19 +71,8 @@ export default class ChatRoomConversation extends HTMLElement {
 			messageComponent.classList.add(isSent);
 			liElem.appendChild(messageComponent);
 			chatroomConversationUl.appendChild(liElem);
-			this.scrollTop = this.scrollHeight;
 		}
-		// last20Messages.forEach(async (message) => {
-		// 	const messageData = message.fields;
-		// 	const chatroomConversationUl = this.querySelector('.chatroom-conversation-message-container > ul');
-		// 	const liElem = document.createElement('li');
-		// 	const messageComponent = new ChatMessageComponent(messageData);
-
-		// 	const isSent = await isSentOrReceivedMessage(messageData.author);
-		// 	messageComponent.classList.add(isSent);
-		// 	liElem.appendChild(messageComponent);
-		// 	chatroomConversationUl.appendChild(liElem);
-		// });
+		this.scrollTop = this.scrollHeight;
 	}
 };
 

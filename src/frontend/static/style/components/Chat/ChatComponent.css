@@ -19,3 +19,25 @@ chat-component .chat-icon {
 	width: 3rem;
 	cursor: pointer;
 }
+
+chat-component .chat-unread-message-notif {
+	display: none;
+}
+
+chat-component .chat-unread-message-notif.active {
+	display: block;
+	width: 1.3rem;
+	height: 1.3rem;
+	background-color: orange;
+	border-radius: 50%;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	transform: translate(30%, -30%);
+	animation: fadeInOut 2s ease-in-out infinite;
+}
+
+@keyframes fadeInOut {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0; }
+}

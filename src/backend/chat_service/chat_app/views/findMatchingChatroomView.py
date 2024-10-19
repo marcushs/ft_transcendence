@@ -14,7 +14,7 @@ class findMatchingChatroomView(View):
 		super().__init__
 
 	def get(self, request):
-		author = request.user
+		author = request.user.id
 		target_user = request.GET.get('targetUserId')
 
 		if isinstance(author, AnonymousUser):

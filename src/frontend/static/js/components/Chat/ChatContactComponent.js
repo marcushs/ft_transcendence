@@ -1,8 +1,9 @@
 import getProfileImage from "../../utils/getProfileImage.js";
+import { sendRequest } from "../../utils/sendRequest.js";
 
 class ChatContactComponent extends HTMLElement {
 	static get observedAttributes() {
-        return ["data-user", "data-status"];
+        return ["data-user", "data-chatroom"];
     };
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -10,8 +11,9 @@ class ChatContactComponent extends HTMLElement {
 			this.userData = JSON.parse(newValue);
 			this.render();
 		}
-		if (name === 'data-status')
-			this.status = newValue;
+		if (name === 'data-chatroom') {
+			this.chatroom = newValue;
+		}
 	}
 
 	constructor() {
@@ -21,7 +23,9 @@ class ChatContactComponent extends HTMLElement {
 
 	async render() {
 		let profileImage = await getProfileImage(this.userData);
+		const lastMessage = await this.getChatroomLastMessage();
 
+		console.log('in ChatContactComponent: ', lastMessage);
 		this.innerHTML = `
 		<div class="chat-contact-profile-picture">
 			<img src=${profileImage} alt='contact picture'></img>
@@ -29,7 +33,7 @@ class ChatContactComponent extends HTMLElement {
 		</div>
 		<div class="chat-contact-info">
 			<p>${this.userData.username}</p>
-			<p>This is an example message This is an example message This is an example message </p>
+			<p>${lastMessage}</p>
 		</div>
 		<div class="message-status">
 			<div class="last-message-datetime">
@@ -45,6 +49,14 @@ class ChatContactComponent extends HTMLElement {
 		`;
 	};
 
+	async getChatroomLastMessage() {
+		let res = await sendRequest('GET', `/api/chat/get_chatroom_last_message/?chatroomId=${this.chatroom}`, null, false);
+
+		if (res.status === 'Error') return 'Problem getting last message of chatroom';
+
+		console.log(res);
+		return res.lastMessage[0].fields.body;
+	}
 }
 
 customElements.define('chat-contact-component', ChatContactComponent);
