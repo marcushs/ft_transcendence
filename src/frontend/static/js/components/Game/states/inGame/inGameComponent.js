@@ -1,4 +1,4 @@
-import { throwGameDisconnectEvent } from '../../../../utils/throwGameDisconnectEvent.js';
+import { throwGameInactivityEvent } from '../../../../utils/throwGameInactivityEvent.js';
 import Game from './Game.js';
 
 export let gameInstance = null;
@@ -85,7 +85,7 @@ class InGameComponent extends HTMLElement {
 	async disconnectedCallback() {
 		console.log('GAME INSTANCE: ', gameInstance);
 		if (gameInstance)
-			throwGameDisconnectEvent(this.userId);
+			throwGameInactivityEvent(this.userId);
 	}
 }
 

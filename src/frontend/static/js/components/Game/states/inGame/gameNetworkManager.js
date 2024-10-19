@@ -1,6 +1,6 @@
 import { disconnectWebSocket, websocketReconnection } from "./gameWebsocket.js";
 import { sendRequest } from "../../../../utils/sendRequest.js";
-import { resetGameInstance } from "./inGameComponent.js";
+import { gameInstance, resetGameInstance } from "./inGameComponent.js";
 
 export class GameInactivityHandler {
     constructor(userId) {
@@ -16,22 +16,45 @@ export class GameInactivityHandler {
         GameInactivityHandler.instance = this;
     }
 
-    async handleDisconnect() {
+    async startReconnectChoice() {
         if (!this.gameState || this.isRunningHandler)
             return;
         this.isRunningHandler = true;
         disconnectWebSocket(this.userId, true);
-        this.checkInactivity();
+        this.render();
+        this.attachEventsListener();
     }
 
-    async checkInactivity() {
-        const wantReconnect = confirm("You've left the game. Do you want to return to the game or surrender?");
+    render() {
+        this.innerHTML = `
+            <div class="inactive-game-pop-up">
+                <p>you have a game in progress</p>
+                <p>reconnect or leave?</p>
+                <div class="inactive-game-choice-icon">
+                    <p class="inactive-game-choice-reconnect">Reconnect</p>
+                    <p class="inactive-game-choice-leave">Leave</p>
+                </div>
+            </div>
+        `
+        app.innerHTML += this.innerHTML;
+        this.inactivePopUp = document.querySelector('.inactive-game-pop-up')
+        this.reconnectChoice = document.querySelector('.inactive-game-choice-reconnect');
+        this.LeaveChoice = document.querySelector('.inactive-game-choice-leave');
+    }
 
-        if (wantReconnect) {
-            await this.handleReconnection();
-        } else {
-            await this.handleSurrender();
-        }
+    attachEventsListener() {
+        this.reconnectChoice.addEventListener('click', () => {
+            console.log('event reached !');
+            
+            this.handleReconnection();
+        })
+        this.LeaveChoice.addEventListener('click', () => {
+            console.log('event reached !');
+            
+            surrenderHandler();
+            this.inactivePopUp.remove();
+            this.isRunningHandler = false;
+        })
     }
 
     async handleReconnection() {
@@ -41,6 +64,7 @@ export class GameInactivityHandler {
         const isReconnected = await websocketReconnection(this.userId);
         if (!isReconnected)
             return;
+        this.inactivePopUp.remove();
         let statesContainerDiv = document.querySelector('.states-container');
         if (!statesContainerDiv) {
             throwRedirectionEvent('/');
@@ -53,13 +77,14 @@ export class GameInactivityHandler {
                 continue;
             statesContainerDiv.classList.remove(statesContainerDiv.classList[i])
         }
+        this.isRunningHandler = false;
         const inGameComponent = document.createElement('in-game-component');
         inGameComponent.setState(this.gameState)
         statesContainerDiv.appendChild(inGameComponent);
-        this.isRunningHandler = false;
     }
 
     async handleSurrender() {
+        disconnectWebSocket();
         surrenderHandler();
         this.isRunningHandler = false;
     }
@@ -68,7 +93,7 @@ export class GameInactivityHandler {
 export async function surrenderHandler() {
     const savedState = localStorage.getItem('inGameComponentState');
     const gameState = savedState ? JSON.parse(savedState) : null;
-    if (!gameState)
+    if (!gameState || !gameInstance)
         return;
     try {
         const payload = {
@@ -76,8 +101,7 @@ export async function surrenderHandler() {
             player_id: gameState.userId
         };
         const response = await sendRequest('POST', 'http://localhost:8005/game/surrend_game/', payload);
-        localStorage.removeItem('inGameComponentState');
-        resetGameInstance();
+        gameInstance.cleanup();
         console.log(response);
     } catch (error) {
         console.log(error);

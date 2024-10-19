@@ -58,6 +58,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 			raise Exception('no game ID provided')
 		self.player_id = str(data['player_id'])
 		self.game_id = str(data['game_id'])
+		print(f'self.player_id: {self.player_id} -- self.game_id')
 		self.game_instance = PongGameEngine.get_active_game(str(data['game_id']))
 		if not self.game_instance:
 			raise Exception('game ID does not match any current game')

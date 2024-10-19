@@ -16,7 +16,7 @@ class MatchHistory(models.Model):
     loser_score = models.IntegerField()
     match_type = models.CharField(max_length=10, choices=match_type_choices)
     
-    def __str__(self):
+    def __str__(self): 
         return f'winner: {self.winner} vs loser: {self.loser} on {self.date} ({self.match_type})'
     
     class Meta:

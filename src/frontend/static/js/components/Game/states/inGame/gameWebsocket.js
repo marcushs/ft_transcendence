@@ -12,6 +12,8 @@ export async function gameWebsocket(userId) {
 		console.log('already connected to game Websocket');
 		return;
 	}
+	if (socket)
+		disconnectWebSocket();
 
 	socket = new WebSocket(`ws://localhost:8005/ws/game/?user_id=${userId}`);
 
@@ -137,10 +139,12 @@ async function checkReconnectCondition(count, maxRetries, gameState) {
 	if (!gameState)
 		throw new Error('instance not found')
 	const gameStatus = await GameStillActive(gameState.gameId);
+	console.log('gamestatus: ', gameStatus);
+	
 	if (gameStatus.status === 'error' && gameStatus.message === 'invalid_id')
 		throw new Error('invalid game id')
-	if (gameStatus.status === 'error' && gameStatus.message === 'not_found')
-		throw new Error('the game you are trying to join is over')
+	// if (gameStatus.status === 'error' && gameStatus.message === 'not_found')
+	// 	throw new Error('the game you are trying to join is over')
 	if (gameStatus.status === 'success' && gameStatus.user_in === false)
 		throw new Error('you are not a player in this game')
 }

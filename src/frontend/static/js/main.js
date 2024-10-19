@@ -12,7 +12,7 @@ import checkAuthentication from "./utils/checkAuthentication.js";
 import twoFactorDeactivation from "./views/two-factor-deactivation.js";
 import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
 import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
-import { throwGameDisconnectEvent } from "./utils/throwGameDisconnectEvent.js";
+import { throwGameInactivityEvent } from "./utils/throwGameInactivityEvent.js";
 import { GameInactivityHandler } from "./components/Game/states/inGame/gameNetworkManager.js";
 import { GameStillActive } from "./components/Game/states/inGame/gameWebsocket.js";
 import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
@@ -61,7 +61,7 @@ async function setGameState() {
         const gameStatus = await GameStillActive(gameState.gameId);
         console.log('gameStatus: ', gameStatus);
         if (gameStatus.status === 'success' && gameStatus.user_in === true) {
-            throwGameDisconnectEvent(gameState.userId);
+            throwGameInactivityEvent(gameState.userId);
         } else {
             localStorage.removeItem('inGameComponentState');
             if (gameInstance)
@@ -149,10 +149,10 @@ async function isViewAccessible(view) {
 document.addEventListener("userLoggedIn", setUserRender)
 
 // Handle game reconnection
-document.addEventListener("gameDisconnect", event => {
+document.addEventListener("inactiveGame", event => {
     const userId = event.detail.userId;
     const disconnectHandler = new GameInactivityHandler(userId);
-    disconnectHandler.handleDisconnect();
+    disconnectHandler.startReconnectChoice();
 })
 
 // Handle reloading or quit app
