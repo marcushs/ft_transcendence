@@ -12,7 +12,7 @@ import checkAuthentication from "./utils/checkAuthentication.js";
 import twoFactorDeactivation from "./views/two-factor-deactivation.js";
 import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
 import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
-import { GameInactivityHandler, checkInactiveGame } from "./components/Game/states/inGame/gameNetworkManager.js";
+import { checkInactiveGame } from "./components/Game/states/inGame/gameNetworkManager.js";
 import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
 import { PingStatus } from "./views/pingStatus.js";
 import { unloadManager } from "./utils/unloadManager.js";
@@ -130,10 +130,14 @@ async function isViewAccessible(view) {
 document.addEventListener("userLoggedIn", setUserRender)
 
 // Handle game reconnection
-document.addEventListener("inactiveGame", event => {
-    const userId = event.detail.userId;
-    const inactivityHandler = new GameInactivityHandler(userId);
-    inactivityHandler.listenChoices();
+document.addEventListener("inactiveGame", () => {
+    setTimeout(() => {
+        const isRender = document.querySelector('game-inactivity-component');       
+        if (!isRender) {
+            const gameInactivityComponent = document.createElement('game-inactivity-component');
+            app.appendChild(gameInactivityComponent);
+        }
+    }, 600);
 })
 
 // Handle reloading or quit app
