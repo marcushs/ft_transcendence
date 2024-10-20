@@ -48,7 +48,7 @@ export async function putMessageToChatroomConversation(messageData) {
 	if (!chatroomConversation) {
 		unreadMessageNotifOn();
 		return ;
-	} 
+	}
 	
 	const currentChatroomId = chatroomConversation.getAttribute('data-chatroom');
 	if (!isTargetChatroom(currentChatroomId, messageData.chatroom)) return ;
@@ -90,4 +90,18 @@ function unreadMessageNotifOff() {
 	const chatUnreadNotif = document.querySelector('.chat-unread-message-notif');
 
 	chatUnreadNotif.classList.remove('active');
+}
+
+export async function messageReceptionDOMUpdate() {
+	const chatroomConversation = document.querySelector('chatroom-conversation');
+	
+	if (!chatroomConversation) { // need to check if the chatroom conversation is the matching one as well
+		unreadMessageNotifOn();
+		return ;
+	}
+
+	// if chat lobby is active instead of chatroom conversation, then update DOM with last message sent or received
+	const chatLobby = document.querySelector('.chat-lobby.active');
+
+	//otherwise call putMessageToChatroomConversation
 }
