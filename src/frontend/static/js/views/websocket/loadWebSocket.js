@@ -1,7 +1,7 @@
 import { sendRequest } from '../../utils/sendRequest.js';
 import {removeContactFromList, addNewContactToList, UpdateContactInList} from './updateContactWebsocket.js'
 import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms, updateChatContactListDOM} from '../../utils/chatUtils/joinRoomUtils.js';
-import { updateCurrentChatroomId, putMessageToChatroomConversation } from '../../utils/chatUtils/sendPrivateMessage.js';
+import { updateCurrentChatroomId, putMessageToChatroomConversation, messageReceptionDOMUpdate } from '../../utils/chatUtils/sendPrivateMessage.js';
 
 
 let socket = null;
@@ -137,15 +137,16 @@ async function loadChatWebSocket() {
 		
 		if (data.type === 'chat_message') {
 			console.log('in chat message: ', data)
-
-			await putMessageToChatroomConversation(data);
+			
+			await messageReceptionDOMUpdate(data);
 			console.log(`received message from websocket: ${data.message}`)
 		}
 		else if (data.type === 'chatgroup_update') {
+			console.log('chatgroup update: ', data);
 			await receiveChatgroupUpdate(data);
 			chatroomsList = await fetchChatroomsList();
 			await updateCurrentChatroomId(data.target_user);
-			if (document.querySelector('.chat-main-menu').style.display === 'block') updateChatContactListDOM();
+			updateChatContactListDOM();
 		}
 	};
 

@@ -20,15 +20,12 @@ chatroom-top-bar i {
 
 .chatroom-profile-picture {
 	position: relative;
-	width: 10%;
+	width: 4.2rem;
+	height: 4.2rem;
 	top: 50%;
 	left: 5rem;
-	transform: translateY(-45%);
-}
-
-.chatroom-profile-picture img {
-	width: 4rem;
 	border-radius: 50%;
+	transform: translateY(-45%);
 	border: 1px solid var(--light-grey);
 }
 

@@ -30,8 +30,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 
 		this.innerHTML = `
 			<i id="chatroom-back-btn" class="fa-solid fa-arrow-left"></i>
-			<div class="chatroom-profile-picture">
-				<img src='${profileImage}' alt='contact picture'></img>
+			<div class="chatroom-profile-picture" style="background: no-repeat center/100% url('${profileImage}')">
 				<div class="chat-status-circle ${status}"></div>
 			</div>
 			<div class="chat-contact-name-status">

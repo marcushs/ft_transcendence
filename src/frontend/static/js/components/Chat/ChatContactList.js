@@ -1,5 +1,6 @@
 import "./ChatContactComponent.js"
 import { sendRequest } from "../../utils/sendRequest.js";
+import { updateChatContactListDOM } from "../../utils/chatUtils/joinRoomUtils.js";
 
 class ChatContactList extends HTMLElement {
 	// static get observedAttributes() {
@@ -8,19 +9,10 @@ class ChatContactList extends HTMLElement {
 	
 	constructor() {
 		super();
-		// this.count = 0;
 		this.render();
 		this.addEventListeners();
+		updateChatContactListDOM();
 	}
-
-	// attributeChangedCallback(name, oldValue, newValue) {
-	// 	if (name === 'data-count')
-	// 		{
-	// 			console.log('in chatcontactlist count is: ', this.count)
-	// 			this.count = parseInt(newValue, 10);
-	// 			console.log('in chatcontactlist count is: ', this.count)
-	// 	}
-	// }
 
 	render() {
 		this.innerHTML = `
@@ -55,6 +47,8 @@ class ChatContactList extends HTMLElement {
 			this.contactedList.classList.toggle('active');
 		});
 	}
+
+	
 }
 
 customElements.define('chat-contact-list', ChatContactList);

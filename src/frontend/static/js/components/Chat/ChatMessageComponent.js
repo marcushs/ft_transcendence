@@ -11,10 +11,6 @@ export default class ChatMessageComponent extends HTMLElement {
 			<p class="chat-message-bubble">${this.messageData.message || this.messageData.body}</p>
 			<div class="chat-message-info">
 				<p class="chat-message-time">${this.messageData.timestamp || this.formatCreatedDatetime(this.messageData.created)}</p>
-				<div class="chat-message-read unread">
-					<i class="fa-solid fa-check"></i>
-					<i class="fa-solid fa-check"></i>
-				</div>
 			</div>
 		</div>
 		`;

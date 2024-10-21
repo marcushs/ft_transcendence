@@ -92,16 +92,30 @@ function unreadMessageNotifOff() {
 	chatUnreadNotif.classList.remove('active');
 }
 
-export async function messageReceptionDOMUpdate() {
+export async function messageReceptionDOMUpdate(messageData) {
+	updateChatContactComponents(messageData);
+
 	const chatroomConversation = document.querySelector('chatroom-conversation');
 	
-	if (!chatroomConversation || chatroomConversation.style.display === 'none') { // need to check if the chatroom conversation is the matching one as well
+	if (!chatroomConversation) { // need to check if the chatroom conversation is the matching one as well
 		unreadMessageNotifOn();
 		return ;
 	}
 
-	// if chat lobby is active instead of chatroom conversation, then update DOM with last message sent or received
-	const chatLobby = document.querySelector('.chat-lobby.active');
-
-	//otherwise call putMessageToChatroomConversation
+	putMessageToChatroomConversation(messageData);
 }
+
+function updateChatContactComponents(messageData) {
+	let listItems = document.querySelectorAll('chat-contact-component');
+	let messagedContacts = Array.from(listItems);
+
+	console.log('messagedContacts', messagedContacts);
+	messagedContacts.forEach(async (contact) => {
+		if (isTargetChatroom(contact.getAttribute('data-chatroom'), messageData.chatroom)) {
+			if (await isSentOrReceivedMessage(messageData.author) === 'received') {
+				contact.querySelector('.unread-circle').classList.add('active');
+			}
+		}
+	})
+}
+

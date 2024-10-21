@@ -33,18 +33,13 @@ class ChatContactComponent extends HTMLElement {
 		</div>
 		<div class="chat-contact-info">
 			<p>${this.userData.username}</p>
-			<p>${this.formatLastMessage(lastMessage)}</p>
+			<p>${this.formatLastMessage(lastMessage.body)}</p>
 		</div>
 		<div class="message-status">
 			<div class="last-message-datetime">
-				<span>18:39</span>
+				<span>${this.formatCreatedDatetime(lastMessage.created)}</span>
 			</div>
-			<div class="unread-message-count-circle"></div>
-			<i class="fa-solid fa-check"></i>
-			<div class="double-check">
-				<i class="fa-solid fa-check"></i>
-				<i class="fa-solid fa-check"></i>
-			</div>
+			<div class="unread-circle"></div>
 		</div>
 		`;
 	};
@@ -55,12 +50,33 @@ class ChatContactComponent extends HTMLElement {
 		if (res.status === 'Error') return 'Problem getting last message of chatroom';
 
 		console.log(res);
-		return res.lastMessage[0].fields.body;
+		return res.lastMessage[0].fields;
 	}
 
 	formatLastMessage(lastMessage) {
 		return lastMessage.length > 87 ? lastMessage.slice(0, 86) + '......' : lastMessage;
 	}
+
+	formatCreatedDatetime(created) {
+		const date = new Date(created);
+		const now = new Date();
+		const yesterday = new Date(now);
+		yesterday.setDate(yesterday.getDate() - 1);
+	  
+		if (this.isSameDay(date, now)) {
+		  return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+		} else if (this.isSameDay(date, yesterday)) {
+		  return 'Yesterday';
+		} else {
+		  return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+		}
+	  }
+	  
+	isSameDay(date1, date2) {
+		return date1.getFullYear() === date2.getFullYear() &&
+			   date1.getMonth() === date2.getMonth() &&
+			   date1.getDate() === date2.getDate();
+	  }
 }
 
 customElements.define('chat-contact-component', ChatContactComponent);
