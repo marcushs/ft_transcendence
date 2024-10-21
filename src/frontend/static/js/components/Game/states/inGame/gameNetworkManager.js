@@ -1,5 +1,5 @@
 import { sendRequest } from "../../../../utils/sendRequest.js";
-import { websocketReconnection } from "./gameWebsocket.js";
+import { disconnectWebSocket, websocketReconnection } from "./gameWebsocket.js";
 import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
 import { throwGameInactivityEvent } from "../../../../utils/throwGameInactivityEvent.js"
 
@@ -52,6 +52,8 @@ class GameInactivityComponent extends HTMLElement {
 
     render() {
         this.innerHTML = `
+        <div class="inactive-game-pop-up-background">
+            <div class="background-overlay"></div>
             <div class="inactive-game-pop-up">
                 <p>you have a game in progress</p>
                 <p>reconnect or leave?</p>
@@ -60,6 +62,7 @@ class GameInactivityComponent extends HTMLElement {
                     <p class="inactive-game-choice-leave">Leave</p>
                 </div>
             </div>
+        </div>
         `
         this.inactivePopUp = document.querySelector('.inactive-game-pop-up')
         this.reconnectChoice = document.querySelector('.inactive-game-choice-reconnect');

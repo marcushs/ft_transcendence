@@ -246,9 +246,9 @@ class PongGameEngine:
             return
         player = self.state[player_key]
         if action == 'move_up':
-            player['position']['y'] = max(player['position']['y'] - 4, self.player_size['height'] * 0.5)
+            player['position']['y'] = max(player['position']['y'] - (self.map['width'] * 0.0075), self.player_size['height'] * 0.5)
         elif action == 'move_down':
-            player['position']['y'] = min(player['position']['y'] + 4, self.map['height'] - self.player_size['height'] * 0.5)
+            player['position']['y'] = min(player['position']['y'] + (self.map['width'] * 0.0075), self.map['height'] - self.player_size['height'] * 0.5)
             
  #//---------------------------------------> Connection management method <--------------------------------------\\#
 

@@ -167,8 +167,10 @@ export function waitForOpenWebsocketConnection(maxChecks = 20, interval = 500) {
 
 export function disconnectWebSocket(userId, sendMessage) {
 	if (socket && socket.readyState === WebSocket.OPEN) {
-		if (sendMessage)
+		if (sendMessage) {
 			sendDisconnectMessage(userId);
+			console.log('disconnect message send to websocket !');
+		}
 		socket.onclose = () => {};
 		socket.close();
 		console.log('Game connection closed');

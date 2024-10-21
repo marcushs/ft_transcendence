@@ -82,7 +82,7 @@ class InGameComponent extends HTMLElement {
 
 	async disconnectedCallback() {
 		if (gameInstance) {
-			disconnectWebSocket();
+			disconnectWebSocket(this.userId, true);
 			gameInstance.cleanup();
 			throwGameInactivityEvent();
 		}
