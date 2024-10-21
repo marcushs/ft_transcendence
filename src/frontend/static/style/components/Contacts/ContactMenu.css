@@ -27,7 +27,7 @@ contact-menu-component {
 } */
 
 .contact-menu {
-    z-index: 3;
+    z-index: 4;
     position: absolute;
     height: 48rem;
     width: 30rem;

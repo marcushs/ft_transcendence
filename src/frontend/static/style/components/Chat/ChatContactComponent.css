@@ -42,7 +42,7 @@ chat-contact-component {
 }
 
 .chat-contact-info p:first-child {
-	font-weight: 700;
+	font-weight: 500;
 	font-size: 2rem;
 }
 
@@ -50,6 +50,8 @@ chat-contact-component {
 	font-style: italic;
 	font-size: 1.2rem;
 	color: gray;
+	word-wrap: break-word;
+	text-wrap: wrap;
 }
 
 .chat-status-circle.online {

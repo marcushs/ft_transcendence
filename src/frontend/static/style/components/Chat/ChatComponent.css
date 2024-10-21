@@ -11,7 +11,7 @@ chat-component {
 	position: absolute;
 	bottom: 7px;
 	right: 10px;
-	z-index: 4;
+	z-index: 3;
 	width: fit-content;
 }
 

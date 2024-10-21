@@ -32,7 +32,6 @@ export default () => {
 					</button-component>
 					<button-component id="oauthGithubLoginBtn" label="Login with " class="generic-auth-btn" icon="logo_github">
 					</button-component>
-					<button-component id="loginBtn" label="login" class="generic-auth-btn-disabled"></button-component>
 					<p>${getString('loginView/noAccountSentence')} <a href="/signup">${getString('loginView/signup')}</a></p>
 					<span id="feedbackElement" class="input-feedback"></span>
 				</form>

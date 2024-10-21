@@ -95,7 +95,7 @@ function unreadMessageNotifOff() {
 export async function messageReceptionDOMUpdate() {
 	const chatroomConversation = document.querySelector('chatroom-conversation');
 	
-	if (!chatroomConversation) { // need to check if the chatroom conversation is the matching one as well
+	if (!chatroomConversation || chatroomConversation.style.display === 'none') { // need to check if the chatroom conversation is the matching one as well
 		unreadMessageNotifOn();
 		return ;
 	}

@@ -29,7 +29,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 		let status = this.userData.status;
 
 		this.innerHTML = `
-			<i class="fa-solid fa-arrow-left"></i>
+			<i id="chatroom-back-btn" class="fa-solid fa-arrow-left"></i>
 			<div class="chatroom-profile-picture">
 				<img src='${profileImage}' alt='contact picture'></img>
 				<div class="chat-status-circle ${status}"></div>
@@ -43,6 +43,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 				<p>Block ${this.userData.username}</p>
 			</div>
 		`;
+
 	};
 }
 

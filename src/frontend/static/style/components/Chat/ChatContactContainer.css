@@ -33,6 +33,15 @@
 
 .contacted-list.active ul {
 	display: block;
+	overflow-x: hidden;
+}
+
+.contacted-list.active ul p.no-contact-text {
+	font-style: italic;
+	font-size: 1.7rem;
+	font-weight: 500;
+	color: darkgray;
+	transform: translate(5%, 20%);
 }
 
 .contacted-list ul li {

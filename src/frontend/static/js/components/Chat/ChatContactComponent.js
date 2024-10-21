@@ -33,7 +33,7 @@ class ChatContactComponent extends HTMLElement {
 		</div>
 		<div class="chat-contact-info">
 			<p>${this.userData.username}</p>
-			<p>${lastMessage}</p>
+			<p>${this.formatLastMessage(lastMessage)}</p>
 		</div>
 		<div class="message-status">
 			<div class="last-message-datetime">
@@ -56,6 +56,10 @@ class ChatContactComponent extends HTMLElement {
 
 		console.log(res);
 		return res.lastMessage[0].fields.body;
+	}
+
+	formatLastMessage(lastMessage) {
+		return lastMessage.length > 87 ? lastMessage.slice(0, 86) + '......' : lastMessage;
 	}
 }
 
