@@ -46,7 +46,7 @@ class CheckGameStillActive(View):
         game_id_string = request.GET.get('q', '')
         
         if not game_id_string:
-             return JsonResponse({'status': 'error', 'message': 'invalid_id'}, status=200)
+             return JsonResponse({'status': 'error', 'message': 'invalid_id'}, status=200) 
         game_id = str(game_id_string)
         game_instance = PongGameEngine.get_active_game(game_id)
         if not game_instance:

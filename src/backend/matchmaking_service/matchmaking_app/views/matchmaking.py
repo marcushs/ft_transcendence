@@ -8,6 +8,9 @@ from django.views import View
 import random
 import queue
 import json
+import redis
+
+redis_instance = redis.Redis(host='redis', port=6379, db=0)
 
 User = get_user_model()
 
@@ -25,10 +28,12 @@ class MatchmakingQueueManager(View):
 
     def post(self, request):
         if isinstance(request.user, AnonymousUser):  
-            return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200)
+            return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200) 
         data = json.loads(request.body.decode('utf-8'))
         if not self.is_valid_matchmaking_type(data=data):
             return JsonResponse({'status': 'error', 'message': 'Invalid matchmaking type'}, status=400)
+        if is_already_in_waiting_list(request.user.id):
+            return JsonResponse({'status': 'error', 'message': 'User is already in matchmaking research'}, status=200)
         self.start_matchmaking_by_type(data['type'], request)
         return JsonResponse({'status': 'success', 'message': f'User successfully added to {data['type']} queue'}, status=200) 
 
@@ -40,6 +45,7 @@ class MatchmakingQueueManager(View):
             if field == data['type']:
                 return True 
         return False
+        
 
     def start_matchmaking_by_type(self, game_type, request):
         matchmaking_dict = {
@@ -58,7 +64,7 @@ class MatchmakingQueueManager(View):
     def add_player_to_ranked_queue(self, request):
         arr = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         random.shuffle(arr)
-        ranked_queue.put(request.user) 
+        ranked_queue.put(request.user)
         print(f'--------- RANKED = {arr} ---------')
 
 
@@ -114,7 +120,6 @@ class MatchmakingResultManager(View):
         loser = User.objects.get(id=int(data['loser']['id']))
         return winner, loser
 
- #//---------------------------------------> matchmaking utils <--------------------------------------\\#
 
 def change_is_ingame_state(value, user_instance=None, user_id=None):
     if user_id:
@@ -154,3 +159,51 @@ def create_new_match_history(data, winner_instance, loser_instance):
         loser_score=int(data['loser']['score']),
         match_type=str(data['type'])
     )
+
+
+ #//---------------------------------------> matchmaking utils <--------------------------------------\\#
+
+def is_already_in_waiting_list(target_id):
+    waiting_users = redis_instance.lrange('waiting_users', 0, -1)
+    waiting_users = [user_id.decode() for user_id in waiting_users]
+    if str(target_id) in waiting_users:
+        return True
+    return False
+
+
+def check_duplicate_user_in_waiting_list(target_user):
+    waiting_users = redis_instance.lrange('waiting_users', 0, -1)
+    waiting_users = [user_id.decode() for user_id in waiting_users]
+    if str(target_user.id) in waiting_users:
+        print(f'--------------> Found !')
+        return False
+    print(f'--------------> User is not in waiting_list !')
+    return True
+class CheckUserInWaitingQueue(View):
+    def __init__(self):
+        super()
+
+
+    def get(self, request):
+        if isinstance(request.user, AnonymousUser):  
+            return JsonResponse({'message': 'No connected user'}, status=401)
+        if is_already_in_waiting_list(request.user.id):
+            return JsonResponse({'waiting': True}, status=200)
+        return JsonResponse({'waiting': False}, status=200)
+        
+    
+
+class RemoveUserFromWaitingQueue(View):
+    def __init__(self):
+        super()
+
+
+    def post(self, request):
+        if isinstance(request.user, AnonymousUser):  
+            return JsonResponse({'message': 'No connected user'}, status=401)
+        if not is_already_in_waiting_list(request.user.id):
+            return JsonResponse({'message': 'cant remove user from matchmaking research cause he is not already present in it'}, status=401)
+        redis_instance.lrem('waiting_users', 0, request.user.id)
+        return JsonResponse({'message': 'user removed from matchmaking research'}, status=200)
+        
+        

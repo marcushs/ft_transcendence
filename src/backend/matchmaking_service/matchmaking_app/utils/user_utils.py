@@ -12,6 +12,11 @@ async def get_user_id_by_username(username):
     
     return user.id
 
+def get_user_by_id(user_id):
+    user = User.objects.get(id=user_id)
+    
+    return user
+
 
 class add_new_user(View):
     def __init__(self):

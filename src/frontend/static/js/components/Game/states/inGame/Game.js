@@ -8,6 +8,7 @@ import Spark from "./Spark.js";
 import Ball from "./Ball.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
+	localStorage.removeItem('isSearchingGame');
 	const userId = await getUserId();
 	let statesContainerDiv = document.querySelector('.states-container');
 	if (!statesContainerDiv) {

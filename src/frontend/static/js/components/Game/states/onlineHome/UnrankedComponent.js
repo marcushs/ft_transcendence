@@ -31,11 +31,14 @@ class UnrankedComponent extends HTMLElement {
 			return;
 		try {
 			await gameWebsocket(userData.id);
+
 			const result =  await waitForOpenWebsocketConnection();
 			if (!result)
-				console.log('Connection to game websocket timeout');
+				console.log('Connection to game websocket timeout');			
 			if (!this.requestMatchmakingResearch())
 				return;
+			// put pop up matchmaking research here
+			localStorage.setItem('isSearchingGame', 'unranked');
 		} catch (error) {
 			console.error(error);
 		}
@@ -43,7 +46,8 @@ class UnrankedComponent extends HTMLElement {
 
 	async requestMatchmakingResearch() {
 		try {
-			await sendRequest('POST', 'http://localhost:8006/matchmaking/matchmaking/', {type: 'unranked'});
+			const response = await sendRequest('POST', 'http://localhost:8006/matchmaking/matchmaking/', {type: 'unranked'}); 
+			console.log(response.message);
 			return true;
 		} catch (error) {
 			console.error(error);

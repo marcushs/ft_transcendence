@@ -1,7 +1,6 @@
 async def notify_user_info_display_change(change_info, user=None ,request=None, old_value=None):
     from .user_utils import send_request
     
-    print(f'---------> notify-user change-info: {change_info}')
     if user is None:
         user = request.user
     payload = {
