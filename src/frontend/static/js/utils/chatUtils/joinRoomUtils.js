@@ -38,7 +38,7 @@ export async function fetchChatroomsList() {
 	return res.chatrooms;
 }
 
-export async function updateChatContactListDOM() {
+export async function updateChatContactListDOM(clear) {
 	let contactCount = chatroomsList.length;
 
 	if (contactCount === 0) return ;
@@ -48,8 +48,11 @@ export async function updateChatContactListDOM() {
 	const chatContactCountEl = document.getElementById('chat-contact-count');
 
 	chatContactCountEl.innerText = `(${contactCount})`;
-	contactedListUl.innerHTML = '';
-	console.log(chatroomsList)
+	// contactedListUl.innerHTML = '';
+	console.log('updateChatContactList chatroomslist: ',chatroomsList)
+	const listItems = document.querySelectorAll('chat-contact-component')
+	const contacts = Array.from(listItems)
+	console.log('updateChatContactList: ul', contacts)
 
 	chatroomsList.forEach(chatroom => { 
 		console.log('userId: ', userId, 'chatroom.members[0].id: ', chatroom.members[0].id, 'chatroom.members[1].id: ', chatroom.members[1].id)
