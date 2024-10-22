@@ -37,7 +37,8 @@ class PongGameEngine:
         self.speed_limit = 45
         self.ball_direction_x = self.ball_speed
         self.ball_direction_y = 0
-        self.max_score = 3
+        self.max_score = 300
+        self.hasBallHitWall = False
         self.map = {
             'width': float(map_dimension['width']),
             'height': float(map_dimension['height'])
@@ -174,10 +175,12 @@ class PongGameEngine:
 
 
     def wall_collision(self, ball):
-        if (ball['x'] + self.ball_radius > self.map['width'] or ball['x'] - self.ball_radius < 0):
-            self.ball_direction_x = self.ball_direction_x * -1
+#         if (ball['x'] + self.ball_radius > self.map['width'] or ball['x'] - self.ball_radius < 0):
+#             self.ball_direction_x = self.ball_direction_x * -1
         if (ball['y'] + self.ball_radius > self.map['height'] or ball['y'] - self.ball_radius < 0):
-            self.ball_direction_y = self.ball_direction_y * -1 
+            self.ball_direction_y = self.ball_direction_y * -1
+            self.hasBallHitWall = True
+
 
 
  #//---------------------------------------> Game update <--------------------------------------\\#
@@ -292,9 +295,12 @@ class PongGameEngine:
                 'player_two_x': self.state['player_two']['position']['x'],
                 'player_two_y': self.state['player_two']['position']['y'],
                 'ball_x': self.state['ball_position']['x'],
-                'ball_y': self.state['ball_position']['y'],   
+                'ball_y': self.state['ball_position']['y'],
+                'hasBallHitWall': self.hasBallHitWall
             }
         })
+        if self.hasBallHitWall == True:
+            self.hasBallHitWall = False
         await self.websocket_sender(payload)
 
 

@@ -1,5 +1,5 @@
 export default class Spark {
-	constructor(x, y, angle, speed, lifeTime, startTime, color) {
+	constructor(x, y, angle, speed, lifeTime, startTime) {
 		this.x = x;
 		this.y = y;
 		this.vx = speed * Math.cos(angle) / 6;
@@ -7,7 +7,7 @@ export default class Spark {
 		this.lifeTime = lifeTime;
 		this.startTime = startTime;
 		this.age = 0;
-		this.color = color;
+		this.color = 'rgb(255, 165, 0)';
 	}
 
 

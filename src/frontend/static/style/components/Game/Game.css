@@ -39,7 +39,7 @@ game-component .states-container {
     height: 100%;
     border-radius: 7px;
     background: var(--component-background-color);
-    padding: 3px;
+    /*padding: 3px;*/
     z-index: 1;
 }
 

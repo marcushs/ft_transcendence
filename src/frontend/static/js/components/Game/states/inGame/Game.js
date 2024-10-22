@@ -97,7 +97,7 @@ export default class Game {
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.movePlayer();
 		this.drawFrame();
-		// this.update();
+		this.drawSparks();
 		requestAnimationFrame(() => this.renderLoop());
 	}
 
@@ -157,7 +157,7 @@ export default class Game {
 	}
 
 	// !! need refactoring to match with the remote game !!
-	update() {
+	drawSparks() {
 		for (let i = 0; i < this.sparks.length; i++) {
 			this.sparks[i].update(this.deltaTime);
 
@@ -179,6 +179,8 @@ export default class Game {
 			this.resetUserInputs();
 			this.updateScore(newState);
 		}
+		if (newState.hasBallHitWall)
+			this.generateSparks(this.ball.x, this.ball.y, "#FF16C6");
 	}
 
 // --------------------------------------- Update render method -------------------------------------- //
@@ -262,56 +264,20 @@ export default class Game {
 		this.keysPlayerOne.down = false;
 	}
 
-	generateSparks(x, y, side, isPlayerOne, isPlayerTwo, color) {
-		let numberOfSparks = 100;
-		let angleRange;
+	generateSparks(x, y) {
+		const numberOfSparks = 100;
+		const angleRange = [0, 2 * Math.PI];
 
-		switch(side) {
-	        case 'top':
-	            angleRange = [-Math.PI, 0];
-	            break;
-	        case 'bottom':
-	            angleRange = [Math.PI / 2, -(Math.PI)];
-	            break;
-			case 'left':
-	            angleRange = [Math.PI / 2, (3 * Math.PI) / 2];
-	            break;
-	        case 'right':
-	            angleRange = [Math.PI / 2, (3 * Math.PI) / 2];
-	            // angleRange = [Math.PI / 2, (Math.PI / 2)];
-	            break;
-	        default:
-	            angleRange = [0, 2 * Math.PI];
-	    }
 	    for (let i = 0; i < numberOfSparks; i++) {
-			let angle;
-			let speed;
+			const angle = angleRange[0] + Math.random() * (angleRange[1] - angleRange[0]);
+			const speed = (this.speed / 4) + Math.random() * (this.speed / 4);
+	        const lifetime = 0.5 + Math.random() * 0.5;
 
-			if (isPlayerTwo)
-		        angle = angleRange[0] + Math.random() * (angleRange[1] - angleRange[0]);
-			else
-		        angle = angleRange[0] - Math.random() * (angleRange[1] - angleRange[0]);
+		    let sparkY;
 
-			if (isPlayerOne || isPlayerTwo)
-		        speed = (this.speed / 4) + Math.random() * (this.speed / 4);
-			else
-		        speed = (this.speed / 3) + Math.random() * (this.speed / 3);
-	        let lifetime = 0.5 + Math.random() * 0.5;
+			(y < 50) ? sparkY = 0 : sparkY = this.canvas.height;
 
-			let sparkX = x;
-			let sparkY = y;
-			if (side === 'top')
-				sparkY = y - this.ball.ballRadius;
-			if (side === 'bottom')
-				sparkY = y + this.ball.ballRadius;
-			if (side === 'left')
-				sparkX = x - this.ball.ballRadius;
-			if (side === 'right')
-				sparkX = x + this.ball.ballRadius;
-			// sparkX = (side === '')
-		    // console.log(sparkY, sparkX)
-
-	        let spark = new Spark(sparkX, sparkY, angle, speed, lifetime, this.deltaTime, color);
+	        let spark = new Spark(x, sparkY, angle, speed, lifetime, this.deltaTime);
 	        this.sparks.push(spark);
 	    }
 	}
