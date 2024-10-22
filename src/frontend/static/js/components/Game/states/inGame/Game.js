@@ -153,10 +153,8 @@ export default class Game {
 		this.canvas.ctx.stroke();
 		this.canvas.ctx.closePath();
 		this.canvas.ctx.fill();
-
 	}
 
-	// !! need refactoring to match with the remote game !!
 	drawSparks() {
 		for (let i = 0; i < this.sparks.length; i++) {
 			this.sparks[i].update(this.deltaTime);
@@ -224,6 +222,8 @@ export default class Game {
 		this.ball.ballDirectionY = newState.ball_direction_y;
 		if (this.ball.isRoundStarted !== newState.is_round_started)
 			this.ball.isRoundStarted = newState.is_round_started;
+		if (newState.is_round_started === true)
+			this.ball.resetBallInfos();
 	}
 
 	updateScore(newState) {

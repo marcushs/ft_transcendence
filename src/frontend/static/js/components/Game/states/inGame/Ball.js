@@ -20,10 +20,14 @@ export default class Ball {
 		this.offsetTrailHeight = -12;
 		this.offsetTrailWidth = -10;
 		this.isRoundStarted = true;
-		this.baseBlue = 255;
-		this.basePink = 255;
-		this.increaseBlue = false;
-		this.increasePink = false;
+	}
+
+
+	resetBallInfos() {
+		this.rotationSpeed = 0.01;
+		this.rotationAngle = 0;
+		this.offsetTrailHeight = -12;
+		this.offsetTrailWidth = -10;
 	}
 
 

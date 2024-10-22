@@ -155,8 +155,7 @@ class PongGameEngine:
         ball_y_next = ball['y'] + self.ball_direction_y
         player_y = player['position']['y']
         player_height_half = self.player_size['height'] * 0.5
-        ball_radius_half = self.ball_radius * 0.5
-        if (ball_y_next - ball_radius_half < player_y + player_height_half) and (ball_y_next + ball_radius_half > player_y - player_height_half):
+        if ball_y_next - self.ball_radius < player_y + player_height_half + self.ball_radius / 2 and ball_y_next + self.ball_radius > player_y - player_height_half - self.ball_radius / 2:
             if self.calculate_x_position(isPlayerOne):
                 collide_point = (ball['y'] - player_y) / player_height_half
                 angle_rad = collide_point * (math.pi * 0.25)
@@ -209,19 +208,11 @@ class PongGameEngine:
     
     def update_score(self):
         update_state = 'running'
-        if self.state['ball_position']['x'] - self.ball_radius < 15:
+        if self.state['ball_position']['x'] - self.ball_radius < 15 or self.state['ball_position']['x'] + self.ball_radius > self.map['width'] - 15:
             self.ball_direction_x = self.ball_speed
             self.ball_direction_y = 0
             self.ball_speed = 15
             self.player_one_score += 1
-            update_state = 'reset'
-            self.set_initial_game_state(player_one_score=self.player_one_score, player_two_score=self.player_two_score)
-            self.is_round_started = True
-        elif self.state['ball_position']['x'] + self.ball_radius > self.map['width'] - 15:
-            self.ball_direction_x = self.ball_speed
-            self.ball_direction_y = 0
-            self.ball_speed = 15
-            self.player_two_score += 1
             update_state = 'reset'
             self.set_initial_game_state(player_one_score=self.player_one_score, player_two_score=self.player_two_score)
             self.is_round_started = True
@@ -302,7 +293,7 @@ class PongGameEngine:
                 'has_ball_hit_wall': self.has_ball_hit_wall,
                 'ball_direction_x': self.ball_direction_x,
                 'ball_direction_y': self.ball_direction_y,
-                'is_round_started': self.is_round_started
+                'is_round_started': self.is_round_started,
             }
         })
         if self.has_ball_hit_wall == True:
