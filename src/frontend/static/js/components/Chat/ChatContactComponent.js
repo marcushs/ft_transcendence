@@ -1,5 +1,6 @@
 import getProfileImage from "../../utils/getProfileImage.js";
 import { sendRequest } from "../../utils/sendRequest.js";
+import { displayChatroomComponent } from "../../utils/chatUtils/sendMessageCallback.js";
 
 export default class ChatContactComponent extends HTMLElement {
 	static get observedAttributes() {
@@ -15,6 +16,7 @@ export default class ChatContactComponent extends HTMLElement {
 	
 	connectedCallback() {
 		this.render();
+		this.addEventListeners();
 	}
 
 	async render() {
@@ -25,7 +27,7 @@ export default class ChatContactComponent extends HTMLElement {
 		this.innerHTML = `
 		<div class="chat-contact-profile-picture">
 			<img src=${profileImage} alt='contact picture'></img>
-			<div class="chat-status-circle online"></div>
+			<div class="chat-status-circle ${await this.getUserStatus()}"></div> 
 		</div>
 		<div class="chat-contact-info">
 			<p>${this.userData.username}</p>
@@ -90,6 +92,22 @@ export default class ChatContactComponent extends HTMLElement {
 			this.addEventListener('renderComplete', () => resolve(), { once: true });
 		  }
 		});
+	}
+
+	addEventListeners() {
+		this.addEventListener('click', () => {
+			displayChatroomComponent(this.userData);
+		})
+	}
+
+	async getUserStatus() {
+		try {
+			let res = await sendRequest('GET', `/api/user/get_user_status/?userId=${this.userData.id}`, null, false);
+			
+			return res.user_status;
+		} catch (error) {
+			
+		}
 	}
 }
 

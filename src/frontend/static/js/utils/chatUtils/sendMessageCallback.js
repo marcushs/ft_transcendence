@@ -8,7 +8,7 @@ export async function sendMessageCallback(targetUserData) {
 	displayChatroomComponent(targetUserData);
 };
 
-async function displayChatroomComponent(targetUserData) {
+export async function displayChatroomComponent(targetUserData) {
 	const userData = JSON.stringify(targetUserData);
 	const chatMainMenu = document.querySelector('.chat-main-menu');
 	const contactMenu = document.querySelector('.contact-menu');
