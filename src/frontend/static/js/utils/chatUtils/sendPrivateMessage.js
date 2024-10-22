@@ -93,10 +93,11 @@ function unreadMessageNotifOff() {
 }
 
 export async function messageReceptionDOMUpdate(messageData) {
+	updateChatContactComponents(messageData);
+	
 	const chatroomConversation = document.querySelector('chatroom-conversation');
 	
 	if (!chatroomConversation) { // need to check if the chatroom conversation is the matching one as well
-		updateChatContactComponents(messageData);
 		unreadMessageNotifOn();
 		return ;
 	}

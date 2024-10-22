@@ -93,6 +93,7 @@ export async function addNewContactToContactedList(chatroomId) {
 
 		console.log(contactComp);
 		contactComp.setAttribute('data-chatroom', chatroom.id);
+		contactComp.setAttribute('data-user', JSON.stringify(user_data));
 		listElem.appendChild(contactComp);
 		contactedListUl.appendChild(listElem);
 		chatContactList.addOneToCount();

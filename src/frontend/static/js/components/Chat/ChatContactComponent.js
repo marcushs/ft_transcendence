@@ -30,7 +30,7 @@ export default class ChatContactComponent extends HTMLElement {
 			<div class="chat-status-circle ${await this.getUserStatus()}"></div> 
 		</div>
 		<div class="chat-contact-info">
-			<p>${this.userData.username}</p>
+			<p class="chat-contact-username">${this.userData.username}</p>
 			<p class="last-message">${this.formatLastMessage(lastMessage.body)}</p>
 		</div>
 		<div class="message-status">

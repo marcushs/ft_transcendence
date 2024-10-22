@@ -3,11 +3,7 @@ import { sendRequest } from "../../utils/sendRequest.js";
 import { getUserId, fetchChatroomsList } from "../../utils/chatUtils/joinRoomUtils.js";
 import ChatContactComponent from "./ChatContactComponent.js";
 
-class ChatContactList extends HTMLElement {
-	// static get observedAttributes() {
-    //     return ["data-count"];
-    // };
-	
+class ChatContactList extends HTMLElement {	
 	constructor() {
 		super();
 		this.count = 0;
@@ -74,6 +70,7 @@ class ChatContactList extends HTMLElement {
 	
 			console.log(contactComp);
 			contactComp.setAttribute('data-chatroom', chatroom.id);
+			contactComp.setAttribute('data-user', JSON.stringify(user_data));
 			listElem.appendChild(contactComp);
 			contactedListUl.appendChild(listElem);
 		});
