@@ -1,4 +1,5 @@
 import getProfileImage from "../../utils/getProfileImage.js";
+import { sendRequest } from "../../utils/sendRequest.js";
 
 export default class ChatRoomTopBar extends HTMLElement {
 	static get observedAttributes() {
@@ -20,13 +21,12 @@ export default class ChatRoomTopBar extends HTMLElement {
 	};
 
 	async connectedCallback() {
-		console.log('topbar rendered')
         await this.render();
     }
 
 	async render() {
 		let profileImage = await getProfileImage(this.userData);
-		let status = this.userData.status;
+		let status = await this.getUserStatus();
 
 		this.innerHTML = `
 			<i id="chatroom-back-btn" class="fa-solid fa-arrow-left"></i>
@@ -44,6 +44,17 @@ export default class ChatRoomTopBar extends HTMLElement {
 		`;
 
 	};
+
+	async getUserStatus() {
+		try {
+			console.log('chatroom top bar: ', this.userData.id)
+			let res = await sendRequest('GET', `/api/user/get_user_status/?userId=${this.userData.id}`, null, false);
+			
+			console.log('chatroom top bar: ', res.user_status)
+			return res.user_status;
+		} catch (error) {
+		}
+	}
 }
 
 customElements.define('chatroom-top-bar', ChatRoomTopBar);
