@@ -8,8 +8,7 @@ export default class Ball {
 		this.rotationAngle = 0;
 		this.isPositiveBallDirection = true;
 		this.ballColor = 'rgb(189, 195, 199)';
-		this.greyPrimaryColor = 'rgb(140, 143, 164)'
-		this.greySecondaryColor = 'rgb(140, 143, 164)'
+		this.greyColor = 'rgb(140, 143, 164)';
 		this.bluePrimaryColor = 'rgb(0, 206, 255)';
 		this.blueSecondaryColor = 'rgb(3, 114, 155)';
 		this.pinkPrimaryColor = 'rgb(255, 22, 198)';
@@ -153,7 +152,7 @@ export default class Ball {
 
 		this.canvas.ctx.beginPath();
 		if (this.isRoundStarted)
-			this.canvas.ctx.fillStyle = this.greyPrimaryColor;
+			this.canvas.ctx.fillStyle = this.greyColor;
 		else if (this.isPositiveBallDirection)
 			this.canvas.ctx.fillStyle = this.pinkPrimaryColor;
 		else
