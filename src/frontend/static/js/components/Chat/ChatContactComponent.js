@@ -6,22 +6,16 @@ export default class ChatContactComponent extends HTMLElement {
         return ["data-user", "data-chatroom"];
     };
 
-	// attributeChangedCallback(name, oldValue, newValue) {
-	// 	if (name === 'data-user') {
-	// 		this.userData = JSON.parse(newValue);
-	// 		this.render();
-	// 	}
-	// 	if (name === 'data-chatroom') {
-	// 		this.chatroom = newValue;
-	// 	}
-	// }
-
 	constructor(userData, chatroomId) {
 		super();
 		this.userData = userData;
 		this.chatroom = chatroomId;
-		this.render();
+		this._renderComplete = false;
 	};
+	
+	connectedCallback() {
+		this.render();
+	}
 
 	async render() {
 		let profileImage = await getProfileImage(this.userData);
@@ -35,7 +29,7 @@ export default class ChatContactComponent extends HTMLElement {
 		</div>
 		<div class="chat-contact-info">
 			<p>${this.userData.username}</p>
-			<p>${this.formatLastMessage(lastMessage.body)}</p>
+			<p class="last-message">${this.formatLastMessage(lastMessage.body)}</p>
 		</div>
 		<div class="message-status">
 			<div class="last-message-datetime">
@@ -44,6 +38,8 @@ export default class ChatContactComponent extends HTMLElement {
 			<div class="unread-circle"></div>
 		</div>
 		`;
+		this._renderComplete = true;
+		this.dispatchEvent(new CustomEvent('renderComplete'));
 	};
 
 	async getChatroomLastMessage() {
@@ -79,6 +75,22 @@ export default class ChatContactComponent extends HTMLElement {
 			   date1.getMonth() === date2.getMonth() &&
 			   date1.getDate() === date2.getDate();
 	  }
+
+	updateLastMessage(message) {
+		message = this.formatLastMessage(message);
+
+		this.querySelector('.last-message').innerText = message;
+	}
+
+	whenRendered() {
+		return new Promise((resolve) => {
+		  if (this._renderComplete) {
+			resolve();
+		  } else {
+			this.addEventListener('renderComplete', () => resolve(), { once: true });
+		  }
+		});
+	}
 }
 
 customElements.define('chat-contact-component', ChatContactComponent);

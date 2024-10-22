@@ -93,11 +93,10 @@ function unreadMessageNotifOff() {
 }
 
 export async function messageReceptionDOMUpdate(messageData) {
-	updateChatContactComponents(messageData);
-
 	const chatroomConversation = document.querySelector('chatroom-conversation');
 	
 	if (!chatroomConversation) { // need to check if the chatroom conversation is the matching one as well
+		updateChatContactComponents(messageData);
 		unreadMessageNotifOn();
 		return ;
 	}
@@ -106,16 +105,47 @@ export async function messageReceptionDOMUpdate(messageData) {
 }
 
 function updateChatContactComponents(messageData) {
-	let listItems = document.querySelectorAll('chat-contact-component');
-	let messagedContacts = Array.from(listItems);
+	let contactedList = document.querySelector('.contacted-list ul');
+	const observer = observeUlChanges(contactedList);
+	// let messagedContacts = Array.from(listItems);
 
-	console.log('messagedContacts', messagedContacts);
-	messagedContacts.forEach(async (contact) => {
-		if (isTargetChatroom(contact.getAttribute('data-chatroom'), messageData.chatroom)) {
-			if (await isSentOrReceivedMessage(messageData.author) === 'received') {
-				contact.querySelector('.unread-circle').classList.add('active');
-			}
-		}
-	})
+	// console.log('messagedContacts', messagedContacts);
+	// messagedContacts.forEach(async (contact) => {
+	// 	if (isTargetChatroom(contact.getAttribute('data-chatroom'), messageData.chatroom)) {
+	// 		if (await isSentOrReceivedMessage(messageData.author) === 'received') {
+	// 			contact.updateLastMessage(messageData.message);
+	// 			contact.querySelector('.unread-circle').classList.add('active');
+	// 		}
+	// 	}
+	// })
 }
 
+function observeUlChanges(element) {
+	const observer = new MutationObserver((mutations) => {
+	  mutations.forEach((mutation) => {
+		if (mutation.type === 'childList') {
+			mutation.addedNodes.forEach(node => {
+				if (node.nodeName === 'LI') {
+					const contact = node.querySelector('chat-contact-component');
+					console.log('Chat contact component rendered:', contact);
+					if (contact) {
+						contact.whenRendered().then(() => {
+							console.log('Chat contact component rendered:', contact);
+							contact.querySelector('.unread-circle').classList.add('active');
+						})
+					}
+				}
+			  });
+		}
+	  });
+	});
+  
+	const config = {
+	  childList: true,
+	};
+  
+	observer.observe(element, config);
+  
+	return observer;
+  }
+  

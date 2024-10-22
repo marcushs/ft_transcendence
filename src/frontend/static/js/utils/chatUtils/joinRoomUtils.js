@@ -60,16 +60,6 @@ export async function updateChatContactListDOM() {
 	});
 }
 
-async function getUserInfoById(userId) {
-	let res = await sendRequest('GET', `/api/user/get_user_by_id/?q=${userId}`, null, false);
-
-	if (res.status === 'error') {
-		console.log(res.message);
-	} else {
-		return res.user_data;
-	}
-}
-
 export async function getUserId() {
 	let res = await sendRequest('GET', '/api/user/user_info/', null, false);
 
@@ -88,6 +78,7 @@ export async function addNewContactToContactedList(chatroomId) {
 		const chatroom = res.chatroom_dict; 
 
 		let user_data = userId === chatroom.members[0].id ? chatroom.members[1] : chatroom.members[0];
+		const chatContactList = document.querySelector('chat-contact-list');
 		const contactedListUl = document.querySelector('.contacted-list > ul');
 		if (document.querySelector('.no-contact-text')) document.querySelector('.no-contact-text').remove();
 		const listElem = document.createElement('li');
@@ -97,7 +88,7 @@ export async function addNewContactToContactedList(chatroomId) {
 		contactComp.setAttribute('data-chatroom', chatroom.id);
 		listElem.appendChild(contactComp);
 		contactedListUl.appendChild(listElem);
-
+		chatContactList.addOneToCount();
 	} catch (error) {
 		
 	}

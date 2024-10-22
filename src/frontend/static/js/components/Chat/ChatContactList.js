@@ -10,6 +10,7 @@ class ChatContactList extends HTMLElement {
 	
 	constructor() {
 		super();
+		this.count = 0;
 		this.render();
 		this.addEventListeners();
 		this.putContactListToDom();
@@ -76,6 +77,14 @@ class ChatContactList extends HTMLElement {
 			listElem.appendChild(contactComp);
 			contactedListUl.appendChild(listElem);
 		});
+	}
+
+	addOneToCount() {
+		this.count++;
+
+		const chatContactCountEl = this.querySelector('#chat-contact-count');
+	
+		chatContactCountEl.innerText = `(${this.count})`;
 	}
 }
 
