@@ -28,6 +28,7 @@ class PongGameEngine:
         self.player_two_score = 0
         self.game_active = False
         self.is_paused = False
+        self.is_round_started = True
         self.pause_time = 120
         self.pause_start_time = None
         self.winner_id = None
@@ -38,7 +39,7 @@ class PongGameEngine:
         self.ball_direction_x = self.ball_speed
         self.ball_direction_y = 0
         self.max_score = 300
-        self.hasBallHitWall = False
+        self.has_ball_hit_wall = False
         self.map = {
             'width': float(map_dimension['width']),
             'height': float(map_dimension['height'])
@@ -165,6 +166,8 @@ class PongGameEngine:
 
                 self.ball_direction_x = direction * (self.ball_speed * math.cos(angle_rad))
                 self.ball_direction_y = self.ball_speed * math.sin(angle_rad)
+                if self.is_round_started == True:
+                    self.is_round_started = False
 
 
     def calculate_x_position(self, isPlayerOne):
@@ -175,11 +178,9 @@ class PongGameEngine:
 
 
     def wall_collision(self, ball):
-#         if (ball['x'] + self.ball_radius > self.map['width'] or ball['x'] - self.ball_radius < 0):
-#             self.ball_direction_x = self.ball_direction_x * -1
         if (ball['y'] + self.ball_radius > self.map['height'] or ball['y'] - self.ball_radius < 0):
             self.ball_direction_y = self.ball_direction_y * -1
-            self.hasBallHitWall = True
+            self.has_ball_hit_wall = True
 
 
 
@@ -215,6 +216,7 @@ class PongGameEngine:
             self.player_one_score += 1
             update_state = 'reset'
             self.set_initial_game_state(player_one_score=self.player_one_score, player_two_score=self.player_two_score)
+            self.is_round_started = True
         elif self.state['ball_position']['x'] + self.ball_radius > self.map['width'] - 15:
             self.ball_direction_x = self.ball_speed
             self.ball_direction_y = 0
@@ -222,6 +224,7 @@ class PongGameEngine:
             self.player_two_score += 1
             update_state = 'reset'
             self.set_initial_game_state(player_one_score=self.player_one_score, player_two_score=self.player_two_score)
+            self.is_round_started = True
         if self.player_one_score == self.max_score or self.player_two_score == self.max_score:
             return 'finish'
         return update_state
@@ -296,11 +299,14 @@ class PongGameEngine:
                 'player_two_y': self.state['player_two']['position']['y'],
                 'ball_x': self.state['ball_position']['x'],
                 'ball_y': self.state['ball_position']['y'],
-                'hasBallHitWall': self.hasBallHitWall
+                'has_ball_hit_wall': self.has_ball_hit_wall,
+                'ball_direction_x': self.ball_direction_x,
+                'ball_direction_y': self.ball_direction_y,
+                'is_round_started': self.is_round_started
             }
         })
-        if self.hasBallHitWall == True:
-            self.hasBallHitWall = False
+        if self.has_ball_hit_wall == True:
+            self.has_ball_hit_wall = False
         await self.websocket_sender(payload)
 
 

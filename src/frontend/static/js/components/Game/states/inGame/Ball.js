@@ -8,6 +8,8 @@ export default class Ball {
 		this.rotationAngle = 0;
 		this.isPositiveBallDirection = true;
 		this.ballColor = 'rgb(189, 195, 199)';
+		this.greyPrimaryColor = 'rgb(140, 143, 164)'
+		this.greySecondaryColor = 'rgb(140, 143, 164)'
 		this.bluePrimaryColor = 'rgb(0, 206, 255)';
 		this.blueSecondaryColor = 'rgb(3, 114, 155)';
 		this.pinkPrimaryColor = 'rgb(255, 22, 198)';
@@ -18,6 +20,7 @@ export default class Ball {
 		this.offsetMaxTrailwidth = 25;
 		this.offsetTrailHeight = -12;
 		this.offsetTrailWidth = -10;
+		this.isRoundStarted = true;
 		this.baseBlue = 255;
 		this.basePink = 255;
 		this.increaseBlue = false;
@@ -25,7 +28,7 @@ export default class Ball {
 	}
 
 
-	changeBallInfos(isPositiveBallDirection) {
+	changeBallDirectionInfos(isPositiveBallDirection) {
 		this.rotationSpeed += 0.05;
 		if (this.offsetTrailHeight < -12 + this.offsetMaxTrailHeight)
 			this.offsetTrailHeight += 0.4;
@@ -35,15 +38,15 @@ export default class Ball {
 	}
 
 
-	draw(primaryColor, secondaryColor) {
-		this.drawTrail(primaryColor, secondaryColor);
+	draw() {
+		if (!this.isRoundStarted)
+			this.drawTrail();
 		this.drawBall();
 		this.drawBallTexture();
-		this.updateTrailColors()
 	}
 
 
-	drawTrail(primaryColor, secondaryColor) {
+	drawTrail() {
 		let angle = Math.atan2(this.ballDirectionY, this.ballDirectionX); // Get the angle direction of the ball
 	    this.canvas.ctx.save(); // Save the current state of the context to apply translation and rotation separately from the rest.
 	    this.canvas.ctx.translate(this.x, this.y); // Set the x and y coordinate as origin coordinates
@@ -79,35 +82,6 @@ export default class Ball {
 		}
 
 	   this.canvas.ctx.restore(); // To restore context as previous context
-	}
-
-
-	updateTrailColors() {
-		if (!this.isPositiveBallDirection) {
-			if (this.increaseBlue) {
-				this.bluePrimaryColor = `rgb(0, ${this.baseBlue - 50}, ${this.baseBlue})`;
-				if (this.baseBlue === 255)
-					this.increaseBlue = false;
-				this.baseBlue += 5;
-			} else {
-				this.bluePrimaryColor = `rgb(0, ${this.baseBlue - 50}, ${this.baseBlue})`;
-				if (this.baseBlue === 155)
-					this.increaseBlue = true;
-				this.baseBlue -= 5;
-			}
-		} else {
-			if (this.increasePink) {
-				this.pinkPrimaryColor = `rgb(${this.basePink}, 22, ${this.basePink * 0.8})`;
-				if (this.basePink === 255)
-					this.increasePink = false;
-				this.basePink += 5;
-			} else {
-				this.pinkPrimaryColor = `rgb(${this.basePink}, 22, ${this.basePink * 0.8})`;
-				if (this.basePink === 155)
-					this.increasePink = true;
-				this.basePink -= 5;
-			}
-		}
 	}
 
 
@@ -178,7 +152,9 @@ export default class Ball {
 		this.canvas.ctx.fill();
 
 		this.canvas.ctx.beginPath();
-		if (this.isPositiveBallDirection)
+		if (this.isRoundStarted)
+			this.canvas.ctx.fillStyle = this.greyPrimaryColor;
+		else if (this.isPositiveBallDirection)
 			this.canvas.ctx.fillStyle = this.pinkPrimaryColor;
 		else
 			this.canvas.ctx.fillStyle = this.bluePrimaryColor;

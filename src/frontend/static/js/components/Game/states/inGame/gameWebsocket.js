@@ -27,7 +27,7 @@ export async function gameWebsocket(userId) {
 				startGame(data.game_id, data.game_state, data.map_dimension)
 			},
 			'data_update': (data) => {
-				if (gameInstance) gameInstance.updateGameRender(data.game_state) 
+				if (gameInstance) gameInstance.updateGameRender(data.game_state)
 			},
 			'game_finished': (data) => {
 				console.log('finished game received : ', data);

@@ -128,7 +128,7 @@ export default class Game {
 		this.drawMiddleLine();
 		this.playerOne.draw();
 		this.playerTwo.draw();
-		this.ball.draw('rgb(255, 22, 198)', 'rgb(146, 0, 117)');
+		this.ball.draw();
 	}
 
 	drawScore() {
@@ -179,7 +179,7 @@ export default class Game {
 			this.resetUserInputs();
 			this.updateScore(newState);
 		}
-		if (newState.hasBallHitWall)
+		if (newState.has_ball_hit_wall)
 			this.generateSparks(this.ball.x, this.ball.y, "#FF16C6");
 	}
 
@@ -218,6 +218,12 @@ export default class Game {
 	updateBallPosition(newState) {
 		this.ball.x = newState.ball_x;
 		this.ball.y = newState.ball_y;
+		if (newState.ball_direction_x !== this.ball.ballDirectionX)
+			this.ball.changeBallDirectionInfos(newState.ball_direction_x < 0);
+		this.ball.ballDirectionX = newState.ball_direction_x;
+		this.ball.ballDirectionY = newState.ball_direction_y;
+		if (this.ball.isRoundStarted !== newState.is_round_started)
+			this.ball.isRoundStarted = newState.is_round_started;
 	}
 
 	updateScore(newState) {
