@@ -34,7 +34,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 				<div class="chat-status-circle ${status}"></div>
 			</div>
 			<div class="chat-contact-name-status">
-				<p>${this.userData.username}</p>
+				<p class="chatroom-top-bar-username">${this.userData.username}</p>
 				<p class="${status}">${status}</p>
 			</div>
 			<div class="chat-block-user">

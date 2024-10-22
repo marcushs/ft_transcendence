@@ -3,6 +3,7 @@ import {removeContactFromList, addNewContactToList, UpdateContactInList} from '.
 import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms, updateChatContactListDOM, addNewContactToContactedList} from '../../utils/chatUtils/joinRoomUtils.js';
 import { updateCurrentChatroomId, messageReceptionDOMUpdate } from '../../utils/chatUtils/sendPrivateMessage.js';
 import { UpdateChatContactWebsocket } from './updateChatContactWebsocket.js';
+import { UpdateChatroomTopBarWebsocket } from './updateChatroomTopBarWebsocket.js';
 
 
 let socket = null;
@@ -41,6 +42,7 @@ function loadContactsWebSocket() {
         } else if (data.type === 'contact_update') {
 			UpdateContactInList(data.contact, data.change_info, data.old_value);
 			UpdateChatContactWebsocket(data.contact, data.change_info, data.old_value);
+			UpdateChatroomTopBarWebsocket(data.contact, data.change_info, data.old_value);
 		} else {
             addNewContactToList(data.contact, data.type, data.is_sender);
         }
