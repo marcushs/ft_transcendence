@@ -175,27 +175,35 @@ export default class Game {
 		}
 		this.updatePlayersPosition(newState);
 		this.updateBallPosition(newState);
-		if (this.playerOneScore !== newState.player_one_score || this.playerTwoScore !== newState.player_two_score)
+		if (this.playerOneScore !== newState.player_one_score || this.playerTwoScore !== newState.player_two_score) {
+			this.resetUserInputs();
 			this.updateScore(newState);
+		}
 	}
 
 // --------------------------------------- Update render method -------------------------------------- //
 
 	attachEventsListener() {
-		document.addEventListener('keydown', (event) => {
-			if (this.isGameRunning) {
-				if (event.key === 'w') this.keysPlayerOne.up = true;
-				if (event.key === 's') this.keysPlayerOne.down = true;
-				if (event.key === 'W') this.keysPlayerOne.up = true;
-				if (event.key === 'S') this.keysPlayerOne.down = true;
-			}
-		});
-		document.addEventListener('keyup', (event) => {
-				if (event.key === 'w') this.keysPlayerOne.up = false;
-				if (event.key === 's') this.keysPlayerOne.down = false;
-				if (event.key === 'W') this.keysPlayerOne.up = false;
-				if (event.key === 'S') this.keysPlayerOne.down = false;
-		});
+		document.addEventListener('keydown', event => this.handleKeyDown(event));
+		document.addEventListener('keyup', event => this.handleKeyUp(event));
+	}
+
+	handleKeyUp(event) {
+		if (this.isGameRunning) {
+			if (event.key === 'w') this.keysPlayerOne.up = false;
+			if (event.key === 's') this.keysPlayerOne.down = false;
+			if (event.key === 'W') this.keysPlayerOne.up = false;
+			if (event.key === 'S') this.keysPlayerOne.down = false;
+		}
+	}
+
+	handleKeyDown(event) {
+		if (this.isGameRunning) {
+			if (event.key === 'w') this.keysPlayerOne.up = true;
+			if (event.key === 's') this.keysPlayerOne.down = true;
+			if (event.key === 'W') this.keysPlayerOne.up = true;
+			if (event.key === 'S') this.keysPlayerOne.down = true;
+		}
 	}
 
 	updatePlayersPosition(newState) {
@@ -210,11 +218,11 @@ export default class Game {
 		this.ball.y = newState.ball_y;
 	}
 
-	updateScore(newstate) {
-		if (this.playerOneScore !== newstate.player_one_score || this.playerTwoScore !== newstate.player_two_score) {
+	updateScore(newState) {
+		if (this.playerOneScore !== newState.player_one_score || this.playerTwoScore !== newState.player_two_score) {
 			this.isGameRunning = false;
-			this.playerOneScore = newstate.player_one_score;
-			this.playerTwoScore = newstate.player_two_score;
+			this.playerOneScore = newState.player_one_score;
+			this.playerTwoScore = newState.player_two_score;
 		}
 	}
 
@@ -249,45 +257,10 @@ export default class Game {
 		console.log(message);
 	}
 
-	// moveBall() {
-	// 	this.checkBallHitBox();
-	// }
-
-	// checkBallHitBox() {
-	// 	this.playerCollision(this.playerOne, this.speed, () => this.ball.x + this.ball.ballDirectionX - this.ball.ballRadius < this.playerOne.x + this.playerOne.width / 2, true);
-	// 	this.playerCollision(this.playerTwo, -this.speed, () => this.ball.x + this.ball.ballDirectionX + this.ball.ballRadius > this.playerTwo.x - this.playerTwo.width / 2, false);
-	// 	this.wallCollision();
-
-	// 	this.ball.x += this.ball.ballDirectionX;
-	// 	this.ball.y += this.ball.ballDirectionY;
-	// }
-
-
-	// playerCollision(player, speed, calculateXPosition, isPlayerOne) {
-	// 	if ((this.ball.y + this.ball.ballDirectionY - this.ball.ballRadius < player.y + player.height / 2 + this.ball.ballRadius / 2 &&
-	// 		this.ball.y + this.ball.ballDirectionY + this.ball.ballRadius >  player.y - player.height / 2 - this.ball.ballRadius / 2) && calculateXPosition()) {
-	// 		player.hitTime = performance.now();
-	// 		player.isPlayerHit = true;
-
-	// 		this.ball.ballDirectionX = speed;
-
-	// 		let collidePoint = this.ball.y - player.y;
-
-	// 		collidePoint = collidePoint / (player.height / 2); // Return a value between 1 and -1 which 1 is bottom and -1 is top
-
-	// 		let angleRad = collidePoint * (Math.PI / 4); // Angle in radiant between 45 and -45deg
-
-	// 		let direction = (this.ball.x < this.canvas.width / 2) ? 1 : -1; // To reverse x direction
-
-	// 		if (this.speed < this.speedLimit)
-	// 			this.speed += 0.5;
-
-	// 		this.ball.ballDirectionX = direction * this.speed * Math.cos(angleRad);
-	// 		this.ball.ballDirectionY = this.speed * Math.sin(angleRad);
-	// 		(direction === 1) ? this.ball.changeBallInfos(false) : this.ball.changeBallInfos(true);
-	// 	}
-	// }
-
+	resetUserInputs() {
+		this.keysPlayerOne.up = false;
+		this.keysPlayerOne.down = false;
+	}
 
 	generateSparks(x, y, side, isPlayerOne, isPlayerTwo, color) {
 		let numberOfSparks = 100;
@@ -364,36 +337,6 @@ export default class Game {
 
 	// ------------------------------------- Move players ------------------------------------- //
 
-
-	// movePlayerOne() {
-	// 	let key = null;
-	// 	if (this.keysPlayerOne.up)
-	// 		key = 'key_up';
-	// 	if (this.keysPlayerOne.down)
-	// 		key = 'key_down'
-	// 	if (key) {
-	// 		socket.send(JSON.stringify({
-	// 			'type': 'player_move',
-	// 			'player_id': this.playerOne.id,
-	// 			'key' : key
-	// 		}));		
-	// 	}
-
-	// 	// this.movePlayerDelay(newPosY, this.playerOne, () => this.playerOne.y += newPosY);
-	// }
-
-
-	// movePlayerTwo() {
-	// 	let newPosY = 0;
-
-	// 	if (this.keysPlayerTwo.up)
-	// 		newPosY = -2;
-	// 	if (this.keysPlayerTwo.down)
-	// 		newPosY = 2;
-	// 	this.movePlayerDelay(newPosY, this.playerTwo, () => this.playerTwo.y += newPosY);
-	// }
-
-
 	// movePlayerDelay(newPosY, player, callback) {
 	// 	let i = 0;
 
@@ -409,12 +352,5 @@ export default class Game {
 	// 	}, 1);
 	// }
 
-	// checkPlayerHitBox(newPosY, player) {
-	// 	if (player.y + newPosY + player.height / 2 + 5 > this.canvas.height)
-	// 		return true;
-	// 	if (player.y + newPosY - player.height / 2 - 5 < 0)
-	// 		return true;
-	// 	return false;
-	// }
 
 }
