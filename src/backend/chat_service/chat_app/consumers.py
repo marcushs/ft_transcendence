@@ -108,6 +108,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_or_create_chatroom(self, author, target_user):
+        if author == target_user:
+            return
+            
         created = False
 
         try:

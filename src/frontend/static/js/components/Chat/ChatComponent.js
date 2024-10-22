@@ -56,7 +56,7 @@ class ChatComponent extends HTMLElement {
 			if (this.chatRoom.classList.contains('active')) this.chatRoom.classList.remove('active');
 			this.chatLobby.classList.add('active');
 			this.chatSearchBarDiv.innerHTML = this.chatMainMenu.style.display === 'block' ? "<chat-search-bar></chat-search-bar>" : '';
-			if (this.chatMainMenu.style.display === 'block') updateChatContactListDOM();
+			// if (this.chatMainMenu.style.display === 'block') updateChatContactListDOM();
 		});
 		this.chatCloseBtn.addEventListener('click', () => {
 			this.chatMainMenu.style.display = 'none';

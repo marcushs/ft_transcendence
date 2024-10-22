@@ -1,24 +1,26 @@
 import getProfileImage from "../../utils/getProfileImage.js";
 import { sendRequest } from "../../utils/sendRequest.js";
 
-class ChatContactComponent extends HTMLElement {
+export default class ChatContactComponent extends HTMLElement {
 	static get observedAttributes() {
         return ["data-user", "data-chatroom"];
     };
 
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (name === 'data-user') {
-			this.userData = JSON.parse(newValue);
-			this.render();
-		}
-		if (name === 'data-chatroom') {
-			this.chatroom = newValue;
-		}
-	}
+	// attributeChangedCallback(name, oldValue, newValue) {
+	// 	if (name === 'data-user') {
+	// 		this.userData = JSON.parse(newValue);
+	// 		this.render();
+	// 	}
+	// 	if (name === 'data-chatroom') {
+	// 		this.chatroom = newValue;
+	// 	}
+	// }
 
-	constructor() {
+	constructor(userData, chatroomId) {
 		super();
-		this.userData = null;
+		this.userData = userData;
+		this.chatroom = chatroomId;
+		this.render();
 	};
 
 	async render() {

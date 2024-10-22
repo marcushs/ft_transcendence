@@ -1,6 +1,7 @@
 import "./ChatContactComponent.js"
 import { sendRequest } from "../../utils/sendRequest.js";
-import { updateChatContactListDOM } from "../../utils/chatUtils/joinRoomUtils.js";
+import { getUserId, fetchChatroomsList } from "../../utils/chatUtils/joinRoomUtils.js";
+import ChatContactComponent from "./ChatContactComponent.js";
 
 class ChatContactList extends HTMLElement {
 	// static get observedAttributes() {
@@ -11,7 +12,7 @@ class ChatContactList extends HTMLElement {
 		super();
 		this.render();
 		this.addEventListeners();
-		updateChatContactListDOM();
+		this.putContactListToDom();
 	}
 
 	render() {
@@ -48,7 +49,34 @@ class ChatContactList extends HTMLElement {
 		});
 	}
 
+	async putContactListToDom() {
+		let chatroomsList = await fetchChatroomsList();
+		let contactCount = chatroomsList.length;
+
+		if (contactCount === 0) return ;
+		
+		const userId = await getUserId();
+		const contactedListUl = document.querySelector('.contacted-list > ul');
+		const chatContactCountEl = document.getElementById('chat-contact-count');
 	
+		chatContactCountEl.innerText = `(${contactCount})`;
+		contactedListUl.innerHTML = '';
+	
+		chatroomsList.forEach(chatroom => { 
+			console.log('userId: ', userId, 'chatroom.members[0].id: ', chatroom.members[0].id, 'chatroom.members[1].id: ', chatroom.members[1].id)
+			let user_data = userId === chatroom.members[0].id ? chatroom.members[1] : chatroom.members[0];
+	
+			console.log('------------> ' + user_data);
+			const listElem = document.createElement('li');
+			console.log(chatroom.id)
+			const contactComp = new ChatContactComponent(user_data, chatroom.id);
+	
+			console.log(contactComp);
+			contactComp.setAttribute('data-chatroom', chatroom.id);
+			listElem.appendChild(contactComp);
+			contactedListUl.appendChild(listElem);
+		});
+	}
 }
 
 customElements.define('chat-contact-list', ChatContactList);

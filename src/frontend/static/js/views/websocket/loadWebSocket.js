@@ -1,7 +1,7 @@
 import { sendRequest } from '../../utils/sendRequest.js';
 import {removeContactFromList, addNewContactToList, UpdateContactInList} from './updateContactWebsocket.js'
-import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms, updateChatContactListDOM} from '../../utils/chatUtils/joinRoomUtils.js';
-import { updateCurrentChatroomId, putMessageToChatroomConversation, messageReceptionDOMUpdate } from '../../utils/chatUtils/sendPrivateMessage.js';
+import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms, updateChatContactListDOM, addNewContactToContactedList} from '../../utils/chatUtils/joinRoomUtils.js';
+import { updateCurrentChatroomId, messageReceptionDOMUpdate } from '../../utils/chatUtils/sendPrivateMessage.js';
 
 
 let socket = null;
@@ -124,11 +124,9 @@ async function loadChatWebSocket() {
 	const chatSocket = new WebSocket('ws://localhost:8008/ws/chat/');
 
 	chatSocket.onopen = async function (e) {
-		console.log(e)
 		console.log("The chat websocket connection was setup successfully !");
 
 		chatroomsList = await fetchChatroomsList();
-		console.log(chatroomsList);
 		joinAllInvitedChatrooms(chatroomsList);
 	};
 	
@@ -136,17 +134,13 @@ async function loadChatWebSocket() {
 		const data = JSON.parse(e.data);
 		
 		if (data.type === 'chat_message') {
-			console.log('in chat message: ', data)
-			
 			await messageReceptionDOMUpdate(data);
-			console.log(`received message from websocket: ${data.message}`)
 		}
 		else if (data.type === 'chatgroup_update') {
-			console.log('chatgroup update: ', data);
 			await receiveChatgroupUpdate(data);
-			chatroomsList = await fetchChatroomsList();
+			// chatroomsList = await fetchChatroomsList();
 			await updateCurrentChatroomId(data.target_user);
-			updateChatContactListDOM();
+			await addNewContactToContactedList(data.chatroom);
 		}
 	};
 
