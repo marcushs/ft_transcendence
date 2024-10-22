@@ -78,10 +78,11 @@ chatroom-top-bar i {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	align-items: center;
 	top: 0;
-	right: 0;
+	right: 2.5rem;
 	height: 100%;
-	width: 17%;	
+	width: 12%;	
 	opacity: 0.5;
 	color: red;
 	cursor: pointer;	
@@ -93,11 +94,18 @@ chatroom-top-bar i {
 	transition: opacity 0.2s ease-in;
 }
 
-.chat-block-user i {
-	transform: translateY(-80%);
+.chat-block-user p {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-wrap: nowrap;
 }
 
-.chat-block-user p {
-	height: fit-content;
+.chat-block-user p i {
+	transform: translateY(-75%);
+}
+
+.chat-block-user p span {
 	transform: translateY(100%);
 }

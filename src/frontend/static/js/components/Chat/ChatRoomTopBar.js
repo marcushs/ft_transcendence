@@ -38,8 +38,10 @@ export default class ChatRoomTopBar extends HTMLElement {
 				<p class="${status}">${status}</p>
 			</div>
 			<div class="chat-block-user">
-				<i class="fa-solid fa-ban"></i>
-				<p>Block ${this.userData.username}</p>
+				<p>
+					<i class="fa-solid fa-ban"></i>
+					<span>Block ${this.userData.username}</span>
+				</p>
 			</div>
 		`;
 
