@@ -4,6 +4,8 @@ import getUserData from "../../../../utils/getUserData.js";
 import { waitForOpenWebsocketConnection } from "../inGame/gameWebsocket.js";
 import '../inGame/inGameComponent.js'
 import { gameWebsocket } from "../inGame/gameWebsocket.js";
+import '../../MatchmakingResearchComponent.js'
+import { matchmakingWebsocket } from "../../matchmakingWebsocket.js";
 
 class UnrankedComponent extends HTMLElement {
 	constructor() {
@@ -30,6 +32,7 @@ class UnrankedComponent extends HTMLElement {
 		if (!userData)
 			return;
 		try {
+			await matchmakingWebsocket();
 			await gameWebsocket(userData.id);
 
 			const result =  await waitForOpenWebsocketConnection();
@@ -37,8 +40,9 @@ class UnrankedComponent extends HTMLElement {
 				console.log('Connection to game websocket timeout');			
 			if (!this.requestMatchmakingResearch())
 				return;
-			// put pop up matchmaking research here
 			localStorage.setItem('isSearchingGame', 'unranked');
+			const researchComponent = document.createElement('matchmaking-research-component');
+			app.appendChild(researchComponent);
 		} catch (error) {
 			console.error(error);
 		}

@@ -2,7 +2,7 @@ import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.j
 import { disconnectWebSocket } from "./gameWebsocket.js";
 import getUserId from "../../../../utils/getUserId.js";
 import { resetGameInstance } from "./inGameComponent.js";
-import { socket } from "./gameWebsocket.js";
+import { gameSocket } from "./gameWebsocket.js";
 import Player from "./Player.js";
 import Spark from "./Spark.js";
 import Ball from "./Ball.js";
@@ -111,8 +111,8 @@ export default class Game {
 		if (this.keysPlayerOne.down)
 			action = 'move_down'
 		if (action) {			
-			if (socket && socket.readyState === WebSocket.OPEN) {
-				socket.send(JSON.stringify({
+			if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
+				gameSocket.send(JSON.stringify({
 					'type': 'player_action',
 					'game_id': this.gameId,
 					'player_id': this.playerOne.playerId,

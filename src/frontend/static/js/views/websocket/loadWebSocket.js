@@ -4,7 +4,7 @@ let socket = null;
 
 export async function loadWebSocket() {
     await loadContactsWebSocket();
-    await loadNotificationsWebSocket();
+    loadNotificationsWebSocket();
     // await loadNotificationWebSocket();
 }
 

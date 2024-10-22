@@ -1,0 +1,90 @@
+/* matchmaking-research-component {
+    position: relative;
+    width: 100vw;
+    height: 20rem;
+    bottom: 120rem;
+    left: 100rem;
+    z-index: 1000;
+} */
+
+.matchmaking-research {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+	align-items: center;
+    height: 10%;
+    width: 100%;
+    top: 8vh;
+    background: 
+    radial-gradient(ellipse at top, 
+        rgb(1, 48, 59) 20%,
+        rgba(3, 20, 26, 0) 60%
+    );
+}
+
+.matchmaking-research-title {
+    margin-top: 1rem;
+    font-size: 2rem;
+    font-weight: 500;
+    font-style: italic;
+	color: var(--text-primary-color);
+    text-shadow: 0 0 10px var(--background-color);
+}
+
+.cancel-matchmaking-research-icon {
+    margin-top: 1.5rem;
+    display: flex;
+	align-items: center;
+    justify-content: center;
+    transform: skew(-10deg);
+    height: 2.8rem;
+    width: 9rem;
+    background-color: rgb(150, 6, 6);
+    box-shadow: 0 0 5px var(--background-color);
+    z-index: 1000;
+}
+
+.cancel-matchmaking-research-icon p {
+    font-size: 1.7rem;
+    font-style: italic;
+	color: var(--text-primary-color);
+}
+
+/* rgb(139, 119, 0) colors for ellipse gradiant when game found*/
+
+.matchmaking-search-indicator {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3rem;
+    width: 7.5rem;
+    top: 0.5rem;
+    left: 55.5%;
+}
+
+.matchmaking-search-indicator-bar {
+    border-radius: 3px;
+    margin-right: 0.5rem;
+    height: 2rem;
+    width: 0.75rem;
+    background-color: var(--neon-blue);
+    animation: bounce 0.6s infinite alternate;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(0.7rem);
+    }
+}
+
+.matchmaking-search-indicator-bar:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.matchmaking-search-indicator-bar:nth-child(3) {
+    animation-delay: 0.4s;
+}
