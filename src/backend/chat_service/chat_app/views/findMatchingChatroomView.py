@@ -21,15 +21,10 @@ class findMatchingChatroomView(View):
 			return JsonResponse({'message': 'No user found', 'status': 'error'}, status=400)
 		try: 
 			chatroom = ChatGroup.objects.filter(
-				is_private=True
-			).annotate(
-				author_count=Count('members', filter=Q(members=author)),
-				target_count=Count('members', filter=Q(members=target_user)),
-				member_count=Count('members')
+				is_private=True,
+				members=author
 			).filter(
-				author_count=1,
-				target_count=1,
-				member_count=2
+				members=target_user
 			).get()
 			return JsonResponse({'chatroom_id': chatroom.group_id, 'status': 'Success'}, status=200)
 		except ChatGroup.DoesNotExist:

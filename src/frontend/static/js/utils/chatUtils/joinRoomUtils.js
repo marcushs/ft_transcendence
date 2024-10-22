@@ -77,7 +77,14 @@ export async function addNewContactToContactedList(chatroomId) {
 		let res = await sendRequest('GET', `/api/chat/get_chatroom_info/?chatroom_id=${chatroomId}`, null, false);
 		const chatroom = res.chatroom_dict; 
 
-		let user_data = userId === chatroom.members[0].id ? chatroom.members[1] : chatroom.members[0];
+		let user_data;
+		if (userId === chatroom.members[0].id) {
+			user_data = chatroom.members[1];
+		} else if (userId === chatroom.members[1].id) {
+			user_data = chatroom.members[0];
+		} else {
+			return ;
+		}
 		const chatContactList = document.querySelector('chat-contact-list');
 		const contactedListUl = document.querySelector('.contacted-list > ul');
 		if (document.querySelector('.no-contact-text')) document.querySelector('.no-contact-text').remove();

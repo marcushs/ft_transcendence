@@ -105,19 +105,20 @@ export async function messageReceptionDOMUpdate(messageData) {
 }
 
 function updateChatContactComponents(messageData) {
-	let contactedList = document.querySelector('.contacted-list ul');
-	const observer = observeUlChanges(contactedList);
-	// let messagedContacts = Array.from(listItems);
-
-	// console.log('messagedContacts', messagedContacts);
-	// messagedContacts.forEach(async (contact) => {
-	// 	if (isTargetChatroom(contact.getAttribute('data-chatroom'), messageData.chatroom)) {
-	// 		if (await isSentOrReceivedMessage(messageData.author) === 'received') {
-	// 			contact.updateLastMessage(messageData.message);
-	// 			contact.querySelector('.unread-circle').classList.add('active');
-	// 		}
-	// 	}
-	// })
+	const contactedList = document.querySelector('.contacted-list ul');
+	const listItems = document.querySelectorAll('chat-contact-component');
+	const messagedContacts = Array.from(listItems);
+	
+	console.log('messagedContacts', messagedContacts);
+	messagedContacts.forEach(async (contact) => {
+		if (isTargetChatroom(contact.getAttribute('data-chatroom'), messageData.chatroom)) {
+			if (await isSentOrReceivedMessage(messageData.author) === 'received') {
+				contact.updateLastMessage(messageData.message);
+				contact.querySelector('.unread-circle').classList.add('active');
+			}
+		}
+	})
+	observeUlChanges(contactedList);
 }
 
 function observeUlChanges(element) {
