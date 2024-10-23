@@ -42,7 +42,6 @@ export async function updateChatContactListDOM() {
 	const chatContactCountEl = document.getElementById('chat-contact-count');
 
 	chatContactCountEl.innerText = `(${contactCount})`;
-	// contactedListUl.innerHTML = '';
 	const listItems = document.querySelectorAll('chat-contact-component')
 	const contacts = Array.from(listItems)
 
@@ -100,4 +99,16 @@ export async function addNewContactToContactedList(chatroomId) {
 	} catch (error) {
 		
 	}
+}
+
+
+export function removeChatContactFromDOM(userData) {
+	const listItems = document.querySelectorAll('chat-contact-component');
+	const chatContacts = Array.from(listItems);
+
+	chatContacts.forEach(contact => {
+		const contactData = JSON.parse(contact.getAttribute('data-user'));
+
+		if (userData.id === contactData.id) contact.remove();
+	})
 }

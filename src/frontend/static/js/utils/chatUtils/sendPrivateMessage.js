@@ -114,26 +114,27 @@ function updateChatContactComponents(messageData) {
 	messagedContacts.forEach(async (contact) => {
 		if (isTargetChatroom(contact.getAttribute('data-chatroom'), messageData.chatroom)) {
 			if (await isSentOrReceivedMessage(messageData.author) === 'received') {
+				console.log('here');
 				contact.updateLastMessage(messageData.message);
 				contact.querySelector('.unread-circle').classList.add('active');
 			}
 		}
 	})
-	observeUlChanges(contactedList);
+	observeUlChanges(contactedList, messageData);
 }
 
-function observeUlChanges(element) {
+function observeUlChanges(element, messageData) {
 	const observer = new MutationObserver((mutations) => {
 	  mutations.forEach((mutation) => {
 		if (mutation.type === 'childList') {
 			mutation.addedNodes.forEach(node => {
 				if (node.nodeName === 'LI') {
 					const contact = node.querySelector('chat-contact-component');
-					console.log('Chat contact component rendered:', contact);
 					if (contact) {
-						contact.whenRendered().then(() => {
-							console.log('Chat contact component rendered:', contact);
-							contact.querySelector('.unread-circle').classList.add('active');
+						contact.whenRendered().then(async () => {
+							if (await isSentOrReceivedMessage(messageData.author) === 'received') {
+								contact.querySelector('.unread-circle').classList.add('active');
+							}
 						})
 					}
 				}
