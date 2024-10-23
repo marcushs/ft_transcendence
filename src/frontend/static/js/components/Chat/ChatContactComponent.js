@@ -96,7 +96,7 @@ export default class ChatContactComponent extends HTMLElement {
 
 	addEventListeners() {
 		this.addEventListener('click', () => {
-			displayChatroomComponent(this.userData);
+			displayChatroomComponent(this.userData, true);
 		})
 	}
 

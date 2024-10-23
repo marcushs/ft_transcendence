@@ -8,7 +8,7 @@ export async function sendMessageCallback(targetUserData) {
 	displayChatroomComponent(targetUserData);
 };
 
-export async function displayChatroomComponent(targetUserData) {
+export async function displayChatroomComponent(targetUserData, fromContact=false) {
 	const userData = JSON.stringify(targetUserData);
 	const chatMainMenu = document.querySelector('.chat-main-menu');
 	const contactMenu = document.querySelector('.contact-menu');
@@ -17,7 +17,7 @@ export async function displayChatroomComponent(targetUserData) {
 	
 	toggleContactMenuToChatMainMenu(chatMainMenu, contactMenu, chatRoom, chatLobby);
 	displayChatroomLayout(userData);
-	addEventListenersToTopBar(chatMainMenu, contactMenu, chatRoom, chatLobby);
+	addEventListenersToTopBar(chatMainMenu, contactMenu, chatRoom, chatLobby, fromContact);
 	addEventListenersToMessageInput();
 }
 
@@ -49,17 +49,30 @@ function displayChatroomLayout(userData) {
 	chatRoom.appendChild(chatRoomBottomBar);
 }
 
-function addEventListenersToTopBar(chatMainMenu, contactMenu, chatRoom, chatLobby) {
+function addEventListenersToTopBar(chatMainMenu, contactMenu, chatRoom, chatLobby, fromContact) {
 	const topBar = document.querySelector('chatroom-top-bar');
 
-	topBar.addEventListener('click', (e) => {
+	const handleBackBtnClickFromSendMessage = (e) => {
 		if (e.target.id === 'chatroom-back-btn') {
 			chatMainMenu.style.display = 'none';
 			contactMenu.style.display = 'block';
 			chatRoom.innerHTML = '';
 			chatLobby.classList.add('active');
 		}
-	});
+	};
+	
+	const handleBackBtnClickFromChatContact = (e) => {
+		if (e.target.id === 'chatroom-back-btn') {
+			chatRoom.innerHTML = '';
+			chatLobby.classList.add('active');
+		}
+	}
+	
+	topBar.removeEventListener('click', handleBackBtnClickFromSendMessage)
+	topBar.removeEventListener('click', handleBackBtnClickFromChatContact)
+
+	if (fromContact) return topBar.addEventListener('click', handleBackBtnClickFromChatContact);
+	topBar.addEventListener('click', handleBackBtnClickFromSendMessage);
 }
 
 function addEventListenersToMessageInput() {
