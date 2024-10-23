@@ -44,9 +44,11 @@ class oauth42AccessResourceView(View):
                                      status=400)
             return self.create_or_login_user(request, response_data)
         except ValueError:
-            return JsonResponse({'message': 'Invalid JSON response',
+            response = JsonResponse({'message': 'Invalid JSON response',
                                  'status': 'Error'}, 
                                  status=500)
+            response.delete_cookie('42_access_token')
+            return response
         
     def create_or_login_user(self, request, data):
         self.csrf_token = request.headers.get('X-CSRFToken')
@@ -82,7 +84,8 @@ class oauth42AccessResourceView(View):
                 elif response_data['message'] == "Username already taken! Try another one.":
                     response_data['url'] = '/oauth-username?oauth_provider=oauth_42'
                     response = JsonResponse(response_data, status=400)
-                    response.set_cookie('id', self.id, httponly=True) 
+                    response.set_cookie('id', self.id, httponly=True)
+                response.delete_cookie('42_access_token')
                 return response
             return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token) 
     

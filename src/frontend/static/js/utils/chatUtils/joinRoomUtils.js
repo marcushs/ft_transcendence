@@ -1,5 +1,5 @@
 import { sendRequest } from "../sendRequest.js";
-import { chatSocket, chatroomsList } from "../../views/websocket/loadWebSocket.js";
+import { chatSocket } from "../../views/websocket/loadWebSocket.js";
 import ChatContactComponent from "../../components/Chat/ChatContactComponent.js";
 
 export async function receiveChatgroupUpdate(data) {
@@ -32,33 +32,6 @@ export async function fetchChatroomsList() {
 	return res.chatrooms;
 }
 
-export async function updateChatContactListDOM() {
-	let contactCount = chatroomsList.length;
-
-	if (contactCount === 0) return ;
-	
-	const userId = await getUserId();
-	const contactedListUl = document.querySelector('.contacted-list > ul');
-	const chatContactCountEl = document.getElementById('chat-contact-count');
-
-	chatContactCountEl.innerText = `(${contactCount})`;
-	const listItems = document.querySelectorAll('chat-contact-component')
-	const contacts = Array.from(listItems)
-
-	chatroomsList.forEach(chatroom => { 
-		console.log('userId: ', userId, 'chatroom.members[0].id: ', chatroom.members[0].id, 'chatroom.members[1].id: ', chatroom.members[1].id)
-		let user_data = userId === chatroom.members[0].id ? JSON.stringify(chatroom.members[1]) : JSON.stringify(chatroom.members[0]);
-
-		const listElem = document.createElement('li');
-		const contactComp = document.createElement('chat-contact-component');
-
-		contactComp.setAttribute('data-user', user_data);
-		contactComp.setAttribute('data-chatroom', chatroom.id);
-		listElem.appendChild(contactComp);
-		contactedListUl.appendChild(listElem);
-	});
-}
-
 export async function getUserId() {
 	let res = await sendRequest('GET', '/api/user/user_info/', null, false);
 
@@ -86,7 +59,7 @@ export async function addNewContactToContactedList(chatroomId) {
 		}
 		const chatContactList = document.querySelector('chat-contact-list');
 		const contactedListUl = document.querySelector('.contacted-list > ul');
-		if (document.querySelector('.no-contact-text')) document.querySelector('.no-contact-text').remove();
+		if (document.querySelector('.no-contact-text')) document.querySelector('.no-contact-text').parentElement.remove();
 		const listElem = document.createElement('li');
 		const contactComp = new ChatContactComponent(user_data, chatroomId);
 
@@ -101,14 +74,27 @@ export async function addNewContactToContactedList(chatroomId) {
 	}
 }
 
+//<------------------------------------- remove chat contact --------------------------------------->\\
 
-export function removeChatContactFromDOM(userData) {
-	const listItems = document.querySelectorAll('chat-contact-component');
+export function removeChatContactFromDOM(chatroom) {
+	const chatContactList = document.querySelector('chat-contact-list');
+	const listItems = chatContactList.querySelectorAll('chat-contact-component');
 	const chatContacts = Array.from(listItems);
-
+	
 	chatContacts.forEach(contact => {
-		const contactData = JSON.parse(contact.getAttribute('data-user'));
-
-		if (userData.id === contactData.id) contact.remove();
+		if (chatroom === contact.getAttribute('data-chatroom')) {
+			contact.remove();
+			chatContactList.subtractOneFromCount();
+			return ;
+		}
 	})
+}
+
+export async function removeChatroom(userData) {
+	const message = {
+		'type': 'remove_room',
+		'target_user_id': userData.id,
+	}
+
+	chatSocket.send(JSON.stringify(message));
 }

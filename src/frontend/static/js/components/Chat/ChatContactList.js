@@ -24,7 +24,7 @@ class ChatContactList extends HTMLElement {
 					<p id="chat-contact-count" class="count">(0)</p>
 					</div>
 				<ul>
-					<p class="no-contact-text">No recent message</p>
+					<li><p class="no-contact-text">No recent message</p></li>
 				</ul>
 			</div>
 		`;
@@ -82,6 +82,19 @@ class ChatContactList extends HTMLElement {
 		const chatContactCountEl = this.querySelector('#chat-contact-count');
 	
 		chatContactCountEl.innerText = `(${this.count})`;
+	}
+
+	subtractOneFromCount() {
+		this.count--;
+		this.count <= 0 ? this.count = 0 : this.count = this.count;
+
+		const chatContactCountEl = this.querySelector('#chat-contact-count');
+	
+		chatContactCountEl.innerText = `(${this.count})`;
+		if (this.count === 0) {
+			const contactedListUl = document.querySelector('.contacted-list > ul');
+			contactedListUl.innerHTML = '<li><p class="no-contact-text">No recent message</p></li>';
+		}
 	}
 }
 

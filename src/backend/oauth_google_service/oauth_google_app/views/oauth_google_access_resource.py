@@ -37,14 +37,18 @@ class oauthGoogleAccessResourceView(View):
         try:
             response_data = response.json()
             if 'error' in response_data:
-                return JsonResponse({'message': response_data['error'],
+                response = JsonResponse({'message': response_data['error'],
                                      'status': 'Error'}, 
                                      status=400)
+                response.delete_cookie('google_access_token')
+                return response
             return self.create_or_login_user(request, response_data)
         except ValueError:
-            return JsonResponse({'message': 'Invalid JSON response',
+            response = JsonResponse({'message': 'Invalid JSON response',
                                  'status': 'Error'}, 
                                  status=500)
+            response.delete_cookie('google_access_token')  
+            return response
         
     def create_or_login_user(self, request, data):
         self.csrf_token = request.headers.get('X-CSRFToken')
@@ -81,6 +85,7 @@ class oauthGoogleAccessResourceView(View):
                     response_data['url'] = '/oauth-username?oauth_provider=oauth_goolge'
                     response = JsonResponse(response_data, status=400)
                     response.set_cookie('id', self.id, httponly=True)
+                response.delete_cookie('google_access_token')
                 return response
             return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
     

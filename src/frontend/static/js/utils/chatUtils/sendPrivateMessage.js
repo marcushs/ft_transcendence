@@ -113,9 +113,9 @@ function updateChatContactComponents(messageData) {
 	console.log('messagedContacts', messagedContacts);
 	messagedContacts.forEach(async (contact) => {
 		if (isTargetChatroom(contact.getAttribute('data-chatroom'), messageData.chatroom)) {
+			contact.updateLastMessage(messageData.message);
 			if (await isSentOrReceivedMessage(messageData.author) === 'received') {
 				console.log('here');
-				contact.updateLastMessage(messageData.message);
 				contact.querySelector('.unread-circle').classList.add('active');
 			}
 		}

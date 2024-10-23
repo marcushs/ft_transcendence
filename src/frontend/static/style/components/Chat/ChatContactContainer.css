@@ -42,6 +42,7 @@
 	font-weight: 500;
 	color: darkgray;
 	transform: translate(5%, 20%);
+	margin-bottom: 1rem;
 }
 
 .contacted-list ul li {

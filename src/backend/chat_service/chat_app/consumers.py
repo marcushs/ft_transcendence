@@ -41,7 +41,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                                                          'target_user': str(target_user.id)})
                     await self.join_room(str(chatroom.group_id))
                 saved_message = await self.save_message(chatroom=chatroom, author=self.user, message=message_body)
-                print(saved_message.created) 
                 await self.channel_layer.group_send(str(chatroom.group_id),
                                                     {'type': 'chat.message',
                                                      'chatroom': str(chatroom.group_id),
@@ -68,6 +67,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
             chatroom_id = data['chatroom_id']
             await self.join_room(chatroom_id)
 
+        elif message_type == 'remove_room':
+            chatroom = await self.find_matching_room(data['target_user_id'])
+            if chatroom is not None:
+                await self.channel_layer.group_send(str(chatroom.group_id), {
+                    'type': "remove_room",
+                    'chatroom': str(chatroom.group_id),
+                })
+
     async def join_room(self, chatroom):
         await self.channel_layer.group_add(chatroom, self.channel_name)
 
@@ -90,6 +97,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'target_user': event['target_user'],
         }))
 
+    async def remove_room(self, event):
+        chatroom = event['chatroom']
+        await self.send(text_data=json.dumps({
+            'type': 'remove_room',
+            'chatroom': chatroom
+        }))
 
     def format_datetime(self, timestamp):
         now = timezone.localtime(timezone.now())    
@@ -114,17 +127,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         created = False
 
         try:
-            chatroom = ChatGroup.objects.filter(
-                is_private=True
-            ).annotate(
-                author_count=Count('members', filter=Q(members=author)),
-                target_count=Count('members', filter=Q(members=target_user)),
-                member_count=Count('members')
-            ).filter(
-                author_count=1,
-                target_count=1,
-                member_count=2
-            ).get()
+          chatroom = ChatGroup.objects.filter(
+				is_private=True,
+				members=author
+			).filter(
+				members=target_user
+			).get()
         except ChatGroup.DoesNotExist:
             chatroom = ChatGroup.objects.create()
             chatroom.members.add(author, target_user)
@@ -143,4 +151,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_message_author_id(self, message):
         return message.author.id
-
+    
+    @database_sync_to_async
+    def find_matching_room(self, target_user_id):
+        try:
+            chatroom = ChatGroup.objects.filter(
+                is_private=True,
+                members=target_user_id
+            ).filter(
+                members=self.user
+            ).get()
+            return chatroom
+        except ChatGroup.DoesNotExist:
+            return None

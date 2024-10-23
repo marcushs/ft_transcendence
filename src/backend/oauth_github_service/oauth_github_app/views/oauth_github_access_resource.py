@@ -34,19 +34,23 @@ class oauthGithubAccessResourceView(View):
         }
 
         response = requests.get(resource_url, headers=headers)
-        print(response.text)
+
         # Check if the response contains JSON data and handle errors
         try:
             response_data = response.json()
             if 'status' in response_data and response_data['status'] == '401':
-                return JsonResponse({'message': response_data['message'],
+                response = JsonResponse({'message': response_data['message'],
                                      'status': 'Error'}, 
                                      status=401)
+                response.delete_cookie('github_access_token')
+                return response
             return self.create_or_login_user(request, response_data, token) 
         except ValueError:
-            return JsonResponse({'message': 'Invalid JSON response',
+            response = JsonResponse({'message': 'Invalid JSON response',
                                  'status': 'Error'}, 
                                  status=500)
+            response.delete_cookie('github_access_token')  
+            return response
         
     def create_or_login_user(self, request, data, token): 
         self.csrf_token = request.headers.get('X-CSRFToken')
@@ -56,6 +60,7 @@ class oauthGithubAccessResourceView(View):
         self.profile_image_link = data['avatar_url']
         self.split_fullname(data['name'])
         response = self.get_user_email(token)
+        response.delete_cookie('github_access_token')
         if response.status_code == 401:
             return response
         self.init_payload() 
@@ -84,6 +89,7 @@ class oauthGithubAccessResourceView(View):
                     response_data['url'] = '/oauth-username?oauth_provider=oauth_github'
                     response = JsonResponse(response_data, status=400)
                     response.set_cookie('id', self.id, httponly=True)
+                response.delete_cookie('github_access_token')
                 return response
             return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token) 
     

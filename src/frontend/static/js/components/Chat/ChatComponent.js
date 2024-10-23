@@ -4,7 +4,6 @@ import "./ChatRoomTopBar.js";
 import "./ChatRoomBottomBar.js";
 import "./ChatRoomConversation.js";
 import checkAuthentication from "../../utils/checkAuthentication.js"
-import { updateChatContactListDOM } from "../../utils/chatUtils/joinRoomUtils.js";
 
 class ChatComponent extends HTMLElement {
 	constructor() {

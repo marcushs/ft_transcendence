@@ -5,7 +5,7 @@ import userProfile from "../views/user-profile.js";
 import { getString } from "../utils/languageManagement.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import { sendMessageCallback } from "../utils/chatUtils/sendMessageCallback.js";
-import { removeChatContactFromDOM } from "../utils/chatUtils/joinRoomUtils.js";
+import { removeChatroom } from "../utils/chatUtils/joinRoomUtils.js";
 
 class ContactComponent extends HTMLElement {
     
@@ -171,7 +171,6 @@ class ContactComponent extends HTMLElement {
                         console.log(`TEST: Invite contact \'${this.userData.username}\' to play successfully reached`);
                         break;
                     case 'contact-action-remove-contact':
-                        removeChatContactFromDOM(this.userData);
                         this.handleRequestIconClick('remove');
                         break;
                     case 'contact-action-see-profile':
