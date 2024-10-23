@@ -1,6 +1,7 @@
 import getProfileImage from "../../utils/getProfileImage.js";
 import { sendRequest } from "../../utils/sendRequest.js";
 import { displayChatroomComponent } from "../../utils/chatUtils/sendMessageCallback.js";
+import { checkAllRecentMessagesRead, unreadMessageNotifOff } from "../../utils/chatUtils/sendPrivateMessage.js";
 
 export default class ChatContactComponent extends HTMLElement {
 	static get observedAttributes() {
@@ -96,7 +97,13 @@ export default class ChatContactComponent extends HTMLElement {
 
 	addEventListeners() {
 		this.addEventListener('click', () => {
+			const unreadCircle = this.querySelector('.unread-circle');
 			displayChatroomComponent(this.userData, true);
+
+			if (unreadCircle.classList.contains('active')) unreadCircle.classList.remove('active');
+
+			if (checkAllRecentMessagesRead()) unreadMessageNotifOff();
+
 		})
 	}
 

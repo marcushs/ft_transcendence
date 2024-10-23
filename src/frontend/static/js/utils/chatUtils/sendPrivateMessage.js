@@ -83,13 +83,15 @@ function isMessageValid(message) {
 function unreadMessageNotifOn() {
 	const chatUnreadNotif = document.querySelector('.chat-unread-message-notif');
 
+	if (chatUnreadNotif.classList.contains('active')) return;
+
 	chatUnreadNotif.classList.add('active');
 }
 
-function unreadMessageNotifOff() {
+export function unreadMessageNotifOff() {
 	const chatUnreadNotif = document.querySelector('.chat-unread-message-notif');
 
-	chatUnreadNotif.classList.remove('active');
+	if (chatUnreadNotif.classList.contains('active')) chatUnreadNotif.classList.remove('active');
 }
 
 export async function messageReceptionDOMUpdate(messageData) {
@@ -114,7 +116,7 @@ function updateChatContactComponents(messageData) {
 	messagedContacts.forEach(async (contact) => {
 		if (isTargetChatroom(contact.getAttribute('data-chatroom'), messageData.chatroom)) {
 			contact.updateLastMessage(messageData.message);
-			if (await isSentOrReceivedMessage(messageData.author) === 'received') {
+			if (await isSentOrReceivedMessage(messageData.author) === 'received' && !document.querySelector('.chatroom.active')) {
 				console.log('here');
 				contact.querySelector('.unread-circle').classList.add('active');
 			}
@@ -132,7 +134,7 @@ function observeUlChanges(element, messageData) {
 					const contact = node.querySelector('chat-contact-component');
 					if (contact) {
 						contact.whenRendered().then(async () => {
-							if (await isSentOrReceivedMessage(messageData.author) === 'received') {
+							if (await isSentOrReceivedMessage(messageData.author) === 'received' && !document.querySelector('.chatroom.active')) {
 								contact.querySelector('.unread-circle').classList.add('active');
 							}
 						})
@@ -151,4 +153,16 @@ function observeUlChanges(element, messageData) {
   
 	return observer;
   }
-  
+
+export function checkAllRecentMessagesRead() {
+	const listItems = document.querySelectorAll('chat-contact-component');
+	const chatContacts = Array.from(listItems);
+
+	chatContacts.forEach(contact => {
+		const unreadCircle = contact.querySelector('.unread-circle');
+
+		if (unreadCircle.classList.contains('active')) return false;
+	})
+
+	return true;
+}
