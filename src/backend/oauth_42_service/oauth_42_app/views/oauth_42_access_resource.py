@@ -39,9 +39,11 @@ class oauth42AccessResourceView(View):
         try:
             response_data = response.json()
             if 'error' in response_data:
-                return JsonResponse({'message': response_data['error'],
+                response = JsonResponse({'message': response_data['error'],
                                      'status': 'Error'}, 
                                      status=400)
+                response.delete_cookie('42_access_token')
+                return response
             return self.create_or_login_user(request, response_data)
         except ValueError:
             response = JsonResponse({'message': 'Invalid JSON response',
