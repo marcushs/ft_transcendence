@@ -1,0 +1,25 @@
+user-profile-send-message-btn {
+	display: flex;
+	width: 15rem;
+	height: 5rem;
+	background-color: rgb(58, 160, 183);
+	text-wrap: nowrap;
+	color: black;
+	font-size: 1.5rem;
+	font-weight: 500;
+	justify-content: center;
+	align-items: center;
+	border-radius: 25px;
+	opacity: 0.8;
+	transition: opacity 0.2s ease-in;
+}
+
+user-profile-send-message-btn i {
+	font-size: 2rem;
+	transform: translateY(15%);
+}
+
+user-profile-send-message-btn.hover {
+	opacity: 1;
+	transition: opacity 0.2s ease-in;
+}

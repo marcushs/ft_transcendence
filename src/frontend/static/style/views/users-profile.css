@@ -4,8 +4,10 @@
 @import '../components/Friendship/CancelFriendButton.css';
 @import '../components/Friendship/AcceptFriendButton.css';
 @import '../components/Friendship/DeclineFriendButton.css';
+@import '../components/UserProfileSendMessageBtn.css';
 
 .users-profile-page {
+	position: relative;
 	width: 100%;
 	height: 100%;
 	display: flex;
@@ -35,6 +37,7 @@
 	height: 100%;
 	width: 100%;
 	border-radius: 7px;
+	z-index: 3;
 }
 
 .users-profile-page .users-profile-container {
@@ -100,4 +103,10 @@
 	height: 16rem;
 	border-radius: 50%;
 	border: 2px solid var(--light-grey);
+}
+
+.user-profile-content .user-profile-send-message-btn {
+	background-color: aqua;
+	width: 3rem;
+	height: 3rem;
 }

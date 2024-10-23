@@ -33,6 +33,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             try:
                 message_body = data['message']
                 target_user = await aget_object_or_404(User, id=data['target_user'])
+                if target_user == self.user:
+                    return 
                 chatroom, created = await self.get_or_create_chatroom(author=self.user, target_user=target_user)
                 if created is True:
                     await self.channel_layer.group_send('chatgroup_updates',
