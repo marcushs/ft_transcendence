@@ -6,7 +6,6 @@ import { throwGameInactivityEvent } from "../../../../utils/throwGameInactivityE
 export async function checkInactiveGame() {
     const savedState = localStorage.getItem('inGameComponentState');
     const gameState = savedState ? JSON.parse(savedState) : null;
-    console.log('gameState: ', gameState);
     if (gameState) {
         try {
             const gameStatus = await GameStillActive(gameState.gameId);

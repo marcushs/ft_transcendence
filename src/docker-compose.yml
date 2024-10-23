@@ -317,6 +317,9 @@ services:
       - ./backend/matchmaking_service:/app
     ports:
       - "8006:8000"
+    depends_on:
+      matchmaking_db:
+        condition: service_healthy
     networks:
       - transcendence-network
 

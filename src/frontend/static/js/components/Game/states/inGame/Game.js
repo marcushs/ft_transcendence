@@ -1,5 +1,5 @@
 import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
-import { disconnectWebSocket } from "./gameWebsocket.js";
+import { disconnectGameWebSocket } from "./gameWebsocket.js";
 import getUserId from "../../../../utils/getUserId.js";
 import { resetGameInstance } from "./inGameComponent.js";
 import { gameSocket } from "./gameWebsocket.js";
@@ -223,7 +223,7 @@ export default class Game {
 	gameFinished(message) {
 		this.gameInProgress = false;
 		alert(message);
-		disconnectWebSocket(this.userId, false);
+		disconnectGameWebSocket(this.userId, false);
 		throwRedirectionEvent('/');
 	}
 
@@ -241,7 +241,7 @@ export default class Game {
 	canceledGame(message) {
 		this.gameInProgress = false;
 		alert(`Game canceled: ${message}`);
-		disconnectWebSocket(this.userId, false);
+		disconnectGameWebSocket(this.userId, false);
 		throwRedirectionEvent('/');
 	}
 

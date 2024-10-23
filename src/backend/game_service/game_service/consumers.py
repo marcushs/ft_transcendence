@@ -3,6 +3,8 @@ from game_app.game.game_engine import PongGameEngine
 from urllib.parse import parse_qs
 import json
 
+connections = {}
+
 class GameConsumer(AsyncWebsocketConsumer):
 
  #//---------------------------------------> Connector <--------------------------------------\\#
@@ -16,6 +18,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 			else:
 				self.group_name = f'game_{self.user_id}'
 				await self.channel_layer.group_add(self.group_name, self.channel_name) 
+				connections[self.user_id] = self
 				await self.accept()
 		except Exception as e:
 			print('Error: ', e) 
@@ -23,6 +26,8 @@ class GameConsumer(AsyncWebsocketConsumer):
  #//---------------------------------------> Disconnector <--------------------------------------\\#
 
 	async def disconnect(self, close_code):
+		if self.user_id in connections:
+			del connections[self.user_id]
 		await self.channel_layer.group_discard(self.group_name, self.channel_name) 
 
  #//---------------------------------------> Receiver <--------------------------------------\\#

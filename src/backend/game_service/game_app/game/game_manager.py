@@ -7,6 +7,7 @@ from ..decorators import jwt_required
 from django.http import JsonResponse
 from ..request import send_request
 from django.views import View
+from game_service.consumers import connections
 import asyncio
 import json
 import uuid
@@ -19,7 +20,8 @@ class startGameEngine(View):
         super()
 
     async def post(self, request):
-        data = json.loads(request.body.decode('utf-8')) 
+        data = json.loads(request.body.decode('utf-8'))
+        print(f'----------data received: {data}')
         if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
             return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)  
         asyncio.create_task(starting_game_instance(data))
@@ -33,6 +35,17 @@ async def starting_game_instance(data):
         'player_one': str(data['player1']),
         'player_two': str(data['player2'])
     }
+    count = 0
+    max_checks = 20
+    while True:
+        if game_id_data['player_one'] in connections and game_id_data['player_two'] in connections:
+            print('all players connected !')
+            break
+        print('waiting all players...')
+        if count == max_checks: # put here a send socket to client for indicate the game is canceled
+            return
+        count += 1
+        await asyncio.sleep(0.5)
     game_instance = PongGameEngine(game_id_data)
     await send_client_game_init(game_id_data=game_id_data, game_instance=game_instance)
     await running_game_instance(instance=game_instance, game_type=data['game_type'])

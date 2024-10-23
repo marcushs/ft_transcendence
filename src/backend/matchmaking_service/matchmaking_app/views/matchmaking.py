@@ -163,9 +163,10 @@ def create_new_match_history(data, winner_instance, loser_instance):
 
  #//---------------------------------------> matchmaking utils <--------------------------------------\\#
 
-def is_already_in_waiting_list(target_id):
+def is_already_in_waiting_list(target_id): 
     waiting_users = redis_instance.lrange('waiting_users', 0, -1)
     waiting_users = [user_id.decode() for user_id in waiting_users]
+    print(f'------------> waiting_users: {waiting_users}')
     if str(target_id) in waiting_users:
         return True
     return False
@@ -175,7 +176,7 @@ def check_duplicate_user_in_waiting_list(target_user):
     waiting_users = redis_instance.lrange('waiting_users', 0, -1)
     waiting_users = [user_id.decode() for user_id in waiting_users]
     if str(target_user.id) in waiting_users:
-        print(f'--------------> Found !')
+        print(f'--------------> Found !')  
         return False
     print(f'--------------> User is not in waiting_list !')
     return True

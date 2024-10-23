@@ -5,7 +5,7 @@ import { waitForOpenWebsocketConnection } from "../inGame/gameWebsocket.js";
 import '../inGame/inGameComponent.js'
 import { gameWebsocket } from "../inGame/gameWebsocket.js";
 import '../../MatchmakingResearchComponent.js'
-import { matchmakingWebsocket } from "../../matchmakingWebsocket.js";
+import { matchmakingWebsocket, matchmakingSocket } from "../../matchmakingWebsocket.js";
 
 class UnrankedComponent extends HTMLElement {
 	constructor() {
@@ -28,18 +28,13 @@ class UnrankedComponent extends HTMLElement {
 	}
 
 	async handlePlayButtonClick() {
-		const userData = await getUserData();
-		if (!userData)
-			return;
 		try {
-			await matchmakingWebsocket();
-			await gameWebsocket(userData.id);
-
-			const result =  await waitForOpenWebsocketConnection();
-			if (!result)
-				console.log('Connection to game websocket timeout');			
-			if (!this.requestMatchmakingResearch())
+			await matchmakingWebsocket();			
+			if (!this.requestMatchmakingResearch()) {
+				if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
+					matchmakingSocket.close();
 				return;
+			}
 			localStorage.setItem('isSearchingGame', 'unranked');
 			const researchComponent = document.createElement('matchmaking-research-component');
 			app.appendChild(researchComponent);

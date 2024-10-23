@@ -12,7 +12,7 @@ export async function gameWebsocket(userId) {
 		return;
 	}
 	if (gameSocket)
-		disconnectWebSocket();
+		disconnectGameWebSocket();
 
 	gameSocket = new WebSocket(`ws://localhost:8005/ws/game/?user_id=${userId}`);
 
@@ -155,7 +155,7 @@ export function waitForOpenWebsocketConnection(maxChecks = 20, interval = 500) {
 				resolve(true);
 			}  else if (checkCount >= maxChecks) {
 				if (gameSocket && gameSocket.readyState !== WebSocket.CLOSED)
-                    disconnectWebSocket();
+                    disconnectGameWebSocket();
                 clearInterval(waitOpenConnection);
 				reject(false);
             }
@@ -165,7 +165,7 @@ export function waitForOpenWebsocketConnection(maxChecks = 20, interval = 500) {
 
 //---------------------------------------> Utils export method <--------------------------------------\\
 
-export function disconnectWebSocket(userId, sendMessage) {
+export function disconnectGameWebSocket(userId, sendMessage) {
 	if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
 		if (sendMessage) {
 			sendDisconnectMessage(userId);

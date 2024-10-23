@@ -1,20 +1,28 @@
-/* matchmaking-research-component {
-    position: relative;
-    width: 100vw;
-    height: 20rem;
-    bottom: 120rem;
-    left: 100rem;
-    z-index: 1000;
-} */
-
-.matchmaking-research {
+matchmaking-research-component {
     position: absolute;
+    width: 100%;
+    height: 20rem;
+    top: 8vh;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+matchmaking-research-component .matchmaking-research-component-hide {
+    opacity: 0;
+}
+
+/* -------------- Searching css style -------------------*/
+
+matchmaking-research-component .matchmaking-research {
     display: flex;
     flex-direction: column;
 	align-items: center;
-    height: 10%;
+    height: 100%;
     width: 100%;
     top: 8vh;
+}
+
+matchmaking-research-component .matchmaking-research-processing {
     background: 
     radial-gradient(ellipse at top, 
         rgb(1, 48, 59) 20%,
@@ -22,7 +30,15 @@
     );
 }
 
-.matchmaking-research-title {
+matchmaking-research-component .matchmaking-research-finished {
+    background: 
+    radial-gradient(ellipse at top, 
+        rgb(61, 52, 0) 20%,
+        rgba(3, 20, 26, 0) 60%
+    );
+}
+
+matchmaking-research-component .matchmaking-research-title {
     margin-top: 1rem;
     font-size: 2rem;
     font-weight: 500;
@@ -31,60 +47,101 @@
     text-shadow: 0 0 10px var(--background-color);
 }
 
-.cancel-matchmaking-research-icon {
+matchmaking-research-component .cancel-matchmaking-research-icon {
     margin-top: 1.5rem;
     display: flex;
 	align-items: center;
     justify-content: center;
-    transform: skew(-10deg);
+    transform: skew(-15deg);
     height: 2.8rem;
     width: 9rem;
+    border-radius: 10px;
     background-color: rgb(150, 6, 6);
-    box-shadow: 0 0 5px var(--background-color);
-    z-index: 1000;
+    box-shadow: 0 3px 5px var(--background-color);
+    transition: all 0.1s ease;
 }
 
-.cancel-matchmaking-research-icon p {
+matchmaking-research-component .cancel-matchmaking-research-icon:hover {
+    transform: skew(-15deg) scale(1.05);
+    box-shadow: 0 6px 8px var(--background-color);
+    background-color: rgb(180, 10, 10);
+    cursor: pointer;
+}
+
+matchmaking-research-component .cancel-matchmaking-research-icon:active {
+    transform: skew(-15deg);
+    background-color: rgb(150, 6, 6);
+    box-shadow: 0 3px 5px var(--background-color);
+}
+
+matchmaking-research-component .cancel-matchmaking-research-icon p {
     font-size: 1.7rem;
-    font-style: italic;
 	color: var(--text-primary-color);
+    text-shadow: 0 0 10px var(--background-color);
+
 }
 
-/* rgb(139, 119, 0) colors for ellipse gradiant when game found*/
+matchmaking-research-component .matchmaking-research-section {
+    display: flex;
+}
 
-.matchmaking-search-indicator {
-    position: absolute;
+matchmaking-research-component .matchmaking-search-indicator {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 3rem;
-    width: 7.5rem;
-    top: 0.5rem;
-    left: 55.5%;
+    width: 6rem;
+    margin-top: 0.25rem;
 }
 
-.matchmaking-search-indicator-bar {
+matchmaking-research-component .matchmaking-search-indicator-bar {
     border-radius: 3px;
     margin-right: 0.5rem;
     height: 2rem;
     width: 0.75rem;
-    background-color: var(--neon-blue);
-    animation: bounce 0.6s infinite alternate;
 }
 
-@keyframes bounce {
+matchmaking-research-component .matchmaking-research-processing .matchmaking-search-indicator-bar {
+    animation: bounce-bar-processing 0.6s infinite alternate;
+}
+
+matchmaking-research-component .matchmaking-research-finished .matchmaking-search-indicator-bar {
+    animation: bounce-bar-found 0.6s infinite alternate;
+}
+
+@keyframes bounce-bar-processing {
     0% {
+        box-shadow: 0 0 0px var(--background-color);
+        background-color: rgb(0, 230, 234);
         transform: translateY(0);
     }
     100% {
+        background-color: rgb(1, 126, 158);
         transform: translateY(0.7rem);
+        box-shadow: 0 0 10px var(--background-color);
     }
 }
 
-.matchmaking-search-indicator-bar:nth-child(2) {
+@keyframes bounce-bar-found {
+    0% {
+        box-shadow: 0 0 0px var(--background-color);
+        background-color: rgb(228, 217, 6);
+        transform: translateY(0);
+    }
+    100% {
+        background-color: rgb(175, 167, 3);
+        transform: translateY(0.7rem);
+        box-shadow: 0 0 10px var(--background-color);
+    }
+}
+
+/* -------------- Searching css style -------------------*/
+
+
+matchmaking-research-component .matchmaking-search-indicator-bar:nth-child(2) {
     animation-delay: 0.2s;
 }
 
-.matchmaking-search-indicator-bar:nth-child(3) {
+matchmaking-research-component .matchmaking-search-indicator-bar:nth-child(3) {
     animation-delay: 0.4s;
 }

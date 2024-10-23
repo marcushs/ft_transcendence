@@ -1,6 +1,6 @@
 import { throwGameInactivityEvent } from '../../../../utils/throwGameInactivityEvent.js';
 import Game from './Game.js';
-import { disconnectWebSocket } from './gameWebsocket.js';
+import { disconnectGameWebSocket } from './gameWebsocket.js';
 
 export let gameInstance = null;
 
@@ -82,7 +82,7 @@ class InGameComponent extends HTMLElement {
 
 	async disconnectedCallback() {
 		if (gameInstance) {
-			disconnectWebSocket(this.userId, true);
+			disconnectGameWebSocket(this.userId, true);
 			gameInstance.cleanup();
 			throwGameInactivityEvent();
 		}
