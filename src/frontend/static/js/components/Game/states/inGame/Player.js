@@ -17,7 +17,7 @@ export default class Player {
 
 
 	draw() {
-		this.playerHitColor();
+		this.drawPlayerHit();
 		if (this.isPlayerHit)
 			this.canvas.ctx.fillStyle = this.hitColor;
 		else
@@ -63,7 +63,7 @@ export default class Player {
 	}
 
 
-	playerHitColor() {
+	drawPlayerHit() {
 		if (this.isPlayerHit)
 			if (performance.now() > this.hitTime + this.hitDuration)
 				this.isPlayerHit = false;

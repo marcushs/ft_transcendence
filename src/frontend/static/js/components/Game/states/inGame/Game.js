@@ -168,11 +168,14 @@ export default class Game {
 // --------------------------------------- Update render -------------------------------------- //
 
 	updateGameRender(newState) {
-		if (!this.isGameRunning) {
+		this.updatePlayerCollisionsHit(newState);
+
+		if (!this.isGameRunning)
 			this.isGameRunning = true;
-		}
+
 		this.updatePlayersPosition(newState);
 		this.updateBallPosition(newState);
+
 		if (this.playerOneScore !== newState.player_one_score || this.playerTwoScore !== newState.player_two_score) {
 			this.resetUserInputs();
 			this.updateScore(newState);
@@ -180,6 +183,19 @@ export default class Game {
 		if (newState.has_ball_hit_wall)
 			this.generateSparks(this.ball.x, this.ball.y, "#FF16C6");
 	}
+
+
+	updatePlayerCollisionsHit(newState) {
+		if (newState.is_player_one_collide) {
+			this.playerOne.isPlayerHit = true;
+			this.playerOne.hitTime = performance.now();
+		}
+		if (newState.is_player_two_collide) {
+			this.playerTwo.isPlayerHit = true;
+			this.playerTwo.hitTime = performance.now();
+		}
+	}
+
 
 // --------------------------------------- Update render method -------------------------------------- //
 
