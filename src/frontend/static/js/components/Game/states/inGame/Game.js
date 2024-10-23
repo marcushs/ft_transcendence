@@ -6,6 +6,7 @@ import { socket } from "./gameWebsocket.js";
 import Player from "./Player.js";
 import Spark from "./Spark.js";
 import Ball from "./Ball.js";
+import Intro from "./Intro.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
 	localStorage.removeItem('isSearchingGame');
@@ -29,40 +30,30 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 	statesContainerDiv.appendChild(inGameComponent);
 }
 
-// export async function startGame(gameId, initialGameState, map_dimension) {
-// 	const userId = await getUserId();
-// 	const onlineHomeDiv = document.querySelector('.states-container');
-// 	const oldDivContent = onlineHomeDiv.innerHTML;
-
-// 	const inGameComponent = document.createElement('in-game-component');
-// 	inGameComponent.gameId = gameId;
-// 	inGameComponent.gameState = initialGameState;
-// 	inGameComponent.map_dimension = map_dimension;
-// 	inGameComponent.userId = userId;
-// 	onlineHomeDiv.innerHTML = '';
-// 	onlineHomeDiv.appendChild(inGameComponent);
-// }
-
 export default class Game {
-	constructor(canvas, gameId, gameState, userId) {		
+	constructor(canvas, gameId, gameState, userId) {
 		this.gameInProgress = true;
 		this.userId = userId;
 		this.canvas = canvas;
 		this.gameId = gameId;
 		this.gameState = gameState;
+		this.isGameRunning = false;
+
+		this.Intro = new Intro(this.canvas);
+
 		this.initGameRender();
 		this.renderLoop();
+
 	}
 
 // --------------------------------------- Constructor method -------------------------------------- //
 
 	initGameRender() {
-		this.isGameRunning = false
 		this.speed = this.gameState.ball_speed;
-		this.speedLimit = this.gameState.speedLimit;		
+		this.speedLimit = this.gameState.speedLimit;
 		this.ball = new Ball(this.canvas, this.gameState.ball_position.x, this.gameState.ball_position.y, this.speed);
-		const playerOneBackId = Number(this.gameState.player_one.id)
-		const playerTwoBackId = Number(this.gameState.player_two.id)
+		const playerOneBackId = Number(this.gameState.player_one.id);
+		const playerTwoBackId = Number(this.gameState.player_two.id);
 
 		if (this.userId === playerOneBackId) {
 			this.playerOne = new Player(this.canvas, true, playerOneBackId);
@@ -70,7 +61,7 @@ export default class Game {
 		} else {
 			this.playerOne = new Player(this.canvas, true, playerTwoBackId);
 			this.playerTwo = new Player(this.canvas, false, playerOneBackId);
-		}		
+		}
 		this.playerOneScore = this.gameState.player_one.score;
 		this.playerTwoScore = this.gameState.player_two.score;
 		this.sparks = [];
@@ -84,6 +75,10 @@ export default class Game {
 			down: false,
 		}
 		this.attachEventsListener();
+
+		setTimeout(() => {
+			this.Intro.isAnimationEnabled = true;
+		}, 3000);
 	}
 
 // --------------------------------------- Render loop -------------------------------------- //
@@ -93,11 +88,15 @@ export default class Game {
 			this.cleanup();
 			return;
 		}
+
 		this.deltaTime = (performance.now() - this.lastTime) / 1000;
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.movePlayer();
 		this.drawFrame();
 		this.drawSparks();
+		if (!this.isGameRunning)
+			this.Intro.drawIntro();
+
 		requestAnimationFrame(() => this.renderLoop());
 	}
 
@@ -110,26 +109,28 @@ export default class Game {
 			action = 'move_up';
 		if (this.keysPlayerOne.down)
 			action = 'move_down'
-		if (action) {			
+		if (action) {
 			if (socket && socket.readyState === WebSocket.OPEN) {
 				socket.send(JSON.stringify({
 					'type': 'player_action',
 					'game_id': this.gameId,
 					'player_id': this.playerOne.playerId,
 					'action' : action
-				}));		
+				}));
 			}
 		}
 	}
 
 	// Draw new frame render
 	drawFrame() {
-		this.drawScore();
+		if (this.isGameRunning)
+			this.drawScore();
 		this.drawMiddleLine();
 		this.playerOne.draw();
 		this.playerTwo.draw();
 		this.ball.draw();
 	}
+
 
 	drawScore() {
 		this.canvas.ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
@@ -170,8 +171,9 @@ export default class Game {
 	updateGameRender(newState) {
 		this.updatePlayerCollisionsHit(newState);
 
-		if (!this.isGameRunning)
+		if (!this.isGameRunning) {
 			this.isGameRunning = true;
+		}
 
 		this.updatePlayersPosition(newState);
 		this.updateBallPosition(newState);
