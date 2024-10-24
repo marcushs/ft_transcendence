@@ -38,6 +38,7 @@ export default class Game {
 		this.gameId = gameId;
 		this.gameState = gameState;
 		this.isGameRunning = false;
+		this.isAnimationEnabled = true;
 
 		this.Intro = new Intro(this.canvas);
 
@@ -94,7 +95,7 @@ export default class Game {
 		this.movePlayer();
 		this.drawFrame();
 		this.drawSparks();
-		if (!this.isGameRunning)
+		if (this.isAnimationEnabled)
 			this.Intro.drawIntro();
 
 		requestAnimationFrame(() => this.renderLoop());
@@ -123,7 +124,7 @@ export default class Game {
 
 	// Draw new frame render
 	drawFrame() {
-		if (this.isGameRunning)
+		if (!this.isAnimationEnabled)
 			this.drawScore();
 		this.drawMiddleLine();
 		this.playerOne.draw();
@@ -171,9 +172,10 @@ export default class Game {
 	updateGameRender(newState) {
 		this.updatePlayerCollisionsHit(newState);
 
-		if (!this.isGameRunning) {
+		if (!this.isGameRunning)
 			this.isGameRunning = true;
-		}
+		if (this.isAnimationEnabled)
+			this.isAnimationEnabled = false;
 
 		this.updatePlayersPosition(newState);
 		this.updateBallPosition(newState);

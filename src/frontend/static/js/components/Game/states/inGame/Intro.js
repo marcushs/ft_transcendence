@@ -48,7 +48,7 @@ export default class Intro {
 		this.canvas.ctx.lineTo(0, this.canvas.height + 3);
 		this.canvas.ctx.clip();
 		this.canvas.ctx.drawImage(this.backgroundImage, this.leftSectionTopRightX - this.canvas.width / 2 - 200, 0, this.canvas.width + 3, this.canvas.height + 3);
-		this.canvas.ctx.fillStyle = 'rgba(0, 208, 255, 0.45)';
+		this.canvas.ctx.fillStyle = 'rgba(0, 208, 255, 0.65)';
 		this.canvas.ctx.fill();
 		this.canvas.ctx.restore();
 		this.canvas.ctx.closePath();
@@ -65,7 +65,7 @@ export default class Intro {
 		this.canvas.ctx.lineTo(this.canvas.width, 0);
 		this.canvas.ctx.clip();
 		this.canvas.ctx.drawImage(this.backgroundImage, this.rightSectionTopLeftX - this.canvas.width / 2 + 200, 0, this.canvas.width + 3, this.canvas.height + 3);
-		this.canvas.ctx.fillStyle = 'rgba(255, 22, 198, 0.45)';
+		this.canvas.ctx.fillStyle = 'rgba(255, 22, 198, 0.65)';
 		this.canvas.ctx.fill();
 		this.canvas.ctx.restore();
 		this.canvas.ctx.closePath();
@@ -163,9 +163,10 @@ export default class Intro {
 
 		if (this.leftSectionTopRightX < 0) {
 			let i = 0;
-			const test = ['2', '1'];
+			const countDownArray = ['2', '1'];
+
 			const intervalId = setInterval(() => {
-				this.countDownNumber = test[i++];
+				this.countDownNumber = countDownArray[i++];
 				if (i > 1)
 					clearInterval(intervalId);
 			}, 1000);
