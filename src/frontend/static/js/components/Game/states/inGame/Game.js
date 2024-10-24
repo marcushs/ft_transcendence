@@ -145,6 +145,10 @@ export default class Game {
 	drawMiddleLine() {
 		this.canvas.fillStyle = '#fff';
 		this.canvas.ctx.beginPath();
+		this.canvas.ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+		this.canvas.ctx.shadowBlur = 50;
+		this.canvas.ctx.shadowOffsetX = 0;
+		this.canvas.ctx.shadowOffsetY = 0;
 		const gradient = this.canvas.ctx.createLinearGradient(this.canvas.width / 2, 0, this.canvas.width / 2, this.canvas.height);
 		gradient.addColorStop(0, 'rgb(255, 22, 198)');
 		gradient.addColorStop(1, 'rgb(0, 206, 255)');
