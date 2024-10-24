@@ -9,5 +9,6 @@ export default async function getUserId() {
 		return data.id;
 	} catch (error) {
 		console.error(error);
+		return null;
 	}
 }

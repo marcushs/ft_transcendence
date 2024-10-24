@@ -1,4 +1,5 @@
 import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
+import { waitForStatesContainer } from "./gameNetworkManager.js";
 import { disconnectGameWebSocket } from "./gameWebsocket.js";
 import getUserId from "../../../../utils/getUserId.js";
 import { resetGameInstance } from "./inGameComponent.js";
@@ -9,12 +10,16 @@ import Ball from "./Ball.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
 	localStorage.removeItem('isSearchingGame');
-	const userId = await getUserId();
-	let statesContainerDiv = document.querySelector('.states-container');
-	if (!statesContainerDiv) {
+	const matchmakingSearchPopUp = document.querySelector('matchmaking-research-component')
+	if (matchmakingSearchPopUp)
+		matchmakingSearchPopUp.remove();
+	if (window.location.pathname !== '/') {
 		throwRedirectionEvent('/');
-		statesContainerDiv = document.querySelector('.states-container');
+		await waitForStatesContainer();
 	}
+	const userId = await getUserId();
+	const statesContainerDiv = document.querySelector('.states-container');
+        
 	statesContainerDiv.innerHTML = '';
 	for (let i = 0; i < statesContainerDiv.classList.length; i++) {
 		if (statesContainerDiv.classList[i] === 'states-container')
@@ -28,20 +33,6 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 	inGameComponent.userId = userId;
 	statesContainerDiv.appendChild(inGameComponent);
 }
-
-// export async function startGame(gameId, initialGameState, map_dimension) {
-// 	const userId = await getUserId();
-// 	const onlineHomeDiv = document.querySelector('.states-container');
-// 	const oldDivContent = onlineHomeDiv.innerHTML;
-
-// 	const inGameComponent = document.createElement('in-game-component');
-// 	inGameComponent.gameId = gameId;
-// 	inGameComponent.gameState = initialGameState;
-// 	inGameComponent.map_dimension = map_dimension;
-// 	inGameComponent.userId = userId;
-// 	onlineHomeDiv.innerHTML = '';
-// 	onlineHomeDiv.appendChild(inGameComponent);
-// }
 
 export default class Game {
 	constructor(canvas, gameId, gameState, userId) {		

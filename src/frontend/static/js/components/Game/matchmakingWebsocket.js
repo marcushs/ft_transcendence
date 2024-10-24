@@ -19,11 +19,8 @@ export async function matchmakingWebsocket() {
 
 		if (data.type === 'game_found') {
 			const matchmakingPopUp = document.querySelector('matchmaking-research-component');
-			console.log('Game found received from matchmaking backend :', matchmakingPopUp);
 			matchmakingPopUp.setFoundGameRender();
-			const userData = await getUserData();
-			if (userData)
-				await gameWebsocket(userData.id);
+			await gameWebsocket(data.player_id);
 		}
 	}
 

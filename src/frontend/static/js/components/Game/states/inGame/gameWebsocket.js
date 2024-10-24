@@ -30,7 +30,6 @@ export async function gameWebsocket(userId) {
 				if (gameInstance) gameInstance.updateGameRender(data.game_state) 
 			},
 			'game_finished': (data) => {
-				console.log('finished game received : ', data);
 				if (gameInstance) gameInstance.gameFinished(data.message) 
 			},
 			'game_canceled': (data) => {
@@ -169,7 +168,6 @@ export function disconnectGameWebSocket(userId, sendMessage) {
 	if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
 		if (sendMessage) {
 			sendDisconnectMessage(userId);
-			console.log('disconnect message send to websocket !');
 		}
 		gameSocket.onclose = () => {};
 		gameSocket.close();

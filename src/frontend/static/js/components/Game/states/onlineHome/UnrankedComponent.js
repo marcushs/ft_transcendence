@@ -1,11 +1,8 @@
-import {getString} from "../../../../utils/languageManagement.js";
-import { sendRequest } from "../../../../utils/sendRequest.js";
-import getUserData from "../../../../utils/getUserData.js";
-import { waitForOpenWebsocketConnection } from "../inGame/gameWebsocket.js";
-import '../inGame/inGameComponent.js'
-import { gameWebsocket } from "../inGame/gameWebsocket.js";
-import '../../MatchmakingResearchComponent.js'
 import { matchmakingWebsocket, matchmakingSocket } from "../../matchmakingWebsocket.js";
+import { requestMatchmakingResearch } from "../../MatchmakingResearchComponent.js";
+import { getString } from "../../../../utils/languageManagement.js";
+import '../../MatchmakingResearchComponent.js'
+// import '../inGame/inGameComponent.js'
 
 class UnrankedComponent extends HTMLElement {
 	constructor() {
@@ -17,7 +14,6 @@ class UnrankedComponent extends HTMLElement {
 				<button-component label="${getString('buttonComponent/play')}" class="generic-btn"></button-component>
 			</div>
 		`;
-
 		this.attachEventsListener();
 	}
 
@@ -30,27 +26,19 @@ class UnrankedComponent extends HTMLElement {
 	async handlePlayButtonClick() {
 		try {
 			await matchmakingWebsocket();			
-			if (!this.requestMatchmakingResearch()) {
+			if (!requestMatchmakingResearch({type: 'unranked'})) {
 				if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 					matchmakingSocket.close();
 				return;
 			}
-			localStorage.setItem('isSearchingGame', 'unranked');
+			localStorage.setItem('isSearchingGame', JSON.stringify({
+				type: 'unranked',
+				status: 'searching'
+			}));
 			const researchComponent = document.createElement('matchmaking-research-component');
 			app.appendChild(researchComponent);
 		} catch (error) {
 			console.error(error);
-		}
-	}
-
-	async requestMatchmakingResearch() {
-		try {
-			const response = await sendRequest('POST', 'http://localhost:8006/matchmaking/matchmaking/', {type: 'unranked'}); 
-			console.log(response.message);
-			return true;
-		} catch (error) {
-			console.error(error);
-			return false;
 		}
 	}
 }

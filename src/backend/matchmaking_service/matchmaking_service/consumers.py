@@ -18,7 +18,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             print('Error: ', e)
 
-    async def disconnect(self, close_code):
+    async def disconnect(self, close_code): 
         if self.user_id in connections:
             del connections[self.user.id]
         await self.channel_layer.group_discard(self.group_name, self.channel_name) 
@@ -30,5 +30,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(
             {
                 'type': 'game_found',
+                'player_id': self.user.id
             }
         ))

@@ -1,4 +1,4 @@
-from .views.matchmaking import unranked_queue, change_is_ingame_state
+from .views.matchmaking import unranked_queue, change_is_ingame_state, ranked_queue
 from channels.layers import get_channel_layer
 from .utils.user_utils import send_request, get_user_by_id
 from asgiref.sync import async_to_sync
@@ -41,8 +41,6 @@ def get_users_to_update_list(users, games_data):
             users_not_in_game.append(user) 
         is_in_game = False
     return users_not_in_game
-        
-
 
  #//---------------------------------------> Thread: unranked matchmaking manager <--------------------------------------\\#
 
@@ -56,17 +54,32 @@ def background_task_unranked_matchmaking():
         if new_user.is_ingame is True: 
             task_queue.task_done()
             continue
-        launch_proccess(user=new_user)
+        launch_proccess(user=new_user, game_type='unranked')
         task_queue.task_done()
 
-def launch_proccess(user):
-    redis_instance.rpush('waiting_users', user.id)
-    if redis_instance.llen('waiting_users') > 1:
-            proccess_matchmaking()
+ #//---------------------------------------> Thread: ranked matchmaking manager <--------------------------------------\\#
+  
+def background_task_ranked_matchmaking():
+    task_queue = ranked_queue
+    
+    while True:
+        new_user = task_queue.get()
+        if new_user.is_ingame is True: 
+            task_queue.task_done()
+            continue
+        launch_proccess(user=new_user, game_type='ranked')
+        task_queue.task_done()
+
+ #//---------------------------------------> Thread: generic matchmaking method <--------------------------------------\\#
+
+def launch_proccess(user, game_type):
+    redis_instance.rpush(f'{game_type}_waiting_users', user.id)
+    if redis_instance.llen(f'{game_type}_waiting_users') > 1:
+            proccess_matchmaking(game_type)
 
 
-def proccess_matchmaking():
-    waiting_users = redis_instance.lrange('waiting_users', 0, -1)
+def proccess_matchmaking(game_type):
+    waiting_users = redis_instance.lrange(f'{game_type}_waiting_users', 0, -1)
     waiting_users = [user_id.decode() for user_id in waiting_users] 
     
     if len(waiting_users) >= 3:
@@ -74,33 +87,22 @@ def proccess_matchmaking():
     player_one_id = waiting_users.pop()
     player_two_id = waiting_users.pop()
     try:
-        redis_instance.lrem('waiting_users', 0, player_one_id)
-        redis_instance.lrem('waiting_users', 0, player_two_id)
+        redis_instance.lrem(f'{game_type}_waiting_users', 0, player_one_id)
+        redis_instance.lrem(f'{game_type}_waiting_users', 0, player_two_id)
         player_one = get_user_by_id(player_one_id)
         player_two = get_user_by_id(player_two_id)
     except Exception as e:
         print(f'Error: thread: {str(e)}')
     
     change_is_ingame_state(value=True, user_instance=player_one)
-    change_is_ingame_state(value=True, user_instance=player_two) 
-    # count = 0
-    # max_checks = 20
+    change_is_ingame_state(value=True, user_instance=player_two)
     try:
-        # while True:
-        #     if player_one_id in connections and player_two_id in connections: 
-        #         print('all players connected !')
-        #         break
-        #     print('waiting all players...')
-            # if count == max_checks: # put here a send socket to client for indicate the game is canceled
-                # return
-            # count += 1
-            # sleep(0.5)
         payload = {'type': 'game_found'}
         async_to_sync(send_websocket_info)(player_id=player_one_id, payload=payload)
         async_to_sync(send_websocket_info)(player_id=player_two_id, payload=payload)
         sleep(2)
         payload = { 
-            'game_type': 'unranked',
+            'game_type': game_type,
             'player1': player_one_id,
             'player2': player_two_id
         }
@@ -108,7 +110,7 @@ def proccess_matchmaking():
     except Exception as e:
         print(f'problem with requesting game_instance: {e}')
     
-    if redis_instance.llen('waiting_users') > 1:
+    if redis_instance.llen('{game_type}_waiting_users') > 1:
         proccess_matchmaking()
         
 async def send_websocket_info(player_id, payload):

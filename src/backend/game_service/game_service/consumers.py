@@ -2,6 +2,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from game_app.game.game_engine import PongGameEngine
 from urllib.parse import parse_qs
 import json
+import asyncio
 
 connections = {}
 
@@ -13,21 +14,24 @@ class GameConsumer(AsyncWebsocketConsumer):
 		query_string = parse_qs(self.scope['query_string'].decode())
 		self.user_id = str(query_string.get('user_id', [None])[0])
 		try:
-			if not self.user_id:
+			if not self.user_id or self.user_id == 'undefined':
 				await self.close()
 			else:
 				self.group_name = f'game_{self.user_id}'
-				await self.channel_layer.group_add(self.group_name, self.channel_name) 
-				connections[self.user_id] = self
+				await self.channel_layer.group_add(self.group_name, self.channel_name)
+				async with asyncio.Lock():
+					print(f'---------> connections set for user : {self.user_id}') 
+					connections[self.user_id] = self
 				await self.accept()
 		except Exception as e:
-			print('Error: ', e) 
+			print('Error: ', e)
 
  #//---------------------------------------> Disconnector <--------------------------------------\\#
 
 	async def disconnect(self, close_code):
-		if self.user_id in connections:
-			del connections[self.user_id]
+		async with asyncio.Lock(): 
+			if self.user_id in connections:
+				del connections[self.user_id]
 		await self.channel_layer.group_discard(self.group_name, self.channel_name) 
 
  #//---------------------------------------> Receiver <--------------------------------------\\#

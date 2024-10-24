@@ -2,27 +2,46 @@ import { throwMatchmakingResearchEvent } from "../../utils/throwEvent/throwMatch
 import checkAuthentication from "../../utils/checkAuthentication.js";
 import { matchmakingSocket, matchmakingWebsocket } from "./matchmakingWebsocket.js";
 import { sendRequest } from "../../utils/sendRequest.js";
+import { gameSocket, gameWebsocket } from "./states/inGame/gameWebsocket.js";
+import getUserId from "../../utils/getUserId.js";
 
 
 export async function checkMatchmakingSearch() {
-    const isSearching = localStorage.getItem('isSearchingGame');
+    const isSearching = JSON.parse(localStorage.getItem('isSearchingGame'));
     const isUserConnected = await checkAuthentication();
-    if (isSearching && isUserConnected) {
+    if (isSearching && isUserConnected) {        
         if (window.location.pathname !== '/' && !window.location.pathname.endsWith('/profile') && !window.location.pathname.startsWith('/users/')) {
             if (document.querySelector('matchmaking-research-component'))
                 document.removeChild('matchmaking-research-component');
             return;
-        }        
+        }      
+        if (isSearching.status === 'joining' && !gameSocket) {
+            const userId = await getUserId();
+            if (userId)
+                await gameWebsocket(userId);
+            return; 
+        }
         if (!matchmakingSocket || matchmakingSocket.readyState !== WebSocket.OPEN)
             await matchmakingWebsocket();
         throwMatchmakingResearchEvent();
     }
 }
 
+export async function requestMatchmakingResearch(payload) {
+    try {
+        const response = await sendRequest('POST', 'http://localhost:8006/matchmaking/matchmaking/', payload); 
+        console.log(response.message);
+        return true;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
 class MatchmakingResearchComponent extends HTMLElement {
     constructor() {
         super();
-        this.isSearching = localStorage.getItem('isSearchingGame');
+        this.isSearching = JSON.parse(localStorage.getItem('isSearchingGame'));
         this.isResearchRendered = document.querySelector('matchmaking-research-component');
     }
 
@@ -39,7 +58,7 @@ class MatchmakingResearchComponent extends HTMLElement {
         this.innerHTML = `
             <div class='matchmaking-research matchmaking-research-processing'>
                 <div class="matchmaking-research-section">                
-                    <p class='matchmaking-research-title'>Searching ${this.isSearching} game</p>
+                    <p class='matchmaking-research-title'>Searching ${this.isSearching.type} game</p>
                     <div class='matchmaking-search-indicator'>
                         <div class='matchmaking-search-indicator-bar'></div>
                         <div class='matchmaking-search-indicator-bar'></div>
@@ -69,7 +88,6 @@ class MatchmakingResearchComponent extends HTMLElement {
             const response = await sendRequest('POST', 'http://localhost:8006/matchmaking/remove_waiting/', null);
             console.log('remove response: ', response);
             this.classList.add('matchmaking-research-component-hide');
-            console.log('Cancel method reached');
             localStorage.removeItem('isSearchingGame');
             setTimeout(() => {
                 this.remove();
@@ -82,12 +100,13 @@ class MatchmakingResearchComponent extends HTMLElement {
     }
 
     setFoundGameRender() {
-        this.popUpTitle.textContent = `Joining ${this.isSearching} game`;
+        this.isSearching.status = 'joining';
+        localStorage.setItem('isSearchingGame', JSON.stringify(this.isSearching));
+        this.popUpTitle.textContent = `Joining ${this.isSearching.type} game`;
         this.cancelResearchIcon.remove();
         this.mainDiv.classList.remove('matchmaking-research-processing');
 		this.mainDiv.classList.add('matchmaking-research-finished');
         document.createElement('div')
-        console.log('setFoundGameRender Reached !: ', this);
     }
 
     setInitialRender() {

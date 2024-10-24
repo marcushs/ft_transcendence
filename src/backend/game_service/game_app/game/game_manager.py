@@ -35,20 +35,31 @@ async def starting_game_instance(data):
         'player_one': str(data['player1']),
         'player_two': str(data['player2'])
     }
+    game_instance = PongGameEngine(game_id_data)
+    if not await check_connections(game_id_data):
+        return # put here a send socket to client for indicate the game is canceled
+    await send_client_game_init(game_id_data=game_id_data, game_instance=game_instance)
+    await running_game_instance(instance=game_instance, game_type=data['game_type'])
+
+
+async def check_connections(data_id):
+    player_one_id = data_id['player_one']
+    player_two_id = data_id['player_two']
+    
     count = 0
     max_checks = 20
     while True:
-        if game_id_data['player_one'] in connections and game_id_data['player_two'] in connections:
-            print('all players connected !')
-            break
-        print('waiting all players...')
-        if count == max_checks: # put here a send socket to client for indicate the game is canceled
-            return
+        async with asyncio.Lock():
+            if player_one_id in connections and player_two_id in connections:
+                print('all players connected !')
+                break
+        print(f"waiting all players... : player_one: {player_one_id} -- player_two: {player_two_id} -- connections: {connections}")
+        if count == max_checks: 
+            return False
         count += 1
-        await asyncio.sleep(0.5)
-    game_instance = PongGameEngine(game_id_data)
-    await send_client_game_init(game_id_data=game_id_data, game_instance=game_instance)
-    await running_game_instance(instance=game_instance, game_type=data['game_type'])
+        await asyncio.sleep(1)
+    return True
+
 
 async def running_game_instance(instance, game_type):
     print(f'-> async_tasks: Game <{instance.game_id}> running...') 

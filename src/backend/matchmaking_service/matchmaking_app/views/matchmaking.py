@@ -35,7 +35,7 @@ class MatchmakingQueueManager(View):
         if is_already_in_waiting_list(request.user.id):
             return JsonResponse({'status': 'error', 'message': 'User is already in matchmaking research'}, status=200)
         self.start_matchmaking_by_type(data['type'], request)
-        return JsonResponse({'status': 'success', 'message': f'User successfully added to {data['type']} queue'}, status=200) 
+        return JsonResponse({'status': 'success', 'message': f"User successfully added to {data['type']} queue"}, status=200) 
 
 
     def is_valid_matchmaking_type(self, data):
@@ -62,11 +62,7 @@ class MatchmakingQueueManager(View):
         
         
     def add_player_to_ranked_queue(self, request):
-        arr = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-        random.shuffle(arr)
         ranked_queue.put(request.user)
-        print(f'--------- RANKED = {arr} ---------')
-
 
 # --------> Handle result of matchmaking game done <-------------- #
 
@@ -160,26 +156,28 @@ def create_new_match_history(data, winner_instance, loser_instance):
         match_type=str(data['type'])
     )
 
-
  #//---------------------------------------> matchmaking utils <--------------------------------------\\#
 
 def is_already_in_waiting_list(target_id): 
-    waiting_users = redis_instance.lrange('waiting_users', 0, -1)
-    waiting_users = [user_id.decode() for user_id in waiting_users]
-    print(f'------------> waiting_users: {waiting_users}')
-    if str(target_id) in waiting_users:
+    unranked_waiting_users = redis_instance.lrange('unranked_waiting_users', 0, -1)
+    unranked_waiting_users = [user_id.decode() for user_id in unranked_waiting_users]
+    ranked_waiting_users = redis_instance.lrange('ranked_waiting_users', 0, -1)
+    ranked_waiting_users = [user_id.decode() for user_id in ranked_waiting_users]
+    if str(target_id) in unranked_waiting_users or str(target_id) in ranked_waiting_users:
         return True
     return False
 
 
 def check_duplicate_user_in_waiting_list(target_user):
-    waiting_users = redis_instance.lrange('waiting_users', 0, -1)
-    waiting_users = [user_id.decode() for user_id in waiting_users]
-    if str(target_user.id) in waiting_users:
-        print(f'--------------> Found !')  
+    unranked_waiting_users = redis_instance.lrange('unranked_waiting_users', 0, -1)
+    unranked_waiting_users = [user_id.decode() for user_id in unranked_waiting_users]
+    ranked_waiting_users = redis_instance.lrange('ranked_waiting_users', 0, -1)
+    ranked_waiting_users = [user_id.decode() for user_id in ranked_waiting_users]
+    if str(target_user.id) in unranked_waiting_users or str(target_user.id) in ranked_waiting_users:
         return False
-    print(f'--------------> User is not in waiting_list !')
     return True
+
+
 class CheckUserInWaitingQueue(View):
     def __init__(self):
         super()
@@ -191,8 +189,7 @@ class CheckUserInWaitingQueue(View):
         if is_already_in_waiting_list(request.user.id):
             return JsonResponse({'waiting': True}, status=200)
         return JsonResponse({'waiting': False}, status=200)
-        
-    
+
 
 class RemoveUserFromWaitingQueue(View):
     def __init__(self):
@@ -204,7 +201,5 @@ class RemoveUserFromWaitingQueue(View):
             return JsonResponse({'message': 'No connected user'}, status=401)
         if not is_already_in_waiting_list(request.user.id):
             return JsonResponse({'message': 'cant remove user from matchmaking research cause he is not already present in it'}, status=401)
-        redis_instance.lrem('waiting_users', 0, request.user.id)
+        redis_instance.lrem('unranked_waiting_users', 0, request.user.id)
         return JsonResponse({'message': 'user removed from matchmaking research'}, status=200)
-        
-        
