@@ -84,8 +84,8 @@ chatroom-top-bar i {
 	height: 100%;
 	width: 12%;	
 	opacity: 0.5;
-	color: red;
 	cursor: pointer;	
+	color: red;
 	transition: opacity 0.2s ease-in;
 }
 
@@ -104,6 +104,22 @@ chatroom-top-bar i {
 
 .chat-block-user p i {
 	transform: translateY(-75%);
+}
+
+.chat-block-user p i.fa-circle-check {
+	display: none;
+}
+
+.chat-block-user.blocked {
+	color: green;
+}
+
+.chat-block-user.blocked p i.fa-circle-check {
+	display: block;
+}
+
+.chat-block-user.blocked p i.fa-ban {
+	display: none;
 }
 
 .chat-block-user p span {

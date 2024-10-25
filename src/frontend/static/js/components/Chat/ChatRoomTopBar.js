@@ -22,11 +22,15 @@ export default class ChatRoomTopBar extends HTMLElement {
 
 	async connectedCallback() {
         await this.render();
+		this.addEventListeners();
     }
 
 	async render() {
 		let profileImage = await getProfileImage(this.userData);
 		let status = await this.getUserStatus();
+		let isUserBlocked = await this.isTargetUserBlocked();
+
+		console.log('isUserBlocked is: ', isUserBlocked)
 
 		this.innerHTML = `
 			<i id="chatroom-back-btn" class="fa-solid fa-arrow-left"></i>
@@ -37,10 +41,11 @@ export default class ChatRoomTopBar extends HTMLElement {
 				<p class="chatroom-top-bar-username">${this.userData.username}</p>
 				<p class="${status}">${status}</p>
 			</div>
-			<div class="chat-block-user">
+			<div id="chat-block-user" class="chat-block-user ${isUserBlocked ? 'blocked' : ''}">
 				<p>
 					<i class="fa-solid fa-ban"></i>
-					<span>Block ${this.userData.username}</span>
+					<i class="fa-regular fa-circle-check"></i>
+					<span>${isUserBlocked ? 'Unblock' : 'Block'} ${this.userData.username}</span>
 				</p>
 			</div>
 		`;
@@ -57,6 +62,55 @@ export default class ChatRoomTopBar extends HTMLElement {
 		} catch (error) {
 		}
 	}
+
+	addEventListeners() {
+		const chatBlockUser = this.querySelector('#chat-block-user');
+		const chatBlockUserSpan = chatBlockUser.querySelector('span');
+
+		chatBlockUser.firstElementChild.addEventListener('click', async () => {
+			if (chatBlockUser.classList.contains('blocked')) {
+				chatBlockUser.classList.remove('blocked');
+				chatBlockUserSpan.innerText = `Block ${this.userData.username}`;
+				this.unblockUser();
+			} else {
+				chatBlockUser.classList.add('blocked');
+				chatBlockUserSpan.innerText = `Unblock ${this.userData.username}`;
+				this.blockUser();
+			}
+		})
+	}
+
+	async isTargetUserBlocked() {
+		try {
+			let res = await sendRequest('GET', `/api/chat/is_user_blocked/?targetUserId=${this.userData.id}`, null, false);
+
+			console.log('is targetuser blocked: ', res)
+			if (res.message === "True") return true;
+			return false;
+		} catch (error) {
+			
+		}
+	}
+
+	async blockUser() {
+		try {
+			let res = await sendRequest('GET', `/api/chat/block_user/?blockedUserId=${this.userData.id}`, null, false);
+
+			console.log("blocked user", res);
+		} catch (error) {
+			
+		}
+	} 
+
+	async unblockUser() {
+		try {
+			let res = await sendRequest('GET', `/api/chat/unblock_user/?blockedUserId=${this.userData.id}`, null, false);
+
+			console.log("unblocked user", res);
+		} catch (error) {
+			
+		}
+	} 
 }
 
 customElements.define('chatroom-top-bar', ChatRoomTopBar);

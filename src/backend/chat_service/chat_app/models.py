@@ -34,6 +34,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_image = models.ImageField(upload_to=user_directory_path, null=True)
     profile_image_link = models.CharField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
     status = models.CharField(max_length=10, choices=[('online', 'Online'), ('away', 'Away'), ('ingame', 'In Game'), ('offline', 'Offline')], default='offline')
+    blocked_users = models.ManyToManyField('self', symmetrical=False, related_name='blocked_by')
     last_active = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = 'username'
