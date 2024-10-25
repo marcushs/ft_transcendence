@@ -73,11 +73,16 @@ async def running_game_instance(instance, game_type):
 async def ending_game_instance(winner, loser, game_type):
     try:
         payload = {
+            'winner_id': winner['id'], 
+            'loser_id': loser['id'] 
+        }
+        await send_request(request_type='POST', url='http://matchmaking:8000/matchmaking/change_game_status/', payload=payload) 
+        payload = {
             'winner': winner,
             'loser': loser,
             'type': game_type
         }
-        response = await send_request(request_type='POST', url='http://matchmaking:8000/matchmaking/matchmaking_result/', payload=payload)
+        response = await send_request(request_type='POST', url='http://statistics:8000/statistics/match_result/', payload=payload) 
         print(f'-> async_tasks: Matchmaking update result responded with: {response.json()}') 
     except Exception as e:
         print(f'-> async_tasks: {e}')

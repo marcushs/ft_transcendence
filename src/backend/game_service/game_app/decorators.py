@@ -29,7 +29,7 @@ async def decode_jwt_token(request):
         token = token.encode('utf-8')
     try:
         print(f'token: {token} -- typeof : {type(token)}')
-        payload = jwt.decode(token, settings.JWT_VERIFYING_KEY,  algorithms=[settings.JWT_ALGORITHM]) 
+        payload = jwt.decode(token, settings.JWT_VERIFYING_KEY,  algorithms=[settings.JWT_ALGORITHM])  
         return str(payload['user_id'])
     except jwt.ExpiredSignatureError:
         response_request = await send_request(request_type='GET',request=request, url='http://auth:8000/auth/update-tokens/')

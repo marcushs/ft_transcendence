@@ -1,7 +1,7 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from .models import MatchHistory, UserStats
+from .models import MatchHistory, User
 from django.views import View
 import json
 
@@ -15,10 +15,11 @@ class MatchResultManager(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             if not self.is_valid_data(data):
-                raise(Exception('Invalid matchmaking result'))
+                raise(Exception('Invalid matchmaking result')) 
             self.update_match_result_data(data)
             return JsonResponse({'status': 'success', 'message': 'match data updated'}, status=200)  
         except Exception as e:
+            print(f'-----------> ERROR: {str(e)}')
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
@@ -41,26 +42,20 @@ class MatchResultManager(View):
 
     def update_match_result_data(self, data):
         winner, loser = self.get_user_from_result(data)
-        change_is_ingame_state(value=False, user_instance=winner)
-        change_is_ingame_state(value=False, user_instance=loser)
-        change_user_games_count(is_game_win=True, user_instance=winner)
-        change_user_games_count(is_game_win=False, user_instance=loser)
-        create_new_match_history(data=data, winner_instance=winner, loser_instance=loser)
-        winner.save()
-        loser.save()
-        
+        change_user_games_count(is_game_win=True, user=winner)
+        change_user_games_count(is_game_win=False, user=loser)
+        create_new_match_history(data=data, winner_instance=winner, loser_instance=loser) 
         if data['type'] == 'ranked':
             pass # do the additional manage of point for ranked games here
+        winner.save()   
+        loser.save()
+        
 
 
     def get_user_from_result(self, data):
-        winner = UserStats.objects.get_or_create(id=int(data['winner']['id']))
-        loser = UserStats.objects.get_or_create(id=int(data['loser']['id']))
+        winner = User.objects.get(id=int(data['winner']['id']))
+        loser = User.objects.get(id=int(data['loser']['id'])) 
         return winner, loser
-
-
-def change_is_ingame_state(value, user_instance):
-    user.is_ingame = value
 
 
 def change_user_games_count(is_game_win, user):

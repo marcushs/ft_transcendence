@@ -1,7 +1,6 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-
 connections = {}
 
 class MatchmakingConsumer(AsyncWebsocketConsumer):
@@ -19,7 +18,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             print('Error: ', e)
 
     async def disconnect(self, close_code): 
-        if self.user_id in connections:
+        if self.user.id in connections:
             del connections[self.user.id]
         await self.channel_layer.group_discard(self.group_name, self.channel_name) 
 

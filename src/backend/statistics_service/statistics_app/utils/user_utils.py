@@ -20,9 +20,9 @@ class add_new_user(View):
 
     async def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
-        if not 'user_id' in data:
+        if not 'user_id' in data and not 'username' in data:
             return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
-        await sync_to_async(User.objects.create_user)(user_id=data['user_id'])
+        await sync_to_async(User.objects.create_user)(username=data['username'], user_id=data['user_id'])
         return JsonResponse({"message": 'user added with success'}, status=200)
     
 # class update_user(View):

@@ -17,7 +17,7 @@ async def send_request(request_type, url, payload=None):
         raise Exception(f"HTTP error occurred: {str(e)}")
     except httpx.RequestError as e:
         raise Exception(f"An error occurred while requesting: {str(e)}")
-        
+         
 def set_headers_cookies_request(request=None): 
     headers = {
         'Accept': 'application/json',

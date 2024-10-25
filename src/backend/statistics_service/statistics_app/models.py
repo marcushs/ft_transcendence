@@ -1,3 +1,5 @@
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
+from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 from django.db import models
@@ -19,17 +21,42 @@ class MatchHistory(models.Model):
     
     class Meta:
         ordering = ['-date']
+    
+
+class UserManager(BaseUserManager):
+    def create_user(self, username, user_id):
+        if not username:
+            raise ValueError('The username field must be set')
+        user = self.model(username=username, id=user_id)
+        user.set_unusable_password()
+        user.save(using=self._db)
+        return user
+
+class User(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(max_length=12, unique=True, default='default')
+    rankPoints = models.IntegerField(default=0)
+    gamesWin = models.IntegerField(default=0)
+    gamesLoose = models.IntegerField(default=0)
 
 
-class UserStats(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='stats')
-    rank_points = models.IntegerField(default=0)
-    games_won = models.IntegerField(default=0)
-    games_lost = models.IntegerField(default=0)
+    USERNAME_FIELD = 'username' 
+    REQUIRED_FIELDS = []
+
+    objects = UserManager()
 
     def __str__(self):
-        return f"Stats for {self.user} - Rank Points: {self.rank_points}, Wins: {self.games_won}, Losses: {self.games_lost}"
+      return self.username
+
+
+    def save(self, *args, **kwargs):
+        super(User, self).save(*args, **kwargs)
+
+    def to_dict(self):
+        return {
+            'username': self.username,
+        }
         
     @property
-    def match_history(self):
-        return MatchHistory.objects.filter(models.Q(winner=self.user) | models.Q(loser=self.user))
+    def match_history(self): # Retrieve all match history for the user.
+        return MatchHistory.objects.filter(models.Q(winner=self) | models.Q(loser=self))
+ 
