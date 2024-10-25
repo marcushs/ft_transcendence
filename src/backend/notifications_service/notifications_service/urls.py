@@ -18,5 +18,5 @@ Including another URLconf
 from django.urls import include, path
 
 urlpatterns = [
-	path('notifications/', include('notifications_app.urls')),
+	path('api/notifications/', include('notifications_app.urls')),
 ]

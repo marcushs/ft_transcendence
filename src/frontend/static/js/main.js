@@ -10,13 +10,15 @@ import twoFactorApp from "./views/two-factor-app.js";
 import twoFactorEmail from "./views/two-factor-email.js";
 import checkAuthentication from "./utils/checkAuthentication.js";
 import twoFactorDeactivation from "./views/two-factor-deactivation.js";
-import {isTwoFactorActivated} from "./utils/isTwoFactorActivated.js";
-import {loadLanguagesJson, getString} from "./utils/languageManagement.js";
+import { isTwoFactorActivated } from "./utils/isTwoFactorActivated.js";
+import { loadLanguagesJson } from "./utils/languageManagement.js";
 import { checkInactiveGame } from "./components/Game/states/inGame/gameNetworkManager.js";
-import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
+import { getTwoFactorMethod } from "./utils/getTwoFactorMethod.js";
 import { PingStatus } from "./views/pingStatus.js";
 import { unloadManager } from "./utils/unloadManager.js";
 import { loadWebSocket } from "./views/websocket/loadWebSocket.js";
+import oauthRedirect from './views/oauthRedirect.js';
+import oauthUsername from "./views/oauthUsername.js";
 import { checkMatchmakingSearch } from "./components/Game/MatchmakingResearchComponent.js";
 
 let languageJson;
@@ -33,6 +35,8 @@ const routes = {
     "/two-factor-app": { title: "TwoFactorApp", render: twoFactorApp },
     "/two-factor-email": { title: "TwoFactorEmail", render: twoFactorEmail },
     "/two-factor-deactivation": { title: "TwoFactorDeactivate", render: twoFactorDeactivation },
+    "/oauth-redirect": { title: "OauthRedirect", render: oauthRedirect },
+    "/oauth-username": { title: "OauthUsername", render: oauthUsername},
 };
 
 async function setUserRender() {
@@ -133,7 +137,7 @@ document.addEventListener("userLoggedIn", setUserRender)
 // Handle game reconnection
 document.addEventListener("inactiveGame", () => {
     setTimeout(() => {
-        const isRender = document.querySelector('game-inactivity-component');       
+        const isRender = document.querySelector('game-inactivity-component');
         if (!isRender) {
             const gameInactivityComponent = document.createElement('game-inactivity-component');
             app.appendChild(gameInactivityComponent);
@@ -142,7 +146,7 @@ document.addEventListener("inactiveGame", () => {
 })
 
 document.addEventListener("matchmakingResearch", () => {
-    const isRender = document.querySelector('matchmaking-research-component');       
+    const isRender = document.querySelector('matchmaking-research-component');
     if (!isRender) {
         const matchmakingResearchComponent = document.createElement('matchmaking-research-component');
         app.appendChild(matchmakingResearchComponent);

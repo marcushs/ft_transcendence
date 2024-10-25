@@ -4,6 +4,7 @@
 @import '../components/ButtonComponent.css';
 @import '../components/Game/Game.css';
 @import '../components/Contacts/ContactMenu.css';
+@import '../components/Chat/ChatComponent.css';
 
 input {
     border: none;

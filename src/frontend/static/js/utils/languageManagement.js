@@ -49,7 +49,7 @@ export function getString(key) {
 }
 
 export async function setUserLanguageInDb(language) {
-	const url = `http://localhost:8000/user/language/`;
+	const url = `/api/user/language/`;
 
 	try {
 		await sendRequest('POST', url, {'language': language});
@@ -59,7 +59,7 @@ export async function setUserLanguageInDb(language) {
 }
 
 async function getUserLanguageFromDb() {
-	const url = 'http://localhost:8000/user/language/';
+	const url = '/api/user/language/';
 
 	try {
 		const data = await sendRequest('GET', url, null);

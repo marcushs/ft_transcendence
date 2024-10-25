@@ -1,11 +1,20 @@
 import {removeContactFromList, addNewContactToList, UpdateContactInList} from './updateContactWebsocket.js'
+import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms, addNewContactToContactedList, removeChatContactFromDOM} from '../../utils/chatUtils/joinRoomUtils.js';
+import { updateCurrentChatroomId, messageReceptionDOMUpdate } from '../../utils/chatUtils/sendPrivateMessage.js';
+import { UpdateChatContactWebsocket } from './updateChatContactWebsocket.js';
+import { UpdateChatroomTopBarWebsocket } from './updateChatroomTopBarWebsocket.js';
+
 
 export let contactSocket = null;
 export let notificationSocket = null;
 
+export let chatSocket;
+export let chatroomsList;
+
 export async function loadWebSocket() {
     await loadContactsWebSocket();
-    loadNotificationsWebSocket();
+    await loadNotificationsWebSocket();
+	await loadChatWebSocket();
 }
 
 //--------------> CONTACT WEBSOCKET <--------------\\
@@ -14,8 +23,8 @@ async function loadContactsWebSocket() {
     if (contactSocket !== null) {
         contactSocket.close();
     }
-
-    contactSocket = new WebSocket(`ws://localhost:8003/ws/contacts/`);
+	
+    contactSocket = new WebSocket(`wss://localhost:8003/ws/contacts/`);
 
     contactSocket.onopen = function(event) {
 		console.log('Contact websocket started');
@@ -31,6 +40,8 @@ async function loadContactsWebSocket() {
             removeContactFromList(data.contact, data.type);
         } else if (data.type === 'contact_update') {
 			UpdateContactInList(data.contact, data.change_info, data.old_value);
+			UpdateChatContactWebsocket(data.contact, data.change_info, data.old_value);
+			UpdateChatroomTopBarWebsocket(data.contact, data.change_info, data.old_value);
 		} else {
             addNewContactToList(data.contact, data.type, data.is_sender);
         }
@@ -48,7 +59,7 @@ async function loadContactsWebSocket() {
 //--------------> NOTIFICATION WEBSOCKET <--------------\\
 
 function loadNotificationsWebSocket() {
-	notificationSocket = new WebSocket(`ws://localhost:8004/ws/notifications/`);
+	notificationSocket = new WebSocket(`wss://localhost:8004/ws/notifications/`);
 
 		notificationSocket.onopen = function(event) {
 		    console.log('Notifications websocket started');
@@ -107,4 +118,36 @@ function throwDeleteNotificationElementEvent(notification) {
 	});
 
 	document.dispatchEvent(event);
+}
+
+//--------------> CHAT WEBSOCKET <--------------\\
+
+async function loadChatWebSocket() {
+	chatSocket = new WebSocket('wss://localhost:8011/ws/chat/');
+
+	chatSocket.onopen = async function (e) {
+		console.log("The chat websocket connection was setup successfully !");
+
+		chatroomsList = await fetchChatroomsList();
+		joinAllInvitedChatrooms(chatroomsList);
+	};
+
+	chatSocket.onmessage = async function(e) {
+		const data = JSON.parse(e.data);
+
+		if (data.type === 'chat_message') {
+			await messageReceptionDOMUpdate(data);
+		} else if (data.type === 'chatgroup_update') {
+			await receiveChatgroupUpdate(data);
+			// chatroomsList = await fetchChatroomsList();
+			await updateCurrentChatroomId(data.target_user);
+			await addNewContactToContactedList(data.chatroom);
+		} else if (data.type === 'remove_room') {
+			removeChatContactFromDOM(data.chatroom);
+		}
+	};
+
+	chatSocket.onclose = function(e) {
+		console.log(e);
+	};
 }

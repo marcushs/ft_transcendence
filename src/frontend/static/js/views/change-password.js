@@ -106,7 +106,7 @@ function showFeedback(response) {
 }
 
 async function postNewPassword(formData) {
-	const url = `http://localhost:8001/auth/change-password/`;
+	const url = `/api/auth/change-password/`;
 
 	try {
 		const data = await sendRequest('POST', url, formData, true);

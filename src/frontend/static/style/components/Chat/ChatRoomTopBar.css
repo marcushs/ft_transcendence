@@ -1,0 +1,127 @@
+chatroom-top-bar {
+	display: inline-block;
+	margin: 0.8rem 0 0.8rem 0;
+	width: 100%;
+	height: 5rem;
+	position: relative;
+	background-color: #2a2d3b;
+	box-shadow: 0 8px 8px -4px #0B0B0B, 0 -8px 8px -4px #0B0B0B;
+	position: relative;
+}
+
+chatroom-top-bar i {
+	position: absolute;
+	top: 50%;
+	left: 1.2rem;
+	transform: translateY(-50%);
+	font-size: 2.2rem;
+	cursor: pointer;
+}
+
+.chatroom-profile-picture {
+	position: relative;
+	width: 4.2rem;
+	height: 4.2rem;
+	top: 50%;
+	left: 5rem;
+	border-radius: 50%;
+	transform: translateY(-45%);
+	border: 1px solid var(--light-grey);
+}
+
+.chatroom-profile-picture .chat-status-circle.online,
+.chatroom-profile-picture .chat-status-circle.offline,
+.chatroom-profile-picture .chat-status-circle.away {
+	width: 1.4rem;
+	height: 1.4rem;
+	top: 3rem;
+	left: 2.8rem;
+}
+
+.chat-contact-name-status {
+	width: 55%;
+	height: 90%;
+	display: flex;
+	flex-direction: column;
+	align-items: start;
+	justify-content: space-evenly;
+	position: absolute;
+	left: 10rem;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.chat-contact-name-status p:first-child {
+	font-weight: bold;
+	font-size: 1.5rem;
+}
+
+.chat-contact-name-status p:last-child {
+	font-style: italic;
+	font-size: 1.2rem;
+}
+
+.chat-contact-name-status p:last-child.online {
+	color: var(--online-status-color);
+}
+
+.chat-contact-name-status p:last-child.offline  {
+	color: var(--offline-status-color);
+}
+
+.chat-contact-name-status p:last-child.away {
+	color: var(--away-status-color);
+}
+
+.chat-block-user {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	top: 0;
+	right: 2.5rem;
+	height: 100%;
+	width: 12%;	
+	opacity: 0.5;
+	cursor: pointer;	
+	color: red;
+	transition: opacity 0.2s ease-in;
+}
+
+.chat-block-user:hover {
+	opacity: 1;
+	transition: opacity 0.2s ease-in;
+}
+
+.chat-block-user p {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-wrap: nowrap;
+}
+
+.chat-block-user p i {
+	transform: translateY(-75%);
+}
+
+.chat-block-user p i.fa-circle-check {
+	display: none;
+}
+
+.chat-block-user.blocked {
+	color: green;
+}
+
+.chat-block-user.blocked p i.fa-circle-check {
+	display: block;
+}
+
+.chat-block-user.blocked p i.fa-ban {
+	display: none;
+}
+
+.chat-block-user p span {
+	transform: translateY(100%);
+}

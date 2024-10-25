@@ -4,6 +4,8 @@ import './Friendship/FriendshipButtonComponent.js';
 import userProfile from "../views/user-profile.js";
 import { getString } from "../utils/languageManagement.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
+import { sendMessageCallback } from "../utils/chatUtils/sendMessageCallback.js";
+import { removeChatroom } from "../utils/chatUtils/joinRoomUtils.js";
 
 class ContactComponent extends HTMLElement {
     
@@ -11,7 +13,7 @@ class ContactComponent extends HTMLElement {
         return ["data-user", "data-status"];
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {    
+    attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'data-user')
             this.userData = JSON.parse(newValue);
         if (name === 'data-status')
@@ -162,6 +164,7 @@ class ContactComponent extends HTMLElement {
             action.addEventListener('click', () => {
                 switch (action.classList[0]) {
                     case 'contact-action-send-message':
+                        sendMessageCallback(this.userData);
                         console.log(`TEST: Send message to contact \'${this.userData.username}\' successfully reached`);
                         break;
                     case 'contact-action-invite-play':
@@ -188,7 +191,7 @@ class ContactComponent extends HTMLElement {
             target_username: this.userData.username,
         };
         try {
-            await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
+            await sendRequest('POST', '/api/friends/manage_friendship/', payload);
         } catch (error) {
             console.error('catch: ', error);
         }

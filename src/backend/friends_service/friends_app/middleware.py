@@ -43,7 +43,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
     
     async def send_new_token_request(self, request, jwt_user):
         try:
-            request_response = await send_async_request(request_type='GET',request=request, url='http://auth:8000/auth/update-tokens/')
+            request_response = await send_async_request(request_type='GET',request=request, url='http://auth:8000/api/auth/update-tokens/')
             if request_response and request_response.cookies:
                 request.new_token = request_response.cookies.get('jwt')
                 request.new_token_refresh =  request_response.cookies.get('jwt_refresh')
@@ -54,13 +54,13 @@ class JWTAuthMiddleware(MiddlewareMixin):
             request.jwt_failed = True
             request.user = AnonymousUser() 
     
-    async def process_response(self, request, response):  
+    async def process_response(self, request, response):
         if hasattr(request, 'jwt_failed'):
             response = JsonResponse({'error': 'invalid session token'}, status=401)
             response.delete_cookie('jwt')
             response.delete_cookie('jwt_refresh')
         if hasattr(request, 'new_token'):
-            response.set_cookie('jwt', request.new_token, httponly=True, max_age=settings.ACCESS_TOKEN_LIFETIME)
+            response.set_cookie('jwt', request.new_token, httponly=True, max_age=settings.ACCESS_TOKEN_LIFETIME) 
         if hasattr(request, 'new_token_refresh'):
             response.set_cookie('jwt_refresh', request.new_token_refresh, httponly=True, max_age=settings.REFRESH_TOKEN_LIFETIME)
         return response

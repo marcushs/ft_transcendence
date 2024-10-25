@@ -24,7 +24,7 @@ export class PingStatus {
     }
 
     async sendPingStatus() {
-        const url = 'http://localhost:8000/user/ping_status/';
+        const url = '/api/user/ping_status/';
         // console.log('ping backend');
         try {
             const data = await sendRequest('POST', url, null);
@@ -38,7 +38,7 @@ export class PingStatus {
     }
 
     // async setOfflineStatus() {
-    //     const url = 'http://localhost:8000/user/set_offline/';
+    //     const url = '/api/user/set_offline/';
     //     console.log('ping sent to back');
     //     try {
     //         const data = await sendRequest('POST', url, null);

@@ -127,15 +127,11 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-	'http://frontend',
- 	'http://statistics'
+    'https://localhost:3000',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-	'http://localhost:3000',
-	'http://frontend',
- 	'http://statistics'
+	'https://localhost:3000',
 ]
 
 LANGUAGE_CODE = 'en-us'

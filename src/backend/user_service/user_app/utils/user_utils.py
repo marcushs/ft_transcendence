@@ -11,6 +11,8 @@ from ..models import User
 from django.contrib.auth import get_user_model
 import httpx
 import json
+import jwt
+from django.conf import settings
 
 
 User = get_user_model()
@@ -69,13 +71,19 @@ class add_new_user(View):
     def get(self, request):
         return JsonResponse({"message": 'get request successfully reached'}, status=200)
     
-
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
         if not all(key in data for key in ('email', 'username', 'user_id')):
             return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
-        User.objects.create_user(email=data['email'], username=data['username'], user_id=data['user_id'])
-        return JsonResponse({"message": 'user added with success'}, status=200)
+        if User.objects.filter(username=data['username']).exists():
+            return JsonResponse({'message': 'Username already taken! Try another one.', "status": "Error"}, status=400)
+        if User.objects.filter(email=data['email']).exists():
+            return JsonResponse({'message': 'Email address already registered! Try logging in.', "status": "Error"}, status=400)
+        if data['logged_in_with_oauth'] and data['logged_in_with_oauth'] is True:
+            User.objects.create_oauth_user(data)
+        else:
+            User.objects.create_user(email=data['email'], username=data['username'], user_id=data['user_id'])
+        return JsonResponse({"message": 'user added with success', "status": "Success"}, status=200)
     
 class update_user(View):
     def __init__(self):
@@ -204,6 +212,7 @@ class getUserInfos(View):
             username = request.GET.get('q', '')
             users = User.objects.get(username=username) 
             users_data = {
+                'id': str(users.id),
                 'username': users.username,
                 'profile_image': users.profile_image.url if users.profile_image else None,
                 'profile_image_link': users.profile_image_link,
@@ -213,7 +222,26 @@ class getUserInfos(View):
         
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
- 
+        
+class getUserInfoById(View):
+    def __init__(self):
+        super().__init__
+    
+    def get(self, request):
+        try:
+            id = request.GET.get('q', '')
+            user = User.objects.get(id=id)
+            user_data = {
+                'id': str(user.id),
+                'username': user.username,
+                'profile_image': user.profile_image.url if user.profile_image else None,
+                'profile_image_link': user.profile_image_link,
+                'status': user.status
+            }
+            return JsonResponse({'status': 'success', 'user_data': user_data}, safe=False, status=200)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+
 class getUsersInfo(View):
     def __init__(self):
         super().__init__
@@ -228,6 +256,7 @@ class getUsersInfo(View):
                 username = user.get('username')
                 user_data = User.objects.get(username=username)
                 users_info = {
+                    'id': user_data.id,
                     'username': user_data.username,
                     'profile_image': user_data.profile_image.url if user_data.profile_image else None,
                     'profile_image_link': user_data.profile_image_link,
@@ -235,5 +264,17 @@ class getUsersInfo(View):
                 }
                 users_list.append(users_info)
             return JsonResponse({'status': 'success', 'message': users_list}, safe=False, status=200)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+
+class getUserStatus(View):
+    def __init__(self):
+        super().__init__
+    
+    def get(self, request):
+        try:
+            user_id = request.GET.get('userId')
+            user = User.objects.get(id=user_id)
+            return JsonResponse({'status': 'success', 'user_status': user.status}, safe=False, status=200)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)

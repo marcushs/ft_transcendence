@@ -14,7 +14,11 @@ class JWTAuthMiddleware:
         self.inner = inner
 
     async def __call__(self, scope, receive, send):
-        instance = JWTAuthMiddlewareInstance(scope, receive, send, self.inner)
+        print(f'scope: {scope}')
+        print(f'receive: {receive}')
+        print(f'send: {send}')
+        
+        instance = JWTAuthMiddlewareInstance(scope, receive, send, self.inner) 
         return await instance()
 
 
@@ -26,12 +30,16 @@ class JWTAuthMiddlewareInstance:
         self.inner = inner
 
     async def __call__(self):
+        print(f'scope -----------------------> {self.scope}') 
         headers = dict(self.scope["headers"])
-        cookies = parse_cookie(headers.get(b'cookie', b'').decode())
+        print(f'header ---------------- > {headers}')
+        cookies = parse_cookie(headers.get(b'cookie', b'').decode()) 
+        print(f'cookies ---------------- > {cookies}')
         jwt_token = cookies.get('jwt')
         
+        print(f'-----> TEST JWT :', jwt_token)
         if jwt_token:
-            user = await get_user_from_jwt(jwt_token)
+            user = await get_user_from_jwt(jwt_token)  
             if user is not None:
                 self.scope['user'] = user
             else:

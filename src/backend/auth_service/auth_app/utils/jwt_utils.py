@@ -16,12 +16,12 @@ def create_jwt_token(user, type: str) -> None:
         raise TypeError("Type must be either 'access' or 'refresh'")
     if type == 'access':
         payload = {
-            'user_id': user.id,
+            'user_id': str(user.id),
             'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.ACCESS_TOKEN_LIFETIME)
         }
     else:
         payload = {
-            'user_id': user.id,
+            'user_id': str(user.id),
             'exp': datetime.datetime.now() + datetime.timedelta(seconds=settings.REFRESH_TOKEN_LIFETIME)
         }
     token = jwt.encode(payload, settings.JWT_SIGNING_KEY, algorithm=settings.JWT_ALGORITHM)

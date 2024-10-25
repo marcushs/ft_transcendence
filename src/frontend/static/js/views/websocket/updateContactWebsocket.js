@@ -41,7 +41,7 @@ export function UpdateContactInList(contactJSON, change_info, old_value) {
                 
                 if (contactUsername.textContent === contact.username) {
                     console.log(`old_status = ${old_value}`);
-                    console.log(`new_status = ${contact.status}`);   
+                    console.log(`new_status = ${contact.status}`);
                     const statusCircle = contactElement.querySelector('.status-circle');
                     contactElement.querySelector('.contact-status').textContent = contact.status;
                     if (old_value === 'online') {
@@ -75,7 +75,7 @@ export function UpdateContactInList(contactJSON, change_info, old_value) {
 }
 
 export async function addNewContactToList(contact, requestType, is_sender) {
-    const url = `http://localhost:8000/user/get_user/?q=${contact}`
+    const url = `/api/user/get_user/?q=${contact}`
     try {
         const data = await sendRequest('GET', url, null);
         const user = data.message;

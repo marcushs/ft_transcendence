@@ -17,7 +17,7 @@ def periodic_check_ingame_status():
     while True:
         try:
             users_ingame = User.objects.filter(is_ingame=True)
-            response = async_to_sync(send_request)(request_type='GET', url='http://game:8000/game/get_games_instance/')
+            response = async_to_sync(send_request)(request_type='GET', url='http://game:8000/api/game/get_games_instance/')
             games_data = response.json().get('games_instance', [])
             users = get_users_to_update_list(users=users_ingame, games_data=games_data) 
             for user in users:
@@ -106,7 +106,7 @@ def proccess_matchmaking(game_type):
             'player1': player_one_id,
             'player2': player_two_id
         }
-        async_to_sync(send_request)(request_type='POST', url='http://game:8000/game/start_game/', payload=payload)
+        async_to_sync(send_request)(request_type='POST', url='http://game:8000/api/game/start_game/', payload=payload)
     except Exception as e:
         print(f'problem with requesting game_instance: {e}')
     

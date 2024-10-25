@@ -14,7 +14,7 @@ export async function gameWebsocket(userId) {
 	if (gameSocket)
 		disconnectGameWebSocket();
 
-	gameSocket = new WebSocket(`ws://localhost:8005/ws/game/?user_id=${userId}`);
+	gameSocket = new WebSocket(`wss://localhost:8005/ws/game/?user_id=${userId}`);
 
 	gameSocket.onopen = () => {
 		console.log('Connected to game websocket');

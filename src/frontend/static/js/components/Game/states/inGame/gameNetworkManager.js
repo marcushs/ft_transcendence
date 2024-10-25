@@ -22,7 +22,7 @@ export async function checkInactiveGame() {
 
 export async function GameStillActive(game_id) {
 	try {
-		const dataResponse = await sendRequest('GET', `http://localhost:8005/game/game_is_active/?q=${game_id}`, null)
+		const dataResponse = await sendRequest('GET', `/api/game/game_is_active/?q=${game_id}`, null)
 		return dataResponse;
 	} catch (error) {
 		throw new Error(error.message)
@@ -128,7 +128,7 @@ export async function surrenderHandler() {
             game_id: gameState.gameId,
             player_id: gameState.userId
         };
-        const response = await sendRequest('POST', 'http://localhost:8005/game/surrend_game/', payload);
+        const response = await sendRequest('POST', '/api/game/surrend_game/', payload);
 		localStorage.removeItem('inGameComponentState');
         console.log(response);
     } catch (error) {
