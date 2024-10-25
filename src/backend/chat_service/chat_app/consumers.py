@@ -84,12 +84,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(chatroom, self.channel_name)
 
     async def chat_message(self, event):
+        author = event['author']
+
+        if await self.is_user_blocked(author) == True:
+            # await self.send(text_data=json.dumps({
+            #     'type': 'chat_message',
+            #     'chatroom': event['chatroom'],
+            #     'message': event['message'],
+            #     'author': author,
+            #     'timestamp': event['timestamp'] 
+            # }))
+            return
         await self.send(text_data=json.dumps({
             'type': 'chat_message',
             'chatroom': event['chatroom'],
             'message': event['message'],
-            'author': event['author'],
-            'timestamp': event['timestamp']
+            'author': author,
+            'timestamp': event['timestamp'] 
         }))
 
     async def chatgroup_update(self, event):
@@ -166,3 +177,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return chatroom
         except ChatGroup.DoesNotExist:
             return None
+        
+    @database_sync_to_async
+    def is_user_blocked(self, user_id):
+        return self.user.blocked_users.filter(id=user_id).exists()
