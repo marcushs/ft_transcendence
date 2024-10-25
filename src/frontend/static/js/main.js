@@ -17,6 +17,7 @@ import {getTwoFactorMethod} from "./utils/getTwoFactorMethod.js";
 import { PingStatus } from "./views/pingStatus.js";
 import { unloadManager } from "./utils/unloadManager.js";
 import { loadWebSocket } from "./views/websocket/loadWebSocket.js";
+import { checkMatchmakingSearch } from "./components/Game/MatchmakingResearchComponent.js";
 
 let languageJson;
 
@@ -43,7 +44,6 @@ async function setUserRender() {
         await loadWebSocket();
         await setTwoFactorUserData();
         new PingStatus();
-        // await checkInactiveGame();
     } else
         console.log('Guest session');
 }
@@ -85,6 +85,7 @@ async function router() {
     document.title = view.title;
     app.innerHTML = await view.render();
     await checkInactiveGame();
+    await checkMatchmakingSearch();
 }
 
 function handleDynamicURL() {
@@ -138,6 +139,14 @@ document.addEventListener("inactiveGame", () => {
             app.appendChild(gameInactivityComponent);
         }
     }, 600);
+})
+
+document.addEventListener("matchmakingResearch", () => {
+    const isRender = document.querySelector('matchmaking-research-component');       
+    if (!isRender) {
+        const matchmakingResearchComponent = document.createElement('matchmaking-research-component');
+        app.appendChild(matchmakingResearchComponent);
+    }
 })
 
 // Handle reloading or quit app

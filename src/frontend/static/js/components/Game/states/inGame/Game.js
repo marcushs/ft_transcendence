@@ -1,8 +1,9 @@
 import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
-import { disconnectWebSocket } from "./gameWebsocket.js";
+import { waitForStatesContainer } from "./gameNetworkManager.js";
+import { disconnectGameWebSocket } from "./gameWebsocket.js";
 import getUserId from "../../../../utils/getUserId.js";
 import { resetGameInstance } from "./inGameComponent.js";
-import { socket } from "./gameWebsocket.js";
+import { gameSocket } from "./gameWebsocket.js";
 import Player from "./Player.js";
 import Spark from "./Spark.js";
 import Ball from "./Ball.js";
@@ -10,12 +11,16 @@ import Intro from "./Intro.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
 	localStorage.removeItem('isSearchingGame');
-	const userId = await getUserId();
-	let statesContainerDiv = document.querySelector('.states-container');
-	if (!statesContainerDiv) {
+	const matchmakingSearchPopUp = document.querySelector('matchmaking-research-component')
+	if (matchmakingSearchPopUp)
+		matchmakingSearchPopUp.remove();
+	if (window.location.pathname !== '/') {
 		throwRedirectionEvent('/');
-		statesContainerDiv = document.querySelector('.states-container');
+		await waitForStatesContainer();
 	}
+	const userId = await getUserId();
+	const statesContainerDiv = document.querySelector('.states-container');
+
 	statesContainerDiv.innerHTML = '';
 	for (let i = 0; i < statesContainerDiv.classList.length; i++) {
 		if (statesContainerDiv.classList[i] === 'states-container')
@@ -44,12 +49,12 @@ export default class Game {
 
 		this.initGameRender();
 		this.renderLoop();
-
 	}
 
 // --------------------------------------- Constructor method -------------------------------------- //
 
 	initGameRender() {
+		this.isGameRunning = false
 		this.speed = this.gameState.ball_speed;
 		this.speedLimit = this.gameState.speedLimit;
 		this.ball = new Ball(this.canvas, this.gameState.ball_position.x, this.gameState.ball_position.y, this.speed);
@@ -110,9 +115,9 @@ export default class Game {
 			action = 'move_up';
 		if (this.keysPlayerOne.down)
 			action = 'move_down'
-		if (action) {
-			if (socket && socket.readyState === WebSocket.OPEN) {
-				socket.send(JSON.stringify({
+		if (action) {			
+			if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
+				gameSocket.send(JSON.stringify({
 					'type': 'player_action',
 					'game_id': this.gameId,
 					'player_id': this.playerOne.playerId,
@@ -159,6 +164,7 @@ export default class Game {
 		this.canvas.ctx.stroke();
 		this.canvas.ctx.closePath();
 		this.canvas.ctx.fill();
+
 	}
 
 	drawSparks() {
@@ -263,7 +269,7 @@ export default class Game {
 	gameFinished(message) {
 		this.gameInProgress = false;
 		alert(message);
-		disconnectWebSocket(this.userId, false);
+		disconnectGameWebSocket(this.userId, false);
 		throwRedirectionEvent('/');
 	}
 
@@ -281,7 +287,7 @@ export default class Game {
 	canceledGame(message) {
 		this.gameInProgress = false;
 		alert(`Game canceled: ${message}`);
-		disconnectWebSocket(this.userId, false);
+		disconnectGameWebSocket(this.userId, false);
 		throwRedirectionEvent('/');
 	}
 
@@ -311,42 +317,5 @@ export default class Game {
 	        this.sparks.push(spark);
 	    }
 	}
-
-
-	// wallCollision() {
-	// 	// X should be deleted to score a goal
-	// 	if (this.ball.x + this.ball.ballRadius > this.canvas.width)
-	// 		this.ball.ballDirectionX = this.ball.ballDirectionX * -1;
-	// 	if (this.ball.x - this.ball.ballRadius < 0)
-	// 		this.ball.ballDirectionX = this.ball.ballDirectionX * -1;
-
-	// 	if (this.ball.y + this.ball.ballRadius > this.canvas.height) {
-	// 		this.ball.ballDirectionY = this.ball.ballDirectionY * -1;
-	// 		this.generateSparks(this.ball.x, this.ball.y, 'bottom', false, false, 'rgb(255, 165, 0)')
-	// 	}
-	// 	if (this.ball.y - this.ball.ballRadius < 0) {
-	// 		this.ball.ballDirectionY = this.ball.ballDirectionY * -1;
-	// 		this.generateSparks(this.ball.x, this.ball.y, 'top', false, false, 'rgb(255, 165, 0)');
-	// 	}
-	// }
-
-
-	// ------------------------------------- Move players ------------------------------------- //
-
-	// movePlayerDelay(newPosY, player, callback) {
-	// 	let i = 0;
-
-	// 	const intervalId = setInterval(() => {
-	// 		if (this.checkPlayerHitBox(newPosY, player)) {
-	// 			clearInterval(intervalId);
-	// 			return ;
-	// 		}
-	// 		callback();
-	// 		i++;
-	// 		if (i === 10)
-	// 			clearInterval(intervalId);
-	// 	}, 1);
-	// }
-
 
 }

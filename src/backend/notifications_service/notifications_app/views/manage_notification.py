@@ -63,7 +63,6 @@ class manage_notification_view(View):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200)
         data = json.loads(request.body.decode('utf-8'))
-        print(f'-------------- test = {data['sender']}, {data['receiver']}  ---------------------') 
         if 'type' in data and 'sender' in data and 'receiver' in data:
             match data['type']:
                 case 'canceled_friend_request_notification':

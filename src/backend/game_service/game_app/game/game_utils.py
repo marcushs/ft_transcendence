@@ -23,6 +23,9 @@ async def send_client_game_init(game_id_data, game_instance):
     await send_websocket_info(player_id=game_id_data['player_two'], payload=payload)
 
 
+async def get_player_info(player_id):
+    pass
+
 async def send_websocket_info(player_id, payload):
     try:
         if isinstance(payload, str):

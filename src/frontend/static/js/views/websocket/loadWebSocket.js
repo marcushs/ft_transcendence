@@ -1,27 +1,27 @@
 import {removeContactFromList, addNewContactToList, UpdateContactInList} from './updateContactWebsocket.js'
 
-let socket = null;
+export let contactSocket = null;
+export let notificationSocket = null;
 
 export async function loadWebSocket() {
     await loadContactsWebSocket();
-    await loadNotificationsWebSocket();
-    // await loadNotificationWebSocket();
+    loadNotificationsWebSocket();
 }
 
 //--------------> CONTACT WEBSOCKET <--------------\\
 
 async function loadContactsWebSocket() {
-    if (socket !== null) {
-        socket.close();
+    if (contactSocket !== null) {
+        contactSocket.close();
     }
 
-    socket = new WebSocket(`ws://localhost:8003/ws/contacts/`);
+    contactSocket = new WebSocket(`ws://localhost:8003/ws/contacts/`);
 
-    socket.onopen = function(event) {
+    contactSocket.onopen = function(event) {
 		console.log('Contact websocket started');
 	};
 
-    socket.onmessage = function(event) {
+    contactSocket.onmessage = function(event) {
         const data = JSON.parse(event.data);
         
         const contactMenuComponent = document.querySelector('contact-menu-component')
@@ -36,11 +36,11 @@ async function loadContactsWebSocket() {
         }
     };
 
-    socket.onclose = function(event) {
-		console.log('Contact websocket closed: ', event);
+    contactSocket.onclose = function(event) {
+		console.log('Contact socket closed');
 	};
 
-    socket.onerror = function(event) {
+    contactSocket.onerror = function(event) {
         console.log("Websocket error: ", event);
     };
 }
@@ -48,16 +48,15 @@ async function loadContactsWebSocket() {
 //--------------> NOTIFICATION WEBSOCKET <--------------\\
 
 function loadNotificationsWebSocket() {
-	const socket = new WebSocket(`ws://localhost:8004/ws/notifications/`);
+	notificationSocket = new WebSocket(`ws://localhost:8004/ws/notifications/`);
 
-		socket.onopen = function(event) {
+		notificationSocket.onopen = function(event) {
 		    console.log('Notifications websocket started');
         };
 
-		socket.onmessage = function(event) {
+		notificationSocket.onmessage = function(event) {
 			const data = JSON.parse(event.data);
 
-			// console.log(data)
 			if (data.type === 'new_notification')
 				throwNewNotificationEvent(data.notification);
 			else if (data.type === 'change_notification_sender')
@@ -66,11 +65,11 @@ function loadNotificationsWebSocket() {
 				throwDeleteNotificationElementEvent(data.notification);
 		};
 
-		socket.onclose = function(event) {
-		    console.log('Notifications websocket closed: ', event);
+		notificationSocket.onclose = function(event) {
+		    console.log('Notifications socket closed');
         };
 
-		socket.onerror = function(event) {
+		notificationSocket.onerror = function(event) {
 		    console.error("Websocket error: ", event);
 		};
 }
