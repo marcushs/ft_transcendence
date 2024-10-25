@@ -42,6 +42,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                                                          'chatroom': str(chatroom.group_id),
                                                          'target_user': str(target_user.id)})
                     await self.join_room(str(chatroom.group_id))
+
                 saved_message = await self.save_message(chatroom=chatroom, author=self.user, message=message_body)
                 await self.channel_layer.group_send(str(chatroom.group_id),
                                                     {'type': 'chat.message',
@@ -87,13 +88,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         author = event['author']
 
         if await self.is_user_blocked(author) == True:
-            # await self.send(text_data=json.dumps({
-            #     'type': 'chat_message',
-            #     'chatroom': event['chatroom'],
-            #     'message': event['message'],
-            #     'author': author,
-            #     'timestamp': event['timestamp'] 
-            # }))
             return
         await self.send(text_data=json.dumps({
             'type': 'chat_message',

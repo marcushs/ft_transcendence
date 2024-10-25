@@ -139,14 +139,12 @@ async function loadChatWebSocket() {
 		
 		if (data.type === 'chat_message') {
 			await messageReceptionDOMUpdate(data);
-		}
-		else if (data.type === 'chatgroup_update') {
+		} else if (data.type === 'chatgroup_update') {
 			await receiveChatgroupUpdate(data);
 			// chatroomsList = await fetchChatroomsList();
 			await updateCurrentChatroomId(data.target_user);
 			await addNewContactToContactedList(data.chatroom);
-		}
-		else if (data.type === 'remove_room') {
+		} else if (data.type === 'remove_room') {
 			removeChatContactFromDOM(data.chatroom);
 		}
 	};
