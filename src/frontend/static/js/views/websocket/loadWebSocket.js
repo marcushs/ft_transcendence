@@ -24,7 +24,7 @@ async function loadContactsWebSocket() {
         contactSocket.close();
     }
 	
-    contactSocket = new WebSocket(`wss://localhost:8003/ws/contacts/`);
+    contactSocket = new WebSocket(`wss://localhost:3000/ws/contacts/`);
 
     contactSocket.onopen = function(event) {
 		console.log('Contact websocket started');
@@ -59,7 +59,7 @@ async function loadContactsWebSocket() {
 //--------------> NOTIFICATION WEBSOCKET <--------------\\
 
 function loadNotificationsWebSocket() {
-	notificationSocket = new WebSocket(`wss://localhost:8004/ws/notifications/`);
+	notificationSocket = new WebSocket(`wss://localhost:3000/ws/notifications/`);
 
 		notificationSocket.onopen = function(event) {
 		    console.log('Notifications websocket started');
@@ -123,7 +123,7 @@ function throwDeleteNotificationElementEvent(notification) {
 //--------------> CHAT WEBSOCKET <--------------\\
 
 async function loadChatWebSocket() {
-	chatSocket = new WebSocket('wss://localhost:8011/ws/chat/');
+	chatSocket = new WebSocket('wss://localhost:3000/ws/chat/');
 
 	chatSocket.onopen = async function (e) {
 		console.log("The chat websocket connection was setup successfully !");
