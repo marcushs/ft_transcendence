@@ -3,7 +3,8 @@ __pycache__
 .idea
 .vscode
 media
-migrations
+migrations/
+!migrations/__init__.py
 .gitignore
 .docker
 chat_models.txt
