@@ -31,7 +31,7 @@ class MatchmakingQueueManager(View):
         data = json.loads(request.body.decode('utf-8'))
         if not self.is_valid_matchmaking_type(data=data):
             return JsonResponse({'status': 'error', 'message': 'Invalid matchmaking type'}, status=400)
-        is_waiting, match_type = is_already_in_waiting_list(request.user.id)
+        is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
         if is_waiting:
             return JsonResponse({'status': 'error', 'message': 'User is already in matchmaking research'}, status=200)
         self.start_matchmaking_by_type(data['type'], request)
@@ -74,7 +74,7 @@ class CheckUserInWaitingQueue(View):
     def get(self, request):
         if isinstance(request.user, AnonymousUser):  
             return JsonResponse({'message': 'No connected user'}, status=401)
-        is_waiting, match_type = is_already_in_waiting_list(request.user.id)
+        is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
         if is_waiting:
             return JsonResponse({'waiting': True, 'match_type': match_type}, status=200) 
         return JsonResponse({'waiting': False}, status=200)
@@ -89,19 +89,20 @@ class RemoveUserFromWaitingQueue(View):
     def post(self, request):
         if isinstance(request.user, AnonymousUser):  
             return JsonResponse({'message': 'No connected user'}, status=401) 
-        is_waiting, match_type = is_already_in_waiting_list(request.user.id)
+        is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
+        print(f'-> is waitin: return : bool : {is_waiting} -- match_type: {match_type}')
         if not is_waiting:
             return JsonResponse({'message': 'cant remove user from matchmaking research cause he is not already present in it'}, status=401)
         if match_type == 'unranked':
-            redis_instance.lrem('unranked_waiting_users', 0, request.user.id)
+            redis_instance.lrem('unranked_waiting_users', 0, str(request.user.id))
         elif match_type == 'ranked':
-            redis_instance.lrem('ranked_waiting_users', 0, request.user.id) 
-        return JsonResponse({'message': 'user removed from matchmaking research'}, status=200)
+            redis_instance.lrem('ranked_waiting_users', 0, str(request.user.id)) 
+        return JsonResponse({'message': 'user removed from matchmaking research'}, status=200) 
     
 # -------->API - internal: change in_game state <-------------- #
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ChangeInGameUserStatus(View):
+class ChangeInGameUserStatus(View): 
     def __init__(self):
         super()
 
@@ -123,11 +124,11 @@ class ChangeInGameUserStatus(View):
 
  #//---------------------------------------> matchmaking utils <--------------------------------------\\#
 
-def change_is_ingame_state(value, user_instance=None, user_id=None):
+def change_is_ingame_state(value: bool, user_instance=None, user_id=None):
     if user_id:
         try:
-            if isinstance(user_id, int):
-                user_id = int(user_id)
+            if not isinstance(user_id, str):
+                user_id = str(user_id)
             user = User.objects.get(id=user_id)
         except Exception as e:
             print(f'Error : {e}')
@@ -138,23 +139,24 @@ def change_is_ingame_state(value, user_instance=None, user_id=None):
     user.is_ingame = value 
     user.save()
 
-def is_already_in_waiting_list(target_id): 
+def is_already_in_waiting_list(target_id: str): 
     unranked_waiting_users = redis_instance.lrange('unranked_waiting_users', 0, -1)
     unranked_waiting_users = [user_id.decode() for user_id in unranked_waiting_users]
     ranked_waiting_users = redis_instance.lrange('ranked_waiting_users', 0, -1)
     ranked_waiting_users = [user_id.decode() for user_id in ranked_waiting_users]
-    if str(target_id) in unranked_waiting_users:
+    print(f'-> check: user_id : {target_id} in unranked : {unranked_waiting_users} -- in ranked: {ranked_waiting_users}')
+    if target_id in unranked_waiting_users:
         return True, 'unranked'
-    if str(target_id) in ranked_waiting_users:
+    if target_id in ranked_waiting_users: 
         return True, 'ranked'
     return False, None
 
 
-def check_duplicate_user_in_waiting_list(target_user):
+def check_duplicate_user_in_waiting_list(target_user: str):
     unranked_waiting_users = redis_instance.lrange('unranked_waiting_users', 0, -1) 
     unranked_waiting_users = [user_id.decode() for user_id in unranked_waiting_users]
     ranked_waiting_users = redis_instance.lrange('ranked_waiting_users', 0, -1)
     ranked_waiting_users = [user_id.decode() for user_id in ranked_waiting_users]
-    if str(target_user.id) in unranked_waiting_users or str(target_user.id) in ranked_waiting_users:  
+    if target_user.id in unranked_waiting_users or target_user.id in ranked_waiting_users:  
         return False
     return True

@@ -23,7 +23,7 @@ class MatchResultManager(View):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
-    def is_valid_data(self, data):
+    def is_valid_data(self, data): 
         if 'winner' not in data or 'loser' not in data:
             return False
         winner = data['winner']
@@ -41,7 +41,7 @@ class MatchResultManager(View):
 
 
     def update_match_result_data(self, data):
-        winner, loser = self.get_user_from_result(data)
+        winner, loser = self.get_users_from_result(data)
         change_user_games_count(is_game_win=True, user=winner)
         change_user_games_count(is_game_win=False, user=loser)
         create_new_match_history(data=data, winner_instance=winner, loser_instance=loser) 
@@ -52,9 +52,9 @@ class MatchResultManager(View):
         
 
 
-    def get_user_from_result(self, data):
-        winner = User.objects.get(id=int(data['winner']['id']))
-        loser = User.objects.get(id=int(data['loser']['id'])) 
+    def get_users_from_result(self, data): 
+        winner = User.objects.get(id=data['winner']['id'])
+        loser = User.objects.get(id=data['loser']['id']) 
         return winner, loser
 
 

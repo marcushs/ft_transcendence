@@ -21,7 +21,6 @@ class startGameEngine(View):
 
     async def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
-        print(f'----------data received: {data}')
         if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
             return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)  
         asyncio.create_task(starting_game_instance(data))
@@ -32,8 +31,8 @@ class startGameEngine(View):
 async def starting_game_instance(data):
     game_id_data = {
         'game': str(uuid.uuid4()),
-        'player_one': str(data['player1']),
-        'player_two': str(data['player2'])
+        'player_one': data['player1'],
+        'player_two': data['player2']
     }
     game_instance = PongGameEngine(game_id_data)
     if not await check_connections(game_id_data):
@@ -51,9 +50,9 @@ async def check_connections(data_id):
     while True:
         async with asyncio.Lock():
             if player_one_id in connections and player_two_id in connections:
-                print('all players connected !')
+                print('->tasks: all players connected !')
                 break
-        print(f"waiting all players... : player_one: {player_one_id} -- player_two: {player_two_id} -- connections: {connections}")
+        print(f"->tasks: waiting all players... : player_one: {player_one_id} -- player_two: {player_two_id} -- connections: {connections}")
         if count == max_checks: 
             return False
         count += 1
@@ -76,7 +75,7 @@ async def ending_game_instance(winner, loser, game_type):
             'winner_id': winner['id'], 
             'loser_id': loser['id'] 
         }
-        await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload) 
+        await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)  
         payload = {
             'winner': winner,
             'loser': loser,

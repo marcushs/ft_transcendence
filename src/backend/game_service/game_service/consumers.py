@@ -20,7 +20,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 				self.group_name = f'game_{self.user_id}'
 				await self.channel_layer.group_add(self.group_name, self.channel_name)
 				async with asyncio.Lock():
-					print(f'---------> connections set for user : {self.user_id}') 
+					print(f'!!!!!!!!!!!!!!!!!!!!!!---------> add user : {self.user_id} to connections list')
 					connections[self.user_id] = self
 				await self.accept()
 		except Exception as e:

@@ -142,7 +142,7 @@ document.addEventListener("inactiveGame", () => {
             const gameInactivityComponent = document.createElement('game-inactivity-component');
             app.appendChild(gameInactivityComponent);
         }
-    }, 600);
+    }, 1000);
 })
 
 document.addEventListener("matchmakingResearch", () => {

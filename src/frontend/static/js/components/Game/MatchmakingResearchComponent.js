@@ -9,21 +9,33 @@ import getUserId from "../../utils/getUserId.js";
 export async function checkMatchmakingSearch() {
     const isSearching = JSON.parse(localStorage.getItem('isSearchingGame'));
     const isUserConnected = await checkAuthentication();
-    if (isSearching && isUserConnected) {        
+    if (!isSearching || !isUserConnected)
+        return;
+    try {
+        const researchData = await sendRequest('GET', '/api/matchmaking/is_waiting/', null)
+        if (!researchData.waiting) {
+            if (document.querySelector('matchmaking-research-component'))
+                document.removeChild('matchmaking-research-component'); 
+            localStorage.removeItem('isSearchingGame');
+        }
         if (window.location.pathname !== '/' && !window.location.pathname.endsWith('/profile') && !window.location.pathname.startsWith('/users/')) {
             if (document.querySelector('matchmaking-research-component'))
                 document.removeChild('matchmaking-research-component');
             return;
-        }      
+        }
+        console.log('isSearching: ', isSearching);
+        
         if (isSearching.status === 'joining' && !gameSocket) {
             const userId = await getUserId();
             if (userId)
                 await gameWebsocket(userId);
             return; 
         }
-        if (!matchmakingSocket || matchmakingSocket.readyState !== WebSocket.OPEN)
+        if (!matchmakingSocket || matchmakingSocket.readyState !== WebSocket.OPEN) 
             await matchmakingWebsocket();
         throwMatchmakingResearchEvent();
+    } catch (error) {
+        console.error('error with matchmaking check: ', error.message);
     }
 }
 
@@ -85,7 +97,7 @@ class MatchmakingResearchComponent extends HTMLElement {
 
     async cancelMatchmakingResearch() {
         try {
-            const response = await sendRequest('POST', '/api/8006/matchmaking/remove_waiting/', null);
+            const response = await sendRequest('POST', '/api/matchmaking/remove_waiting/', null);
             console.log('remove response: ', response);
             this.classList.add('matchmaking-research-component-hide');
             localStorage.removeItem('isSearchingGame');
@@ -94,7 +106,7 @@ class MatchmakingResearchComponent extends HTMLElement {
             }, 500);
         } catch (error) {
             this.remove();
-            console.error(error.message);
+            console.error(error.message); 
         }
 
     }

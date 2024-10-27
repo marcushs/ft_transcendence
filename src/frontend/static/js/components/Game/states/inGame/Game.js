@@ -44,6 +44,7 @@ export default class Game {
 		this.gameState = gameState;
 		this.isGameRunning = false;
 		this.isAnimationEnabled = true;
+		
 
 		this.Intro = new Intro(this.canvas);
 
@@ -58,8 +59,10 @@ export default class Game {
 		this.speed = this.gameState.ball_speed;
 		this.speedLimit = this.gameState.speedLimit;
 		this.ball = new Ball(this.canvas, this.gameState.ball_position.x, this.gameState.ball_position.y, this.speed);
-		const playerOneBackId = Number(this.gameState.player_one.id);
-		const playerTwoBackId = Number(this.gameState.player_two.id);
+		const playerOneBackId = this.gameState.player_one.id;
+		const playerTwoBackId = this.gameState.player_two.id;
+		console.log('playerOneBackId: ', playerOneBackId);
+		console.log('playerTwoBackId: ', playerTwoBackId);
 
 		if (this.userId === playerOneBackId) {
 			this.playerOne = new Player(this.canvas, true, playerOneBackId);
