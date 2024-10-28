@@ -7,6 +7,7 @@ import Player from "./Player.js";
 import Spark from "./Spark.js";
 import Ball from "./Ball.js";
 import Intro from "./Intro.js";
+import Outro from "./Outro.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
 	localStorage.removeItem('isSearchingGame');
@@ -38,9 +39,11 @@ export default class Game {
 		this.gameId = gameId;
 		this.gameState = gameState;
 		this.isGameRunning = false;
-		this.isAnimationEnabled = true;
+		this.isIntroAnimationEnabled = true;
+		this.isOutroAnimationEnabled = false;
 
 		this.Intro = new Intro(this.canvas);
+		this.Outro = new Outro(this.canvas);
 
 		this.initGameRender();
 		this.renderLoop();
@@ -78,7 +81,7 @@ export default class Game {
 		this.attachEventsListener();
 
 		setTimeout(() => {
-			this.Intro.isAnimationEnabled = true;
+			this.Intro.isIntroAnimationEnabled = true;
 		}, 3000);
 	}
 
@@ -92,11 +95,13 @@ export default class Game {
 
 		this.deltaTime = (performance.now() - this.lastTime) / 1000;
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.movePlayer();
+		// this.movePlayer();
 		this.drawFrame();
 		this.drawSparks();
-		if (this.isAnimationEnabled)
-			this.Intro.drawIntro();
+		// if (this.isIntroAnimationEnabled)
+		// 	this.Intro.drawIntro();
+		// if (this.isOutroAnimationEnabled)
+			this.Outro.drawOutro();
 
 		requestAnimationFrame(() => this.renderLoop());
 	}
@@ -124,7 +129,7 @@ export default class Game {
 
 	// Draw new frame render
 	drawFrame() {
-		if (!this.isAnimationEnabled)
+		if (!this.isIntroAnimationEnabled)
 			this.drawScore();
 		this.drawMiddleLine();
 		this.playerOne.draw();
@@ -178,8 +183,8 @@ export default class Game {
 
 		if (!this.isGameRunning)
 			this.isGameRunning = true;
-		if (this.isAnimationEnabled)
-			this.isAnimationEnabled = false;
+		if (this.isIntroAnimationEnabled)
+			this.isIntroAnimationEnabled = false;
 
 		this.updatePlayersPosition(newState);
 		this.updateBallPosition(newState);
@@ -262,7 +267,8 @@ export default class Game {
 
 	gameFinished(message) {
 		this.gameInProgress = false;
-		alert(message);
+		// alert(message);
+
 		disconnectWebSocket(this.userId, false);
 		throwRedirectionEvent('/');
 	}
@@ -307,7 +313,7 @@ export default class Game {
 
 			(y < 50) ? sparkY = 0 : sparkY = this.canvas.height;
 
-	        let spark = new Spark(x, sparkY, angle, speed, lifetime, this.deltaTime);
+	        let spark = new Spark(x, sparkY, angle, speed, lifetime, this.deltaTime, 2, "rgb(255, 165, 0)");
 	        this.sparks.push(spark);
 	    }
 	}
