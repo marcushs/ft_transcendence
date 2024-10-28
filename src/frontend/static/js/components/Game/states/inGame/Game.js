@@ -81,7 +81,7 @@ export default class Game {
 		this.attachEventsListener();
 
 		setTimeout(() => {
-			this.Intro.isIntroAnimationEnabled = true;
+			this.Intro.isAnimationEnabled = true;
 		}, 3000);
 	}
 
@@ -95,12 +95,12 @@ export default class Game {
 
 		this.deltaTime = (performance.now() - this.lastTime) / 1000;
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		// this.movePlayer();
+		this.movePlayer();
 		this.drawFrame();
 		this.drawSparks();
-		// if (this.isIntroAnimationEnabled)
-		// 	this.Intro.drawIntro();
-		// if (this.isOutroAnimationEnabled)
+		if (this.isIntroAnimationEnabled)
+			this.Intro.drawIntro();
+		if (this.isOutroAnimationEnabled)
 			this.Outro.drawOutro();
 
 		requestAnimationFrame(() => this.renderLoop());
@@ -265,12 +265,17 @@ export default class Game {
 
 // --------------------------------------- Game finished render -------------------------------------- //
 
-	gameFinished(message) {
-		this.gameInProgress = false;
-		// alert(message);
+	gameFinished(isWin) {
+		console.log('is win = ', isWin)
+		this.throwLoadOutroAnimationEvent(isWin);
+		this.isOutroAnimationEnabled = true;
 
-		disconnectWebSocket(this.userId, false);
-		throwRedirectionEvent('/');
+		// Not definitive
+		setTimeout(() => {
+			this.gameInProgress = false;
+			disconnectWebSocket(this.userId, false);
+			throwRedirectionEvent('/');
+		}, 10000);
 	}
 
 	cleanup() {
@@ -318,6 +323,17 @@ export default class Game {
 	    }
 	}
 
+
+	throwLoadOutroAnimationEvent(isWin) {
+		const event = new CustomEvent('loadOutroAnimationEvent', {
+			bubbles: true,
+			detail: {
+				isWin: isWin
+			}
+		});
+
+		document.dispatchEvent(event);
+	}
 
 	// wallCollision() {
 	// 	// X should be deleted to score a goal

@@ -38,7 +38,7 @@ class PongGameEngine:
         self.speed_limit = 45
         self.ball_direction_x = self.ball_speed
         self.ball_direction_y = 0
-        self.max_score = 2
+        self.max_score = 1
         self.has_ball_hit_wall = False
         self.is_player_one_collide = False
         self.is_player_two_collide = False
@@ -236,8 +236,10 @@ class PongGameEngine:
     async def end_game(self):
         if self.player_one_score > self.player_two_score:
             self.winner_id = self.player_one_id
+            self.loser_id = self.player_two_id
         elif self.player_one_score < self.player_two_score:
             self.winner_id = self.player_two_id
+            self.loser_id = self.player_one_id
         else:
             self.winner_id = -1
         self.game_active = False
@@ -326,13 +328,25 @@ class PongGameEngine:
                 'event': 'game_canceled',
                 'message': f'Game draw after reconnection time to the paused game has been exceeded'
             }
+            await self.websocket_sender(payload)
         else:
-            payload = {
+            winner_payload = {
                 'type': 'game_update_info',
                 'event': 'game_finished',
-                'message': f'Player {self.winner_id} wins!'
+                'message': {
+                    'is_win' : True
+                }
             }
-        await self.websocket_sender(payload)
+            loser_payload = {
+                'type': 'game_update_info',
+                'event': 'game_finished',
+                'message': {
+                    'is_win' : False
+                }
+            }
+            print(f'------------ idwinner : {self.winner_id}, idwinner: {self.loser_id} -----------')
+            await send_websocket_info(self.winner_id, winner_payload)
+            await send_websocket_info(self.loser_id, loser_payload)
 
 
     async def send_surrender_update(self, loser_id):
@@ -342,8 +356,8 @@ class PongGameEngine:
             'message': f'Player {loser_id} has surrendered. {self.winner_id} wins!'
         }
         await self.websocket_sender(payload)
-        
-         
+
+
     async def send_disconnect_update(self, player_id):
         payload = {
             'type': 'game_update_info',
@@ -352,14 +366,14 @@ class PongGameEngine:
         }
         await self.websocket_sender(payload)
 
-     
+
     async def send_reconnect_update(self, player_id):
         payload = {
             'type': 'game_update_info',
             'event': 'player_reconnected',
             'message': f'player {player_id} has reconnected',
         }
-        await self.websocket_sender(payload) 
+        await self.websocket_sender(payload)
 
 
     async def send_resume_update(self):

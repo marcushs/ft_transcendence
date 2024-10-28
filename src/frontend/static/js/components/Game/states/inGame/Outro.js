@@ -18,9 +18,7 @@ export default class Outro {
 		this.isResultDrawable = false;
 		this.isSparksDrawable = false;
 
-		this.updateBackgroundOpacity();
 		this.attachEventsListeners();
-		this.generateSparks(this.canvas.width / 2, this.canvas.height / 2);
 	}
 
 
@@ -28,9 +26,7 @@ export default class Outro {
 		document.addEventListener('loadOutroAnimationEvent', (event) => {
 			this.isWin = event.detail.isWin;
 			this.updateBackgroundOpacity();
-			if (this.isWin)
-				this.generateSparks(this.canvas.width / 2, this.canvas.height / 2);
-		})
+		});
 	}
 
 
@@ -82,11 +78,14 @@ export default class Outro {
 	}
 
 
+	// Need refactor
 	updateResult() {
 		const intervalId = setInterval(() => {
 			if (this.resultFontSize > 180) {
 				this.resultFontSize -= 30;
 			} else if (this.isWin) {
+				if (this.isWin)
+					this.generateSparks(this.canvas.width / 2, this.canvas.height / 2);
 				this.isSparksDrawable = true;
 				clearInterval(intervalId);
 			} else {
@@ -107,7 +106,8 @@ export default class Outro {
 	}
 
 	generateSparks(x, y) {
-		const numberOfSparks = 200;
+		console.log('sparks')
+		const numberOfSparks = 350;
 		const angleRange = [0, 2 * Math.PI];
 
 		for (let i = 0; i < numberOfSparks; i++) {
