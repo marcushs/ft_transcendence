@@ -6,7 +6,7 @@ import {sendRequest} from "../utils/sendRequest.js";
 import { contactSocket, chatSocket } from "./websocket/loadWebSocket.js";
 import { notificationSocket } from "./websocket/loadWebSocket.js";
 import { gameSocket } from "../components/Game/states/inGame/gameWebsocket.js";
-import { matchmakingSocket } from "../components/Game/matchmakingWebsocket.js";
+import { matchmakingSocket } from "../utils/matchmaking/matchmakingWebsocket.js";
 import { disconnectGameWebSocket } from "../components/Game/states/inGame/gameWebsocket.js";
 
 export default () => {

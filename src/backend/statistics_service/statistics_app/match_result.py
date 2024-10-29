@@ -52,7 +52,7 @@ class MatchResultManager(View):
         
 
 
-    def get_users_from_result(self, data): 
+    def get_users_from_result(self, data):  
         winner = User.objects.get(id=data['winner']['id'])
         loser = User.objects.get(id=data['loser']['id']) 
         return winner, loser

@@ -1,5 +1,5 @@
 import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
-import { waitForStatesContainer } from "./gameNetworkManager.js";
+import { waitForStatesContainer } from "../../../../utils/game/gameConnection.js";
 import { disconnectGameWebSocket } from "./gameWebsocket.js";
 import getUserId from "../../../../utils/getUserId.js";
 import { resetGameInstance } from "./inGameComponent.js";

@@ -1,7 +1,6 @@
 import { sendRequest } from "../../../../utils/sendRequest.js";
-import { websocketReconnection } from "./gameWebsocket.js";
-import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
 import { throwGameInactivityEvent } from "../../../../utils/throwGameInactivityEvent.js"
+import { surrenderHandler, handleGameReconnection } from "../../../../utils/game/gameConnection.js";
 
 export async function checkInactiveGame() {
     const savedState = localStorage.getItem('inGameComponentState');
@@ -69,69 +68,14 @@ class GameInactivityComponent extends HTMLElement {
 
     attachEventsListener() {
         this.reconnectChoice.addEventListener('click', async () => {            
-            await this.handleReconnection();
+            await handleGameReconnection(this.gameState.userId, this.gameState)
             this.remove();
         })
         this.LeaveChoice.addEventListener('click', async () => {            
-            await this.handleSurrender();
+            await surrenderHandler();
             this.remove();
         })
     }
-
-    async handleReconnection() {
-        if (window.location.pathname !== '/') {
-            throwRedirectionEvent('/');
-            await waitForStatesContainer();
-        }
-        const isReconnected = await websocketReconnection(this.gameState.userId);
-        if (!isReconnected)
-            return;
-        const statesContainerDiv = document.querySelector('.states-container');
-        
-        statesContainerDiv.innerHTML = '';
-        for (let i = 0; i < statesContainerDiv.classList.length; i++) {
-            if (statesContainerDiv.classList[i] === 'states-container')
-                continue;
-            statesContainerDiv.classList.remove(statesContainerDiv.classList[i])
-        }
-        const inGameComponent = document.createElement('in-game-component');
-        inGameComponent.setState(this.gameState)
-        statesContainerDiv.appendChild(inGameComponent);
-    }
-
-    async handleSurrender() {
-        await surrenderHandler();
-    }
 }
+
 customElements.define('game-inactivity-component', GameInactivityComponent);
-
-export async function waitForStatesContainer() {
-    await new Promise(resolve => {
-        const observer = new MutationObserver(() => {
-            const newContainer = document.querySelector('.states-container');
-            if (newContainer) {
-                observer.disconnect();
-                resolve();
-            }
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-    });
-}
-
-export async function surrenderHandler() {
-    const savedState = localStorage.getItem('inGameComponentState');
-    const gameState = savedState ? JSON.parse(savedState) : null;
-    if (!gameState)
-        return;
-    try {
-        const payload = {
-            game_id: gameState.gameId,
-            player_id: gameState.userId
-        };
-        const response = await sendRequest('POST', '/api/game/surrend_game/', payload);
-		localStorage.removeItem('inGameComponentState');
-        console.log(response);
-    } catch (error) {
-        console.log(error);
-    }
-}

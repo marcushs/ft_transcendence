@@ -5,6 +5,10 @@ import json
 connections = {}
 connections_lock = asyncio.Lock()
 
+def get_connections():
+    print(f'-> ---------------------------->  {connections}')
+    return connections
+
 class MatchmakingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope["user"]
@@ -14,9 +18,9 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             else:
                 self.group_name = f'matchmaking_searching_{str(self.user.id)}'
                 await self.channel_layer.group_add(self.group_name, self.channel_name)
+                await self.accept()
                 print(f'!!!!!!!!!!!!!!!!!!!!!!---------> add user : {self.user.id} to connections list')
                 connections[str(self.user.id)] = self
-                await self.accept()
         except Exception as e: 
             print('Error: ', e)
 
@@ -31,7 +35,15 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
     async def game_found(self, event):  
         await self.send(text_data=json.dumps(
             {
-                'type': 'game_found',
+                'type': event['type'],
+                'player_id': str(self.user.id)
+            }
+        ))
+        
+    async def already_in_game(self, event):  
+        await self.send(text_data=json.dumps(
+            {
+                'type': event['type'],
                 'player_id': str(self.user.id)
             }
         ))

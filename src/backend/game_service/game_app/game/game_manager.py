@@ -50,7 +50,7 @@ async def check_connections(data_id):
     while True:
         async with asyncio.Lock():
             if player_one_id in connections and player_two_id in connections:
-                print('->tasks: all players connected !')
+                print('->tasks: all players connected !') 
                 break
         print(f"->tasks: waiting all players... : player_one: {player_one_id} -- player_two: {player_two_id} -- connections: {connections}")
         if count == max_checks: 

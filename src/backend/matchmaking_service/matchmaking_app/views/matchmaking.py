@@ -27,7 +27,7 @@ class MatchmakingQueueManager(View):
 
     def post(self, request):
         if isinstance(request.user, AnonymousUser):  
-            return JsonResponse({'status':'error', 'message': 'No connected user'}, status=200) 
+            return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400) 
         data = json.loads(request.body.decode('utf-8'))
         if not self.is_valid_matchmaking_type(data=data):
             return JsonResponse({'status': 'error', 'message': 'Invalid matchmaking type'}, status=400)

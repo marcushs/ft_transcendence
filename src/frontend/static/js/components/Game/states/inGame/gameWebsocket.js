@@ -1,5 +1,6 @@
+import { surrenderHandler } from "../../../../utils/game/gameConnection.js";
 import { gameInstance, resetGameInstance } from "./inGameComponent.js";
-import { surrenderHandler, GameStillActive } from "./gameNetworkManager.js";
+import { GameStillActive } from "./gameNetworkManager.js";
 import { startGame } from "./Game.js";
 
 export let gameSocket = null;

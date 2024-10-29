@@ -11,7 +11,7 @@ class GameConsumer(AsyncWebsocketConsumer):
  #//---------------------------------------> Connector <--------------------------------------\\#
 
 	async def connect(self):
-		query_string = parse_qs(self.scope['query_string'].decode())
+		query_string = parse_qs(self.scope['query_string'].decode()) 
 		self.user_id = str(query_string.get('user_id', [None])[0])
 		try:
 			if not self.user_id or self.user_id == 'undefined':

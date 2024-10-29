@@ -1,6 +1,6 @@
 from .views.matchmaking import unranked_queue, change_is_ingame_state, ranked_queue
 from .utils.user_utils import send_request, get_user_by_id
-from matchmaking_service.consumers import connections, connections_lock
+from matchmaking_service.consumers import get_connections
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from .models import User
@@ -52,7 +52,8 @@ def background_task_unranked_matchmaking():
     
     while True:
         new_user = task_queue.get()
-        if new_user.is_ingame is True: 
+        if new_user.is_ingame is True:
+            send_socket_message(payload={'type': 'already_in_game'}, player_one_id=str(new_user.id))
             task_queue.task_done()
             continue
         launch_proccess(user=new_user, game_type='unranked') 
@@ -81,7 +82,7 @@ def launch_proccess(user, game_type):
 
 
 def proccess_matchmaking(game_type):
-    waiting_users = redis_instance.lrange(f'{game_type}_waiting_users', 0, -1)
+    waiting_users = redis_instance.lrange(f'{game_type}_waiting_users', 0, -1) 
     waiting_users = [user_id.decode() for user_id in waiting_users] 
     
     if len(waiting_users) >= 3:
@@ -98,9 +99,10 @@ def proccess_matchmaking(game_type):
     except Exception as e:
         print(f'Error: thread: {str(e)}')
     try:
-        if not check_connections(player_one_id=player_one_id, player_two_id=player_two_id):
-            raise Exception('Players connections timeout, game initialisation canceled')
-        send_matchmaking_found_to_client(player_one_id=player_one_id, player_two_id=player_two_id)
+        sleep(2)
+        # if not check_connections(player_one_id=player_one_id, player_two_id=player_two_id):
+        #     raise Exception('Players connections timeout, game initialisation canceled')
+        send_socket_message(payload={'type': 'game_found'}, player_one_id=player_one_id, player_two_id=player_two_id)
         sleep(2)
         send_start_game(game_type=game_type, player_one_id=player_one_id, player_two_id=player_two_id)
     except Exception as e:
@@ -112,29 +114,32 @@ def proccess_matchmaking(game_type):
 # def get_connections_snapshot(player_one_id, player_two_id):
 #     return asyncio.run(check_connections(player_one_id=player_one_id, player_two_id=player_two_id))
 
-async def check_connections(player_one_id, player_two_id):
+def check_connections(player_one_id, player_two_id):
     count = 0
     max_checks = 20
     while True:
+        connections = get_connections()
+        print(f'-> thread: ---------------------------->  {connections}')
         if player_one_id in connections and player_two_id in connections:
             print('->thread: all players connected !')
             break
         print(f"->thread: waiting all players... : player_one: {player_one_id} -- player_two: {player_two_id} -- connections: {connections}")
-        if count == max_checks: 
-            return False
+        if count == max_checks:  
+            return False 
         count += 1
-        asyncio.sleep(1)
+        sleep(1) 
     return True
 
-def send_matchmaking_found_to_client(player_one_id, player_two_id):
-    payload = {'type': 'game_found'}
-    async_to_sync(send_websocket_info)(player_id=player_one_id, payload=payload)
-    async_to_sync(send_websocket_info)(player_id=player_two_id, payload=payload)
+def send_socket_message(payload, player_one_id=None, player_two_id=None):
+    if player_one_id:
+        async_to_sync(send_websocket_info)(player_id=player_one_id, payload=payload)
+    if player_two_id:
+        async_to_sync(send_websocket_info)(player_id=player_two_id, payload=payload)
     
 def send_start_game(game_type, player_one_id, player_two_id):
     payload = { 
-            'game_type': game_type,
-            'player1': player_one_id,
+            'game_type': game_type, 
+            'player1': player_one_id, 
             'player2': player_two_id
     }
     async_to_sync(send_request)(request_type='POST', url='http://game:8000/api/game/start_game/', payload=payload)
