@@ -43,6 +43,7 @@ class signup_view(View):
             send_request_without_token(request_type='POST', url='http://friends:8000/friends/add_user/', payload=payload, csrf_token=csrf_token)
             send_request_without_token(request_type='POST', url='http://notifications:8000/notifications/add_user/', payload=payload, csrf_token=csrf_token)
             send_request_without_token(request_type='POST', url='http://matchmaking:8000/matchmaking/add_user/', payload=payload, csrf_token=csrf_token)
+            send_request_without_token(request_type='POST', url='http://statistics:8000/statistics/add_user/', payload=payload, csrf_token=csrf_token)
             return True
         except Exception as e:
             return False

@@ -2,25 +2,25 @@ import { gameInstance, resetGameInstance } from "./inGameComponent.js";
 import { surrenderHandler, GameStillActive } from "./gameNetworkManager.js";
 import { startGame } from "./Game.js";
 
-export let socket = null;
+export let gameSocket = null;
 let reconnectTimeout;
 
 
 export async function gameWebsocket(userId) {
-	if (socket && socket.readyState === WebSocket.OPEN) {
+	if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
 		console.log('already connected to game Websocket');
 		return;
 	}
-	if (socket)
-		disconnectWebSocket();
+	if (gameSocket)
+		disconnectGameWebSocket();
 
-	socket = new WebSocket(`ws://localhost:8005/ws/game/?user_id=${userId}`);
+	gameSocket = new WebSocket(`ws://localhost:8005/ws/game/?user_id=${userId}`);
 
-	socket.onopen = () => {
+	gameSocket.onopen = () => {
 		console.log('Connected to game websocket');
 	}
 
-	socket.onmessage = (event) => {
+	gameSocket.onmessage = (event) => {
 		const data = JSON.parse(event.data)
 		const actions = {
 			'game_ready_to_start': (data) => {
@@ -51,7 +51,7 @@ export async function gameWebsocket(userId) {
 			actions[data.type](data);
 	}
 
-	socket.onclose = async () => {
+	gameSocket.onclose = async () => {
 		if (gameInstance) {
 			sendDisconnectMessage(userId);
 			await websocketReconnection(userId);
@@ -59,7 +59,7 @@ export async function gameWebsocket(userId) {
 		}
 	}
 
-    socket.onerror = function(event) {
+    gameSocket.onerror = function(event) {
         console.log("Websocket error: ", event);
     };
 }
@@ -67,8 +67,8 @@ export async function gameWebsocket(userId) {
 //---------------------------------------> Game Reconnect method <--------------------------------------\\
 
 function sendDisconnectMessage(userId) {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-		socket.send(JSON.stringify({
+    if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
+		gameSocket.send(JSON.stringify({
 			'type': 'client_disconnected',
 			'game_id': gameInstance.gameId,
 			'player_id': userId,
@@ -77,8 +77,8 @@ function sendDisconnectMessage(userId) {
 }
 
 function sendReconnectMessage(userId, gameId) {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-		socket.send(JSON.stringify({
+    if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
+		gameSocket.send(JSON.stringify({
 			'type': 'client_reconnected',
 			'game_id': gameId,
 			'player_id': userId,
@@ -149,12 +149,12 @@ export function waitForOpenWebsocketConnection(maxChecks = 20, interval = 500) {
 	return new Promise((resolve, reject) => {
 		let checkCount = 0;
 		const waitOpenConnection = setInterval(() => {
-			if (socket && socket.readyState === WebSocket.OPEN) {
+			if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
 				clearInterval(waitOpenConnection);
 				resolve(true);
 			}  else if (checkCount >= maxChecks) {
-				if (socket && socket.readyState !== WebSocket.CLOSED)
-                    disconnectWebSocket();
+				if (gameSocket && gameSocket.readyState !== WebSocket.CLOSED)
+                    disconnectGameWebSocket();
                 clearInterval(waitOpenConnection);
 				reject(false);
             }
@@ -164,14 +164,13 @@ export function waitForOpenWebsocketConnection(maxChecks = 20, interval = 500) {
 
 //---------------------------------------> Utils export method <--------------------------------------\\
 
-export function disconnectWebSocket(userId, sendMessage) {
-	if (socket && socket.readyState === WebSocket.OPEN) {
+export function disconnectGameWebSocket(userId, sendMessage) {
+	if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
 		if (sendMessage) {
 			sendDisconnectMessage(userId);
-			console.log('disconnect message send to websocket !');
 		}
-		socket.onclose = () => {};
-		socket.close();
+		gameSocket.onclose = () => {};
+		gameSocket.close();
 		console.log('Game connection closed');
 	}
 }

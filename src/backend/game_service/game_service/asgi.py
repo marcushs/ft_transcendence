@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/asgi/
 
 
 import os
-import asyncio
+import asyncio 
 import uvloop
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())

@@ -1,8 +1,9 @@
 import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
-import { disconnectWebSocket } from "./gameWebsocket.js";
+import { waitForStatesContainer } from "./gameNetworkManager.js";
+import { disconnectGameWebSocket } from "./gameWebsocket.js";
 import getUserId from "../../../../utils/getUserId.js";
 import { resetGameInstance } from "./inGameComponent.js";
-import { socket } from "./gameWebsocket.js";
+import { gameSocket } from "./gameWebsocket.js";
 import Player from "./Player.js";
 import Spark from "./Spark.js";
 import Ball from "./Ball.js";
@@ -11,12 +12,16 @@ import Outro from "./Outro.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
 	localStorage.removeItem('isSearchingGame');
-	const userId = await getUserId();
-	let statesContainerDiv = document.querySelector('.states-container');
-	if (!statesContainerDiv) {
+	const matchmakingSearchPopUp = document.querySelector('matchmaking-research-component')
+	if (matchmakingSearchPopUp)
+		matchmakingSearchPopUp.remove();
+	if (window.location.pathname !== '/') {
 		throwRedirectionEvent('/');
-		statesContainerDiv = document.querySelector('.states-container');
+		await waitForStatesContainer();
 	}
+	const userId = await getUserId();
+	const statesContainerDiv = document.querySelector('.states-container');
+
 	statesContainerDiv.innerHTML = '';
 	for (let i = 0; i < statesContainerDiv.classList.length; i++) {
 		if (statesContainerDiv.classList[i] === 'states-container')
@@ -53,6 +58,7 @@ export default class Game {
 // --------------------------------------- Constructor method -------------------------------------- //
 
 	initGameRender() {
+		this.isGameRunning = false
 		this.speed = this.gameState.ball_speed;
 		this.speedLimit = this.gameState.speedLimit;
 		this.ball = new Ball(this.canvas, this.gameState.ball_position.x, this.gameState.ball_position.y, this.speed);
@@ -116,8 +122,8 @@ export default class Game {
 		if (this.keysPlayerOne.down)
 			action = 'move_down'
 		if (action) {
-			if (socket && socket.readyState === WebSocket.OPEN) {
-				socket.send(JSON.stringify({
+			if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
+				gameSocket.send(JSON.stringify({
 					'type': 'player_action',
 					'game_id': this.gameId,
 					'player_id': this.playerOne.playerId,
@@ -180,7 +186,6 @@ export default class Game {
 
 	updateGameRender(newState) {
 		this.updatePlayerCollisionsHit(newState);
-
 
 		if (!this.isGameRunning)
 			this.isGameRunning = true;
@@ -274,7 +279,7 @@ export default class Game {
 		// Not definitive
 		setTimeout(() => {
 			this.gameInProgress = false;
-			disconnectWebSocket(this.userId, false);
+			disconnectGameWebSocket(this.userId, false);
 			throwRedirectionEvent('/');
 		}, 10000);
 	}
@@ -293,7 +298,7 @@ export default class Game {
 	canceledGame(message) {
 		this.gameInProgress = false;
 		alert(`Game canceled: ${message}`);
-		disconnectWebSocket(this.userId, false);
+		disconnectGameWebSocket(this.userId, false);
 		throwRedirectionEvent('/');
 	}
 

@@ -13,7 +13,7 @@ def jwt_required(initial_function):
             user_id = await decode_jwt_token(request)
             response = await initial_function(request, user_id)
             return update_jwt_cookies(request=request, response=response)
-        except ValueError as e:
+        except ValueError as e: 
             print(f'ValueError: jwt: {str(e)}')
             return JsonResponse({'message': str(e)}, status=401)
         except Exception as e:
@@ -29,7 +29,7 @@ async def decode_jwt_token(request):
         token = token.encode('utf-8')
     try:
         print(f'token: {token} -- typeof : {type(token)}')
-        payload = jwt.decode(token, settings.JWT_VERIFYING_KEY,  algorithms=[settings.JWT_ALGORITHM])  
+        payload = jwt.decode(token, settings.JWT_VERIFYING_KEY,  algorithms=[settings.JWT_ALGORITHM]) 
         return str(payload['user_id'])
     except jwt.ExpiredSignatureError:
         response_request = await send_request(request_type='GET',request=request, url='http://auth:8000/auth/update-tokens/')

@@ -4,7 +4,11 @@ import { throwRedirectionEvent } from "../utils/throwRedirectionEvent.js"
 import rotatingGradient from "../anim/rotatingGradient.js";
 import "../components/ButtonComponent.js";
 import {sendRequest} from "../utils/sendRequest.js";
-
+import { contactSocket } from "./websocket/loadWebSocket.js";
+import { notificationSocket } from "./websocket/loadWebSocket.js";
+import { gameSocket } from "../components/Game/states/inGame/gameWebsocket.js";
+import { matchmakingSocket } from "../components/Game/matchmakingWebsocket.js";
+import { disconnectGameWebSocket } from "../components/Game/states/inGame/gameWebsocket.js";
 
 export default () => {
 	const html = `
@@ -42,9 +46,21 @@ function attachEvent() {
     yesBtn.addEventListener('click', async () => {
         try {
             const data = await sendRequest('POST', 'http://localhost:8001/auth/logout/', null);
+			closeAllWebsocket();
             throwRedirectionEvent('/');
         } catch (error) {
             console.log(`${error}`);
         }
     });
+}
+
+async function closeAllWebsocket() {
+	if (gameSocket && gameSocket.readyState !== WebSocket.CLOSED)
+		disconnectGameWebSocket();
+	if (matchmakingSocket && matchmakingSocket.readyState !== WebSocket.CLOSED)
+		matchmakingSocket.close();
+	if (contactSocket && contactSocket.readyState !== WebSocket.CLOSED)
+		contactSocket.close();
+	if (notificationSocket && notificationSocket.readyState !== WebSocket.CLOSED)
+		notificationSocket.close();
 }

@@ -1,4 +1,7 @@
+import { matchmakingSocket, matchmakingWebsocket } from "../../matchmakingWebsocket.js";
+import { requestMatchmakingResearch } from "../../MatchmakingResearchComponent.js";
 import {getString} from "../../../../utils/languageManagement.js";
+import "../../MatchmakingResearchComponent.js"
 
 class RankedComponent extends HTMLElement {
 	constructor() {
@@ -11,6 +14,7 @@ class RankedComponent extends HTMLElement {
 				<button-component label="${getString('buttonComponent/play')}" class="generic-btn"></button>
 			</div>
 		`;
+		this.attachEventsListener();
 	}
 
 	createRankContainer(rank) {
@@ -47,6 +51,30 @@ class RankedComponent extends HTMLElement {
 		`;
 	}
 
+	attachEventsListener() {
+		this.querySelector('button-component').addEventListener('click', () => {
+			this.handlePlayButtonClick();
+		})
+	}
+
+	async handlePlayButtonClick() {
+		try {
+			await matchmakingWebsocket();
+			if (!requestMatchmakingResearch({type: 'ranked'})) {
+				if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
+					matchmakingSocket.close();
+				return;
+			}
+			localStorage.setItem('isSearchingGame', JSON.stringify({
+				type: 'ranked',
+				status: 'searching'
+			}));
+			const researchComponent = document.createElement('matchmaking-research-component');
+			app.appendChild(researchComponent);
+		} catch (error) {
+			console.error(error);
+		}
+	}
 }
 
 customElements.define('ranked-component', RankedComponent);

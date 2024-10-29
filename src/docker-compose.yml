@@ -295,8 +295,6 @@ services:
     networks:
       - transcendence-network
 
-  # ---------------> REDIS <---------------
-
   # Matchmaking
 
   matchmaking:
@@ -317,6 +315,9 @@ services:
       - ./backend/matchmaking_service:/app
     ports:
       - "8006:8000"
+    depends_on:
+      matchmaking_db:
+        condition: service_healthy
     networks:
       - transcendence-network
 
@@ -343,6 +344,56 @@ services:
       timeout: 5s
       retries: 5
 
+
+ # -----> Statistics <----- #
+
+  # Service
+  statistics:
+    container_name: statistics
+    restart: always
+    build:
+      context: ./backend/statistics_service
+      dockerfile: docker/Dockerfile
+    image: statistics
+    env_file: ./backend/.env
+    command: >
+      sh -c "
+        python3 manage.py makemigrations &&
+        python3 manage.py migrate &&
+        python3 manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./backend/statistics_service:/app
+    ports:
+      - "8007:8000"
+    depends_on:
+      statistics_db:
+        condition: service_healthy
+    networks:
+      - transcendence-network
+
+  # DB
+  statistics_db:
+    container_name: statistics_db
+    image: postgres
+    restart: always
+    env_file: ./backend/.env
+    environment:
+      - POSTGRES_USER=${STATISTICS_DB_USER}
+      - POSTGRES_DB=${STATISTICS_DB_NAME}
+      - POSTGRES_PASSWORD=${STATISTICS_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - statistics_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    ports:
+      - "5438:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${STATISTICS_DB_USER} -d ${STATISTICS_DB_NAME}" ]
+      interval: 8s
+      timeout: 5s
+      retries: 5
 
   # ---------------> REDIS <---------------
 
@@ -375,6 +426,8 @@ volumes:
     name: notifications_data
   matchmaking_pgdata:
     name: matchmaking_data
+  statistics_pgdata:
+    name: statistics_data
 
 networks:
   transcendence-network:

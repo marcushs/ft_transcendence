@@ -7,6 +7,7 @@ from ..decorators import jwt_required
 from django.http import JsonResponse
 from ..request import send_request
 from django.views import View
+from game_service.consumers import connections
 import asyncio
 import json
 import uuid
@@ -19,7 +20,8 @@ class startGameEngine(View):
         super()
 
     async def post(self, request):
-        data = json.loads(request.body.decode('utf-8')) 
+        data = json.loads(request.body.decode('utf-8'))
+        print(f'----------data received: {data}')
         if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
             return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)  
         asyncio.create_task(starting_game_instance(data))
@@ -34,8 +36,30 @@ async def starting_game_instance(data):
         'player_two': str(data['player2'])
     }
     game_instance = PongGameEngine(game_id_data)
+    if not await check_connections(game_id_data):
+        return # put here a send socket to client for indicate the game is canceled
     await send_client_game_init(game_id_data=game_id_data, game_instance=game_instance)
     await running_game_instance(instance=game_instance, game_type=data['game_type'])
+
+
+async def check_connections(data_id):
+    player_one_id = data_id['player_one']
+    player_two_id = data_id['player_two']
+    
+    count = 0
+    max_checks = 20
+    while True:
+        async with asyncio.Lock():
+            if player_one_id in connections and player_two_id in connections:
+                print('all players connected !')
+                break
+        print(f"waiting all players... : player_one: {player_one_id} -- player_two: {player_two_id} -- connections: {connections}")
+        if count == max_checks: 
+            return False
+        count += 1
+        await asyncio.sleep(1)
+    return True
+
 
 async def running_game_instance(instance, game_type):
     print(f'-> async_tasks: Game <{instance.game_id}> running...') 
@@ -49,11 +73,16 @@ async def running_game_instance(instance, game_type):
 async def ending_game_instance(winner, loser, game_type):
     try:
         payload = {
+            'winner_id': winner['id'], 
+            'loser_id': loser['id'] 
+        }
+        await send_request(request_type='POST', url='http://matchmaking:8000/matchmaking/change_game_status/', payload=payload) 
+        payload = {
             'winner': winner,
             'loser': loser,
             'type': game_type
         }
-        response = await send_request(request_type='POST', url='http://matchmaking:8000/matchmaking/matchmaking_result/', payload=payload)
+        response = await send_request(request_type='POST', url='http://statistics:8000/statistics/match_result/', payload=payload) 
         print(f'-> async_tasks: Matchmaking update result responded with: {response.json()}') 
     except Exception as e:
         print(f'-> async_tasks: {e}')
