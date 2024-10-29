@@ -56,7 +56,6 @@ class UpdateJwtToken(View):
     def __init__(self):
         super().__init__
 
-
     def get(self, request):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'No token provided'}, status=401)

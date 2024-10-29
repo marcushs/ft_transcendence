@@ -55,7 +55,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
             request.user = AnonymousUser() 
     
     async def process_response(self, request, response):
-        if hasattr(request, 'jwt_failed'):
+        if hasattr(request, 'jwt_failed'): 
             response = JsonResponse({'error': 'invalid session token'}, status=401)
             response.delete_cookie('jwt')
             response.delete_cookie('jwt_refresh')

@@ -57,18 +57,6 @@ def _create_user_session(user, request):
 		print(e)
 		return JsonResponse({'message': 'An error occured while logging in'}, status=400) 
 
-# def _send_twofactor_request(user, payload, csrf_token):
-# 	try:
-# 		response = send_post_request(url='http://twofactor:8000/api/twofactor/twofactor_login/', payload=payload, csrf_token=csrf_token)
-# 		response.delete_cookie('42_access_token')
-# 		if response.status_code != 200:
-# 			return response
-# 		return _create_user_session(user=user)
-# 	except ObjectDoesNotExist:
-# 		response = JsonResponse({'error': 'User not found'}, status=404)
-# 		response.delete_cookie('42_access_token')
-# 		return response
-
 def _send_twofactor_request(user, payload, csrf_token, request):
 	try:
 		response = send_request_without_token(request_type='POST', url='http://twofactor:8000/api/twofactor/twofactor_login/', payload=payload, csrf_token=csrf_token)
