@@ -1,12 +1,14 @@
 
 
 export default class Intro {
-	constructor(canvas) {
+	constructor(canvas, playerOneInfos, playerTwoInfos) {
 		this.canvas = canvas;
 		this.isAnimationEnabled = false;
 		this.isCountDownEnabled = false;
 		this.countDownNumber = '3';
 
+		this.playerOneInfos = playerOneInfos;
+		this.playerTwoInfos = playerTwoInfos;
 		this.playersInfos = {
 			isRanked: false,
 			playerOne: {
@@ -39,10 +41,10 @@ export default class Intro {
 	initializeImages() {
 		this.backgroundImage = this.loadImage("../../../../../assets/gameStartAnimationBackground.svg");
 
-		this.playerOneImage = this.loadImage(this.playersInfos.playerOne.profileImage);
+		this.playerOneImage = this.loadImage(this.playerOneInfos.profile_image);
 		this.playerOneRankImage = this.loadImage(`../../../../../assets/rank-${this.playersInfos.playerOne.rank}.svg`);
 
-		this.playerTwoImage = this.loadImage(this.playersInfos.playerTwo.profileImage);
+		this.playerTwoImage = this.loadImage(this.playerTwoInfos.profile_image);
 		this.playerTwoRankImage = this.loadImage(`../../../../../assets/rank-${this.playersInfos.playerTwo.rank}.svg`);
 	}
 
@@ -108,7 +110,7 @@ export default class Intro {
 		this.canvas.ctx.restore();
 		this.canvas.ctx.closePath();
 
-		this.drawPlayer(this.playerOneInfosX, this.canvas.height / 4 * 2.8, this.playerOneImage, this.playersInfos.playerOne.name);
+		this.drawPlayer(this.playerOneInfosX, this.canvas.height / 4 * 2.8, this.playerOneImage, this.playerOneInfos.username);
 		if (this.isRanked)
 			this.drawRank(this.playerOneInfosX, this.canvas.height / 4 * 2.8, this.playerOneRankImage);
 		this.drawLine(this.leftSectionTopRightX, this.leftSectionBottomRightX);
@@ -130,7 +132,7 @@ export default class Intro {
 		this.canvas.ctx.restore();
 		this.canvas.ctx.closePath();
 
-		this.drawPlayer(this.playerTwoInfosX, this.canvas.height / 4, this.playerTwoImage, this.playersInfos.playerTwo.name);
+		this.drawPlayer(this.playerTwoInfosX, this.canvas.height / 4, this.playerTwoImage, this.playerTwoInfos.username);
 		if (this.isRanked)
 			this.drawRank(this.playerTwoInfosX, this.canvas.height / 4, this.playerTwoRankImage);
 

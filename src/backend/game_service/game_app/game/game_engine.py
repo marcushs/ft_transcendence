@@ -10,18 +10,20 @@ class PongGameEngine:
 
  #//---------------------------------------> Game Constructor <--------------------------------------\\#
 
-    def __init__(self, game_id_data):
-        self.init_game_attributes(game_id_data)
+    def __init__(self, game_data):
+        self.init_game_attributes(game_data)
         self.set_initial_game_state(player_one_score=self.player_one_score, player_two_score=self.player_two_score)
         PongGameEngine.add_active_games(self)
 
  #//---------------------------------------> Initial game attributes <--------------------------------------\\#
 
-    def init_game_attributes(self, game_id_data):  
+    def init_game_attributes(self, game_data):
         map_dimension = get_map_dimension()
-        self.game_id = str(game_id_data['game'])
-        self.player_one_id = str(game_id_data['player_one'])
-        self.player_two_id = str(game_id_data['player_two'])
+        self.game_id = str(game_data['game'])
+        self.player_one_id = str(game_data['player_one']['id'])
+        self.player_two_id = str(game_data['player_two']['id'])
+        self.player_one_user_infos = game_data['player_one']['user_infos']
+        self.player_two_user_infos = game_data['player_two']['user_infos']
         self.player_one_connected = True
         self.player_two_connected = True
         self.player_one_score = 0
@@ -59,6 +61,7 @@ class PongGameEngine:
             'player_one': {
                 'score': player_one_score,
                 'id': self.player_one_id,
+                'user_infos': self.player_one_user_infos,
                 'position': {
                     'x': self.map['width'] * 0.015, 
                     'y': self.map['height'] * 0.5,
@@ -67,6 +70,7 @@ class PongGameEngine:
             'player_two': {
                 'score': player_two_score,
                 'id': self.player_two_id,
+                'user_infos': self.player_two_user_infos,
                 'position': {
                     'x': self.map['width'] - self.map['width'] * 0.015,
                     'y' : self.map['height'] * 0.5,

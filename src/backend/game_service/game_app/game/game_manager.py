@@ -30,21 +30,37 @@ class startGameEngine(View):
  #//---------------------------------------> game instance <--------------------------------------\\#
 
 async def starting_game_instance(data):
-    game_id_data = {
+
+    player_one_infos = (await send_request(request_type="GET", url=f"http://user:8000/user/get_user_by_id/?q={str(data['player1'])}")).json()['message']
+    player_two_infos = (await send_request(request_type="GET", url=f"http://user:8000/user/get_user_by_id/?q={str(data['player2'])}")).json()['message']
+    
+    game_data = {
         'game': str(uuid.uuid4()),
-        'player_one': str(data['player1']),
-        'player_two': str(data['player2'])
+        'player_one': {
+            'id': str(data['player1']),
+            'user_infos': {
+                'profile_image': "http://localhost:8000" + player_one_infos['profile_image'] if player_one_infos['profile_image'] else player_one_infos['profile_image_link'],
+                'username': player_one_infos['username']
+            }
+        },
+        'player_two': {
+            'id': str(data['player2']),
+            'user_infos': {
+                'profile_image': "http://localhost:8000" + player_two_infos['profile_image'] if player_two_infos['profile_image'] else player_two_infos['profile_image_link'],
+            }
+                'username': player_two_infos['username']
+        },
     }
-    game_instance = PongGameEngine(game_id_data)
-    if not await check_connections(game_id_data):
+    game_instance = PongGameEngine(game_data)
+    if not await check_connections(game_data):
         return # put here a send socket to client for indicate the game is canceled
-    await send_client_game_init(game_id_data=game_id_data, game_instance=game_instance)
+    await send_client_game_init(game_data=game_data, game_instance=game_instance)
     await running_game_instance(instance=game_instance, game_type=data['game_type'])
 
 
-async def check_connections(data_id):
-    player_one_id = data_id['player_one']
-    player_two_id = data_id['player_two']
+async def check_connections(data):
+    player_one_id = data['player_one']['id']
+    player_two_id = data['player_two']['id']
     
     count = 0
     max_checks = 20

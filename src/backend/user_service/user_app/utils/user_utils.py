@@ -213,7 +213,28 @@ class getUserInfos(View):
         
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+        
+        
+class getUserInfosById(View):
+    def __init__(self):
+        super().__init__
+    
+    def get(self, request):
+        try:
+            id = request.GET.get('q', '')
+            user = User.objects.get(id=id) 
+            user_data = {
+                'username': user.username,
+                'profile_image': user.profile_image.url if user.profile_image else None,
+                'profile_image_link': user.profile_image_link,
+                'status': user.status
+            }
+            return JsonResponse({'status': 'success', 'message': user_data}, safe=False, status=200)
+        
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
  
+
 class getUsersInfo(View):
     def __init__(self):
         super().__init__

@@ -38,6 +38,7 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 
 export default class Game {
 	constructor(canvas, gameId, gameState, userId) {
+		console.log("gameState = ", gameState);
 		this.gameInProgress = true;
 		this.userId = userId;
 		this.canvas = canvas;
@@ -47,7 +48,7 @@ export default class Game {
 		this.isIntroAnimationEnabled = true;
 		this.isOutroAnimationEnabled = false;
 
-		this.Intro = new Intro(this.canvas);
+		this.Intro = new Intro(this.canvas, gameState.player_one.user_infos, gameState.player_two.user_infos);
 		this.Outro = new Outro(this.canvas);
 
 		this.initGameRender();
