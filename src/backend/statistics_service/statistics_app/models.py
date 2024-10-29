@@ -9,6 +9,7 @@ class MatchHistory(models.Model):
         ('ranked', 'Ranked'),
         ('unranked', 'Unranked')
     ]
+    opponent = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='opponent', on_delete=models.CASCADE)
     winner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='won_matches', on_delete=models.CASCADE)
     loser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='lost_matches', on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
@@ -56,7 +57,5 @@ class User(AbstractBaseUser, PermissionsMixin):
             'username': self.username,
         }
         
-    @property
     def match_history(self): # Retrieve all match history for the user.
         return MatchHistory.objects.filter(models.Q(winner=self) | models.Q(loser=self))
- 

@@ -258,3 +258,23 @@ class getUsersInfo(View):
             return JsonResponse({'status': 'success', 'message': users_list}, safe=False, status=200)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+        
+        
+class getUsernameById(View):
+    def __init__(self):
+        super().__init__
+ 
+    def get(self, request):
+        try:
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'message': 'User not found'}, status=400)
+
+            target_id = json.loads(request.GET.get('q', ''))
+            
+            if not target_id:
+                return JsonResponse({'status': 'error', 'message': 'No id provided'}, status=200)
+            
+            user = User.objects.get(id=target_id)
+            return JsonResponse({'status': 'success', 'username': user.username}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'No user id found'}, status=200)
