@@ -47,8 +47,8 @@ async def starting_game_instance(data):
             'id': str(data['player2']),
             'user_infos': {
                 'profile_image': "http://localhost:8000" + player_two_infos['profile_image'] if player_two_infos['profile_image'] else player_two_infos['profile_image_link'],
-            }
                 'username': player_two_infos['username']
+            }
         },
     }
     game_instance = PongGameEngine(game_data)

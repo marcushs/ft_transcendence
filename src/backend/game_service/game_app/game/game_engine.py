@@ -354,8 +354,8 @@ class PongGameEngine:
             }
             print(f'------------------- {self.winner_id}, {self.loser_id} -----------------')
             print(f'------------------- {self.player_one_score}, {self.player_two_score} -----------------')
-            print(f'------------------- {self.player_one_id}, {self.player_two_id} -----------------')
-            await send_websocket_info(self.winner_id, winner_payload)
+            print(f'------------------- {self.player_one_id}, {self.player_two_id} -----------------')   
+            await send_websocket_info(self.winner_id, winner_payload) 
             await send_websocket_info(self.loser_id, loser_payload)
 
 
