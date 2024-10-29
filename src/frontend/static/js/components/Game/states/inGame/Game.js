@@ -59,7 +59,7 @@ export default class Game {
 		const playerOneBackId = Number(this.gameState.player_one.id);
 		const playerTwoBackId = Number(this.gameState.player_two.id);
 
-		if (this.userId === playerOneBackId) {
+		if (this.userId !== playerOneBackId) {
 			this.playerOne = new Player(this.canvas, true, playerOneBackId);
 			this.playerTwo = new Player(this.canvas, false, playerTwoBackId);
 		} else {
@@ -74,10 +74,10 @@ export default class Game {
 			up: false,
 			down: false,
 		}
-		this.keysPlayerTwo = {
-			up: false,
-			down: false,
-		}
+		// this.keysPlayerTwo = {
+		// 	up: false,
+		// 	down: false,
+		// }
 		this.attachEventsListener();
 
 		setTimeout(() => {
@@ -181,6 +181,7 @@ export default class Game {
 	updateGameRender(newState) {
 		this.updatePlayerCollisionsHit(newState);
 
+
 		if (!this.isGameRunning)
 			this.isGameRunning = true;
 		if (this.isIntroAnimationEnabled)
@@ -265,11 +266,11 @@ export default class Game {
 
 // --------------------------------------- Game finished render -------------------------------------- //
 
-	gameFinished(isWin) {
-		console.log('is win = ', isWin)
+	gameFinished(isWin, data) {
 		this.throwLoadOutroAnimationEvent(isWin);
 		this.isOutroAnimationEnabled = true;
 
+		console.log(this.userId, data);
 		// Not definitive
 		setTimeout(() => {
 			this.gameInProgress = false;

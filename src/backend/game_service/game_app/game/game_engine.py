@@ -334,17 +334,23 @@ class PongGameEngine:
                 'type': 'game_update_info',
                 'event': 'game_finished',
                 'message': {
-                    'is_win' : True
+                    'is_win' : True,
+                    'winner_id': self.winner_id,
+                    'loser_id': self.loser_id
                 }
             }
             loser_payload = {
                 'type': 'game_update_info',
                 'event': 'game_finished',
                 'message': {
-                    'is_win' : False
+                    'is_win' : False,
+                    'winner_id': self.winner_id,
+                    'loser_id': self.loser_id
                 }
             }
-            print(f'------------ idwinner : {self.winner_id}, idwinner: {self.loser_id} -----------')
+            print(f'------------------- {self.winner_id}, {self.loser_id} -----------------')
+            print(f'------------------- {self.player_one_score}, {self.player_two_score} -----------------')
+            print(f'------------------- {self.player_one_id}, {self.player_two_id} -----------------')
             await send_websocket_info(self.winner_id, winner_payload)
             await send_websocket_info(self.loser_id, loser_payload)
 

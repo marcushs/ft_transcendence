@@ -30,7 +30,7 @@ export async function gameWebsocket(userId) {
 				if (gameInstance) gameInstance.updateGameRender(data.game_state)
 			},
 			'game_finished': (data) => {
-				if (gameInstance) gameInstance.gameFinished(data.message.is_win)
+				if (gameInstance) gameInstance.gameFinished(data.message.is_win, data)
 			},
 			'game_canceled': (data) => {
 				if (gameInstance) gameInstance.canceledGame(data.message) 
