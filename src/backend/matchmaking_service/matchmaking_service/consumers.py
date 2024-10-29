@@ -6,7 +6,7 @@ connections = {}
 connections_lock = asyncio.Lock()
 
 def get_connections():
-    print(f'-> ---------------------------->  {connections}')
+    print(f'---------> consumers:  {connections}')
     return connections
 
 class MatchmakingConsumer(AsyncWebsocketConsumer):
@@ -17,9 +17,9 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 await self.close()
             else:
                 self.group_name = f'matchmaking_searching_{str(self.user.id)}'
-                await self.channel_layer.group_add(self.group_name, self.channel_name)
+                await self.channel_layer.group_add(self.group_name, self.channel_name) 
                 await self.accept()
-                print(f'!!!!!!!!!!!!!!!!!!!!!!---------> add user : {self.user.id} to connections list')
+                print(f'---------> consumers: add user : {self.user} to connections list')
                 connections[str(self.user.id)] = self
         except Exception as e: 
             print('Error: ', e)

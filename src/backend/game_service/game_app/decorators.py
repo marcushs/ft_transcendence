@@ -17,7 +17,7 @@ def jwt_required(initial_function):
             print(f'ValueError: jwt: {str(e)}')
             return JsonResponse({'message': str(e)}, status=401)
         except Exception as e:
-            print(f'ExceptionError: jwt: {str(e)}')
+            print(f'ExceptionError: jwt: {str(e)}') 
             return send_jwt_failed_response()
     return wrapper
 

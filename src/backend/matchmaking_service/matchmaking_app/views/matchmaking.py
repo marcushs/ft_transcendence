@@ -144,10 +144,9 @@ def is_already_in_waiting_list(target_id: str):
     unranked_waiting_users = [user_id.decode() for user_id in unranked_waiting_users]
     ranked_waiting_users = redis_instance.lrange('ranked_waiting_users', 0, -1)
     ranked_waiting_users = [user_id.decode() for user_id in ranked_waiting_users]
-    print(f'-> check: user_id : {target_id} in unranked : {unranked_waiting_users} -- in ranked: {ranked_waiting_users}')
     if target_id in unranked_waiting_users:
         return True, 'unranked'
-    if target_id in ranked_waiting_users: 
+    if target_id in ranked_waiting_users:  
         return True, 'ranked'
     return False, None
 

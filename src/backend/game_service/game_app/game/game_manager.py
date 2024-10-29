@@ -19,26 +19,37 @@ class startGameEngine(View):
     def __init__(self):
         super()
 
-    async def post(self, request):
-        data = json.loads(request.body.decode('utf-8'))
-        if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
-            return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)  
-        asyncio.create_task(starting_game_instance(data))
-        return JsonResponse({'status': 'success', 'message': 'Game instance started'}, status=200)
+    async def post(self, request): 
+        try:
+            print('!!!! startGameEngine REACHED !!!!')
+            data = json.loads(request.body.decode('utf-8'))
+            if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
+                return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)  
+            asyncio.create_task(starting_game_instance(data))
+            return JsonResponse({'status': 'success', 'message': 'Game instance started'}, status=200)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)  
 
  #//---------------------------------------> game instance <--------------------------------------\\#
 
 async def starting_game_instance(data):
-    game_id_data = {
-        'game': str(uuid.uuid4()),
-        'player_one': data['player1'],
-        'player_two': data['player2']
-    }
-    game_instance = PongGameEngine(game_id_data)
-    if not await check_connections(game_id_data):
-        return # put here a send socket to client for indicate the game is canceled
-    await send_client_game_init(game_id_data=game_id_data, game_instance=game_instance)
-    await running_game_instance(instance=game_instance, game_type=data['game_type'])
+    try:
+        print(f'-> async_tasks: starting_game_instance reached with data : {data}')
+        game_id_data = {
+            'game': str(uuid.uuid4()),
+            'player_one': data['player1'],
+            'player_two': data['player2']
+        }
+        print(f'-> async_tasks: call pong game engine constructor...')
+        game_instance = PongGameEngine(game_id_data)
+        print(f'-> async_tasks: pong game engine ready, start checking connections...')
+        if not await check_connections(game_id_data):
+            return # put here a send socket to client for indicate the game is canceled
+        print(f'-> async_tasks: connections ok, sending websocket...')
+        await send_client_game_init(game_id_data=game_id_data, game_instance=game_instance)
+        await running_game_instance(instance=game_instance, game_type=data['game_type'])
+    except Exception as e:
+        print(f'-> async_tasks: error: {str(e)}')
 
 
 async def check_connections(data_id):
