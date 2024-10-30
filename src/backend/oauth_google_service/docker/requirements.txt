@@ -6,3 +6,4 @@ pyjwt==2.8.0
 oauthlib==3.2.2
 requests
 google-auth==2.31.0
+cryptography

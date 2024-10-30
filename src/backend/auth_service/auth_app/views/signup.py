@@ -46,6 +46,7 @@ class signup_view(View):
             send_request_without_token(request_type='POST', url='http://matchmaking:8000/api/matchmaking/add_user/', payload=payload, csrf_token=csrf_token)
             send_request_without_token(request_type='POST', url='http://statistics:8000/api/statistics/add_user/', payload=payload, csrf_token=csrf_token)
             send_request_without_token(request_type='POST', url='http://chat:8000/api/chat/add_user/', payload=payload, csrf_token=csrf_token)
+            send_request_without_token(request_type='POST', url='http://tournament:8000/api/tournament/add_user/', payload=payload, csrf_token=csrf_token)
             return True
         except Exception as e:
             return False

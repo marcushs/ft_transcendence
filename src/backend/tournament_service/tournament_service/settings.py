@@ -11,22 +11,26 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import environ
 import os
 
+# Read from .env file
+env = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("TOURNAMENT_SECRET_KEY")
+SECRET_KEY = env("TOURNAMENT_SECRET_KEY")
 
 # /-----> JWT keys && algorithm <-----\
 
-JWT_VERIFYING_KEY = os.environ.get("PUBLIC_JWT_KEY")
-JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")
+JWT_VERIFYING_KEY = env("PUBLIC_JWT_KEY")
+JWT_ALGORITHM = env("JWT_ALGORITHM")
 
 # /-----> JWT token lifetime in seconds <-----\
 
@@ -36,7 +40,7 @@ REFRESH_TOKEN_LIFETIME = 86400 # 1 day
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'tournament'] 
+ALLOWED_HOSTS = ['*'] 
 
 
 # Application definition
@@ -56,7 +60,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'tournament_app.http_middleware.JWTAuthMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -82,16 +86,50 @@ TEMPLATES = [
 WSGI_APPLICATION = 'tournament_service.wsgi.application'
 
 
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_HEADER = [
+	"accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'https://localhost:3000',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+	'https://localhost:3000',
+]
+
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('TOURNAMENT_DB_NAME'),
+        'USER': env('TOURNAMENT_DB_USER'),
+        'PASSWORD': env('TOURNAMENT_DB_PASSWORD'),
+        'HOST': env('TOURNAMENT_DB_HOST'),
+        'PORT': env('TOURNAMENT_DB_PORT'),
+    },
 }
 
+AUTH_USER_MODEL = "tournament_app.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -117,7 +155,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'
 
 USE_I18N = True
 

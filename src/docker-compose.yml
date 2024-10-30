@@ -48,8 +48,6 @@ services:
       "
     volumes:
       - ./backend/user_service:/app 
-    ports:
-      - "8000:8000"
     depends_on:
       user_db:
         condition: service_healthy
@@ -71,8 +69,6 @@ services:
       - user_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
-    ports:
-      - "5432:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${USER_DB_USER} -d ${USER_DB_NAME}" ]
       interval: 8s
@@ -99,8 +95,6 @@ services:
       "
     volumes:
       - ./backend/auth_service:/app
-    ports:
-      - "8001:8000"
     depends_on:
       auth_db:
         condition: service_healthy
@@ -122,8 +116,6 @@ services:
       - auth_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
-    ports:
-      - "5433:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${AUTH_DB_USER} -d ${AUTH_DB_NAME}" ]
       interval: 8s
@@ -150,8 +142,6 @@ services:
       "
     volumes:
       - ./backend/twofactor_service:/app
-    ports:
-      - "8002:8000"
     depends_on:
       twofactor_db:
         condition: service_healthy
@@ -173,8 +163,6 @@ services:
       - twofactor_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
-    ports:
-      - "5434:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${TWOFACTOR_DB_USER} -d ${TWOFACTOR_DB_NAME}" ]
       interval: 8s
@@ -201,8 +189,6 @@ services:
       "
     volumes:
       - ./backend/friends_service:/app
-    ports:
-      - "8003:8000"
     depends_on:
       friends_db:
         condition: service_healthy
@@ -224,8 +210,6 @@ services:
       - friends_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
-    ports:
-      - "5435:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${FRIENDS_DB_USER} -d ${FRIENDS_DB_NAME}" ]
       interval: 8s
@@ -252,8 +236,6 @@ services:
       "
     volumes:
       - ./backend/notifications_service:/app
-    ports:
-      - "8004:8000"
     depends_on:
       notifications_db:
         condition: service_healthy
@@ -275,8 +257,6 @@ services:
       - notifications_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
-    ports:
-      - "5436:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${NOTIFICATIONS_DB_USER} -d ${NOTIFICATIONS_DB_NAME}" ]
       interval: 8s
@@ -300,8 +280,6 @@ services:
       "
     volumes:
       - ./backend/game_service:/app
-    ports:
-      - "8005:8000"
     depends_on:
       redis:
         condition: service_healthy
@@ -326,8 +304,6 @@ services:
       "
     volumes:
       - ./backend/matchmaking_service:/app
-    ports:
-      - "8006:8000"
     depends_on:
       matchmaking_db:
         condition: service_healthy
@@ -349,8 +325,6 @@ services:
       - matchmaking_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
-    ports:
-      - "5437:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${MATCHMAKING_DB_USER} -d ${MATCHMAKING_DB_NAME}" ]
       interval: 8s
@@ -377,8 +351,6 @@ services:
       "
     volumes:
       - ./backend/statistics_service:/app
-    ports:
-      - "8007:8000"
     depends_on:
       statistics_db:
         condition: service_healthy
@@ -400,8 +372,6 @@ services:
       - statistics_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
-    ports:
-      - "5438:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${STATISTICS_DB_USER} -d ${STATISTICS_DB_NAME}" ]
       interval: 8s
@@ -428,8 +398,6 @@ services:
       "
     volumes:
       - ./backend/oauth_42_service:/app
-    ports:
-      - "8008:8000"
     depends_on:
       oauth_42_db:
         condition: service_healthy
@@ -451,8 +419,6 @@ services:
       - oauth_42_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
-    ports:
-     - "5439:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${OAUTH_42_DB_USER} -d ${OAUTH_42_DB_NAME}"]
       interval: 4s
@@ -479,8 +445,6 @@ services:
       "
     volumes:
       - ./backend/oauth_google_service:/app
-    ports:
-      - "8009:8000"
     depends_on:
       oauth_google_db:
         condition: service_healthy
@@ -502,8 +466,6 @@ services:
       - oauth_google_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
-    ports:
-     - "5440:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${OAUTH_GOOGLE_DB_USER} -d ${OAUTH_GOOGLE_DB_NAME}"]
       interval: 4s
@@ -530,8 +492,6 @@ services:
       "
     volumes:
       - ./backend/oauth_github_service:/app
-    ports:
-      - "8010:8000"
     depends_on:
       oauth_github_db:
         condition: service_healthy
@@ -553,8 +513,6 @@ services:
       - oauth_github_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
-    ports:
-     - "5441:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${OAUTH_GITHUB_DB_USER} -d ${OAUTH_GITHUB_DB_NAME}"]
       interval: 4s
@@ -582,8 +540,6 @@ services:
       "
     volumes:
       - ./backend/chat_service:/app
-    ports:
-      - "8011:8000"
     depends_on:
       - chat_redis
       - chat_db
@@ -605,10 +561,54 @@ services:
       - chat_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
-    ports:
-     - "5442:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${CHAT_DB_USER} -d ${CHAT_DB_NAME}"]
+      interval: 8s
+      timeout: 5s
+      retries: 5
+
+  # -----> TOURNAMENT <----- #
+
+  # Service
+  tournament:
+    container_name: tournament
+    restart: always
+    build:
+      context: ./backend/tournament_service
+      dockerfile: docker/Dockerfile
+    image: tournament
+    env_file:
+      - ./backend/.env
+    command: >
+      sh -c "
+          python3 manage.py makemigrations &&
+          python3 manage.py migrate &&
+          python3 manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./backend/tournament_service:/app
+    depends_on:
+      - tournament_db
+    networks:
+      - transcendence-network
+
+  # DB
+  tournament_db:
+    container_name: tournament_db
+    image: postgres
+    restart: always
+    env_file: ./backend/.env
+    environment:
+      - POSTGRES_USER=${TOURNAMENT_DB_USER}
+      - POSTGRES_DB=${TOURNAMENT_DB_NAME}
+      - POSTGRES_PASSWORD=${TOURNAMENT_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - tournament_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${TOURNAMENT_DB_USER} -d ${TOURNAMENT_DB_NAME}"]
       interval: 8s
       timeout: 5s
       retries: 5
@@ -622,8 +622,6 @@ services:
     image: redis:latest
     networks:
       - transcendence-network
-    ports:
-      - "6380:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 8s
@@ -637,8 +635,6 @@ services:
     container_name: chat_redis
     image: redis
     restart: always
-    ports:
-     - "6480:6379"
     networks:
     - transcendence-network
 
@@ -666,6 +662,8 @@ volumes:
     name: oauth_github_data
   chat_pgdata:
     name: chat_data
+  tournament_pgdata:
+    name: tournament_data
 
 networks:
   transcendence-network:

@@ -6,3 +6,4 @@ pyjwt==2.8.0
 oauthlib==3.2.2
 requests
 pillow==10.4.0
+cryptography

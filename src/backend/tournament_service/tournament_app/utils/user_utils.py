@@ -13,6 +13,7 @@ class add_new_user(View):
         return JsonResponse({"message": 'get request successfully reached'}, status=200)
     
     def post(self, request):
+        print('hello-------------------------------->') 
         data = json.loads(request.body.decode('utf-8'))
         if not all(key in data for key in ('email', 'username', 'user_id')):
             return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
@@ -26,7 +27,6 @@ class add_new_user(View):
             User.objects.create_user(email=data['email'], username=data['username'], user_id=data['user_id'])
         return JsonResponse({"message": 'user added with success', "status": "Success"}, status=200)
     
-
 class update_user(View):
     def __init__(self):
         super().__init__
@@ -95,7 +95,7 @@ class delete_user(View):
     def post(self, request):
         return JsonResponse({'message': 'Method not allowed', 'status': 'Error'}, status=405)
     
-async def send_async_request(request_type, request, url, payload=None): 
+async def send_async_request(request_type, request, url, payload=None):
         headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -116,6 +116,6 @@ async def send_async_request(request_type, request, url, payload=None):
                 response.raise_for_status()  # Raise an exception for HTTP errors
                 return response
         except httpx.HTTPStatusError as e:
-            raise Exception(f"HTTP error occurred: {e}")
+            raise Exception(f"HTTP error occurred: {e}") 
         except httpx.RequestError as e:
             raise Exception(f"An error occurred while requesting: {e}")

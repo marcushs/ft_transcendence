@@ -40,10 +40,14 @@ docker exec -e PGPASSWORD=$FRIENDS_DB_PASSWORD friends psql -U $FRIENDS_DB_USER 
 echo -e "_________NOTIFICATIONS CONTAINER_________\n" >> result.txt
 docker exec -e PGPASSWORD=$NOTIFICATIONS_DB_PASSWORD notifications psql -U $NOTIFICATIONS_DB_USER -d $NOTIFICATIONS_DB_NAME -h $NOTIFICATIONS_DB_HOST -c "SELECT * FROM notifications_app_user;" >> result.txt
 
-# #matchmaking
-# echo -e "_________MATCHMAKING CONTAINER_________\n" >> result.txt
-# docker exec -e PGPASSWORD=$MATCHMAKING_DB_PASSWORD matchmaking psql -U $MATCHMAKING_DB_USER -d $MATCHMAKING_DB_NAME -h $MATCHMAKING_DB_HOST -c "SELECT * FROM matchmaking_app_user;" >> result.txt
+#matchmaking
+echo -e "_________MATCHMAKING CONTAINER_________\n" >> result.txt
+docker exec -e PGPASSWORD=$MATCHMAKING_DB_PASSWORD matchmaking psql -U $MATCHMAKING_DB_USER -d $MATCHMAKING_DB_NAME -h $MATCHMAKING_DB_HOST -c "SELECT * FROM matchmaking_app_user;" >> result.txt
 
-# #statistics
-# echo -e "_________STATISTICS CONTAINER_________\n" >> result.txt
-# docker exec -e PGPASSWORD=$STATISTICS_DB_PASSWORD statistics psql -U $STATISTICS_DB_USER -d $STATISTICS_DB_NAME -h $STATISTICS_DB_HOST -c "SELECT * FROM statistics_app_user;" >> result.txt
+#statistics
+echo -e "_________STATISTICS CONTAINER_________\n" >> result.txt
+docker exec -e PGPASSWORD=$STATISTICS_DB_PASSWORD statistics psql -U $STATISTICS_DB_USER -d $STATISTICS_DB_NAME -h $STATISTICS_DB_HOST -c "SELECT * FROM statistics_app_user;" >> result.txt
+
+#tournament
+echo -e "_________TOURNAMENT CONTAINER_________\n" >> result.txt
+docker exec -e PGPASSWORD=$TOURNAMENT_DB_PASSWORD tournament psql -U $TOURNAMENT_DB_USER -d $TOURNAMENT_DB_NAME -h $TOURNAMENT_DB_HOST -c "SELECT * FROM tournament_app_user;" >> result.txt
