@@ -6,6 +6,7 @@ class MatchHistory extends HTMLElement {
     constructor() {
         super();
 
+        this.initializeComponent();
         this.classList.add('component');
     }
 
@@ -13,17 +14,17 @@ class MatchHistory extends HTMLElement {
         this.history = await sendRequest("GET", "http://localhost:8007/statistics/get_history/", null);
         this.userId = await getUserId();
 
-        await this.initializeComponent();
+        await this.fillHistoryList();
+
         console.log('history = ', this.history);
     }
 
 
-    async initializeComponent() {
+    initializeComponent() {
         this.innerHTML = `
             <div class="match-history-container">
                 <h1>Match history</h1>
                 <ul class="history-list-container">
-                    ${await this.generateHistoryList()}
 <!--                    <li class="win">-->
 <!--                        <div class="type">-->
 <!--                            <p>Tournament</p>-->
@@ -37,6 +38,13 @@ class MatchHistory extends HTMLElement {
                 </ul>
             </div>
         `
+    }
+
+
+    async fillHistoryList() {
+        const ul = this.querySelector('ul');
+
+        ul.innerHTML = await this.generateHistoryList();
     }
 
 
