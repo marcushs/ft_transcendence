@@ -21,7 +21,6 @@ class startGameEngine(View):
 
     async def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
-        print(f'----------data received: {data}')
         if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
             return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)  
         asyncio.create_task(starting_game_instance(data))
@@ -98,6 +97,7 @@ async def ending_game_instance(winner, loser, game_type):
             'loser': loser,
             'type': game_type
         }
+
         response = await send_request(request_type='POST', url='http://statistics:8000/statistics/match_result/', payload=payload) 
         print(f'-> async_tasks: Matchmaking update result responded with: {response.json()}') 
     except Exception as e:
