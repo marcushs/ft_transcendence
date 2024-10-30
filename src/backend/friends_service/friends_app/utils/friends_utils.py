@@ -62,13 +62,13 @@ class friendshipManager(View):
             'sender': str(self.target_user),
             'receiver': str(self.user)
         }
-        send_sync_request(request_type='DELETE', request=request, url='http://notifications:8000/notifications/manage_notifications/', payload=payload)
+        send_sync_request(request_type='DELETE', request=request, url='http://notifications:8000/api/notifications/manage_notifications/', payload=payload)
         payload = {
             'type': 'friend-request-accepted',
             'sender': str(self.user),
             'receiver': str(self.target_user)
         }
-        send_sync_request(request_type='POST', request=request, url='http://notifications:8000/notifications/manage_notifications/', payload=payload)
+        send_sync_request(request_type='POST', request=request, url='http://notifications:8000/api/notifications/manage_notifications/', payload=payload)
         notify_friend_display_change(created=False, action='accepted', is_contact=False , receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'mutual_friend', 'message': 'friends invitation successfully accepted'}, status=200)
 
@@ -91,7 +91,7 @@ class friendshipManager(View):
             'sender': str(self.user),
             'receiver': str(self.target_user)
         }
-        send_sync_request(request_type='DELETE', request=request, url='http://notifications:8000/notifications/manage_notifications/', payload=payload)  
+        send_sync_request(request_type='DELETE', request=request, url='http://notifications:8000/api/notifications/manage_notifications/', payload=payload)  
         notify_friend_display_change(created=False, action='refused', is_contact=False , receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully canceled'}, status=200)
 
@@ -105,7 +105,7 @@ class friendshipManager(View):
             'sender': str(self.target_user),
             'receiver': str(self.user)
         }
-        send_sync_request(request_type='DELETE', request=request, url='http://notifications:8000/notifications/manage_notifications/', payload=payload)
+        send_sync_request(request_type='DELETE', request=request, url='http://notifications:8000/api/notifications/manage_notifications/', payload=payload)
         notify_friend_display_change(created=False, action='refused', is_contact=False , receiver=self.target_user, sender=self.user)
         return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully declined'}, status=200)
 

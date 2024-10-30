@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 from django.db import models  
+import uuid
 
 class UserManager(BaseUserManager):
     def create_user(self, username, user_id):
@@ -14,6 +15,7 @@ class UserManager(BaseUserManager):
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=12, unique=True, default='default')
     is_ingame = models.BooleanField(default=False)
 

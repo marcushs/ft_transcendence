@@ -36,7 +36,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
     
     def send_new_token_request(self, request, jwt_user):
         try:
-            request_response = send_request(request_type='GET',request=request, url='http://auth:8000/auth/update-tokens/')
+            request_response = send_request(request_type='GET',request=request, url='http://auth:8000/api/auth/update-tokens/')
             if request_response and request_response.cookies:
                 request.new_token = request_response.cookies.get('jwt')
                 request.new_token_refresh =  request_response.cookies.get('jwt_refresh')

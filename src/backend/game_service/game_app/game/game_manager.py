@@ -30,22 +30,22 @@ class startGameEngine(View):
 
 async def starting_game_instance(data):
 
-    player_one_infos = (await send_request(request_type="GET", url=f"http://user:8000/user/get_user_by_id/?q={str(data['player1'])}")).json()['message']
-    player_two_infos = (await send_request(request_type="GET", url=f"http://user:8000/user/get_user_by_id/?q={str(data['player2'])}")).json()['message']
-    
+    player_one_infos = (await send_request(request_type="GET", url=f"http://user:8000/api/user/get_user_by_id/?q={str(data['player1'])}")).json()['user_data']
+    player_two_infos = (await send_request(request_type="GET", url=f"http://user:8000/api/user/get_user_by_id/?q={str(data['player2'])}")).json()['user_data']
+
     game_data = {
         'game': str(uuid.uuid4()),
         'player_one': {
             'id': str(data['player1']),
             'user_infos': {
-                'profile_image': "http://localhost:8000" + player_one_infos['profile_image'] if player_one_infos['profile_image'] else player_one_infos['profile_image_link'],
+                'profile_image': "http://user:8000/api/user" + player_one_infos['profile_image'] if player_one_infos['profile_image'] else player_one_infos['profile_image_link'],
                 'username': player_one_infos['username']
             }
         },
         'player_two': {
             'id': str(data['player2']),
             'user_infos': {
-                'profile_image': "http://localhost:8000" + player_two_infos['profile_image'] if player_two_infos['profile_image'] else player_two_infos['profile_image_link'],
+                'profile_image': "http://user:8000/api/user" + player_two_infos['profile_image'] if player_two_infos['profile_image'] else player_two_infos['profile_image_link'],
                 'username': player_two_infos['username']
             }
         },
@@ -91,14 +91,13 @@ async def ending_game_instance(winner, loser, game_type):
             'winner_id': winner['id'], 
             'loser_id': loser['id'] 
         }
-        await send_request(request_type='POST', url='http://matchmaking:8000/matchmaking/change_game_status/', payload=payload) 
+        await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)
         payload = {
             'winner': winner,
             'loser': loser,
             'type': game_type
         }
-
-        response = await send_request(request_type='POST', url='http://statistics:8000/statistics/match_result/', payload=payload) 
+        response = await send_request(request_type='POST', url='http://statistics:8000/api/statistics/match_result/', payload=payload)
         print(f'-> async_tasks: Matchmaking update result responded with: {response.json()}') 
     except Exception as e:
         print(f'-> async_tasks: {e}')

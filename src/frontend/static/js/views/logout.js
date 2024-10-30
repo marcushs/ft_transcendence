@@ -1,10 +1,9 @@
 import "../components/NavBarComponent.js";
 import { throwRedirectionEvent } from "../utils/throwRedirectionEvent.js"
-// import { sendRequest } from "../utils/sendRequest.js";
 import rotatingGradient from "../anim/rotatingGradient.js";
 import "../components/ButtonComponent.js";
 import {sendRequest} from "../utils/sendRequest.js";
-import { contactSocket } from "./websocket/loadWebSocket.js";
+import { contactSocket, chatSocket } from "./websocket/loadWebSocket.js";
 import { notificationSocket } from "./websocket/loadWebSocket.js";
 import { gameSocket } from "../components/Game/states/inGame/gameWebsocket.js";
 import { matchmakingSocket } from "../components/Game/matchmakingWebsocket.js";
@@ -45,7 +44,8 @@ function attachEvent() {
 
     yesBtn.addEventListener('click', async () => {
         try {
-            const data = await sendRequest('POST', 'http://localhost:8001/auth/logout/', null);
+
+            const data = await sendRequest('POST', '/api/auth/logout/', null);
 			closeAllWebsocket();
             throwRedirectionEvent('/');
         } catch (error) {
@@ -63,4 +63,6 @@ async function closeAllWebsocket() {
 		contactSocket.close();
 	if (notificationSocket && notificationSocket.readyState !== WebSocket.CLOSED)
 		notificationSocket.close();
+	if (chatSocket && chatSocket.readyState !== WebSocket.CLOSED)
+		chatSocket.close();
 }

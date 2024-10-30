@@ -187,10 +187,10 @@ class FriendsMenuComponent extends HTMLElement {
     async getDataRequest(requestType, payload) {
         let url = null;
         if (requestType === 'search_contacts')
-            url = `http://localhost:8003/friends/search_contacts/`;
+            url = `/api/friends/search_contacts/`;
         else if (requestType === 'users_data') {
             const encodedList = encodeURIComponent(JSON.stringify(payload));
-            url = `http://localhost:8000/user/get_users_info/?q=${encodedList}`
+            url = `/api/user/get_users_info/?q=${encodedList}`
         }
         try {
             const data = await sendRequest('GET', url, null);

@@ -392,7 +392,7 @@ class UserInfosComponent extends HTMLElement {
 customElements.define('user-infos-component', UserInfosComponent);
 
 async function postNewUserInfos(newUserInfos) {
-	const url = `http://localhost:8000/user/change-user-infos/`;
+	const url = `/api/user/change-user-infos/`;
 
 	try {
 		const data = await sendRequest('POST', url, newUserInfos, true);

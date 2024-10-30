@@ -4,6 +4,9 @@ import { sendRequest } from '../utils/sendRequest.js';
 import '../components/Friendship/FriendshipButtonComponent.js';
 import "../components/NavBarComponent.js";
 import { throwRedirectionEvent } from '../utils/throwRedirectionEvent.js';
+import "../components/Chat/ChatComponent.js";
+import { getUserId } from '../utils/chatUtils/joinRoomUtils.js';
+import UserProfileSendMessageBtn from '../components/Profile/UserProfileSendMessageBtn.js';
 
 export default () => {
     const html = `
@@ -22,6 +25,7 @@ export default () => {
                 </div>
             </div>
 			<contact-menu-component></contact-menu-component>
+            <chat-component></chat-component>
         </section>
     `;
 
@@ -37,9 +41,15 @@ export default () => {
         }
         displayInformation(infoList);
         const friends_status = await checkFriendshipStatus();
+        const divUserContent = document.querySelector('.users-profile-content');
+
         if (friends_status) {
-            const divUserContent = document.querySelector('.users-profile-content');
             divUserContent.innerHTML += `<friendship-button-component button-status=${friends_status}></friendship-button-component>`
+        }
+        if (await isOneself(infoList.id) === false) {
+            const sendMessageBtn = new UserProfileSendMessageBtn(infoList);
+
+            divUserContent.appendChild(sendMessageBtn);
         }
     }, 0)
 
@@ -55,7 +65,7 @@ async function getInformation() {
     const targetUsername = localStorage.getItem('users-profile-target-username');
     if (targetUsername === null)
         return null;
-    const url = `http://localhost:8000/user/get_user/?q=${targetUsername}`;
+    const url = `/api/user/get_user/?q=${targetUsername}`;
     
     try {
         const data = await sendRequest('GET', url, null);
@@ -72,7 +82,7 @@ async function getInformation() {
 
 async function checkFriendshipStatus() {
     const targetUsername = localStorage.getItem('users-profile-target-username');
-    const url = `http://localhost:8003/friends/friendship_status/?q=${targetUsername}`
+    const url = `/api/friends/friendship_status/?q=${targetUsername}`
 
     try {
         const data = await sendRequest('GET', url, null);
@@ -83,4 +93,11 @@ async function checkFriendshipStatus() {
         console.error(error.message);
         return null;
     }
+}
+
+async function isOneself(targetUserId) {
+    const userId = await getUserId();
+
+    console.log('and userId is: ', userId)
+    return userId === targetUserId;
 }

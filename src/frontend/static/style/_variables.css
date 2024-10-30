@@ -1,10 +1,15 @@
 :root {
     --light-grey: #8C8FA4;
+    --steel-gray: #3b3b3b;
     --neon-pink: #FF16C6;
     --neon-blue: #00ceff;
     --neon-gradiant: linear-gradient(90deg, #FF16C6, #00D0FF);
     --text-primary-color: #EDEDF1;
     --background-color: #121216;
     --component-background-color: #1E202B;
+    --contact-background-color: #201a22;
     --error-color: #FF3D3D;
+    --online-status-color: #3AA0B7;
+    --offline-status-color: gray;
+    --away-status-color: rgb(184, 151, 60);
 }

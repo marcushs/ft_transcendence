@@ -53,7 +53,7 @@ class FriendshipButtonComponent extends HTMLElement {
 
     async sendFriendshipRequest(payload) {
         try {
-            const data = await sendRequest('POST', 'http://localhost:8003/friends/manage_friendship/', payload);
+            const data = await sendRequest('POST', '/api/friends/manage_friendship/', payload);
             if (data.status === 'success') {
                 this.setAttribute('button-status', data.friendship_status);
             }

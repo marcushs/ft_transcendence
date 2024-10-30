@@ -1,0 +1,142 @@
+/* <------ Chat lobby ------> */
+
+.chat-lobby {
+	display: none;
+}
+
+.chat-lobby.active {
+	display: block;
+}
+
+/* <------ Chat contacts ------> */
+
+.chat-contact-container {
+	margin-top: 2rem;
+	border-top: 1px solid var(--neon-blue);
+	overflow-y: scroll;
+}
+
+.contacted-list {
+	height: 7.3rem;
+	border-bottom: 1px solid darkgray;
+}
+
+.contacted-list ul {
+	display: none;
+}
+
+.contacted-list.active {
+	height: fit-content;
+	padding-top: 1.7rem;
+	border-bottom: 0;
+}
+
+.contacted-list.active ul {
+	display: block;
+	overflow-x: hidden;
+}
+
+.contacted-list.active ul p.no-contact-text {
+	font-style: italic;
+	font-size: 1.7rem;
+	font-weight: 500;
+	color: darkgray;
+	transform: translate(5%, 20%);
+	margin-bottom: 1rem;
+}
+
+.contacted-list ul li {
+	width: 100%;
+	height: 7rem;
+}
+
+.contacted-list.active ul li {
+	margin: 1.2rem 0 1.2rem 0;
+} 
+
+.list-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	width: 45%;
+	height: 100%;
+	cursor: pointer;
+}
+
+.plus-sign {
+	position: relative;
+	height: 16px;
+	width: 16px;
+	opacity: 0.5;
+	transition: opacity 0.2s ease-in;
+	cursor: pointer;
+}
+
+.plus-sign.hover {
+	opacity: 1;
+	transition: opacity 0.2s ease-in;
+}
+
+.vertical-line {
+	position: absolute;
+	background-color: darkgray;
+	height: 100%;
+	width: 18%;
+	left: 50%;
+	transform: translateX(-50%);
+	border-radius: 10px;
+	transition: height 0.1s ease-in;
+}
+
+.contacted-list.active .vertical-line {
+	height: 0;
+	transition: height 0.1s ease-in;
+}
+
+.horizontal-line {
+	position: absolute;
+	top: 50%;
+	background-color: darkgray;
+	width: 100%;
+	height: 18%;
+	border-radius: 10px;
+	transform: translateY(-50%);
+}
+
+.title {
+	font-size: 2.5rem;
+	font-weight: 400;
+}
+
+.count {
+	font-size: 1.5rem;
+	color: darkgray;
+	transform: translateY(10%);
+}
+
+/* <------ Chat room ------> */
+
+.chatroom {
+	display: none;
+}
+
+.chatroom.active {
+	display: flex;
+	height: 92%;
+	flex-direction: column;
+	justify-content: stretch;
+	overflow: hidden;
+}
+
+.block-btn {
+	color: red;
+	font-size: 2.2rem;
+	opacity: 0.5;
+	transition: opacity 0.2s ease-in;
+}
+
+.block-btn:hover {
+	cursor: pointer;
+	opacity: 1;
+	transition: opacity 0.2s ease-in;
+}

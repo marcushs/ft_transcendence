@@ -4,4 +4,6 @@
 .vscode
 **/media/
 **/migrations/*
+.docker
+chat_models.txt
 result.txt

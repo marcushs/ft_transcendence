@@ -316,7 +316,7 @@ class NotificationComponent extends HTMLElement {
 	// Utils
 
 	async getNotificationsFromDb() {
-		const url = 'http://localhost:8004/notifications/manage_notifications/';
+		const url = '/api/notifications/manage_notifications/';
 
 		try {
 			const data = await sendRequest('GET', url, null);
@@ -364,7 +364,7 @@ class NotificationComponent extends HTMLElement {
 		this.notifications.forEach(notification => { if (!notification.is_read) notification.is_read = true });
 		
 		for (const notification of this.unreadNotifications) {
-			await sendRequest('PUT', 'http://localhost:8004/notifications/manage_notifications/', { uuids: uuids, type: 'set_as_read' });
+			await sendRequest('PUT', '/api/notifications/manage_notifications/', { uuids: uuids, type: 'set_as_read' });
 		}
 		this.unreadNotifications = [];
 	}

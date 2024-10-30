@@ -11,7 +11,7 @@ class MatchHistory extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.history = await sendRequest("GET", "http://localhost:8007/statistics/get_history/", null);
+        this.history = await sendRequest("GET", "/api/statistics/get_history/", null);
         this.userId = await getUserId();
 
         await this.fillHistoryList();

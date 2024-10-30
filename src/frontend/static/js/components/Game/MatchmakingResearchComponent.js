@@ -29,7 +29,7 @@ export async function checkMatchmakingSearch() {
 
 export async function requestMatchmakingResearch(payload) {
     try {
-        const response = await sendRequest('POST', 'http://localhost:8006/matchmaking/matchmaking/', payload); 
+        const response = await sendRequest('POST', '/api/matchmaking/matchmaking/', payload); 
         console.log(response.message);
         return true;
     } catch (error) {
@@ -85,7 +85,7 @@ class MatchmakingResearchComponent extends HTMLElement {
 
     async cancelMatchmakingResearch() {
         try {
-            const response = await sendRequest('POST', 'http://localhost:8006/matchmaking/remove_waiting/', null);
+            const response = await sendRequest('POST', '/api/8006/matchmaking/remove_waiting/', null);
             console.log('remove response: ', response);
             this.classList.add('matchmaking-research-component-hide');
             localStorage.removeItem('isSearchingGame');

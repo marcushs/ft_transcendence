@@ -22,4 +22,4 @@ from friends_app.websocket_middleware import JWTAuthMiddleware
 application = ProtocolTypeRouter({ 
     "http": get_asgi_application(),
     "websocket": JWTAuthMiddleware(URLRouter(websocket_urlpatterns))
-}) 
+})

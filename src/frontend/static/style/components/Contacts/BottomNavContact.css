@@ -4,7 +4,7 @@
     cursor: pointer;
     display: flex;
     bottom: 0;
-    right: 0;
+    right: 2.5rem;
     margin-right: 2.5rem;
     margin-bottom: 1rem;
     z-index: 3;
@@ -16,7 +16,18 @@
     color: white;
 }
 
+.bottom-nav-contacts #contact-icon {
+    display: flex;
+}
+
 .bottom-nav-contacts img {
     width: 3.5rem;
 	height: 3.5rem;
 }
+
+.bottom-nav-contacts #bottom-nav-chat-icon {
+    width: 3rem;
+	height: 3rem;
+    margin-left: 1rem;
+}
+
