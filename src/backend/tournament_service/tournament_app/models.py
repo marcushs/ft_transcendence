@@ -47,4 +47,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             'username': self.username,
             'email': self.email,
         }
-        
+
+class Tournament(models.Model):
+    tournament_name = models.CharField(max_length=30, unique=True, editable=False)
+    creator = models.UUIDField()
+    tournament_size = models.IntegerField()
+    members = models.ManyToManyField(User, related_name='chat_groups', blank=True)
+    creation_time = models.DateTimeField(default=timezone.now)

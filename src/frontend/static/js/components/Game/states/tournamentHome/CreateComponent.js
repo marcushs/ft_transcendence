@@ -1,4 +1,5 @@
 import {getString} from "../../../../utils/languageManagement.js";
+import { sendRequest } from "../../../../utils/sendRequest.js";
 
 class CreateComponent extends HTMLElement {
 	constructor() {
@@ -55,7 +56,7 @@ class CreateComponent extends HTMLElement {
 	}
 
 	handleCreateButtonClick() {
-		this.tournamentName = this.querySelector('input').value;
+		this.tournamentName = this.querySelector('input').value.trim();
 
 		if (this.tournamentName === '' && !this.querySelector('.create-tournament-error')) {
 			const errorElement = document.createElement('p');
@@ -63,7 +64,10 @@ class CreateComponent extends HTMLElement {
 			errorElement.className = 'create-tournament-error';
 			errorElement.innerText = 'The tournament name cannot be empty';
 			this.querySelector('.tournament-name-container').appendChild(errorElement);
-		} else if (this.tournamentName !== '') {
+		} else if (this.tournamentName !== '' && (this.tournamentName > 0 && this.tournamentName <=30)) {
+			const payload = {
+				''
+			}
 			// Fetch request
 			// Maybe check error of tournament len in backend ?
 			// How to manage whitespaces ?
