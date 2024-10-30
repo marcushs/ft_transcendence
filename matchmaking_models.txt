@@ -1,0 +1,9 @@
+_________matchmaking_APP_USER_________
+
+                 password                  | last_login | is_superuser |                  id                  | username | is_ingame 
+-------------------------------------------+------------+--------------+--------------------------------------+----------+-----------
+ !0Ndo5mCXkHkAuxfH08kcPjO5FVcSPLyDTR9ohEWI |            | f            | 7a228bdb-da19-4307-99e0-0775f1f9a8b9 | Shellks  | f
+ !3GJzo4iRAqH6NEFCp60KuLDdZzKo0eY2x6ua6x3N |            | f            | 11e9d888-1c66-46be-9ea6-84da1f53092b | alex     | f
+(2 rows)
+
+***************************************************************************************************************************

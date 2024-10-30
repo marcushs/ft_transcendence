@@ -1,4 +1,6 @@
 import { websocketReconnection } from "../../components/Game/states/inGame/gameWebsocket.js";
+import { disconnectGameWebSocket } from "../../components/Game/states/inGame/gameWebsocket.js";
+import { matchmakingSocket } from "../matchmaking/matchmakingWebsocket.js";
 import { sendRequest } from "../sendRequest.js";
 
 export async function handleGameReconnection(userId, gameState) {
@@ -51,4 +53,17 @@ export async function surrenderHandler() {
     } catch (error) {
         console.log(error);
     }
+}
+
+export function handleGameConnectionTimeOut(message) {
+	console.log(message);
+    if (document.querySelector('matchmaking-research-component'))
+        document.querySelector('matchmaking-research-component').remove();
+    if (document.querySelector('in-game-component'))
+        document.querySelector('in-game-component').remove();
+	localStorage.removeItem('inGameComponentState');
+	localStorage.removeItem('isSearchingGame');
+    disconnectGameWebSocket();
+    if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
+        matchmakingSocket.close();
 }

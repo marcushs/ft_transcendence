@@ -1,5 +1,5 @@
 import { throwMatchmakingResearchEvent } from '../throwEvent/throwMatchmakingResearchEvent.js';
-import { gameSocket, gameWebsocket } from '../../components/Game/states/inGame/gameWebsocket.js';
+import { gameWebsocket } from '../../components/Game/states/inGame/gameWebsocket.js';
 import { matchmakingSocket, matchmakingWebsocket } from './matchmakingWebsocket.js';
 import '../../components/Matchmaking/MatchmakingResearchComponent.js'
 import checkAuthentication from '../checkAuthentication.js';
@@ -39,32 +39,70 @@ async function requestMatchmakingResearch(payload) {
 }
 
 export async function checkMatchmakingSearch() {
+    const isConnected = await checkAuthentication();
     const isSearching = JSON.parse(localStorage.getItem('isSearchingGame'));
-    const isUserConnected = await checkAuthentication();
-    if (!isSearching || !isUserConnected)
+
+    if (!isConnected || !isSearching)
         return;
+    console.log('isSearching: ', isSearching);
     try {
         const researchData = await sendRequest('GET', '/api/matchmaking/is_waiting/', null)
-        if (!researchData.waiting && isSearching.status !== 'joining') {
-            if (document.querySelector('matchmaking-research-component'))
-                document.removeChild('matchmaking-research-component'); 
-            localStorage.removeItem('isSearchingGame');
-        }
-        if (window.location.pathname !== '/' && !window.location.pathname.endsWith('/profile') && !window.location.pathname.startsWith('/users/')) {
-            if (document.querySelector('matchmaking-research-component'))
-                document.removeChild('matchmaking-research-component');
+        console.log('test waiting: researchData: ', researchData);
+        if (await isWaitingMatch(researchData))
             return;
-        }
-        if (isSearching.status === 'joining' && !gameSocket) {
-            const userId = await getUserId();
-            if (userId)
-                await gameWebsocket(userId);
-            return; 
-        }
-        if (!matchmakingSocket || matchmakingSocket.readyState !== WebSocket.OPEN) 
-            await matchmakingWebsocket();
-        throwMatchmakingResearchEvent();
+        console.log('test connecting');
+        if (await isConnectingGame())
+            return;
+        console.log('test end');
+        closeMatchmakingResearch();
     } catch (error) {
         console.error('error with matchmaking check: ', error.message);
     }
+}
+
+async function isWaitingMatch(researchData) {
+    if (researchData.waiting) {
+        const userId = await getUserId();
+        await matchmakingWebsocket(userId);
+        if (checkPath()) {
+            throwMatchmakingResearchEvent();
+        } else {
+            if (document.querySelector('matchmaking-research-component'))
+                document.removeChild('matchmaking-research-component'); 
+        }
+        return true;
+    }
+    return false;
+}
+
+async function isConnectingGame() {
+    const inGameData = await sendRequest('GET', '/api/matchmaking/user_is_in_game/', null);
+    console.log('inGameData: ', inGameData);
+    if (inGameData.is_in_game) {
+        await gameWebsocket(inGameData.id);
+        if (checkPath()) {
+            throwMatchmakingResearchEvent();
+            const researchComponent = document.querySelector('matchmaking-research-component');
+            researchComponent.setFoundGameRender();
+        } else {
+            if (document.querySelector('matchmaking-research-component'))
+                document.removeChild('matchmaking-research-component'); 
+        }
+        return true;
+    }
+    return false;
+}
+
+function closeMatchmakingResearch() {
+    if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
+        matchmakingSocket.close()
+    if (document.querySelector('matchmaking-research-component'))
+        document.removeChild('matchmaking-research-component'); 
+    localStorage.removeItem('isSearchingGame');
+}
+
+function checkPath() {
+    if (window.location.pathname !== '/' && !window.location.pathname.endsWith('/profile') && !window.location.pathname.startsWith('/users/'))
+        return false;
+    return true;
 }

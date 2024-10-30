@@ -22,13 +22,13 @@ def jwt_required(initial_function):
     return wrapper
 
 async def decode_jwt_token(request): 
-    token = request.COOKIES.get('jwt')  
+    token = request.COOKIES.get('jwt')   
     if not token:
         raise ValueError("JWT token is missing in cookies")
     if not isinstance(token, bytes):
         token = token.encode('utf-8')
     try:
-        print(f'token: {token} -- typeof : {type(token)}')
+        # print(f'token: {token} -- typeof : {type(token)}')
         payload = jwt.decode(token, settings.JWT_VERIFYING_KEY,  algorithms=[settings.JWT_ALGORITHM])  
         return str(payload['user_id'])
     except jwt.ExpiredSignatureError:

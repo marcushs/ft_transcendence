@@ -96,7 +96,15 @@ class PongGameEngine:
         for game in cls.active_games:
             if game.game_id == game_id:
                 return game
-        return None
+        return None 
+ 
+
+    @classmethod
+    def check_user_in_game(cls, player_id):
+        for game in cls.active_games:
+            if game.player_is_in_game(player_id):
+                return True
+        return False
 
  #//---------------------------------------> Game Engine <--------------------------------------\\#
        

@@ -1,12 +1,14 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
+from matchmaking_app.utils.websocket_utils import handle_waiting_messages
 import asyncio
+import threading
 import json
 
 connections = {}
-connections_lock = asyncio.Lock()
+connections_lock = threading.Lock()
 
 def get_connections():
-    print(f'---------> consumers:  {connections}')
+    print(f'---------> consumers:  {connections}') 
     return connections
 
 class MatchmakingConsumer(AsyncWebsocketConsumer):
@@ -20,14 +22,18 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 await self.channel_layer.group_add(self.group_name, self.channel_name) 
                 await self.accept()
                 print(f'---------> consumers: add user : {self.user} to connections list')
-                connections[str(self.user.id)] = self
+                with connections_lock:
+                    connections[str(self.user.id)] = self
+                await handle_waiting_messages(str(self.user.id))
         except Exception as e: 
             print('Error: ', e)
 
     async def disconnect(self, close_code):
-        if str(self.user.id) in connections:
-            del connections[str(self.user.id)]
-        await self.channel_layer.group_discard(self.group_name, self.channel_name) 
+        with connections_lock:
+            if str(self.user.id) in connections:
+                del connections[str(self.user.id)]
+        if hasattr(self, 'group_name'):
+            await self.channel_layer.group_discard(self.group_name, self.channel_name) 
 
     async def receive(self, text_data):
         pass

@@ -1,4 +1,4 @@
-import { surrenderHandler } from "../../../../utils/game/gameConnection.js";
+import { surrenderHandler, handleGameConnectionTimeOut } from "../../../../utils/game/gameConnection.js";
 import { gameInstance, resetGameInstance } from "./inGameComponent.js";
 import { GameStillActive } from "./gameNetworkManager.js";
 import { startGame } from "./Game.js";
@@ -44,6 +44,9 @@ export async function gameWebsocket(userId) {
 			},
 			'game_resumed': (data) => {
 				if (gameInstance) gameInstance.updateMessage(data.message) 
+			},
+			'connections_time_out': (data) => {
+				handleGameConnectionTimeOut(data.message)
 			},
 			'error_log': (data) => console.log(data.message)
 			

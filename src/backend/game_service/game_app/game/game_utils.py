@@ -38,7 +38,8 @@ async def send_websocket_info(player_id, payload):
     except Exception as e:
         print(f'---------------->> Error sending websocket info: {e}')
 
-@method_decorator(jwt_required, name='dispatch') 
+
+@method_decorator(jwt_required, name='dispatch')  
 class CheckGameStillActive(View):
     def __init__(self):
         super()

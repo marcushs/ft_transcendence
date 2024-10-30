@@ -31,6 +31,7 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 	inGameComponent.gameId = gameId;
 	inGameComponent.gameState = initialGameState;
 	inGameComponent.map_dimension = map_dimension;
+	console.log('userId: ', userId);
 	inGameComponent.userId = userId;
 	statesContainerDiv.appendChild(inGameComponent);
 }

@@ -17,7 +17,7 @@ from .utils.user_utils import get_user_id_by_username
 
 User = get_user_model()
 
-class JWTAuthMiddleware(MiddlewareMixin):
+class JWTAuthMiddleware(MiddlewareMixin):  
     
     async def __call__(self, request):  
         response = await self.process_request(request)
