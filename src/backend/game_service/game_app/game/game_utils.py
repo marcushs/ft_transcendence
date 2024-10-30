@@ -38,8 +38,21 @@ async def send_websocket_info(player_id, payload):
     except Exception as e:
         print(f'---------------->> Error sending websocket info: {e}')
 
+@method_decorator(jwt_required, name='dispatch') 
+class GetUserGameData(View):
+    def __init__(self):
+        super()
 
-@method_decorator(jwt_required, name='dispatch')  
+    async def get(self, request, user_id):
+        from .game_engine import PongGameEngine 
+        
+        game_data = PongGameEngine.get_user_game_data(str(user_id))
+        if game_data:
+            return JsonResponse({'status': 'success', 'game_data': json.dumps(game_data)}, status=200)
+        return JsonResponse({'status': 'error'}, status=200)  
+
+
+@method_decorator(jwt_required, name='dispatch') 
 class CheckGameStillActive(View):
     def __init__(self):
         super()

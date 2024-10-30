@@ -45,7 +45,7 @@ async def starting_game_instance(data):
         print(f'-> async_tasks: pong game engine ready, start checking connections...')
         if not await check_connections(game_id_data):
             payload = {
-            'player_one_id': game_id_data['player_one'], 
+            'player_one_id': game_id_data['player_one'],  
             'player_two_id': game_id_data['player_two']
             }
             await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)  
@@ -61,14 +61,14 @@ async def check_connections(data_id):
     player_one_id = data_id['player_one']
     player_two_id = data_id['player_two']
     
-    count = 0
-    max_checks = 20
+    count = 1
+    max_checks = 21
     while True:
         async with asyncio.Lock():
             if player_one_id in connections and player_two_id in connections:
                 print('->tasks: all players connected !') 
                 break
-        print(f"->tasks: waiting all players... : player_one: {player_one_id} -- player_two: {player_two_id} -- connections: {connections}")
+        print(f"->tasks: waiting all players... retry <{count}>")
         if count == max_checks:
             if player_one_id in connections:
                 await send_websocket_info(player_id=player_one_id, payload={'type': 'connections_time_out'})

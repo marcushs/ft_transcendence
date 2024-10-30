@@ -122,7 +122,7 @@ class ChangeInGameUserStatus(View):
         if not 'player_one_id' in data or not 'player_two_id' in data:
             raise Exception('Missing user_id in data') 
 
-class CheckUserInGame(View):
+class CheckUserInGame(View): 
     def __init__(self):
         super()
 
@@ -130,8 +130,8 @@ class CheckUserInGame(View):
         if isinstance(request.user, AnonymousUser):  
             return JsonResponse({'message': 'No connected user'}, status=401)
         if request.user.is_ingame:
-            return JsonResponse({'is_in_game': True, 'id': str(request.user.id)}, status=200)
-        return JsonResponse({'is_in_game': False, 'id': str(request.user.id)}, status=200)
+            return JsonResponse({'is_in_game': True, 'user_id': str(request.user.id)}, status=200)
+        return JsonResponse({'is_in_game': False, 'user_id': str(request.user.id)}, status=200)
 
  #//---------------------------------------> matchmaking utils <--------------------------------------\\#
 

@@ -10,14 +10,17 @@ import Ball from "./Ball.js";
 import Intro from "./Intro.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
+	// console.log('test');
 	localStorage.removeItem('isSearchingGame');
 	const matchmakingSearchPopUp = document.querySelector('matchmaking-research-component')
 	if (matchmakingSearchPopUp)
 		matchmakingSearchPopUp.remove();
+	// console.log('test2');
 	if (window.location.pathname !== '/') {
 		throwRedirectionEvent('/');
 		await waitForStatesContainer();
 	}
+	// console.log('test3');
 	const userId = await getUserId();
 	const statesContainerDiv = document.querySelector('.states-container');
 
@@ -27,11 +30,12 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 			continue;
 		statesContainerDiv.classList.remove(statesContainerDiv.classList[i])
 	}
+	// console.log('test4');
 	const inGameComponent = document.createElement('in-game-component');
 	inGameComponent.gameId = gameId;
 	inGameComponent.gameState = initialGameState;
 	inGameComponent.map_dimension = map_dimension;
-	console.log('userId: ', userId);
+	// console.log('userId: ', userId);
 	inGameComponent.userId = userId;
 	statesContainerDiv.appendChild(inGameComponent);
 }
@@ -62,8 +66,6 @@ export default class Game {
 		this.ball = new Ball(this.canvas, this.gameState.ball_position.x, this.gameState.ball_position.y, this.speed);
 		const playerOneBackId = this.gameState.player_one.id;
 		const playerTwoBackId = this.gameState.player_two.id;
-		console.log('playerOneBackId: ', playerOneBackId);
-		console.log('playerTwoBackId: ', playerTwoBackId);
 
 		if (this.userId === playerOneBackId) {
 			this.playerOne = new Player(this.canvas, true, playerOneBackId);

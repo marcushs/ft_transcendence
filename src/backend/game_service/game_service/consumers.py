@@ -141,7 +141,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 	# Sender for websocket connections timeout
 	async def connections_time_out(self, event):
 		await self.send(text_data=json.dumps({
-			'type': event['event'],
+			'type': event['type'],
 			'message': 'game connection timeout, game is canceled'
 		}
 	))

@@ -87,7 +87,7 @@ class PongGameEngine:
  #//---------------------------------------> Game Class Method <--------------------------------------\\#
 
     @classmethod
-    def add_active_games(cls, game_instance):
+    def add_active_games(cls, game_instance): 
         cls.active_games.append(game_instance)
         
         
@@ -100,11 +100,15 @@ class PongGameEngine:
  
 
     @classmethod
-    def check_user_in_game(cls, player_id):
+    def get_user_game_data(cls, player_id):
         for game in cls.active_games:
             if game.player_is_in_game(player_id):
-                return True
-        return False
+                return {
+                    'game_id': game.game_id,
+                    'game_state': game.state,
+                    'map_dimension': get_map_dimension()
+                }
+        return None
 
  #//---------------------------------------> Game Engine <--------------------------------------\\#
        

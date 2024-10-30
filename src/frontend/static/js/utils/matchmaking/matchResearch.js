@@ -1,6 +1,7 @@
 import { throwMatchmakingResearchEvent } from '../throwEvent/throwMatchmakingResearchEvent.js';
 import { gameWebsocket } from '../../components/Game/states/inGame/gameWebsocket.js';
 import { matchmakingSocket, matchmakingWebsocket } from './matchmakingWebsocket.js';
+import { startGame } from '../../components/Game/states/inGame/Game.js';
 import '../../components/Matchmaking/MatchmakingResearchComponent.js'
 import checkAuthentication from '../checkAuthentication.js';
 import { sendRequest } from "../sendRequest.js";
@@ -44,16 +45,12 @@ export async function checkMatchmakingSearch() {
 
     if (!isConnected || !isSearching)
         return;
-    console.log('isSearching: ', isSearching);
     try {
         const researchData = await sendRequest('GET', '/api/matchmaking/is_waiting/', null)
-        console.log('test waiting: researchData: ', researchData);
         if (await isWaitingMatch(researchData))
             return;
-        console.log('test connecting');
         if (await isConnectingGame())
             return;
-        console.log('test end');
         closeMatchmakingResearch();
     } catch (error) {
         console.error('error with matchmaking check: ', error.message);
@@ -76,10 +73,11 @@ async function isWaitingMatch(researchData) {
 }
 
 async function isConnectingGame() {
-    const inGameData = await sendRequest('GET', '/api/matchmaking/user_is_in_game/', null);
-    console.log('inGameData: ', inGameData);
-    if (inGameData.is_in_game) {
-        await gameWebsocket(inGameData.id);
+    const matchmakingResponse = await sendRequest('GET', '/api/matchmaking/user_is_in_game/', null);
+    if (matchmakingResponse.is_in_game) {
+        await gameWebsocket(matchmakingResponse.user_id);
+        if (isGameStarted())
+            return true;
         if (checkPath()) {
             throwMatchmakingResearchEvent();
             const researchComponent = document.querySelector('matchmaking-research-component');
@@ -88,6 +86,17 @@ async function isConnectingGame() {
             if (document.querySelector('matchmaking-research-component'))
                 document.removeChild('matchmaking-research-component'); 
         }
+        return true;
+    }
+    return false;
+}
+
+async function isGameStarted() {
+    const gameResponse =  await sendRequest('GET', '/api/game/user_game_data/', null);
+    const isGameRendered = document.querySelector('in-game-component')
+    const gameData = JSON.parse(gameResponse.game_data)
+    if (gameResponse.status === 'success' && !isGameRendered) {
+        startGame(gameData.game_id, gameData.game_state, gameData.map_dimension)
         return true;
     }
     return false;
