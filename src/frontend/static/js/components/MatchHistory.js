@@ -26,56 +26,12 @@ class MatchHistory extends HTMLElement {
                     ${await this.generateHistoryList()}
 <!--                    <li class="win">-->
 <!--                        <div class="type">-->
-<!--                            <p>Ranked</p>-->
-<!--                            <div class="line"></div>-->
-<!--                        </div>-->
-<!--                        <div class="content">-->
-<!--                            <p class="vs">VS</p>-->
-<!--                            <p class="name">WWWWWWWWWWWW</p>-->
-<!--                            <p class="score">11 - 9</p>-->
-<!--                        </div>-->
-<!--                    </li>-->
-<!--                    <li class="win">-->
-<!--                        <div class="type">-->
-<!--                            <p>Ranked</p>-->
-<!--                            <div class="line"></div>-->
-<!--                        </div>-->
-<!--                        <div class="content">-->
-<!--                            <p class="vs">VS</p>-->
-<!--                            <p class="name">tduprez</p>-->
-<!--                            <p class="score">11 - 9</p>-->
-<!--                        </div>-->
-<!--                    </li>-->
-<!--                    <li class="lose">-->
-<!--                        <div class="type">-->
-<!--                            <p>Unranked</p>-->
-<!--                            <div class="line"></div>-->
-<!--                        </div>-->
-<!--                        <div class="content">-->
-<!--                            <p class="vs">VS</p>-->
-<!--                            <p class="name">acarlott</p>-->
-<!--                            <p class="score">11 - 9</p>-->
-<!--                        </div>-->
-<!--                    </li>-->
-<!--                    <li class="win">-->
-<!--                        <div class="type">-->
 <!--                            <p>Tournament</p>-->
 <!--                            <div class="line"></div>-->
 <!--                        </div>-->
 <!--                        <div class="content">-->
 <!--                            <p class="tournament-name">Sowoo's tournamentttdfokghnfdoihgjdfh</p>-->
 <!--                            <p class="score">12-16th</p>-->
-<!--                        </div>-->
-<!--                    </li>-->
-<!--                    <li class="lose">-->
-<!--                        <div class="type">-->
-<!--                            <p>Ranked</p>-->
-<!--                            <div class="line"></div>-->
-<!--                        </div>-->
-<!--                        <div class="content">-->
-<!--                            <p class="vs">VS</p>-->
-<!--                            <p class="name">hleung</p>-->
-<!--                            <p class="score">11 - 9</p>-->
 <!--                        </div>-->
 <!--                    </li>-->
                 </ul>
@@ -87,7 +43,7 @@ class MatchHistory extends HTMLElement {
     async generateHistoryList() {
         let historyListElement = '';
 
-        for (let item in this.history) {
+        for (let item of this.history) {
             switch (item.match_type) {
                 case "ranked":
                     historyListElement += await this.generateRankedItem(item);
@@ -109,9 +65,9 @@ class MatchHistory extends HTMLElement {
 
     async generateRankedItem(matchInfos) {
         const isWin = matchInfos.winner_id === this.userId;
-        const opponent_id = (isWin) ? matchInfos.winner_id : matchInfos.loser_id;
+        const opponent_id = (isWin) ? matchInfos.loser_id : matchInfos.winner_id;
         const opponent_name = await getUsernameById(opponent_id);
-        // const score = matchInfos.
+        const score = (isWin) ? `${matchInfos.winner_score} - ${matchInfos.loser_score}` : `${matchInfos.loser_score} - ${matchInfos.winner_score}`
 
         return `
             <li class="${(isWin) ? "win" : "lose"}">
@@ -122,7 +78,7 @@ class MatchHistory extends HTMLElement {
                 <div class="content">
                     <p class="vs">VS</p>
                     <p class="name">${opponent_name}</p>
-                    <p class="score">10 - 1</p>
+                    <p class="score">${score}</p>
                 </div>
             </li>
         `;
@@ -131,20 +87,20 @@ class MatchHistory extends HTMLElement {
 
     async generateUnrankedItem(matchInfos) {
         const isWin = matchInfos.winner_id === this.userId;
-        const opponent_id = (isWin) ? matchInfos.winner_id : matchInfos.loser_id;
+        const opponent_id = (isWin) ? matchInfos.loser_id : matchInfos.winner_id;
         const opponent_name = await getUsernameById(opponent_id);
-        // const score = matchInfos.
+        const score = (isWin) ? `${matchInfos.winner_score} - ${matchInfos.loser_score}` : `${matchInfos.loser_score} - ${matchInfos.winner_score}`
 
         return `
             <li class="${(isWin) ? "win" : "lose"}">
                 <div class="type">
-                    <p>Unanked</p>
+                    <p>Unranked</p>
                     <div class="line"></div>
                 </div>
                 <div class="content">
                     <p class="vs">VS</p>
                     <p class="name">${opponent_name}</p>
-                    <p class="score">10 - 1</p>
+                    <p class="score">${score}</p>
                 </div>
             </li>
         `;
