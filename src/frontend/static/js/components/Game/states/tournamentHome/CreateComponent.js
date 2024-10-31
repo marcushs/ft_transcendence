@@ -55,7 +55,7 @@ class CreateComponent extends HTMLElement {
 		}
 	}
 
-	handleCreateButtonClick() {
+	async handleCreateButtonClick() {
 		this.tournamentName = this.querySelector('input').value.trim();
 
 		if (this.tournamentName === '' && !this.querySelector('.create-tournament-error')) {
@@ -64,9 +64,19 @@ class CreateComponent extends HTMLElement {
 			errorElement.className = 'create-tournament-error';
 			errorElement.innerText = 'The tournament name cannot be empty';
 			this.querySelector('.tournament-name-container').appendChild(errorElement);
-		} else if (this.tournamentName !== '' && (this.tournamentName > 0 && this.tournamentName <=30)) {
+		} else if (this.tournamentName.length > 0 && this.tournamentName.length <=30) {
 			const payload = {
-				''
+				'tournament_name': this.tournamentName,
+				'tournament_size': this.numberOfPlayers,
+			};
+
+			try {
+				let res = await sendRequest('POST', '/api/tournament/create_tournament/', payload, false);
+
+				console.log(res)
+				if (res.status === 'error') console.log(res.message);
+			} catch (error) {
+				
 			}
 			// Fetch request
 			// Maybe check error of tournament len in backend ?

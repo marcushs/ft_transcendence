@@ -54,3 +54,22 @@ class Tournament(models.Model):
     tournament_size = models.IntegerField()
     members = models.ManyToManyField(User, related_name='chat_groups', blank=True)
     creation_time = models.DateTimeField(default=timezone.now)
+
+
+    def to_dict(self):
+        return {
+            'tournament_name': self.tournament_name,
+            'creator': self.creator,
+            'tournament_size': self.tournament_size,
+            'creation_time': self.creation_time,
+            'members': list(self.members.all().values('id', 'username')),
+        }
+
+class TournamentMatch(models.Model):
+    tournament = models.ForeignKey(Tournament, related_name='tournament_match', on_delete=models.CASCADE)
+    winner = models.ForeignKey(User, related_name='won_matches', on_delete=models.CASCADE)
+    loser = models.ForeignKey(User, related_name='lost_matches', on_delete=models.CASCADE)
+    winner_score = models.IntegerField()
+    loser_score = models.IntegerField()
+    date = models.DateTimeField(default=timezone.now)
+    tournament_round = models.CharField()

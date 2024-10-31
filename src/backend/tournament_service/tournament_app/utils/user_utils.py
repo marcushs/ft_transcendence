@@ -13,7 +13,6 @@ class add_new_user(View):
         return JsonResponse({"message": 'get request successfully reached'}, status=200)
     
     def post(self, request):
-        print('hello-------------------------------->') 
         data = json.loads(request.body.decode('utf-8'))
         if not all(key in data for key in ('email', 'username', 'user_id')):
             return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
