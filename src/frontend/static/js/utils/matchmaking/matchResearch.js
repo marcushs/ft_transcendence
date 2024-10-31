@@ -15,7 +15,7 @@ export async function sendMatchSearchRequest(match_type) {
         if (requestResponse.status === 'error')
             return false;
         localStorage.setItem('isSearchingGame', JSON.stringify({
-            type: 'ranked',
+            type: match_type,
             status: 'searching'
         }));
         const researchComponent = document.createElement('matchmaking-research-component');
@@ -46,8 +46,7 @@ export async function checkMatchmakingSearch() {
     if (!isConnected || !isSearching)
         return;
     try {
-        const researchData = await sendRequest('GET', '/api/matchmaking/is_waiting/', null)
-        if (await isWaitingMatch(researchData))
+        if (await isWaitingMatch())
             return;
         if (await isConnectingGame())
             return;
@@ -57,7 +56,8 @@ export async function checkMatchmakingSearch() {
     }
 }
 
-async function isWaitingMatch(researchData) {
+async function isWaitingMatch() {
+    const researchData = await sendRequest('GET', '/api/matchmaking/is_waiting/', null)
     if (researchData.waiting) {
         const userId = await getUserId();
         await matchmakingWebsocket(userId);
@@ -93,9 +93,11 @@ async function isConnectingGame() {
 
 async function isGameStarted() {
     const gameResponse =  await sendRequest('GET', '/api/game/user_game_data/', null);
+    if (gameResponse.status === 'error')
+        return false;
     const isGameRendered = document.querySelector('in-game-component')
-    const gameData = JSON.parse(gameResponse.game_data)
-    if (gameResponse.status === 'success' && !isGameRendered) {
+    if (!isGameRendered) {
+        const gameData = JSON.parse(gameResponse.game_data)
         startGame(gameData.game_id, gameData.game_state, gameData.map_dimension)
         return true;
     }

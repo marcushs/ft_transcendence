@@ -1,8 +1,12 @@
 import { sendRequest } from "../../../../utils/sendRequest.js";
 import { throwGameInactivityEvent } from "../../../../utils/throwGameInactivityEvent.js"
 import { surrenderHandler, handleGameReconnection } from "../../../../utils/game/gameConnection.js";
+import checkAuthentication from "../../../../utils/checkAuthentication.js";
 
 export async function checkInactiveGame() {
+    const isConnected = await checkAuthentication();
+    if (!isConnected)
+        return;
     const savedState = localStorage.getItem('inGameComponentState');
     const gameState = savedState ? JSON.parse(savedState) : null;
     if (gameState) {

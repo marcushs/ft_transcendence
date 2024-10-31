@@ -50,6 +50,7 @@ async def starting_game_instance(data):
             }
             await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)  
             return
+        asyncio.sleep(0.5)
         print(f'-> async_tasks: connections ok, sending websocket...')
         await send_client_game_init(game_id_data=game_id_data, game_instance=game_instance)
         await running_game_instance(instance=game_instance, game_type=data['game_type'])

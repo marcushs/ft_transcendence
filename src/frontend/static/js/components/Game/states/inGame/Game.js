@@ -1,41 +1,39 @@
 import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
 import { waitForStatesContainer } from "../../../../utils/game/gameConnection.js";
+import { gameSocket, websocketReconnection } from "./gameWebsocket.js";
 import { disconnectGameWebSocket } from "./gameWebsocket.js";
 import getUserId from "../../../../utils/getUserId.js";
 import { resetGameInstance } from "./inGameComponent.js";
-import { gameSocket } from "./gameWebsocket.js";
+import { gameWebsocket } from "./gameWebsocket.js";
 import Player from "./Player.js";
 import Spark from "./Spark.js";
 import Ball from "./Ball.js";
 import Intro from "./Intro.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
-	// console.log('test');
 	localStorage.removeItem('isSearchingGame');
 	const matchmakingSearchPopUp = document.querySelector('matchmaking-research-component')
 	if (matchmakingSearchPopUp)
 		matchmakingSearchPopUp.remove();
-	// console.log('test2');
 	if (window.location.pathname !== '/') {
 		throwRedirectionEvent('/');
 		await waitForStatesContainer();
 	}
-	// console.log('test3');
 	const userId = await getUserId();
 	const statesContainerDiv = document.querySelector('.states-container');
-
+	
+	if (statesContainerDiv.querySelector('in-game-component'))
+		return;
 	statesContainerDiv.innerHTML = '';
 	for (let i = 0; i < statesContainerDiv.classList.length; i++) {
 		if (statesContainerDiv.classList[i] === 'states-container')
 			continue;
 		statesContainerDiv.classList.remove(statesContainerDiv.classList[i])
 	}
-	// console.log('test4');
 	const inGameComponent = document.createElement('in-game-component');
 	inGameComponent.gameId = gameId;
 	inGameComponent.gameState = initialGameState;
 	inGameComponent.map_dimension = map_dimension;
-	// console.log('userId: ', userId);
 	inGameComponent.userId = userId;
 	statesContainerDiv.appendChild(inGameComponent);
 }

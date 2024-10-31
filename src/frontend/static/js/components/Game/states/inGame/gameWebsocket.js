@@ -8,6 +8,7 @@ let reconnectTimeout;
 
 
 export async function gameWebsocket(userId) {
+	console.trace('calling function: ')
 	if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
 		console.log('already connected to game Websocket');
 		return;
