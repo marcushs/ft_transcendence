@@ -1,5 +1,6 @@
 import {getString} from "../../../../utils/languageManagement.js";
 import { sendRequest } from "../../../../utils/sendRequest.js";
+import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
 
 class CreateComponent extends HTMLElement {
 	constructor() {
@@ -66,18 +67,21 @@ class CreateComponent extends HTMLElement {
 			this.querySelector('.tournament-name-container').appendChild(errorElement);
 		} else if (this.tournamentName.length > 0 && this.tournamentName.length <=30) {
 			const payload = {
+				'type': 'create_tournament',
 				'tournament_name': this.tournamentName,
 				'tournament_size': this.numberOfPlayers,
 			};
 
-			try {
-				let res = await sendRequest('POST', '/api/tournament/create_tournament/', payload, false);
+			tournamentSocket.send(JSON.stringify(payload))
+			// try {
+			// 	let res = await sendRequest('POST', '/api/tournament/create_tournament/', payload, false);
 
-				console.log(res)
-				if (res.status === 'error') console.log(res.message);
-			} catch (error) {
+			// 	console.log(res)
+			// 	if (res.status === 'error') console.log(res.message);
+
+			// } catch (error) {
 				
-			}
+			// }
 			// Fetch request
 			// Maybe check error of tournament len in backend ?
 			// How to manage whitespaces ?

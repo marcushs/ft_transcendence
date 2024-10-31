@@ -165,6 +165,8 @@ async function loadTournamentWebSocket() {
 	};
 
 	chatSocket.onmessage = async function(e) {
+		const data = JSON.parse(e.data)
+		console.log(data)
 		// const data = JSON.parse(e.data);
 
 		// if (data.type === 'chat_message') {
