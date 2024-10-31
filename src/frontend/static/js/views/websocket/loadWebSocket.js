@@ -9,12 +9,15 @@ export let contactSocket = null;
 export let notificationSocket = null;
 
 export let chatSocket;
-export let chatroomsList;
+export let tournamentSocket;
+
+
 
 export async function loadWebSocket() {
     await loadContactsWebSocket();
     await loadNotificationsWebSocket();
 	await loadChatWebSocket();
+	await loadTournamentWebSocket();
 }
 
 //--------------> CONTACT WEBSOCKET <--------------\\
@@ -139,12 +142,41 @@ async function loadChatWebSocket() {
 			await messageReceptionDOMUpdate(data);
 		} else if (data.type === 'chatgroup_update') {
 			await receiveChatgroupUpdate(data);
-			// chatroomsList = await fetchChatroomsList();
 			await updateCurrentChatroomId(data.target_user);
 			await addNewContactToContactedList(data.chatroom);
 		} else if (data.type === 'remove_room') {
 			removeChatContactFromDOM(data.chatroom);
 		}
+	};
+
+	chatSocket.onclose = function(e) {
+		console.log(e);
+	};
+}
+
+async function loadTournamentWebSocket() {
+	tournamentSocket = new WebSocket('wss://localhost:3000/ws/tournament/');
+
+	chatSocket.onopen = async function (e) {
+		console.log("The tournament websocket connection was setup successfully !");
+
+		// chatroomsList = await fetchChatroomsList();
+		// joinAllInvitedChatrooms(chatroomsList);
+	};
+
+	chatSocket.onmessage = async function(e) {
+		// const data = JSON.parse(e.data);
+
+		// if (data.type === 'chat_message') {
+		// 	await messageReceptionDOMUpdate(data);
+		// } else if (data.type === 'chatgroup_update') {
+		// 	await receiveChatgroupUpdate(data);
+		// 	// chatroomsList = await fetchChatroomsList();
+		// 	await updateCurrentChatroomId(data.target_user);
+		// 	await addNewContactToContactedList(data.chatroom);
+		// } else if (data.type === 'remove_room') {
+		// 	removeChatContactFromDOM(data.chatroom);
+		// }
 	};
 
 	chatSocket.onclose = function(e) {

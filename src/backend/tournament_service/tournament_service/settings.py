@@ -47,6 +47,8 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
 	'corsheaders',
+    'daphne',
+	'channels',
 	'tournament_app',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -84,7 +86,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tournament_service.wsgi.application'
-
+ASGI_APPLICATION = 'tournament_service.asgi.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
+}
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
