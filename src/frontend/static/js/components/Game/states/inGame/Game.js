@@ -9,6 +9,7 @@ import Player from "./Player.js";
 import Spark from "./Spark.js";
 import Ball from "./Ball.js";
 import Intro from "./Intro.js";
+import Outro from "./Outro.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
 	localStorage.removeItem('isSearchingGame');
@@ -21,7 +22,6 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 	}
 	const userId = await getUserId();
 	const statesContainerDiv = document.querySelector('.states-container');
-	
 	if (statesContainerDiv.querySelector('in-game-component'))
 		return;
 	statesContainerDiv.innerHTML = '';
@@ -46,10 +46,11 @@ export default class Game {
 		this.gameId = gameId;
 		this.gameState = gameState;
 		this.isGameRunning = false;
-		this.isAnimationEnabled = true;
+		this.isIntroAnimationEnabled = true;
+		this.isOutroAnimationEnabled = false;
 		
-
-		this.Intro = new Intro(this.canvas);
+		this.Intro = new Intro(this.canvas, gameState.player_one.user_infos, gameState.player_two.user_infos);
+		this.Outro = new Outro(this.canvas);
 
 		this.initGameRender();
 		this.renderLoop();
@@ -65,7 +66,7 @@ export default class Game {
 		const playerOneBackId = this.gameState.player_one.id;
 		const playerTwoBackId = this.gameState.player_two.id;
 
-		if (this.userId === playerOneBackId) {
+		if (this.userId !== playerOneBackId) {
 			this.playerOne = new Player(this.canvas, true, playerOneBackId);
 			this.playerTwo = new Player(this.canvas, false, playerTwoBackId);
 		} else {
@@ -80,10 +81,10 @@ export default class Game {
 			up: false,
 			down: false,
 		}
-		this.keysPlayerTwo = {
-			up: false,
-			down: false,
-		}
+		// this.keysPlayerTwo = {
+		// 	up: false,
+		// 	down: false,
+		// }
 		this.attachEventsListener();
 
 		setTimeout(() => {
@@ -104,8 +105,10 @@ export default class Game {
 		this.movePlayer();
 		this.drawFrame();
 		this.drawSparks();
-		if (this.isAnimationEnabled)
+		if (this.isIntroAnimationEnabled)
 			this.Intro.drawIntro();
+		if (this.isOutroAnimationEnabled)
+			this.Outro.drawOutro();
 
 		requestAnimationFrame(() => this.renderLoop());
 	}
@@ -119,7 +122,7 @@ export default class Game {
 			action = 'move_up';
 		if (this.keysPlayerOne.down)
 			action = 'move_down'
-		if (action) {			
+		if (action) {
 			if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
 				gameSocket.send(JSON.stringify({
 					'type': 'player_action',
@@ -133,7 +136,7 @@ export default class Game {
 
 	// Draw new frame render
 	drawFrame() {
-		if (!this.isAnimationEnabled)
+		if (!this.isIntroAnimationEnabled)
 			this.drawScore();
 		this.drawMiddleLine();
 		this.playerOne.draw();
@@ -188,8 +191,8 @@ export default class Game {
 
 		if (!this.isGameRunning)
 			this.isGameRunning = true;
-		if (this.isAnimationEnabled)
-			this.isAnimationEnabled = false;
+		if (this.isIntroAnimationEnabled)
+			this.isIntroAnimationEnabled = false;
 
 		this.updatePlayersPosition(newState);
 		this.updateBallPosition(newState);
@@ -270,11 +273,17 @@ export default class Game {
 
 // --------------------------------------- Game finished render -------------------------------------- //
 
-	gameFinished(message) {
-		this.gameInProgress = false;
-		alert(message);
-		disconnectGameWebSocket(this.userId, false);
-		throwRedirectionEvent('/');
+	gameFinished(isWin, data) {
+		this.throwLoadOutroAnimationEvent(isWin);
+		this.isOutroAnimationEnabled = true;
+
+		console.log(this.userId, data);
+		// Not definitive
+		setTimeout(() => {
+			this.gameInProgress = false;
+			disconnectGameWebSocket(this.userId, false);
+			throwRedirectionEvent('/');
+		}, 10000);
 	}
 
 	cleanup() {
@@ -317,9 +326,21 @@ export default class Game {
 
 			(y < 50) ? sparkY = 0 : sparkY = this.canvas.height;
 
-	        let spark = new Spark(x, sparkY, angle, speed, lifetime, this.deltaTime);
+	        let spark = new Spark(x, sparkY, angle, speed, lifetime, this.deltaTime, 2, "rgb(255, 165, 0)");
 	        this.sparks.push(spark);
 	    }
+	}
+
+
+	throwLoadOutroAnimationEvent(isWin) {
+		const event = new CustomEvent('loadOutroAnimationEvent', {
+			bubbles: true,
+			detail: {
+				isWin: isWin
+			}
+		});
+
+		document.dispatchEvent(event);
 	}
 
 }

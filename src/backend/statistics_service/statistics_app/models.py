@@ -58,7 +58,5 @@ class User(AbstractBaseUser, PermissionsMixin):
             'username': self.username,
         }
         
-    @property
     def match_history(self): # Retrieve all match history for the user.
         return MatchHistory.objects.filter(models.Q(winner=self) | models.Q(loser=self))
- 

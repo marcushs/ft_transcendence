@@ -10,18 +10,20 @@ class PongGameEngine:
 
  #//---------------------------------------> Game Constructor <--------------------------------------\\#
 
-    def __init__(self, game_id_data):
-        self.init_game_attributes(game_id_data)
+    def __init__(self, game_data):
+        self.init_game_attributes(game_data)
         self.set_initial_game_state(player_one_score=self.player_one_score, player_two_score=self.player_two_score)
         PongGameEngine.add_active_games(self)
 
  #//---------------------------------------> Initial game attributes <--------------------------------------\\#
 
-    def init_game_attributes(self, game_id_data):  
+    def init_game_attributes(self, game_data):
         map_dimension = get_map_dimension()
-        self.game_id = str(game_id_data['game'])
-        self.player_one_id = str(game_id_data['player_one'])
-        self.player_two_id = str(game_id_data['player_two'])
+        self.game_id = str(game_data['game'])
+        self.player_one_id = str(game_data['player_one']['id'])
+        self.player_two_id = str(game_data['player_two']['id'])
+        self.player_one_user_infos = game_data['player_one']['user_infos']
+        self.player_two_user_infos = game_data['player_two']['user_infos']
         self.player_one_connected = True
         self.player_two_connected = True
         self.player_one_score = 0
@@ -38,7 +40,7 @@ class PongGameEngine:
         self.speed_limit = 45
         self.ball_direction_x = self.ball_speed
         self.ball_direction_y = 0
-        self.max_score = 300
+        self.max_score = 1
         self.has_ball_hit_wall = False
         self.is_player_one_collide = False
         self.is_player_two_collide = False
@@ -59,6 +61,7 @@ class PongGameEngine:
             'player_one': {
                 'score': player_one_score,
                 'id': self.player_one_id,
+                'user_infos': self.player_one_user_infos,
                 'position': {
                     'x': self.map['width'] * 0.015, 
                     'y': self.map['height'] * 0.5,
@@ -67,6 +70,7 @@ class PongGameEngine:
             'player_two': {
                 'score': player_two_score,
                 'id': self.player_two_id,
+                'user_infos': self.player_two_user_infos,
                 'position': {
                     'x': self.map['width'] - self.map['width'] * 0.015,
                     'y' : self.map['height'] * 0.5,
@@ -248,8 +252,10 @@ class PongGameEngine:
     async def end_game(self):
         if self.player_one_score > self.player_two_score:
             self.winner_id = self.player_one_id
+            self.loser_id = self.player_two_id
         elif self.player_one_score < self.player_two_score:
             self.winner_id = self.player_two_id
+            self.loser_id = self.player_one_id
         else:
             self.winner_id = -1
         self.game_active = False
@@ -338,13 +344,31 @@ class PongGameEngine:
                 'event': 'game_canceled',
                 'message': f'Game draw after reconnection time to the paused game has been exceeded'
             }
+            await self.websocket_sender(payload)
         else:
-            payload = {
+            winner_payload = {
                 'type': 'game_update_info',
                 'event': 'game_finished',
-                'message': f'Player {self.winner_id} wins!'
+                'message': {
+                    'is_win' : True,
+                    'winner_id': self.winner_id,
+                    'loser_id': self.loser_id
+                }
             }
-        await self.websocket_sender(payload)
+            loser_payload = {
+                'type': 'game_update_info',
+                'event': 'game_finished',
+                'message': {
+                    'is_win' : False,
+                    'winner_id': self.winner_id,
+                    'loser_id': self.loser_id
+                }
+            }
+            print(f'------------------- {self.winner_id}, {self.loser_id} -----------------')
+            print(f'------------------- {self.player_one_score}, {self.player_two_score} -----------------')
+            print(f'------------------- {self.player_one_id}, {self.player_two_id} -----------------')   
+            await send_websocket_info(self.winner_id, winner_payload) 
+            await send_websocket_info(self.loser_id, loser_payload)
 
 
     async def send_surrender_update(self, loser_id):
@@ -354,8 +378,8 @@ class PongGameEngine:
             'message': f'Player {loser_id} has surrendered. {self.winner_id} wins!'
         }
         await self.websocket_sender(payload)
-        
-         
+
+
     async def send_disconnect_update(self, player_id):
         payload = {
             'type': 'game_update_info',
@@ -364,14 +388,14 @@ class PongGameEngine:
         }
         await self.websocket_sender(payload)
 
-     
+
     async def send_reconnect_update(self, player_id):
         payload = {
             'type': 'game_update_info',
             'event': 'player_reconnected',
             'message': f'player {player_id} has reconnected',
         }
-        await self.websocket_sender(payload) 
+        await self.websocket_sender(payload)
 
 
     async def send_resume_update(self):

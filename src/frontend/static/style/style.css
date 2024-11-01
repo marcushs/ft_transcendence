@@ -13,10 +13,11 @@
 @import './views/two-factor-deactivation.css';
 @import './views/logout.css';
 @import './_variables.css';
+@import './responsive.css';
 
-:root {
-    font-size: 50%;
-}
+/*:root {*/
+/*    font-size: 50%;*/
+/*}*/
 
 * {
     margin: 0;

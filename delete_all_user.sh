@@ -36,4 +36,12 @@ docker exec -e PGPASSWORD=$FRIENDS_DB_PASSWORD friends psql -U $FRIENDS_DB_USER 
 
 #notifications
 echo -e "_________NOTIFICATIONS CONTAINER_________\n" 
-docker exec -e PGPASSWORD=$NOTIFICATIONS_DB_PASSWORD notifications psql -U $NOTIFICATIONS_DB_USER -d $NOTIFICATIONS_DB_NAME -h $NOTIFICATIONS_DB_HOST -c "DELETE FROM notifications_app_user; DELETE FROM notifications_app_notification;" 
+docker exec -e PGPASSWORD=$NOTIFICATIONS_DB_PASSWORD notifications psql -U $NOTIFICATIONS_DB_USER -d $NOTIFICATIONS_DB_NAME -h $NOTIFICATIONS_DB_HOST -c "DELETE FROM notifications_app_user; DELETE FROM notifications_app_notification;"
+
+#matchmaking
+echo -e "_________MATCHMAKING CONTAINER_________\n"
+docker exec -e PGPASSWORD=$MATCHMAKING_DB_PASSWORD notifications psql -U $MATCHMAKING_DB_USER -d $MATCHMAKING_DB_NAME -h $MATCHMAKING_DB_HOST -c "DELETE FROM matchmaking_app_user;"
+
+#statistics
+echo -e "_________STATISTICS CONTAINER_________\n"
+docker exec -e PGPASSWORD=$STATISTICS_DB_PASSWORD notifications psql -U $STATISTICS_DB_USER -d $STATISTICS_DB_NAME -h $STATISTICS_DB_HOST -c "DELETE FROM statistics_app_user;"

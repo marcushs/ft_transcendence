@@ -50,6 +50,8 @@ class oauth42UpdateUsernameView(View):
         'http://user:8000/api/user/add_user/', 
         'http://friends:8000/api/friends/add_user/', 
         'http://notifications:8000/api/notifications/add_user/',
+        'http://matchmaking:8000/api/matchmaking/add_user/',
+        'http://statistics:8000/api/statistics/add_user/',
         'http://chat:8000/api/chat/add_user/']
         for url in urls:
             response = requests.get(url=url, params={"username": username})
@@ -63,6 +65,8 @@ class oauth42UpdateUsernameView(View):
                 'http://user:8000/api/user/add_user/', 
                 'http://friends:8000/api/friends/add_user/', 
                 'http://notifications:8000/api/notifications/add_user/',
+                'http://matchmaking:8000/api/matchmaking/add_user/',
+                'http://statistics:8000/api/statistics/add_user/',
                 'http://chat:8000/api/chat/add_user/']
         for url in urls:
             response = send_post_request(url=url, payload=self.payload, csrf_token=self.csrf_token)

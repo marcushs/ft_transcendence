@@ -17,7 +17,7 @@ class MatchResultManager(View):
             if not self.is_valid_data(data):
                 raise(Exception('Invalid matchmaking result')) 
             self.update_match_result_data(data)
-            return JsonResponse({'status': 'success', 'message': 'match data updated'}, status=200)  
+            return JsonResponse({'status': 'success', 'message': 'match data updated'}, status=200)
         except Exception as e:
             print(f'-----------> ERROR: {str(e)}')
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
@@ -44,17 +44,16 @@ class MatchResultManager(View):
         winner, loser = self.get_users_from_result(data)
         change_user_games_count(is_game_win=True, user=winner)
         change_user_games_count(is_game_win=False, user=loser)
-        create_new_match_history(data=data, winner_instance=winner, loser_instance=loser) 
+        create_new_match_history(data=data, winner_instance=winner, loser_instance=loser)
         if data['type'] == 'ranked':
             pass # do the additional manage of point for ranked games here
-        winner.save()   
+        winner.save()
         loser.save()
-        
 
 
-    def get_users_from_result(self, data):  
+    def get_users_from_result(self, data):
         winner = User.objects.get(id=data['winner']['id'])
-        loser = User.objects.get(id=data['loser']['id']) 
+        loser = User.objects.get(id=data['loser']['id'])
         return winner, loser
 
 

@@ -71,6 +71,7 @@ class add_new_user(View):
     def get(self, request):
         return JsonResponse({"message": 'get request successfully reached'}, status=200)
     
+
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
         if not all(key in data for key in ('email', 'username', 'user_id')):
@@ -222,11 +223,11 @@ class getUserInfos(View):
         
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
-        
+
 class getUserInfoById(View):
     def __init__(self):
         super().__init__
-    
+
     def get(self, request):
         try:
             id = request.GET.get('q', '')
@@ -267,10 +268,30 @@ class getUsersInfo(View):
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
 
+
+class getUsernameById(View):
+    def __init__(self):
+        super().__init__
+
+    def get(self, request):
+        try:
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'message': 'User not found'}, status=400)
+
+            target_id = request.GET.get('q', '')
+
+            if not target_id:
+                return JsonResponse({'status': 'error', 'message': 'No id provided'}, status=200)
+
+            user = User.objects.get(id=target_id)
+            return JsonResponse({'status': 'success', 'username': user.username}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'No user id found'}, status=200)
+
 class getUserStatus(View):
     def __init__(self):
         super().__init__
-    
+
     def get(self, request):
         try:
             user_id = request.GET.get('userId')
