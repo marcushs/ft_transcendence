@@ -1,18 +1,11 @@
-
-
 export default class Intro {
 	constructor(canvas, playerOneInfos, playerTwoInfos) {
 		this.canvas = canvas;
 		this.isAnimationEnabled = false;
 		this.isCountDownEnabled = false;
 		this.countDownNumber = '3';
+		this.backgroundImage = this.loadImage("../../../../../assets/gameStartAnimationBackground.svg");
 
-		this.playerOneInfos = playerOneInfos;
-		this.playerTwoInfos = playerTwoInfos;
-
-		this.isRanked = false;
-
-		this.initializeImages();
 		this.initializeCoordinates();
 	}
 
@@ -22,17 +15,6 @@ export default class Intro {
 
 		img.src = path;
 		return img;
-	}
-
-
-	initializeImages() {
-		this.backgroundImage = this.loadImage("../../../../../assets/gameStartAnimationBackground.svg");
-
-		this.playerOneImage = this.loadImage(this.playerOneInfos.profile_image);
-		this.playerOneRankImage = this.loadImage(`../../../../../assets/rank-${this.playersInfos.playerOne.rank}.svg`);
-
-		this.playerTwoImage = this.loadImage(this.playerTwoInfos.profile_image);
-		this.playerTwoRankImage = this.loadImage(`../../../../../assets/rank-${this.playersInfos.playerTwo.rank}.svg`);
 	}
 
 
@@ -97,9 +79,7 @@ export default class Intro {
 		this.canvas.ctx.restore();
 		this.canvas.ctx.closePath();
 
-		this.drawPlayer(this.playerOneInfosX, this.canvas.height / 4 * 2.8, this.playerOneImage, this.playerOneInfos.username);
-		if (this.isRanked)
-			this.drawRank(this.playerOneInfosX, this.canvas.height / 4 * 2.8, this.playerOneRankImage);
+		this.drawPlayerName(this.playerOneInfosX, this.canvas.height / 4 * 3, "Player 1");
 		this.drawLine(this.leftSectionTopRightX, this.leftSectionBottomRightX);
 	}
 
@@ -119,43 +99,13 @@ export default class Intro {
 		this.canvas.ctx.restore();
 		this.canvas.ctx.closePath();
 
-		this.drawPlayer(this.playerTwoInfosX, this.canvas.height / 4, this.playerTwoImage, this.playerTwoInfos.username);
-		if (this.isRanked)
-			this.drawRank(this.playerTwoInfosX, this.canvas.height / 4, this.playerTwoRankImage);
-
+		this.drawPlayerName(this.playerTwoInfosX, this.canvas.height / 4, "Player 2");
 		this.drawLine(this.rightSectionBottomLeftX, this.rightSectionTopLeftX);
 	}
 
 
-	drawPlayer(x, y, playerImage, playerName) {
-		const radius = 100;
-
-		this.drawPlayerShadow(x, y, radius);
-		this.drawPlayerImg(x, y, radius, playerImage);
+	drawPlayer(x, y, playerName) {
 		this.drawPlayerName(x, y + 135, playerName);
-	}
-
-
-	drawPlayerShadow(x, y, radius) {
-		this.canvas.ctx.beginPath();
-		this.canvas.ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
-		this.canvas.ctx.shadowBlur = 25;
-		this.canvas.ctx.shadowOffsetX = 0;
-		this.canvas.ctx.shadowOffsetY = 0;
-		this.canvas.ctx.arc(x, y, radius, 0, Math.PI * 2);
-		this.canvas.ctx.closePath();
-		this.canvas.ctx.fill();
-	}
-
-
-	drawPlayerImg(x, y, radius, playerImage) {
-		this.canvas.ctx.save();
-		this.canvas.ctx.beginPath();
-		this.canvas.ctx.arc(x, y, radius, 0, Math.PI * 2);
-		this.canvas.ctx.clip();
-		this.canvas.ctx.drawImage(playerImage, x - radius, y - radius, radius * 2, radius * 2);
-		this.canvas.ctx.closePath();
-		this.canvas.ctx.restore();
 	}
 
 
@@ -165,28 +115,12 @@ export default class Intro {
 		this.canvas.ctx.shadowBlur = 25;
 		this.canvas.ctx.shadowOffsetX = 0;
 		this.canvas.ctx.shadowOffsetY = 0;
-		this.canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-		this.canvas.ctx.font = '50px Russo one';
+		this.canvas.ctx.fillStyle = '#afb4c5';
+		this.canvas.ctx.font = '100px Russo one';
 		this.canvas.ctx.textAlign = 'center';
 		this.canvas.ctx.textBaseline = 'middle';
 		this.canvas.ctx.fillText(playerName, x, y);
 		this.canvas.ctx.closePath();
-	}
-
-
-	drawRank(x, y, img) {
-		const imgWidth = 140;
-		const imgHeight = 85;
-
-		this.canvas.ctx.save();
-		this.canvas.ctx.beginPath();
-		this.canvas.ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
-		this.canvas.ctx.shadowBlur = 50;
-		this.canvas.ctx.shadowOffsetX = 0;
-		this.canvas.ctx.shadowOffsetY = 0;
-		this.canvas.ctx.drawImage(img, x - imgWidth / 2, y + imgHeight * 2, imgWidth, imgHeight);
-		this.canvas.ctx.closePath();
-		this.canvas.ctx.restore();
 	}
 
 
@@ -229,12 +163,12 @@ export default class Intro {
 
 
 	updateCountDown() {
-		const countDownArray = ['2', '1'];
+		const countDownArray = ['2', '1', ''];
 		let i = 0;
 
 		const intervalId = setInterval(() => {
 			this.countDownNumber = countDownArray[i++];
-			if (i > 1)
+			if (i > 2)
 				clearInterval(intervalId);
 		}, 1000);
 		this.isCountDownEnabled = true;

@@ -1,4 +1,5 @@
 import {getString, getUserLanguage} from "../../../../utils/languageManagement.js";
+import './localGame/inLocalGameComponent.js';
 
 class LocalComponent extends HTMLElement {
 
@@ -86,6 +87,7 @@ class LocalComponent extends HTMLElement {
 	}
 
 	handlePlayButtonClick() {
+		document.querySelector('.states-container').innerHTML = '<in-local-game-component></in-local-game-component>';
 		// Start game in local
 	}
 
