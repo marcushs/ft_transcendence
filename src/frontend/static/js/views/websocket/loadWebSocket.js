@@ -1,3 +1,4 @@
+
 import {removeContactFromList, addNewContactToList, UpdateContactInList} from './updateContactWebsocket.js'
 import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms, addNewContactToContactedList, removeChatContactFromDOM} from '../../utils/chatUtils/joinRoomUtils.js';
 import { updateCurrentChatroomId, messageReceptionDOMUpdate } from '../../utils/chatUtils/sendPrivateMessage.js';
@@ -9,6 +10,7 @@ export let contactSocket = null;
 export let notificationSocket = null;
 
 export let chatSocket;
+export let chatroomsList;
 export let tournamentSocket;
 
 
@@ -16,7 +18,7 @@ export let tournamentSocket;
 export async function loadWebSocket() {
     await loadContactsWebSocket();
     await loadNotificationsWebSocket();
-	await loadChatWebSocket();
+	loadChatWebSocket();
 	await loadTournamentWebSocket();
 }
 
@@ -125,7 +127,7 @@ function throwDeleteNotificationElementEvent(notification) {
 
 //--------------> CHAT WEBSOCKET <--------------\\
 
-async function loadChatWebSocket() {
+function loadChatWebSocket() {
 	chatSocket = new WebSocket('wss://localhost:3000/ws/chat/');
 
 	chatSocket.onopen = async function (e) {
@@ -150,21 +152,21 @@ async function loadChatWebSocket() {
 	};
 
 	chatSocket.onclose = function(e) {
-		console.log(e);
+		console.log('chatSocket', e);
 	};
 }
 
-async function loadTournamentWebSocket() {
+function loadTournamentWebSocket() {
 	tournamentSocket = new WebSocket('wss://localhost:3000/ws/tournament/');
 
-	chatSocket.onopen = async function (e) {
+	tournamentSocket.onopen = async function (e) {
 		console.log("The tournament websocket connection was setup successfully !");
 
 		// chatroomsList = await fetchChatroomsList();
 		// joinAllInvitedChatrooms(chatroomsList);
 	};
 
-	chatSocket.onmessage = async function(e) {
+	tournamentSocket.onmessage = async function(e) {
 		const data = JSON.parse(e.data)
 		console.log(data)
 		// const data = JSON.parse(e.data);

@@ -30,12 +30,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		message_type = data['type']
 
 		if message_type == 'create_tournament':
-			self.createTournament()
+			self.createTournament(data)
 			
 	@database_sync_to_async
-	async def createTournament(self, request):
-		creator = self.user.id
-		data = json.loads(request.body.decode('utf-8'))
+	def createTournament(self, data):
+		creator = self.user
 		tournament_name = data['tournament_name']
 		tournament_size = data['tournament_size']
 

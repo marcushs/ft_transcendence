@@ -44,6 +44,7 @@ export async function updateCurrentChatroomId(userId) {
 }
 
 export async function putMessageToChatroomConversation(messageData) {
+	console.log('putMessageToChatroom called???????')
 	const chatroomConversation = document.querySelector('chatroom-conversation');
 	if (!chatroomConversation) {
 		unreadMessageNotifOn();
