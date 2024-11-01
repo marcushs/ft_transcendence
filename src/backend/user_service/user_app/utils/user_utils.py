@@ -278,7 +278,7 @@ class getUsernameById(View):
             if isinstance(request.user, AnonymousUser):
                 return JsonResponse({'message': 'User not found'}, status=400)
 
-            target_id = json.loads(request.GET.get('q', ''))
+            target_id = request.GET.get('q', '')
 
             if not target_id:
                 return JsonResponse({'status': 'error', 'message': 'No id provided'}, status=200)

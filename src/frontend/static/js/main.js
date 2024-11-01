@@ -19,7 +19,7 @@ import { unloadManager } from "./utils/unloadManager.js";
 import { loadWebSocket } from "./views/websocket/loadWebSocket.js";
 import oauthRedirect from './views/oauthRedirect.js';
 import oauthUsername from "./views/oauthUsername.js";
-import { checkMatchmakingSearch } from "./components/Game/MatchmakingResearchComponent.js";
+import { checkMatchmakingSearch } from "./utils/matchmaking/matchResearch.js";
 
 let languageJson;
 
@@ -142,7 +142,7 @@ document.addEventListener("inactiveGame", () => {
             const gameInactivityComponent = document.createElement('game-inactivity-component');
             app.appendChild(gameInactivityComponent);
         }
-    }, 600);
+    }, 1000);
 })
 
 document.addEventListener("matchmakingResearch", () => {

@@ -17,7 +17,7 @@ class UserAppConfig(AppConfig):
             unranked_matchmaking_thread.start()
         if not ranked_matchmaking_thread or not ranked_matchmaking_thread.is_alive():
             ranked_matchmaking_thread = threading.Thread(target=background_task_ranked_matchmaking, daemon=True)
-            ranked_matchmaking_thread.start()
+            ranked_matchmaking_thread.start() 
         if not ingame_check_thread or not ingame_check_thread.is_alive():
             ingame_check_thread = threading.Thread(target=periodic_check_ingame_status, daemon=True) 
             ingame_check_thread.start()

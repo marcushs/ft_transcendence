@@ -96,7 +96,9 @@ class MatchHistory extends HTMLElement {
     async generateUnrankedItem(matchInfos) {
         const isWin = matchInfos.winner_id === this.userId;
         const opponent_id = (isWin) ? matchInfos.loser_id : matchInfos.winner_id;
+        console.log('opponent_id = ', opponent_id);
         const opponent_name = await getUsernameById(opponent_id);
+        console.log('opponent_name = ', opponent_name);
         const score = (isWin) ? `${matchInfos.winner_score} - ${matchInfos.loser_score}` : `${matchInfos.loser_score} - ${matchInfos.winner_score}`
 
         return `

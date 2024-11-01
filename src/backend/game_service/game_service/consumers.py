@@ -11,20 +11,20 @@ class GameConsumer(AsyncWebsocketConsumer):
  #//---------------------------------------> Connector <--------------------------------------\\#
 
 	async def connect(self):
-		query_string = parse_qs(self.scope['query_string'].decode())
+		query_string = parse_qs(self.scope['query_string'].decode()) 
 		self.user_id = str(query_string.get('user_id', [None])[0])
 		try:
-			if not self.user_id or self.user_id == 'undefined':
+			if not self.user_id or self.user_id == 'undefined':  
 				await self.close()
 			else:
 				self.group_name = f'game_{self.user_id}'
 				await self.channel_layer.group_add(self.group_name, self.channel_name)
 				async with asyncio.Lock():
-					print(f'---------> connections set for user : {self.user_id}') 
-					connections[self.user_id] = self
+					print(f'!!!!!!!!!!!!!!!!!!!!!!---------> add user : {self.user_id} to connections list')
+					connections[self.user_id] = self 
 				await self.accept()
 		except Exception as e:
-			print('Error: ', e)
+			print('Error: ', e) 
 
  #//---------------------------------------> Disconnector <--------------------------------------\\#
 
@@ -32,7 +32,8 @@ class GameConsumer(AsyncWebsocketConsumer):
 		async with asyncio.Lock(): 
 			if self.user_id in connections:
 				del connections[self.user_id]
-		await self.channel_layer.group_discard(self.group_name, self.channel_name) 
+		if hasattr(self, 'group_name'):
+			await self.channel_layer.group_discard(self.group_name, self.channel_name) 
 
  #//---------------------------------------> Receiver <--------------------------------------\\#
 
@@ -58,7 +59,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 			}))
 
 
-	def check_received_id(self, data):
+	def check_received_id(self, data): 
 		if not 'type' in data:
 			raise Exception('No type provided')
 		if not 'player_id' in data:
@@ -133,5 +134,14 @@ class GameConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps({
 			'type': event['event'],
 			'message': event['message']
+		}
+	))
+
+
+	# Sender for websocket connections timeout
+	async def connections_time_out(self, event):
+		await self.send(text_data=json.dumps({
+			'type': event['type'],
+			'message': 'game connection timeout, game is canceled'
 		}
 	))

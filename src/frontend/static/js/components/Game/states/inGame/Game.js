@@ -1,9 +1,10 @@
 import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
-import { waitForStatesContainer } from "./gameNetworkManager.js";
+import { waitForStatesContainer } from "../../../../utils/game/gameConnection.js";
+import { gameSocket, websocketReconnection } from "./gameWebsocket.js";
 import { disconnectGameWebSocket } from "./gameWebsocket.js";
 import getUserId from "../../../../utils/getUserId.js";
 import { resetGameInstance } from "./inGameComponent.js";
-import { gameSocket } from "./gameWebsocket.js";
+import { gameWebsocket } from "./gameWebsocket.js";
 import Player from "./Player.js";
 import Spark from "./Spark.js";
 import Ball from "./Ball.js";
@@ -22,6 +23,8 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 	const userId = await getUserId();
 	const statesContainerDiv = document.querySelector('.states-container');
 
+	if (statesContainerDiv.querySelector('in-game-component'))
+		return;
 	statesContainerDiv.innerHTML = '';
 	for (let i = 0; i < statesContainerDiv.classList.length; i++) {
 		if (statesContainerDiv.classList[i] === 'states-container')
@@ -38,7 +41,6 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 
 export default class Game {
 	constructor(canvas, gameId, gameState, userId) {
-		console.log("gameState = ", gameState);
 		this.gameInProgress = true;
 		this.userId = userId;
 		this.canvas = canvas;
@@ -53,7 +55,6 @@ export default class Game {
 
 		this.initGameRender();
 		this.renderLoop();
-
 	}
 
 // --------------------------------------- Constructor method -------------------------------------- //
@@ -63,8 +64,8 @@ export default class Game {
 		this.speed = this.gameState.ball_speed;
 		this.speedLimit = this.gameState.speedLimit;
 		this.ball = new Ball(this.canvas, this.gameState.ball_position.x, this.gameState.ball_position.y, this.speed);
-		const playerOneBackId = Number(this.gameState.player_one.id);
-		const playerTwoBackId = Number(this.gameState.player_two.id);
+		const playerOneBackId = this.gameState.player_one.id;
+		const playerTwoBackId = this.gameState.player_two.id;
 
 		if (this.userId !== playerOneBackId) {
 			this.playerOne = new Player(this.canvas, true, playerOneBackId);
@@ -171,6 +172,7 @@ export default class Game {
 		this.canvas.ctx.stroke();
 		this.canvas.ctx.closePath();
 		this.canvas.ctx.fill();
+
 	}
 
 	drawSparks() {
@@ -341,41 +343,5 @@ export default class Game {
 
 		document.dispatchEvent(event);
 	}
-
-	// wallCollision() {
-	// 	// X should be deleted to score a goal
-	// 	if (this.ball.x + this.ball.ballRadius > this.canvas.width)
-	// 		this.ball.ballDirectionX = this.ball.ballDirectionX * -1;
-	// 	if (this.ball.x - this.ball.ballRadius < 0)
-	// 		this.ball.ballDirectionX = this.ball.ballDirectionX * -1;
-
-	// 	if (this.ball.y + this.ball.ballRadius > this.canvas.height) {
-	// 		this.ball.ballDirectionY = this.ball.ballDirectionY * -1;
-	// 		this.generateSparks(this.ball.x, this.ball.y, 'bottom', false, false, 'rgb(255, 165, 0)')
-	// 	}
-	// 	if (this.ball.y - this.ball.ballRadius < 0) {
-	// 		this.ball.ballDirectionY = this.ball.ballDirectionY * -1;
-	// 		this.generateSparks(this.ball.x, this.ball.y, 'top', false, false, 'rgb(255, 165, 0)');
-	// 	}
-	// }
-
-
-	// ------------------------------------- Move players ------------------------------------- //
-
-	// movePlayerDelay(newPosY, player, callback) {
-	// 	let i = 0;
-
-	// 	const intervalId = setInterval(() => {
-	// 		if (this.checkPlayerHitBox(newPosY, player)) {
-	// 			clearInterval(intervalId);
-	// 			return ;
-	// 		}
-	// 		callback();
-	// 		i++;
-	// 		if (i === 10)
-	// 			clearInterval(intervalId);
-	// 	}, 1);
-	// }
-
 
 }

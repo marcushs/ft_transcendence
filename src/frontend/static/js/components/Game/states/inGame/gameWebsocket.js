@@ -1,5 +1,6 @@
+import { surrenderHandler, handleGameConnectionTimeOut } from "../../../../utils/game/gameConnection.js";
 import { gameInstance, resetGameInstance } from "./inGameComponent.js";
-import { surrenderHandler, GameStillActive } from "./gameNetworkManager.js";
+import { GameStillActive } from "./gameNetworkManager.js";
 import { startGame } from "./Game.js";
 
 export let gameSocket = null;
@@ -7,14 +8,15 @@ let reconnectTimeout;
 
 
 export async function gameWebsocket(userId) {
+	console.trace('calling function: ')
 	if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
 		console.log('already connected to game Websocket');
 		return;
 	}
-	if (gameSocket)
-		disconnectGameWebSocket();
+	// if (gameSocket)
+	// 	disconnectGameWebSocket();
 
-	gameSocket = new WebSocket(`wss://localhost:8005/ws/game/?user_id=${userId}`);
+	gameSocket = new WebSocket(`wss://localhost:3000/ws/game/?user_id=${userId}`);
 
 	gameSocket.onopen = () => {
 		console.log('Connected to game websocket');
@@ -43,6 +45,9 @@ export async function gameWebsocket(userId) {
 			},
 			'game_resumed': (data) => {
 				if (gameInstance) gameInstance.updateMessage(data.message) 
+			},
+			'connections_time_out': (data) => {
+				handleGameConnectionTimeOut(data.message)
 			},
 			'error_log': (data) => console.log(data.message)
 			
