@@ -5,10 +5,12 @@ import Intro from "./Intro.js";
 import Outro from "./Outro.js";
 
 export default class Game {
-	constructor(canvas) {
+	constructor(canvas, ballSpeed, paddleSpeed, scoreToWin) {
+		const speeds = [5, 6, 7, 8, 9, 10, 11, 12, 13]
+
 		this.canvas = canvas;
-		this.speed = 15;
-		this.speedLimit = 45;
+		this.speed = speeds[ballSpeed - 1];
+		this.speedLimit = this.speed + 30;
 		this.ball = new Ball(canvas, canvas.width / 2, canvas.height / 2, this.speed);
 		this.playerOne = new Player(canvas, true);
 		this.playerTwo = new Player(canvas, false);
@@ -62,7 +64,7 @@ export default class Game {
 	}
 
 
-	gameLoop(currentTime) {
+	gameLoop() {
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.drawFrame();
 		if (this.isIntroAnimationEnabled)

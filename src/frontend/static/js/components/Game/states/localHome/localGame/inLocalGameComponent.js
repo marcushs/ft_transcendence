@@ -1,6 +1,7 @@
 import Game from './Game.js';
 
 class InLocalGameComponent extends HTMLElement {
+
 	constructor() {
 		super();
 
@@ -12,6 +13,7 @@ class InLocalGameComponent extends HTMLElement {
 		}
 		this.angle = 0;
 		this.initializeComponent();
+		this.initCanvas();
 	}
 
 
@@ -23,8 +25,8 @@ class InLocalGameComponent extends HTMLElement {
 
 
 	connectedCallback() {
+		new Game(this.canvas, this.attributes['ball-speed'].value, this.attributes['paddle-speed'].value, this.attributes['score-to-win'].value);
 		this.initCanvas();
-		new Game(this.canvas);
 	}
 
 	initCanvas() {
