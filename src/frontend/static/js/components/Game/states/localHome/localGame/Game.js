@@ -6,12 +6,13 @@ import Outro from "./Outro.js";
 
 export default class Game {
 	constructor(canvas, ballSpeed, paddleSpeed, scoreToWin) {
-		const speeds = [5, 6, 7, 8, 9, 10, 11, 12, 13]
+		const ballSpeeds = [5, 6, 7, 8, 9, 10, 11, 12, 13];
 
 		this.canvas = canvas;
-		this.startSpeed = speeds[ballSpeed - 1];
+		this.startSpeed = ballSpeeds[Number(ballSpeed) - 1];
 		this.speed = this.startSpeed;
 		this.speedLimit = this.speed + 30;
+		this.paddlesSpeed = Number(paddleSpeed) + 4;
 		this.ball = new Ball(canvas, canvas.width / 2, canvas.height / 2, this.speed);
 		this.playerOne = new Player(canvas, true);
 		this.playerTwo = new Player(canvas, false);
@@ -316,7 +317,7 @@ export default class Game {
 			}
 			callback();
 			i++;
-			if (i === 10)
+			if (i === this.paddlesSpeed)
 				clearInterval(intervalId);
 		}, 1);
 	}
