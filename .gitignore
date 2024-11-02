@@ -9,3 +9,4 @@ migrations/
 .docker
 chat_models.txt
 result.txt
+.DS_Store
