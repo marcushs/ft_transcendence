@@ -8,6 +8,7 @@ import onlineHome from "./states/onlineHome/onlineHome.js";
 import localHome from "./states/localHome/localHome.js";
 import bracket from "./states/tournamentHome/bracket/bracket.js";
 import rotatingGradient from "../../anim/rotatingGradient.js";
+import "./EmotesComponent.js";
 
 class GameComponent extends HTMLElement {
     constructor() {
@@ -25,6 +26,7 @@ class GameComponent extends HTMLElement {
             <div class="game-background"></div>
             <div class="states-container"></div>
             <game-top-bar></game-top-bar>
+            <emotes-component></emotes-component>
         `;
 
         this.statesContainer = this.querySelector('.states-container');
