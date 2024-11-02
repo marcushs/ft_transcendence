@@ -8,6 +8,8 @@ export default class Ball {
 		this.rotationAngle = 0;
 		this.isPositiveBallDirection = true;
 		this.ballColor = 'rgb(189, 195, 199)';
+		this.greyColor = 'rgb(140, 143, 164)';
+		this.ballTextureColor = this.greyColor;
 		this.bluePrimaryColor = 'rgb(0, 206, 255)';
 		this.blueSecondaryColor = 'rgb(3, 114, 155)';
 		this.pinkPrimaryColor = 'rgb(255, 22, 198)';
@@ -20,8 +22,16 @@ export default class Ball {
 		this.offsetTrailWidth = -10;
 		this.baseBlue = 255;
 		this.basePink = 255;
+		this.isTrailAvailable = false;
 		this.increaseBlue = false;
 		this.increasePink = false;
+	}
+
+
+	resetBallInfos(isPositiveBallDirection) {
+		this.rotationSpeed = 0.01;
+		this.isPositiveBallDirection = isPositiveBallDirection;
+		this.ballTextureColor = this.greyColor;
 	}
 
 
@@ -31,12 +41,16 @@ export default class Ball {
 			this.offsetTrailHeight += 0.4;
 		if (this.offsetTrailWidth < -10 + this.offsetMaxTrailwidth)
 			this.offsetTrailWidth += 0.6;
+
+		(isPositiveBallDirection) ? this.ballTextureColor = this.pinkPrimaryColor : this.ballTextureColor = this.bluePrimaryColor;
+
 		this.isPositiveBallDirection = isPositiveBallDirection;
 	}
 
 
 	draw(primaryColor, secondaryColor) {
-		this.drawTrail(primaryColor, secondaryColor);
+		if (this.rotationSpeed !== 0.01)
+			this.drawTrail(primaryColor, secondaryColor);
 		this.drawBall();
 		this.drawBallTexture();
 		this.updateTrailColors()
@@ -177,11 +191,8 @@ export default class Ball {
 		this.canvas.ctx.closePath();
 		this.canvas.ctx.fill();
 
+		this.canvas.ctx.fillStyle = this.ballTextureColor;
 		this.canvas.ctx.beginPath();
-		if (this.isPositiveBallDirection)
-			this.canvas.ctx.fillStyle = this.pinkPrimaryColor;
-		else
-			this.canvas.ctx.fillStyle = this.bluePrimaryColor;
 		this.canvas.ctx.ellipse(x, y, 3, 6, ellipseRotation, 0, 2 * Math.PI);
 		this.canvas.ctx.closePath();
 		this.canvas.ctx.fill();

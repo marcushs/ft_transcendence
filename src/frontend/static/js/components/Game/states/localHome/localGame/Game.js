@@ -9,7 +9,8 @@ export default class Game {
 		const speeds = [5, 6, 7, 8, 9, 10, 11, 12, 13]
 
 		this.canvas = canvas;
-		this.speed = speeds[ballSpeed - 1];
+		this.startSpeed = speeds[ballSpeed - 1];
+		this.speed = this.startSpeed;
 		this.speedLimit = this.speed + 30;
 		this.ball = new Ball(canvas, canvas.width / 2, canvas.height / 2, this.speed);
 		this.playerOne = new Player(canvas, true);
@@ -66,11 +67,13 @@ export default class Game {
 
 	gameLoop() {
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.drawFrame();
-		if (this.isIntroAnimationEnabled)
+		if (this.isIntroAnimationEnabled) {
+			this.drawFrame();
 			this.Intro.drawIntro();
-		else
+		} else {
 			this.drawGame();
+			this.drawFrame();
+		}
 		requestAnimationFrame(() => this.gameLoop());
 	}
 
@@ -225,20 +228,21 @@ export default class Game {
 		}
 		if (this.ball.x - this.ball.ballRadius < 15) {
 
-			this.speed = 15;
+			this.speed = this.startSpeed;
 			this.ball.x = this.canvas.width / 2;
 			this.ball.y = this.canvas.height / 2;
 			this.playerOneScore++;
-			this.ball.offsetTrailHeight = -12;
-			this.ball.offsetTrailWidth = -10;
+			this.ball.offsetTrailHeight = -12; // A voir
+			this.ball.offsetTrailWidth = -10; // A voir
 			this.ball.ballDirectionY = 0;
-			this.ball.ballDirectionX = this.speed;
+			this.ball.ballDirectionX = -this.speed;
+			this.ball.resetBallInfos(false);
 			this.playerOne.y = this.canvas.height / 2;
 			this.playerTwo.y = this.canvas.height / 2;
 		}
 		if (this.ball.x + this.ball.ballRadius > this.canvas.width - 15) {
 
-			this.speed = 15;
+			this.speed = this.startSpeed;
 			this.ball.x = this.canvas.width / 2;
 			this.ball.y = this.canvas.height / 2;
 			this.playerTwoScore++;
@@ -246,6 +250,7 @@ export default class Game {
 			this.ball.offsetTrailWidth = -10;
 			this.ball.ballDirectionY = 0;
 			this.ball.ballDirectionX = this.speed;
+			this.ball.resetBallInfos(true);
 			this.playerOne.y = this.canvas.height / 2;
 			this.playerTwo.y = this.canvas.height / 2;
 		}
