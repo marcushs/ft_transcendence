@@ -26,8 +26,7 @@ export default class Spark {
 
 	draw(ctx) {
 		ctx.save();
-		// console.log(this.startTime + this.lifeTime - this.age)
-        ctx.globalAlpha = 1 - -1 * (this.startTime + this.lifeTime - this.age); // Diminution progressive de l'opacité
+        ctx.globalAlpha = 1 - -1 * (this.startTime + this.lifeTime - this.age);
         ctx.fillStyle = this.color;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);

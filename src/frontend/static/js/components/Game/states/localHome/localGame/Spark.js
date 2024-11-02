@@ -1,5 +1,5 @@
 export default class Spark {
-	constructor(x, y, angle, speed, lifeTime, startTime, color) {
+	constructor(x, y, angle, speed, lifeTime, startTime, radius, color) {
 		this.x = x;
 		this.y = y;
 		this.vx = speed * Math.cos(angle) / 6;
@@ -7,6 +7,7 @@ export default class Spark {
 		this.lifeTime = lifeTime;
 		this.startTime = startTime;
 		this.age = 0;
+		this.radius = radius;
 		this.color = color;
 	}
 
@@ -15,7 +16,6 @@ export default class Spark {
 		this.x += this.vx;
 		this.y += this.vy;
 		this.age = deltaTime;
-		// console.log(this.age, this.lifeTime)
 	}
 
 
@@ -26,11 +26,10 @@ export default class Spark {
 
 	draw(ctx) {
 		ctx.save();
-		// console.log(this.startTime + this.lifeTime - this.age)
-        ctx.globalAlpha = 1 - -1 * (this.startTime + this.lifeTime - this.age); // Diminution progressive de l'opacité
+        ctx.globalAlpha = 1 - -1 * (this.startTime + this.lifeTime - this.age);
         ctx.fillStyle = this.color;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, 2, 0, 2 * Math.PI);
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
         ctx.fill();
         ctx.restore();
 	}

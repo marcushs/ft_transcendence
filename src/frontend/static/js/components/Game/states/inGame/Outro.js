@@ -17,7 +17,6 @@ export default class Outro {
 
 		this.isResultDrawable = false;
 		this.isSparksDrawable = false;
-
 		this.attachEventsListeners();
 	}
 

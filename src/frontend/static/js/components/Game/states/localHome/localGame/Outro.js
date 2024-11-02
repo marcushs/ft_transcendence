@@ -5,9 +5,6 @@ export default class Outro {
 	constructor(canvas) {
 		this.canvas = canvas;
 
-		this.isWin = true;
-		this.isRanked = false;
-
 		this.backgroundOpacity = 0;
 		this.resultFontSize = 1500;
 
@@ -24,7 +21,7 @@ export default class Outro {
 
 	attachEventsListeners() {
 		document.addEventListener('loadOutroAnimationEvent', (event) => {
-			this.isWin = event.detail.isWin;
+			this.winnerName = event.detail.winnerName;
 			this.updateBackgroundOpacity();
 		});
 	}
@@ -50,11 +47,11 @@ export default class Outro {
 		if (this.isSparksDrawable)
 			this.drawSparks();
 		this.canvas.ctx.beginPath();
-		this.canvas.ctx.fillStyle = (this.isWin) ? `rgba(0, 206, 255, 1)` : `rgba(255, 22, 198, 1)`;
+		this.canvas.ctx.fillStyle = `rgba(0, 206, 255, 1)`;
 		this.canvas.ctx.font = `bold ${this.resultFontSize}px Poppins`;
 		this.canvas.ctx.textAlign = 'center';
 		this.canvas.ctx.textBaseline = 'middle';
-		this.canvas.ctx.fillText((this.isWin) ? "WIN" : "LOSE", this.canvas.width / 2, this.canvas.height / 2);
+		this.canvas.ctx.fillText(`${this.winnerName} WON`, this.canvas.width / 2, this.canvas.height / 2);
 		this.canvas.ctx.closePath();
 	}
 
@@ -78,17 +75,13 @@ export default class Outro {
 	}
 
 
-	// Need refactor
 	updateResult() {
 		const intervalId = setInterval(() => {
 			if (this.resultFontSize > 180) {
 				this.resultFontSize -= 30;
-			} else if (this.isWin) {
-				if (this.isWin)
-					this.generateSparks(this.canvas.width / 2, this.canvas.height / 2);
-				this.isSparksDrawable = true;
-				clearInterval(intervalId);
 			} else {
+				this.generateSparks(this.canvas.width / 2, this.canvas.height / 2);
+				this.isSparksDrawable = true;
 				clearInterval(intervalId);
 			}
 		}, 10);

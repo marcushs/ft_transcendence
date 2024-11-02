@@ -1,5 +1,6 @@
 export default class Ball {
 	constructor(canvas, x, y, ballSpeed) {
+		console.log('ball speed = ', ballSpeed);
 		this.canvas = canvas;
 		this.x = x;
 		this.y = y;
@@ -14,7 +15,7 @@ export default class Ball {
 		this.blueSecondaryColor = 'rgb(3, 114, 155)';
 		this.pinkPrimaryColor = 'rgb(255, 22, 198)';
 		this.pinkSecondaryColor = 'rgb(146, 0, 117)';
-		this.ballDirectionX = ballSpeed;
+		(Math.random() > 0.5) ? this.ballDirectionX = ballSpeed : this.ballDirectionX = -ballSpeed;
 		this.ballDirectionY = 0;
 		this.offsetMaxTrailHeight = 20;
 		this.offsetMaxTrailwidth = 25;
@@ -32,6 +33,11 @@ export default class Ball {
 		this.rotationSpeed = 0.01;
 		this.isPositiveBallDirection = isPositiveBallDirection;
 		this.ballTextureColor = this.greyColor;
+		this.offsetTrailHeight = -12;
+		this.offsetTrailWidth = -10;
+		this.ballDirectionY = 0;
+		this.x = this.canvas.width / 2;
+		this.y = this.canvas.height / 2;
 	}
 
 

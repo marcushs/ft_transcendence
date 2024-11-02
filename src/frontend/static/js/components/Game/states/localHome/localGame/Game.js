@@ -3,6 +3,7 @@ import Ball from "./Ball.js";
 import Spark from "./Spark.js";
 import Intro from "./Intro.js";
 import Outro from "./Outro.js";
+import {throwRedirectionEvent} from "../../../../../utils/throwRedirectionEvent.js";
 
 export default class Game {
 	constructor(canvas, ballSpeed, paddleSpeed, scoreToWin) {
@@ -19,7 +20,6 @@ export default class Game {
 		this.Intro = new Intro(this.canvas);
 		this.isIntroAnimationEnabled = true;
 		this.Outro = new Outro(this.canvas);
-		this.isOutroAnimationEnabled = false;
 		this.playerOneScore = 0;
 		this.playerTwoScore = 0;
 		this.sparks = [];
@@ -32,6 +32,8 @@ export default class Game {
 			up: false,
 			down: false,
 		}
+		this.scoreToWin = Number(scoreToWin);
+		this.isGameFinished = false;
 		this.attachEventsListener();
 		this.gameLoop();
 
@@ -71,9 +73,13 @@ export default class Game {
 		if (this.isIntroAnimationEnabled) {
 			this.drawFrame();
 			this.Intro.drawIntro();
-		} else {
+		} else if (!this.isGameFinished) {
 			this.drawGame();
 			this.drawFrame();
+		} else {
+			this.drawScore();
+			this.drawFrame();
+			this.Outro.drawOutro();
 		}
 		requestAnimationFrame(() => this.gameLoop());
 	}
@@ -93,8 +99,8 @@ export default class Game {
 		this.canvas.ctx.font = '500px Russo One';
 		this.canvas.ctx.textAlign = 'center';
 		this.canvas.ctx.textBaseline = 'middle';
-		this.canvas.ctx.fillText(`${this.playerTwoScore}`, this.canvas.width / 4, this.canvas.height / 2 + 35);
-		this.canvas.ctx.fillText(`${this.playerOneScore}`, this.canvas.width / 4 * 3, this.canvas.height / 2 + 35);
+		this.canvas.ctx.fillText(`${this.playerOneScore}`, this.canvas.width / 4, this.canvas.height / 2 + 35);
+		this.canvas.ctx.fillText(`${this.playerTwoScore}`, this.canvas.width / 4 * 3, this.canvas.height / 2 + 35);
 	}
 
 
@@ -166,56 +172,22 @@ export default class Game {
 	}
 
 
-	generateSparks(x, y, side, isPlayerOne, isPlayerTwo, color) {
-		let numberOfSparks = 100;
-		let angleRange;
+	generateSparks(x, y) {
+		const numberOfSparks = 100;
+		const angleRange = [0, 2 * Math.PI];
 
-		switch(side) {
-	        case 'top':
-	            angleRange = [-Math.PI, 0];
-	            break;
-	        case 'bottom':
-	            angleRange = [Math.PI / 2, -(Math.PI)];
-	            break;
-			case 'left':
-	            angleRange = [Math.PI / 2, (3 * Math.PI) / 2];
-	            break;
-	        case 'right':
-	            angleRange = [Math.PI / 2, (3 * Math.PI) / 2];
-	            // angleRange = [Math.PI / 2, (Math.PI / 2)];
-	            break;
-	        default:
-	            angleRange = [0, 2 * Math.PI];
-	    }
-	    for (let i = 0; i < numberOfSparks; i++) {
-			let angle;
-			let speed;
+		for (let i = 0; i < numberOfSparks; i++) {
+			const angle = angleRange[0] + Math.random() * (angleRange[1] - angleRange[0]);
+			const speed = (this.speed / 4) + Math.random() * (this.speed / 4);
+			const lifetime = 0.5 + Math.random() * 0.5;
 
-			if (isPlayerTwo)
-		        angle = angleRange[0] + Math.random() * (angleRange[1] - angleRange[0]);
-			else
-		        angle = angleRange[0] - Math.random() * (angleRange[1] - angleRange[0]);
+			let sparkY;
 
-			if (isPlayerOne || isPlayerTwo)
-		        speed = (this.speed / 4) + Math.random() * (this.speed / 4);
-			else
-		        speed = (this.speed / 3) + Math.random() * (this.speed / 3);
-	        let lifetime = 0.5 + Math.random() * 0.5;
+			(y < 50) ? sparkY = 0 : sparkY = this.canvas.height;
 
-			let sparkX = x;
-			let sparkY = y;
-			if (side === 'top')
-				sparkY = y - this.ball.ballRadius;
-			if (side === 'bottom')
-				sparkY = y + this.ball.ballRadius;
-			if (side === 'left')
-				sparkX = x - this.ball.ballRadius;
-			if (side === 'right')
-				sparkX = x + this.ball.ballRadius;
-
-	        let spark = new Spark(sparkX, sparkY, angle, speed, lifetime, this.deltaTime, color);
-	        this.sparks.push(spark);
-	    }
+			let spark = new Spark(x, sparkY, angle, speed, lifetime, this.deltaTime, 2, "rgb(255, 165, 0)");
+			this.sparks.push(spark);
+		}
 	}
 
 
@@ -227,52 +199,60 @@ export default class Game {
 			if (!this.sparks[i].isAlive())
 				this.sparks.splice(i, 1);
 		}
-		if (this.ball.x - this.ball.ballRadius < 15) {
 
-			this.speed = this.startSpeed;
-			this.ball.x = this.canvas.width / 2;
-			this.ball.y = this.canvas.height / 2;
-			this.playerOneScore++;
-			this.ball.offsetTrailHeight = -12; // A voir
-			this.ball.offsetTrailWidth = -10; // A voir
-			this.ball.ballDirectionY = 0;
-			this.ball.ballDirectionX = -this.speed;
-			this.ball.resetBallInfos(false);
-			this.playerOne.y = this.canvas.height / 2;
-			this.playerTwo.y = this.canvas.height / 2;
-		}
-		if (this.ball.x + this.ball.ballRadius > this.canvas.width - 15) {
-
-			this.speed = this.startSpeed;
-			this.ball.x = this.canvas.width / 2;
-			this.ball.y = this.canvas.height / 2;
-			this.playerTwoScore++;
-			this.ball.offsetTrailHeight = -12;
-			this.ball.offsetTrailWidth = -10;
-			this.ball.ballDirectionY = 0;
-			this.ball.ballDirectionX = this.speed;
-			this.ball.resetBallInfos(true);
-			this.playerOne.y = this.canvas.height / 2;
-			this.playerTwo.y = this.canvas.height / 2;
-		}
-
+		if (this.ball.x - this.ball.ballRadius < 15)
+			this.handlePlayerTwoScore();
+		if (this.ball.x + this.ball.ballRadius > this.canvas.width - 15)
+			this.handlePlayerOneScore();
 
 	}
 
 
-	wallCollision() {
-		if (this.ball.x + this.ball.ballRadius > this.canvas.width)
-			this.ball.ballDirectionX = this.ball.ballDirectionX * -1;
-		if (this.ball.x - this.ball.ballRadius < 0)
-			this.ball.ballDirectionX = this.ball.ballDirectionX * -1;
+	handlePlayerOneScore() {
+		if (++this.playerOneScore === this.scoreToWin) {
+			this.endGame("PLAYER 1");
+			return ;
+		}
 
+		this.speed = this.startSpeed;
+		this.ball.ballDirectionX = this.speed;
+		this.ball.resetBallInfos(true);
+		this.playerOne.y = this.canvas.height / 2;
+		this.playerTwo.y = this.canvas.height / 2;
+	}
+
+
+	handlePlayerTwoScore() {
+		if (++this.playerTwoScore === this.scoreToWin) {
+			this.endGame("PLAYER 2");
+			return ;
+		}
+
+		this.speed = this.startSpeed;
+		this.ball.ballDirectionX = -this.speed;
+		this.ball.resetBallInfos(false);
+		this.playerOne.y = this.canvas.height / 2;
+		this.playerTwo.y = this.canvas.height / 2;
+	}
+
+
+	endGame(winnerName) {
+		this.isGameFinished = true;
+		this.throwLoadOutroAnimationEvent(winnerName);
+		setTimeout(() => {
+			throwRedirectionEvent('/');
+		}, 7000);
+	}
+
+
+	wallCollision() {
 		if (this.ball.y + this.ball.ballRadius > this.canvas.height) {
 			this.ball.ballDirectionY = this.ball.ballDirectionY * -1;
-			this.generateSparks(this.ball.x, this.ball.y, 'bottom', false, false, 'rgb(255, 165, 0)')
+			this.generateSparks(this.ball.x, this.ball.y)
 		}
 		if (this.ball.y - this.ball.ballRadius < 0) {
 			this.ball.ballDirectionY = this.ball.ballDirectionY * -1;
-			this.generateSparks(this.ball.x, this.ball.y, 'top', false, false, 'rgb(255, 165, 0)');
+			this.generateSparks(this.ball.x, this.ball.y);
 		}
 	}
 
@@ -329,6 +309,18 @@ export default class Game {
 		if (player.y + newPosY - player.height / 2 - 5 < 0)
 			return true;
 		return false;
+	}
+
+
+	throwLoadOutroAnimationEvent(winnerName) {
+		const event = new CustomEvent('loadOutroAnimationEvent', {
+			bubbles: true,
+			detail: {
+				winnerName: winnerName
+			}
+		});
+
+		document.dispatchEvent(event);
 	}
 
 }
