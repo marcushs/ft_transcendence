@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
 import uuid
 from django.utils import timezone
+import datetime
+from asgiref.sync import sync_to_async
+from django.forms.models import model_to_dict
 
 def user_directory_path(instance, filename):
     return f'profile_images/{instance.id}/{filename}'
@@ -41,29 +44,36 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
       return self.username
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'username': self.username,
-            'email': self.email,
-        }
+    async def to_dict(self):
+        obj_dict = await sync_to_async(model_to_dict)(self)
+
+        obj_dict['id'] = str(self.id)
+        return obj_dict
 
 class Tournament(models.Model):
     tournament_name = models.CharField(max_length=30, unique=True, editable=False)
-    creator = models.UUIDField()
+    creator = models.ForeignKey(User, related_name='created_tournaments', on_delete=models.CASCADE)
     tournament_size = models.IntegerField()
-    members = models.ManyToManyField(User, related_name='chat_groups', blank=True)
+    members = models.ManyToManyField(User, related_name='joined_tournaments', blank=True)
     creation_time = models.DateTimeField(default=timezone.now)
+    
+    async def to_dict(self):
+        # Convert the main object to a dict
+        obj_dict = await sync_to_async(model_to_dict)(self)
 
+        obj_dict['creator'] = await self.creator.to_dict()
 
-    def to_dict(self):
-        return {
-            'tournament_name': self.tournament_name,
-            'creator': self.creator,
-            'tournament_size': self.tournament_size,
-            'creation_time': self.creation_time,
-            'members': list(self.members.all().values('id', 'username')),
-        }
+        # Convert members (ManyToMany field) to list of dicts with 'id' and 'username'
+        members = await sync_to_async(list)(
+            self.members.values('id', 'username')
+        )
+        obj_dict['members'] = [{'id': str(member['id']), 'username': member['username']} for member in members]
+        obj_dict['creation_time'] = self.format_datetime(self.creation_time)
+
+        return obj_dict
+    
+    def format_datetime(self, datetime):
+        return datetime.strftime('%d/%m/%Y %H:%M')
 
 class TournamentMatch(models.Model):
     tournament = models.ForeignKey(Tournament, related_name='tournament_match', on_delete=models.CASCADE)

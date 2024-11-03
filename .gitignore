@@ -8,3 +8,4 @@ migrations
 .docker
 chat_models.txt
 result.txt
+tournament_models.txt
