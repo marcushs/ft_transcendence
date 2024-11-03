@@ -1,29 +1,22 @@
 import {getString, getUserLanguage} from "../../../../utils/languageManagement.js";
 import { sendRequest } from "../../../../utils/sendRequest.js";
+import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
+import { TournamentComponent } from "./TournamentComponent.js";
 
 class JoinComponent extends HTMLElement {
 
 	constructor() {
 		super();
 
-		this.temporaryBuildObject = {
-			first: {name: 'Call of duty league major final', score: '15/16'},
-			second: {name: 'League of Legends Worlds', score: '11/16'},
-			third: {name: 'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW', score: '4/8'},
-			fourth: {name: 'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW', score: '15/16'},
-			fifth: {name: 'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW', score: '11/16'},
-			sixth: {name: 'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW', score: '11/16'},
-		}
-
 		this.innerHTML = `
 			<div class="join-component-content">
 				<h4>${getString('buttonComponent/join')}</h4>
 				<div class="tournaments-list">
-					${this.getTournamentList()}
 				</div>
 			</div>
 		`;
-
+		this.tournamentsList;
+		this.createTournamentsList();
 	}
 
 	async connectedCallback() {
@@ -48,33 +41,27 @@ class JoinComponent extends HTMLElement {
 	}
 
 	async getTournamentList() {
-		// const tournamentsInfos = Object.values(this.temporaryBuildObject);
-		// let tournamentList = '';
-
-		// for (const tournamentInfo of tournamentsInfos) {
-		// 	tournamentList +=  `
-		// 		<div class="joinable-tournament">
-		// 			<div class="tournament-left-infos">
-		// 				<p class="tournament-name">${tournamentInfo.name}</p>
-		// 			</div>
-		// 			<div class="tournament-right-infos">
-		// 				<p>${tournamentInfo.score}</p>
-		// 				<button-component label="${getString('buttonComponent/join')}" class="generic-btn"></button-component>
-		// 			</div>
-		// 		</div>
-		// 	`;
-		// }
-
-		// return tournamentList;
 		try {
 			let res = await sendRequest('GET', `/api/tournament/get_joinable_tournaments/`, null, false);
 
-			console.log(res);
+			this.tournamentsList = res.tournaments_list;
 		} catch (error) {
 			
 		}
 	}
 
+	async createTournamentsList() {
+		const tournamentsListDOM = this.querySelector('.tournaments-list')
+
+		await this.getTournamentList(); 
+
+		console.log(this.tournamentsList)
+		this.tournamentsList.forEach(tournament => {
+			const tournamentEl = new TournamentComponent(tournament);
+
+			tournamentsListDOM.appendChild(tournamentEl);
+		})
+	}
 
 	createTournamentsNameTooltip() {
 		const joinableTournaments = this.querySelectorAll('.joinable-tournament');
