@@ -42,33 +42,46 @@ class MatchResultManager(View):
 
     def update_match_result_data(self, data):
         winner, loser = self.get_users_from_result(data)
-        change_user_games_count(is_game_win=True, user=winner)
-        change_user_games_count(is_game_win=False, user=loser)
-        create_new_match_history(data=data, winner_instance=winner, loser_instance=loser)
+        self.change_user_games_count(is_game_win=True, user=winner)
+        self.change_user_games_count(is_game_win=False, user=loser)
+        self.create_new_match_history(data=data, winner_instance=winner, loser_instance=loser)
         if data['type'] == 'ranked':
-            pass # do the additional manage of point for ranked games here
-        winner.save()
+            self.manage_ranked_points_change(winner=winner, loser=loser)
+        winner.save() 
         loser.save()
 
 
     def get_users_from_result(self, data):
-        winner = User.objects.get(id=data['winner']['id'])
+        winner = User.objects.get(id=data['winner']['id']) 
         loser = User.objects.get(id=data['loser']['id'])
         return winner, loser
 
 
-def change_user_games_count(is_game_win, user):
-    if is_game_win:
-        user.gamesWin += 1
-    else:
-        user.gamesLoose += 1
+    def change_user_games_count(self, is_game_win, user):
+        if is_game_win:
+            user.gamesWin += 1
+        else:
+            user.gamesLoose += 1
 
 
-def create_new_match_history(data, winner_instance, loser_instance):
-    MatchHistory.objects.create(
-        winner=winner_instance,
-        loser=loser_instance,
-        winner_score=int(data['winner']['score']),
-        loser_score=int(data['loser']['score']),
-        match_type=str(data['type'])
-    )
+    def create_new_match_history(self, data, winner_instance, loser_instance):
+        MatchHistory.objects.create(
+            winner=winner_instance,
+            loser=loser_instance,
+            winner_score=int(data['winner']['score']),
+            loser_score=int(data['loser']['score']),
+            match_type=str(data['type'])
+        )
+        
+    def manage_ranked_points_change(self, winner, loser):
+        self.increase_winner_points(winner) 
+        self.decrease_loser_points(loser)
+    
+    def increase_winner_points(self, winner):
+        winner.rankPoints += 2000
+    
+    def decrease_loser_points(self, loser):
+        if loser.rankPoints - 100 >= 0:
+            loser.rankPoints -= 100
+        else:
+            loser.rankPoints = 0
