@@ -70,3 +70,47 @@ game-top-bar .game-settings .extend-game-button:hover {
 	cursor: pointer;
 	height: 2.7rem;
 }
+
+game-top-bar .increase-game-top-bar-button {
+	display: none;
+}
+
+
+
+.in-game-top-bar {
+	height: 0;
+	padding-top: 0;
+	/*animation: increase-top-bar-size 0.25s linear forwards;*/
+}
+
+.in-game-top-bar .back-button {
+	visibility: hidden !important;
+}
+
+.in-game-top-bar .game-settings .reduce-game-button {
+	visibility: hidden;
+}
+
+.in-game-top-bar .game-settings .extend-game-button {
+	visibility: hidden;
+}
+
+.in-game-top-bar .increase-game-top-bar-button {
+	position: absolute;
+	height: 6rem;
+	cursor: pointer;
+	right: 1rem;
+	top: 0.3rem;
+}
+
+@keyframes increase-top-bar-size {
+	from {
+		height: 0;
+		padding-top: 0;
+	}
+	to {
+		height: 8%;
+		padding-top: 1.8rem;
+	}
+}
+

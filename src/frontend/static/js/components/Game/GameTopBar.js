@@ -13,6 +13,7 @@ class GameTopBarComponent extends HTMLElement {
 				<div class="game-settings">
 					<img src="../../../assets/extendGameButton.svg" alt="extend game button" class="extend-game-button">
 					<img src="../../../assets/reduceGameButton.svg" alt="reduce game button" class="reduce-game-button">
+					<img src="../../../assets/arrow_down.svg" alt="increase top bar" class="increase-game-top-bar-button">
 				</div>
 			</div>
 		`;
@@ -20,6 +21,10 @@ class GameTopBarComponent extends HTMLElement {
 		this.backButton = this.querySelector('.back-button');
 		this.extendGameButton = this.querySelector('.extend-game-button');
 		this.reduceGameButton = this.querySelector('.reduce-game-button');
+		this.increaseTopBarButton = this.querySelector('.increase-game-top-bar-button');
+
+		this.increaseTopBarButton.addEventListener('click', () => this.handleClickOnIncreaseTopBarButton());
+
 		this.throwEvents();
 	}
 
@@ -47,6 +52,11 @@ class GameTopBarComponent extends HTMLElement {
 
 			this.dispatchEvent(event);
 		});
+	}
+
+
+	handleClickOnIncreaseTopBarButton() {
+		this.increaseTopBarButton.style.visibility = 'hidden';
 	}
 
 }

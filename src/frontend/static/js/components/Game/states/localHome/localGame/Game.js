@@ -43,6 +43,12 @@ export default class Game {
 		setTimeout(() => {
 			this.isIntroAnimationEnabled = false;
 		}, 7300);
+
+		this.gameTopBar = document.querySelector('game-top-bar');
+		this.gameTopBar.classList.add('in-game-top-bar');
+
+
+		// document.querySelector('.increase-game-top-bar-button');
 	}
 
 
@@ -65,6 +71,11 @@ export default class Game {
 			if (event.key === 'ArrowUp') this.keysPlayerTwo.up = false;
 			if (event.key === 'ArrowDown') this.keysPlayerTwo.down = false;
 		});
+
+		document.querySelector('game-top-bar .increase-game-top-bar-button').addEventListener('click', () => {
+			this.gameTopBar.style.animation = "increase-top-bar-size 0.25s linear forwards";
+		});
+
 	}
 
 

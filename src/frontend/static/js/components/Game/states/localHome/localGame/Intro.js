@@ -166,6 +166,7 @@ export default class Intro {
 		const countDownArray = ['2', '1', ''];
 		let i = 0;
 
+		document.querySelector('game-top-bar .increase-game-top-bar-button').style.display = 'block';
 		const intervalId = setInterval(() => {
 			this.countDownNumber = countDownArray[i++];
 			if (i > 2)

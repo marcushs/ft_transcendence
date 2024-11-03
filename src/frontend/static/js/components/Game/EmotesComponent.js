@@ -19,6 +19,7 @@ class EmotesComponent extends HTMLElement {
 				<img src="../../../assets/emotes/laugh/gorilla-laugh.png" alt="laugh emote" id="gorilla-laugh">
 			</div>
 			<div class="emote-in-game"></div>
+			<div class="opponent-emote-in-game"></div>
 		`;
 	}
 
@@ -34,21 +35,26 @@ class EmotesComponent extends HTMLElement {
 
 	attachEventListeners() {
 		for (const emote of this.emotes) {
-			emote.addEventListener('click', (event) => this.displayEmote(event))
+			emote.addEventListener('click', (event) => {
+				this.displayEmote(event.target.id.split('-')[1]);
+				// this.displayOpponentEmote(event.target.id.split('-')[1]);
+			});
 		}
 
 		this.querySelector('.emotes-choice').addEventListener('click', () => this.handleClickOnEmotesChoice());
 
 		this.addEventListener('click', event => event.stopPropagation());
 		document.addEventListener('click', () => this.closeEmotesContainer());
+
+		this.addEventListener('launchOpponentEmoteEvent', (event) => this.displayEmote(event.detail.emoteType, true));
 	}
 
 
-	displayEmote(event) {
+	displayEmote(emoteType) {
 		if (!this.isDisplayEmoteAvailable)
 			return;
 
-		const emoteInGame = this.querySelector('.emote-in-game');
+		let emoteInGame = this.querySelector('.emote-in-game');
 
 		this.isDisplayEmoteAvailable = false;
 		this.isEmotesOpened = false;
@@ -56,7 +62,7 @@ class EmotesComponent extends HTMLElement {
 
 		const emoteInGameImgElement = document.createElement('img');
 
-		emoteInGameImgElement.src = `../../../assets/emotes/${event.target.id.split('-')[1]}/${event.target.id}.gif`;
+		emoteInGameImgElement.src = `../../../assets/emotes/${emoteType}/gorilla-${emoteType}.gif`;
 		emoteInGame.append(emoteInGameImgElement);
 
 		this.emotesChoice.src = "../../../assets/emotes/emote-choice-unavailable.png";
@@ -69,7 +75,23 @@ class EmotesComponent extends HTMLElement {
 			emoteInGame.innerHTML = '';
 		}, 3500);
 
-		this.loadEmoteSound(event.target.id.split('-')[1]);
+		this.loadEmoteSound(emoteType);
+	}
+
+
+	displayOpponentEmote(emoteType) {
+		let emoteInGame = this.querySelector('.opponent-emote-in-game');
+
+		const emoteInGameImgElement = document.createElement('img');
+
+		emoteInGameImgElement.src = `../../../assets/emotes/${emoteType}/gorilla-${emoteType}.gif`;
+		emoteInGame.append(emoteInGameImgElement);
+
+		setTimeout(() => {
+			emoteInGame.innerHTML = '';
+		}, 3500);
+
+		this.loadEmoteSound(emoteType);
 	}
 
 
