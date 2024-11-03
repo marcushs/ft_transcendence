@@ -56,6 +56,7 @@ class Tournament(models.Model):
     tournament_size = models.IntegerField()
     members = models.ManyToManyField(User, related_name='joined_tournaments', blank=True)
     creation_time = models.DateTimeField(default=timezone.now)
+    isOver = models.BooleanField(default=False)
     
     async def to_dict(self):
         # Convert the main object to a dict
@@ -74,6 +75,9 @@ class Tournament(models.Model):
     
     def format_datetime(self, datetime):
         return datetime.strftime('%d/%m/%Y %H:%M')
+    
+    def is_not_full(self):
+        return self.members.count() < self.tournament_size
 
 class TournamentMatch(models.Model):
     tournament = models.ForeignKey(Tournament, related_name='tournament_match', on_delete=models.CASCADE)

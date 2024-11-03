@@ -1,4 +1,5 @@
 import {getString, getUserLanguage} from "../../../../utils/languageManagement.js";
+import { sendRequest } from "../../../../utils/sendRequest.js";
 
 class JoinComponent extends HTMLElement {
 
@@ -18,7 +19,7 @@ class JoinComponent extends HTMLElement {
 			<div class="join-component-content">
 				<h4>${getString('buttonComponent/join')}</h4>
 				<div class="tournaments-list">
-					${this.createTournamentList()}
+					${this.getTournamentList()}
 				</div>
 			</div>
 		`;
@@ -46,25 +47,32 @@ class JoinComponent extends HTMLElement {
 		});
 	}
 
-	createTournamentList() {
-		const tournamentsInfos = Object.values(this.temporaryBuildObject);
-		let tournamentList = '';
+	async getTournamentList() {
+		// const tournamentsInfos = Object.values(this.temporaryBuildObject);
+		// let tournamentList = '';
 
-		for (const tournamentInfo of tournamentsInfos) {
-			tournamentList +=  `
-				<div class="joinable-tournament">
-					<div class="tournament-left-infos">
-						<p class="tournament-name">${tournamentInfo.name}</p>
-					</div>
-					<div class="tournament-right-infos">
-						<p>${tournamentInfo.score}</p>
-						<button-component label="${getString('buttonComponent/join')}" class="generic-btn"></button-component>
-					</div>
-				</div>
-			`;
+		// for (const tournamentInfo of tournamentsInfos) {
+		// 	tournamentList +=  `
+		// 		<div class="joinable-tournament">
+		// 			<div class="tournament-left-infos">
+		// 				<p class="tournament-name">${tournamentInfo.name}</p>
+		// 			</div>
+		// 			<div class="tournament-right-infos">
+		// 				<p>${tournamentInfo.score}</p>
+		// 				<button-component label="${getString('buttonComponent/join')}" class="generic-btn"></button-component>
+		// 			</div>
+		// 		</div>
+		// 	`;
+		// }
+
+		// return tournamentList;
+		try {
+			let res = await sendRequest('GET', `/api/tournament/get_joinable_tournaments/`, null, false);
+
+			console.log(res);
+		} catch (error) {
+			
 		}
-
-		return tournamentList;
 	}
 
 

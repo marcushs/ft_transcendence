@@ -50,7 +50,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	@database_sync_to_async
 	def createTournamentInDB(self, data):
 		creator = self.user
-		print(creator) 
 		tournament_name = data['tournament_name']
 		tournament_size = data['tournament_size']
 
