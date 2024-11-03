@@ -67,7 +67,17 @@ class EmotesComponent extends HTMLElement {
 			this.emotesChoice.style.cursor = 'pointer';
 			this.isDisplayEmoteAvailable = true;
 			emoteInGame.innerHTML = '';
-		}, 3000);
+		}, 3500);
+
+		this.loadEmoteSound(event.target.id.split('-')[1]);
+	}
+
+
+	loadEmoteSound(emoteType) {
+		const randomNumber = Math.floor(Math.random() * 4) + 1;
+		const sound = new Audio(`../../../assets/emotes/${emoteType}/sounds/gorilla-${emoteType}-sound-${randomNumber}.mp3`);
+
+		sound.play();
 	}
 
 

@@ -37,4 +37,5 @@ emotes-component .emote-in-game img {
 	width: 100%;
 	height: 100%;
 	transform: scaleX(-1);
+	opacity: 0.75;
 }
