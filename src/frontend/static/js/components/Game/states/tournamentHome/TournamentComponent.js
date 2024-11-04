@@ -22,6 +22,14 @@ export class TournamentComponent extends HTMLElement {
 			</div>
 		`;
 	}
+
+	// addEventListeners() {
+	// 	const btn = this.querySelector('button-component');
+
+	// 	btn.addEventListener('click', () => {
+			
+	// 	});
+	// }
 }
 
 customElements.define('tournament-component', TournamentComponent);

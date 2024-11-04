@@ -19,7 +19,7 @@ class getJoinableTournamentsView(View):
 			member_count=Count('members')
 		).filter(
 			Q(member_count__lt=F('tournament_size')) & Q(isOver=False)
-		).values('tournament_name', 'tournament_size', 'member_count', 'members')
+		).values('tournament_name', 'tournament_size', 'member_count')
 
 		tournaments_list = list(joinable_tournaments)
 		return JsonResponse({'tournaments_list': tournaments_list, 'status': 'success'}, status=200)
