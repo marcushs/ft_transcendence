@@ -54,6 +54,21 @@ game-top-bar .back-button:hover p {
 
 game-top-bar .game-settings {
 	margin-right: 2.5rem;
+	width: 9rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+
+game-top-bar .game-settings .emotes-choice-button {
+	height: 3.2rem;
+	margin-bottom: 5px;
+}
+
+game-top-bar .game-settings .emotes-choice-button:hover {
+	height: 3.4rem;
+	cursor: pointer;
 }
 
 game-top-bar .game-settings .reduce-game-button {
@@ -73,6 +88,11 @@ game-top-bar .game-settings .extend-game-button:hover {
 
 game-top-bar .increase-game-top-bar-button {
 	display: none;
+	position: relative;
+}
+
+game-top-bar emotes-component {
+	visibility: hidden;
 }
 
 .in-game-top-bar {
@@ -82,6 +102,10 @@ game-top-bar .increase-game-top-bar-button {
 
 .in-game-top-bar .back-button {
 	visibility: hidden !important;
+}
+
+.in-game-top-bar .game-settings emotes-component {
+	visibility: hidden;
 }
 
 .in-game-top-bar .game-settings .reduce-game-button {
@@ -96,8 +120,10 @@ game-top-bar .increase-game-top-bar-button {
 	position: absolute;
 	height: 6rem;
 	cursor: pointer;
+	display: inline-block;
 	right: 1rem;
 	top: 0.3rem;
+	filter: drop-shadow(0 0 10px rgba(0, 0, 0, 1)) drop-shadow(0 0 10px rgba(0, 0, 0, 1));
 }
 
 @keyframes increase-top-bar-size {

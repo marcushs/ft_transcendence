@@ -1,28 +1,29 @@
 emotes-component {
-	position: absolute;
-	height: 10rem;
-	width: 10rem;
-	z-index: 23;
-	left: -8.5rem;
-	top: 85%;
+	height: 3.4rem;
+	padding-bottom: 3.8rem;
 }
 
 emotes-component > img {
-	width: 8rem;
+	height: 3.2rem;
+	cursor: pointer;
+}
+
+emotes-component > img:hover {
+	height: 3.4rem;
 	cursor: pointer;
 }
 
 emotes-component .emotes-container {
 	position: absolute;
+	right: 7.4rem;
 	display: none;
-	flex-direction: column;
-	bottom: 3.8rem;
+	bottom: 2rem;
 }
 
 emotes-component .emotes-container img {
-	width: 8rem;
+	height: 4rem;
+	margin-left: 1rem;
 	cursor: pointer;
-	margin-top: 1rem;
 }
 
 emotes-component .emote-in-game {

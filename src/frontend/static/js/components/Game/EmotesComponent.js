@@ -60,19 +60,20 @@ class EmotesComponent extends HTMLElement {
 		this.isEmotesOpened = false;
 		this.closeEmotesContainer();
 
-		const emoteInGameImgElement = document.createElement('img');
+		// const emoteInGameImgElement = document.createElement('img');
 
-		emoteInGameImgElement.src = `../../../assets/emotes/${emoteType}/gorilla-${emoteType}.gif`;
-		emoteInGame.append(emoteInGameImgElement);
+		// emoteInGameImgElement.src = `../../../assets/emotes/${emoteType}/gorilla-${emoteType}.gif`;
+		// emoteInGame.append(emoteInGameImgElement);
 
 		this.emotesChoice.src = "../../../assets/emotes/emote-choice-unavailable.png";
 		this.emotesChoice.style.cursor = 'inherit';
+		this.throwLoadEmoteEvent(emoteType);
 
 		setTimeout(() => {
 			this.emotesChoice.src = "../../../assets/emotes/emote-choice.png";
 			this.emotesChoice.style.cursor = 'pointer';
 			this.isDisplayEmoteAvailable = true;
-			emoteInGame.innerHTML = '';
+			// emoteInGame.innerHTML = '';
 		}, 3500);
 
 		this.loadEmoteSound(emoteType);
@@ -117,6 +118,18 @@ class EmotesComponent extends HTMLElement {
 		this.emotesChoice.style.display = 'block';
 		this.emotesContainer.style.display = 'none';
 		this.isEmotesOpened = false;
+	}
+
+
+	throwLoadEmoteEvent(emoteType) {
+		const event = new CustomEvent('loadEmoteEvent', {
+			bubbles: true,
+			detail: {
+				emoteType: emoteType
+			}
+		});
+
+		document.dispatchEvent(event);
 	}
 
 }
