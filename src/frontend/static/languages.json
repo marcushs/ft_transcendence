@@ -56,7 +56,8 @@
 	  "play": "Play",
 	  "change": "Change",
 	  "save": "Save",
-	  "verify": "Verify"
+	  "verify": "Verify",
+	  "leave": "Leave"
 	},
 	"navBarComponent": {
 	  "home": "Home"

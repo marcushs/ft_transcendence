@@ -3,8 +3,9 @@ import { getString } from "../../../../utils/languageManagement.js";
 export class TournamentComponent extends HTMLElement {
 	constructor(tournamentData) {
 		super();
-		this.tournamentData = tournamentData
-		console.log(this.tournamentData);
+		this.tournamentName = tournamentData.tournament_name;
+		this.tournamentSize = tournamentData.tournament_size;
+		this.tournamentMembersCount = tournamentData.member_count;
 		this.render();
 	}
 
@@ -12,10 +13,10 @@ export class TournamentComponent extends HTMLElement {
 		this.innerHTML =  `
 			<div class="joinable-tournament">
 				<div class="tournament-left-infos">
-					<p class="tournament-name">${this.tournamentData.tournament_name}</p>
+					<p class="tournament-name">${this.tournamentName}</p>
 				</div>
 				<div class="tournament-right-infos">
-					<p>${this.tournamentData.member_count}/${this.tournamentData.tournament_size}</p>
+					<p>${this.tournamentMembersCount}/${this.tournamentSize}</p>
 					<button-component label="${getString('buttonComponent/join')}" class="generic-btn"></button-component>
 				</div>
 			</div>

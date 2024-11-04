@@ -62,6 +62,8 @@ class Tournament(models.Model):
         # Convert the main object to a dict
         obj_dict = await sync_to_async(model_to_dict)(self)
 
+        obj_dict['tournament_name'] = self.tournament_name
+        obj_dict['tournament_size'] = int(self.tournament_size)
         obj_dict['creator'] = await self.creator.to_dict()
 
         # Convert members (ManyToMany field) to list of dicts with 'id' and 'username'
@@ -69,6 +71,7 @@ class Tournament(models.Model):
             self.members.values('id', 'username')
         )
         obj_dict['members'] = [{'id': str(member['id']), 'username': member['username']} for member in members]
+        obj_dict['member_count'] = len(members)
         obj_dict['creation_time'] = self.format_datetime(self.creation_time)
 
         return obj_dict

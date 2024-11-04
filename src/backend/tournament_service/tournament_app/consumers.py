@@ -38,12 +38,12 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				return await self.send_error_message(message_type, result)
 			await self.send_success_message(message_type, result)
 			await self.channel_layer.group_send('tournament_updates',
-												{'type': 'create.tournament',
+												{'type': 'new.tournament',
 												'tournament': await tournament.to_dict()})
 
-	async def create_tournament(self, event):
+	async def new_tournament(self, event):
 		await self.send(text_data=json.dumps({
-			'type': 'create_tournament',
+			'type': 'new_tournament',
 			'tournament': event['tournament']
 		}))
 
@@ -59,7 +59,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			return None, 'Invalid tournament name'
 		if tournament_size is None or self.is_valid_size(int(tournament_size)) is False:
 			return None, 'Invalid tournament size'
-		if Tournament.objects.filter(tournament_name=tournament_name).exists():
+		if Tournament.objects.filter(tournament_name=tournament_name).filter(isOver=False).exists():
 			return None, 'Tournament already exists'
 		
 		new_tournament = Tournament.objects.create(creator=creator, tournament_name=tournament_name, tournament_size=tournament_size)
