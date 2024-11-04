@@ -82,7 +82,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
             print(f'-> request_response: {request_response} <-')
             if request_response and request_response.cookies:
                 request.new_token = request_response.cookies.get('jwt')
-                request.new_token_refresh =  request_response.cookies.get('jwt_refresh')
+                request.new_token_refresh =  request_response.cookies.get('jwt_refresh') 
                 request.user = jwt_user
             else:
                 request.user = AnonymousUser()
