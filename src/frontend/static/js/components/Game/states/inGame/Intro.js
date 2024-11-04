@@ -12,6 +12,21 @@ export default class Intro {
 
 		this.isRanked = false;
 
+		this.playersInfos = {
+			isRanked: false,
+			playerOne: {
+				name: "Theo",
+				profileImage: "https://imgs.search.brave.com/iSAvbiep4QwLA-UQyDCBMZsxBkcoa3eu7mv2ycTyU3I/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXM1LmFscGhhY29k/ZXJzLmNvbS81OTMv/NTkzMzMzLmpwZw",
+				rank: "master"
+			},
+			playerTwo: {
+				name: "Alex",
+				profileImage: "https://imgs.search.brave.com/yhsJnp0ftGpvmQ6t71zUYHHDynOvfO1xoG8mGtodmMk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLmpl/dXhhY3R1cy5jb20v/ZGF0YXMvamV1eC9y/L28vcm9ja2V0LWxl/YWd1ZS92bi9yb2Nr/ZXQtbGVhZ3VlLTYx/NWU2NzY4MTZhZTYu/anBn",
+				rank: "diamond"
+			}
+		}
+
+
 		this.initializeImages();
 		this.initializeCoordinates();
 	}

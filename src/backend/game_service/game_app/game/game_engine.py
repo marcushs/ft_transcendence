@@ -406,6 +406,17 @@ class PongGameEngine:
         }
         await self.websocket_sender(payload)
 
+        
+    async def send_emote(self, player_id, emote_type):
+        payload = {
+            'type': 'send_emote',
+            'message': f'{emote_type}',
+        }
+        if player_id == self.player_one_id:
+            await send_websocket_info(player_id=self.player_one_id, payload=payload)
+        else:
+            await send_websocket_info(player_id=self.player_two_id, payload=payload)
+
 
     async def websocket_sender(self, payload):
         if self.player_one_connected:

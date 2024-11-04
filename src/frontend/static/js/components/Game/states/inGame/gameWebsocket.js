@@ -26,31 +26,33 @@ export async function gameWebsocket(userId) {
 		const data = JSON.parse(event.data)
 		const actions = {
 			'game_ready_to_start': (data) => {
-				startGame(data.game_id, data.game_state, data.map_dimension)
+				startGame(data.game_id, data.game_state, data.map_dimension);
 			},
 			'data_update': (data) => {
-				if (gameInstance) gameInstance.updateGameRender(data.game_state)
+				if (gameInstance) gameInstance.updateGameRender(data.game_state);
+			},
+			'emote_received': (data) => {
+				if (gameInstance) throwReceivedEmoteEvent(data.message);
 			},
 			'game_finished': (data) => {
-				if (gameInstance) gameInstance.gameFinished(data.message.is_win, data)
+				if (gameInstance) gameInstance.gameFinished(data.message.is_win, data);
 			},
 			'game_canceled': (data) => {
-				if (gameInstance) gameInstance.canceledGame(data.message) 
+				if (gameInstance) gameInstance.canceledGame(data.message);
 			},
 			'player_disconnected': (data) => {
-				if (gameInstance) gameInstance.updateMessage(data.message) 
+				if (gameInstance) gameInstance.updateMessage(data.message);
 			},
 			'player_reconnected': (data) => {
-				if (gameInstance) gameInstance.updateMessage(data.message) 
+				if (gameInstance) gameInstance.updateMessage(data.message);
 			},
 			'game_resumed': (data) => {
-				if (gameInstance) gameInstance.updateMessage(data.message) 
+				if (gameInstance) gameInstance.updateMessage(data.message);
 			},
 			'connections_time_out': (data) => {
-				handleGameConnectionTimeOut(data.message)
+				handleGameConnectionTimeOut(data.message);
 			},
 			'error_log': (data) => console.log(data.message)
-			
 		}
 		if (data.type in actions)
 			actions[data.type](data);
@@ -178,4 +180,16 @@ export function disconnectGameWebSocket(userId, sendMessage) {
 		gameSocket.close();
 		console.log('Game connection closed');
 	}
+}
+
+
+function throwReceivedEmoteEvent(emoteType) {
+	const event = new CustomEvent('receivedEmoteEvent', {
+		bubbles: true,
+		detail: {
+			emoteType: emoteType
+		}
+	});
+
+	document.dispatchEvent(event);
 }

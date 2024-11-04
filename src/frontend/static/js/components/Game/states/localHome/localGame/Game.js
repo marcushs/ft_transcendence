@@ -4,7 +4,6 @@ import Spark from "./Spark.js";
 import Intro from "./Intro.js";
 import Outro from "./Outro.js";
 import {throwRedirectionEvent} from "../../../../../utils/throwRedirectionEvent.js";
-import CircularList from "../../../../../utils/CircularList.js";
 
 export default class Game {
 	constructor(canvas, ballSpeed, paddleSpeed, scoreToWin) {
@@ -25,9 +24,6 @@ export default class Game {
 		this.playerTwoScore = 0;
 		this.sparks = [];
 		this.lastTime = performance.now();
-		this.isEmoteAnimationEnabled = false;
-		this.emoteFramesList = null;
-
 
 		this.keysPlayerOne = {
 			up: false,
@@ -39,11 +35,8 @@ export default class Game {
 		}
 		this.scoreToWin = Number(scoreToWin);
 		this.isGameFinished = false;
-		this.initEmotesLists();
 		this.attachEventsListener();
-		setTimeout(() => {
-			this.gameLoop();
-		}, 100);
+		this.gameLoop();
 
 		setTimeout(() => {
 			this.Intro.isAnimationEnabled = true;
@@ -54,30 +47,6 @@ export default class Game {
 
 		this.gameTopBar = document.querySelector('game-top-bar');
 		this.gameTopBar.classList.add('in-game-top-bar');
-	}
-
-
-	initEmotesLists() {
-		let framesArr = [];
-
-		for (let i = 0; i < 18; i++)
-			framesArr.push(this.loadImage(`../../../../../../assets/emotes/happy/frames/${i}.gif`));
-		this.happyFramesList = new CircularList(framesArr);
-		framesArr = [];
-
-		for (let i = 0; i < 12; i++)
-			framesArr.push(this.loadImage(`../../../../../../assets/emotes/mad/frames/${i}.gif`));
-		this.madFramesList = new CircularList(framesArr);
-		framesArr = [];
-
-		for (let i = 0; i < 39; i++)
-			framesArr.push(this.loadImage(`../../../../../../assets/emotes/cry/frames/${i}.gif`));
-		this.cryFramesList = new CircularList(framesArr);
-		framesArr = [];
-
-		for (let i = 0; i < 9; i++)
-			framesArr.push(this.loadImage(`../../../../../../assets/emotes/laugh/frames/${i}.gif`));
-		this.laughFramesList = new CircularList(framesArr);
 	}
 
 
@@ -100,43 +69,6 @@ export default class Game {
 			if (event.key === 'ArrowUp') this.keysPlayerTwo.up = false;
 			if (event.key === 'ArrowDown') this.keysPlayerTwo.down = false;
 		});
-
-		document.querySelector('game-top-bar .increase-game-top-bar-button').addEventListener('click', () => {
-			this.gameTopBar.style.animation = "increase-top-bar-size 0.25s linear forwards";
-				document.querySelector('game-top-bar emotes-component').style.visibility = 'visible';
-			document.querySelector('game-top-bar .extend-game-button').style.visibility = 'visible';
-			document.querySelector('game-top-bar .reduce-game-button').style.visibility = 'visible';
-			setTimeout(() => { this.isTopBarOpened = true; }, 250);
-		});
-
-		document.querySelector('game-top-bar').addEventListener('mouseleave', () => {
-			if (this.isTopBarOpened) {
-				this.gameTopBar.style.animation = "decrease-top-bar-size 0.25s linear forwards";
-				this.isTopBarOpened = false;
-				this.gameTopBar.classList.add('in-game-top-bar');
-				document.querySelector('game-top-bar emotes-component').style.visibility = 'hidden';
-				document.querySelector('game-top-bar .increase-game-top-bar-button').style.visibility = 'visible';
-				document.querySelector('game-top-bar .extend-game-button').style.visibility = 'hidden';
-				document.querySelector('game-top-bar .reduce-game-button').style.visibility = 'hidden';
-			}
-		});
-
-		document.addEventListener('loadEmoteEvent', (event) => {
-			if (event.detail.emoteType === "happy")
-				this.emoteFramesList = this.happyFramesList;
-			if (event.detail.emoteType === "mad")
-				this.emoteFramesList = this.madFramesList;
-			if (event.detail.emoteType === "cry")
-				this.emoteFramesList = this.cryFramesList;
-			if (event.detail.emoteType === "laugh")
-				this.emoteFramesList = this.laughFramesList;
-
-			this.isEmoteAnimationEnabled = true;
-			setTimeout(() => {
-				this.isEmoteAnimationEnabled = false;
-			}, 3500);
-		});
-
 	}
 
 
@@ -145,32 +77,6 @@ export default class Game {
 
 		img.src = path;
 		return img;
-	}
-
-	drawEmote() {
-		this.canvas.ctx.save();
-		this.canvas.ctx.beginPath();
-		if (this.backgroundImage)
-			this.canvas.ctx.drawImage(this.backgroundImage, this.canvas.width - 175, 0, 175, 150);
-		this.canvas.ctx.translate(this.canvas.width, 0);
-		this.canvas.ctx.fillStyle = 'rgba(0, 208, 255, 0.65)';
-		this.canvas.ctx.fill();
-		this.canvas.ctx.restore();
-		this.canvas.ctx.closePath();
-	}
-
-
-	drawOpponentEmote() {
-		this.canvas.ctx.save();
-		this.canvas.ctx.beginPath();
-		this.canvas.ctx.scale(-1, 1);
-		if (this.backgroundImage)
-			this.canvas.ctx.drawImage(this.backgroundImage, -175, this.canvas.height - 150, 175, 150);
-		this.canvas.ctx.translate(this.canvas.width, 0);
-		this.canvas.ctx.fillStyle = 'rgba(0, 208, 255, 0.65)';
-		this.canvas.ctx.fill();
-		this.canvas.ctx.restore();
-		this.canvas.ctx.closePath();
 	}
 
 

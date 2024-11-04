@@ -37,7 +37,6 @@ class EmotesComponent extends HTMLElement {
 		for (const emote of this.emotes) {
 			emote.addEventListener('click', (event) => {
 				this.displayEmote(event.target.id.split('-')[1]);
-				// this.displayOpponentEmote(event.target.id.split('-')[1]);
 			});
 		}
 
@@ -67,7 +66,7 @@ class EmotesComponent extends HTMLElement {
 
 		this.emotesChoice.src = "../../../assets/emotes/emote-choice-unavailable.png";
 		this.emotesChoice.style.cursor = 'inherit';
-		this.throwLoadEmoteEvent(emoteType);
+		this.throwSendEmoteEvent(emoteType);
 
 		setTimeout(() => {
 			this.emotesChoice.src = "../../../assets/emotes/emote-choice.png";
@@ -121,8 +120,8 @@ class EmotesComponent extends HTMLElement {
 	}
 
 
-	throwLoadEmoteEvent(emoteType) {
-		const event = new CustomEvent('loadEmoteEvent', {
+	throwSendEmoteEvent(emoteType) {
+		const event = new CustomEvent('sendEmoteEvent', {
 			bubbles: true,
 			detail: {
 				emoteType: emoteType
