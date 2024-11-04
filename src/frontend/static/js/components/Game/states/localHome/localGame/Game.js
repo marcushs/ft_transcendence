@@ -74,6 +74,21 @@ export default class Game {
 
 		document.querySelector('game-top-bar .increase-game-top-bar-button').addEventListener('click', () => {
 			this.gameTopBar.style.animation = "increase-top-bar-size 0.25s linear forwards";
+			document.querySelector('game-top-bar .extend-game-button').style.visibility = 'visible';
+			document.querySelector('game-top-bar .reduce-game-button').style.visibility = 'visible';
+			// this.isTopBarOpened = true;
+			setTimeout(() => { this.isTopBarOpened = true; }, 250);
+		});
+
+		document.querySelector('game-top-bar').addEventListener('mouseleave', () => {
+			if (this.isTopBarOpened) {
+				this.gameTopBar.style.animation = "decrease-top-bar-size 0.25s linear forwards";
+				this.isTopBarOpened = false;
+				this.gameTopBar.classList.add('in-game-top-bar');
+				document.querySelector('game-top-bar .increase-game-top-bar-button').style.visibility = 'visible';
+				document.querySelector('game-top-bar .extend-game-button').style.visibility = 'hidden';
+				document.querySelector('game-top-bar .reduce-game-button').style.visibility = 'hidden';
+			}
 		});
 
 	}

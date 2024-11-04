@@ -5,7 +5,7 @@ async function reduceGameComponent(gameComponent) {
 	gameComponent.classList.add('reduced-game');
 	gameComponent.querySelector('.extend-game-button').style.display = 'inline';
 	gameComponent.querySelector('.reduce-game-button').style.display = 'none';
-	gameComponent.querySelector('game-top-bar').style.paddingTop = '1.8rem';
+	gameComponent.querySelector('game-top-bar .top-bar-options').style.paddingTop = '0';
 	gameComponent.addEventListener('animationend', async (event) => manageBackgroundDisplay(event, gameComponent));
 }
 

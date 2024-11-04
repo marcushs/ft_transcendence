@@ -75,12 +75,9 @@ game-top-bar .increase-game-top-bar-button {
 	display: none;
 }
 
-
-
 .in-game-top-bar {
 	height: 0;
 	padding-top: 0;
-	/*animation: increase-top-bar-size 0.25s linear forwards;*/
 }
 
 .in-game-top-bar .back-button {
@@ -111,6 +108,17 @@ game-top-bar .increase-game-top-bar-button {
 	to {
 		height: 8%;
 		padding-top: 1.8rem;
+	}
+}
+
+@keyframes decrease-top-bar-size {
+	from {
+		height: 8%;
+		padding-top: 1.8rem;
+	}
+	to {
+		height: 0;
+		padding-top: 0;
 	}
 }
 

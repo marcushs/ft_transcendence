@@ -47,6 +47,7 @@ emotes-component .opponent-emote-in-game {
 	height: 12rem;
 	left: 132.7rem;
 	bottom: 69rem;
+	display: none;
 }
 
 emotes-component .opponent-emote-in-game img {
