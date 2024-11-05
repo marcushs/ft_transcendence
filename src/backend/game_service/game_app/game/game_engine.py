@@ -1,4 +1,5 @@
 from .game_utils import send_websocket_info, get_map_dimension
+from ..request import send_request
 import asyncio
 import json
 import time
@@ -20,6 +21,7 @@ class PongGameEngine:
     def init_game_attributes(self, game_data):
         map_dimension = get_map_dimension()
         self.game_id = str(game_data['game'])
+        self.game_type = str(game_data['game_type'])
         self.player_one_id = str(game_data['player_one']['id'])
         self.player_two_id = str(game_data['player_two']['id'])
         self.player_one_user_infos = game_data['player_one']['user_infos']
@@ -260,7 +262,7 @@ class PongGameEngine:
             self.winner_id = -1
         self.game_active = False
         PongGameEngine.active_games.remove(self)
-        await self.send_end_update()
+        await self.send_end_update(is_surrend=False)
 
  #//---------------------------------------> Player movement-(websocket receiver) <--------------------------------------\\#     
         
@@ -304,6 +306,7 @@ class PongGameEngine:
         self.winner_id = self.player_one_id if surrend_id == self.player_two_id else self.player_two_id
         self.game_active = False
         PongGameEngine.active_games.remove(self)
+        # await self.send_end_update(is_surrend=True)
         await self.send_surrender_update(loser_id)
 
  #//---------------------------------------> Send message to client websocket method <--------------------------------------\\#
@@ -337,12 +340,18 @@ class PongGameEngine:
         await self.websocket_sender(payload)
 
 
-    async def send_end_update(self):
+    async def send_end_update(self, is_surrend):
+        await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)
+        payload = {
+            'winner': self.winner_id,
+            'loser': self.loser_id,
+            'type': self.game_type
+        }
         if self.winner_id == -1:
             payload = {
                 'type': 'game_update_info',
                 'event': 'game_canceled',
-                'message': f'Game draw after reconnection time to the paused game has been exceeded'
+                'message': f'Game canceled: reconnection time to the paused game has been exceeded'
             }
             await self.websocket_sender(payload)
         else:

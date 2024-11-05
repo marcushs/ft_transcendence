@@ -40,6 +40,7 @@ async def starting_game_instance(data):
     try:
         game_users_data = {
             'game': str(uuid.uuid4()),
+            'game_type': str(data['game_type']),
             'player_one': {
                 'id': str(data['player1']),
                 'user_infos': {
@@ -71,31 +72,6 @@ async def starting_game_instance(data):
         await running_game_instance(instance=game_instance, game_type=data['game_type'])
     except Exception as e:
         print(f'-> async_tasks: error: {str(e)}')
-
-
-#     try:
-#         print(f'-> async_tasks: starting_game_instance reached with data : {data}')
-#         game_id_data = {
-#             'game': str(uuid.uuid4()),
-#             'player_one': data['player1'],
-#             'player_two': data['player2']
-#         }
-#         print(f'-> async_tasks: call pong game engine constructor...')
-#         game_instance = PongGameEngine(game_id_data)
-#         print(f'-> async_tasks: pong game engine ready, start checking connections...')
-#         if not await check_connections(game_id_data):
-#             payload = {
-#             'player_one_id': game_id_data['player_one'],
-#             'player_two_id': game_id_data['player_two']
-#             }
-#             await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)
-#             return
-#         asyncio.sleep(0.5)
-#         print(f'-> async_tasks: connections ok, sending websocket...')
-#         await send_client_game_init(game_id_data=game_id_data, game_instance=game_instance)
-#         await running_game_instance(instance=game_instance, game_type=data['game_type'])
-#     except Exception as e:
-#         print(f'-> async_tasks: error: {str(e)}')
 
 
 async def check_connections(data):
@@ -132,10 +108,6 @@ async def running_game_instance(instance, game_type):
 
 async def ending_game_instance(winner, loser, game_type):
     try:
-#         payload = {
-#             'winner_id': winner['id'],
-#             'loser_id': loser['id']
-#         }
         payload = {
             'player_one_id': winner['id'],
             'player_two_id': loser['id']

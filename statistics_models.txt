@@ -1,0 +1,27 @@
+_________statistics_APP_USER_________
+
+                 password                  | last_login | is_superuser |                  id                  | username | rankPoints | gamesWin | gamesLoose 
+-------------------------------------------+------------+--------------+--------------------------------------+----------+------------+----------+------------
+ !1ONuAuNvIfhGi2tDapZHHoQXE6DRhJlWHObCS2kq |            | f            | 70759519-1443-4d21-ab92-214b95c0d3f0 | Shellks  |        101 |        1 |          0
+ !YDlgmwSOo9j8DPAMHF0gC06vbBj6O3B06OSPc6T7 |            | f            | 5e15a11b-2881-4afa-bd92-64cfc702a615 | alex     |          0 |        0 |          1
+(2 rows)
+
+***************************************************************************************************************************
+_________statistics_APP_USER_________
+
+                 password                  | last_login | is_superuser |                  id                  | username | rankPoints | gamesWin | gamesLoose 
+-------------------------------------------+------------+--------------+--------------------------------------+----------+------------+----------+------------
+ !1ONuAuNvIfhGi2tDapZHHoQXE6DRhJlWHObCS2kq |            | f            | 70759519-1443-4d21-ab92-214b95c0d3f0 | Shellks  |        501 |        5 |          0
+ !YDlgmwSOo9j8DPAMHF0gC06vbBj6O3B06OSPc6T7 |            | f            | 5e15a11b-2881-4afa-bd92-64cfc702a615 | alex     |          0 |        0 |          5
+(2 rows)
+
+***************************************************************************************************************************
+_________statistics_APP_USER_________
+
+                 password                  | last_login | is_superuser |                  id                  | username | rankPoints | gamesWin | gamesLoose 
+-------------------------------------------+------------+--------------+--------------------------------------+----------+------------+----------+------------
+ !YDlgmwSOo9j8DPAMHF0gC06vbBj6O3B06OSPc6T7 |            | f            | 5e15a11b-2881-4afa-bd92-64cfc702a615 | alex     |        423 |        5 |          5
+ !1ONuAuNvIfhGi2tDapZHHoQXE6DRhJlWHObCS2kq |            | f            | 70759519-1443-4d21-ab92-214b95c0d3f0 | Shellks  |        179 |        5 |          5
+(2 rows)
+
+***************************************************************************************************************************

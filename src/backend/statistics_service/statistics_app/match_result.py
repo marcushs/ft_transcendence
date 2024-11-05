@@ -47,6 +47,10 @@ class MatchResultManager(View):
         self.create_new_match_history(data=data, winner_instance=winner, loser_instance=loser)
         if data['type'] == 'ranked':
             self.manage_ranked_result(data=data, winner=winner, loser=loser)
+        winner.goals_scored += data['winner']['score']
+        winner.goals_conceded += data['loser']['score']
+        loser.goals_scored += data['loser']['score']
+        loser.goals_conceded += data['winner']['score']
         winner.save()
         loser.save()
 
@@ -70,7 +74,7 @@ class MatchResultManager(View):
             loser=loser_instance,
             winner_score=int(data['winner']['score']),
             loser_score=int(data['loser']['score']),
-            match_type=str(data['type'])
+            match_type=str(data['type']) 
         )
 
 
@@ -89,36 +93,22 @@ class MatchResultManager(View):
     def manage_ranked_points_change(self, user, user_score, opponent, opponent_score): 
         base_point = 100 
         rank_difference = user.rankPoints - opponent.rankPoints
-        average_rank = (user.rankPoints + opponent.rankPoints) / 2
-        rank_percentage = (rank_difference * 100) / max(1, average_rank)
+        rank_percentage = (abs(rank_difference) * 100) / max(1, user.rankPoints, opponent.rankPoints)
         score_difference = user_score - opponent_score
-        print(f'------> rank_difference: {rank_difference} -- rank percentage : {rank_percentage} -- average_rank: {average_rank} -- score_difference: {score_difference}')
-        points = base_point + rank_percentage + score_difference
+        print(f'------> rank_difference: {rank_difference} -- rank percentage : {rank_percentage} -- score_difference: {score_difference}')
         if score_difference > 0:
+            if rank_difference > 0:
+                points = base_point - rank_percentage + score_difference
+            else:
+                points = base_point + rank_percentage + score_difference
             print(points)
-            return round(min(150, points))
+            return round(max(50, min(150, points))) 
         elif score_difference < 0:
+            if rank_difference > 0:
+                points = base_point + rank_percentage + abs(score_difference)
+            else:
+                points = base_point - rank_percentage + abs(score_difference)
             print(points * -1)
-            return round(max(-150, points * -1))
+            return round(min(-50, max(-150, points * -1))) 
         else:
             return 0
-    
-    
-    # if rank_difference < 0:
-    #         multiplier = 1 + abs(rank_difference) / (abs(rank_difference) + 1000)
-    #     else:
-    #         multiplier = 1 - rank_difference / (rank_difference + 1000)
-    #     score_ratio = (user_score / max(opponent_score, 1)) / 1000
-    #     print(f'user_score: {user_score} -- opponent_score: {opponent_score}')
-    #     print(f'rank_difference: {rank_difference} -- user.rankPoints: {user.rankPoints} -- opponent.rankPoints: {opponent.rankPoints}')
-    #     print(f'score_ratio: {score_ratio} -- base_point: {base_point}')
-    #     print(f'multiplier: {multiplier}')
-    #     if user_score > opponent_score:
-    #         multiplier = 1 + (abs(rank_difference) / (abs(rank_difference) + 100)) * (1 if rank_difference < 0 else -0.8)
-    #         points = base_point * multiplier * score_ratio
-    #     elif user_score < opponent_score:
-    #         multiplier = 1 - (abs(rank_difference) / (abs(rank_difference) + 100)) * (1 if rank_difference < 0 else -0.8) 
-    #         points = -base_point * multiplier * (1 - score_ratio)
-    #     else: 
-    #         points = 0 
-    #     print(f'points: {points}')
