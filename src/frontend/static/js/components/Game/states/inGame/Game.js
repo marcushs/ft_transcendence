@@ -53,7 +53,7 @@ export default class Game {
 		this.isSentEmoteAnimationEnabled = false;
 		this.isReceivedEmoteAnimationEnabled = false;
 
-		this.Intro = new Intro(this.canvas, gameState.player_one.user_infos, gameState.player_two.user_infos);
+		this.Intro = new Intro(this.canvas, gameState.player_two.user_infos, gameState.player_one.user_infos);
 		this.Outro = new Outro(this.canvas);
 
 		this.gameTopBar = document.querySelector('game-top-bar');
@@ -227,21 +227,26 @@ export default class Game {
 	drawEmotes() {
 		if (this.isSentEmoteAnimationEnabled) {
 			this.sentEmoteFrame = this.sentEmoteFramesList.get();
-			(this.isLeftPlayer) ? this.drawLeftEmote() : this.drawRightEmote();
+			this.drawSentEmote(this.sentEmoteFrame, this.isLeftPlayer);
 		}
 
 		if (this.isReceivedEmoteAnimationEnabled) {
 			this.receivedEmoteFrame = this.receivedEmoteFramesList.get();
-			(this.isLeftPlayer) ? this.drawRightEmote() : this.drawLeftEmote();
+			this.drawReceivedEmote(this.receivedEmoteFrame, this.isLeftPlayer);
 		}
 	}
 
-	drawLeftEmote() {
+	drawSentEmote(emoteFrame, isLeftPlayer) {
 		this.canvas.ctx.save();
 		this.canvas.ctx.beginPath();
-		this.canvas.ctx.scale(-1, 1);
-		if (this.sentEmoteFrame)
-			this.canvas.ctx.drawImage(this.sentEmoteFrame, -175, this.canvas.height - 150, 175, 150);
+		if (isLeftPlayer)
+			this.canvas.ctx.scale(-1, 1);
+		if (emoteFrame) {
+			if (isLeftPlayer)
+				this.canvas.ctx.drawImage(emoteFrame, -175, this.canvas.height - 150, 175, 150);
+			else
+				this.canvas.ctx.drawImage(emoteFrame, this.canvas.width - 175, 0, 175, 150);
+		}
 		this.canvas.ctx.translate(this.canvas.width, 0);
 		this.canvas.ctx.fillStyle = 'rgba(0, 208, 255, 0.65)';
 		this.canvas.ctx.fill();
@@ -249,11 +254,17 @@ export default class Game {
 		this.canvas.ctx.closePath();
 	}
 
-	drawRightEmote() {
+	drawReceivedEmote(emoteFrame, isLeftPlayer) {
 		this.canvas.ctx.save();
 		this.canvas.ctx.beginPath();
-		if (this.receivedEmoteFrame)
-			this.canvas.ctx.drawImage(this.receivedEmoteFrame, this.canvas.width - 175, 0, 175, 150);
+		if (!isLeftPlayer)
+			this.canvas.ctx.scale(-1, 1);
+		if (emoteFrame) {
+			if (isLeftPlayer)
+				this.canvas.ctx.drawImage(emoteFrame, this.canvas.width - 175, 0, 175, 150);
+			else
+				this.canvas.ctx.drawImage(emoteFrame, -175, this.canvas.height - 150, 175, 150);
+		}
 		this.canvas.ctx.translate(this.canvas.width, 0);
 		this.canvas.ctx.fillStyle = 'rgba(0, 208, 255, 0.65)';
 		this.canvas.ctx.fill();
@@ -374,9 +385,10 @@ export default class Game {
 	}
 
 	handleReceivedEmote(event) {
+		console.log('Emote received = ', event.detail.emoteType);
 		this.receivedEmoteFramesList = this.getEmoteFramesListByType(event.detail.emoteType);
-		this.isReceivedEmoteAnimationEnabled = true;
 
+		this.isReceivedEmoteAnimationEnabled = true;
 		setTimeout(() => {
 			this.isReceivedEmoteAnimationEnabled = false;
 		}, 3500);

@@ -36,7 +36,7 @@ class EmotesComponent extends HTMLElement {
 	attachEventListeners() {
 		for (const emote of this.emotes) {
 			emote.addEventListener('click', (event) => {
-				this.displayEmote(event.target.id.split('-')[1]);
+				this.launchEmote(event.target.id.split('-')[1]);
 			});
 		}
 
@@ -45,24 +45,17 @@ class EmotesComponent extends HTMLElement {
 		this.addEventListener('click', event => event.stopPropagation());
 		document.addEventListener('click', () => this.closeEmotesContainer());
 
-		this.addEventListener('launchOpponentEmoteEvent', (event) => this.displayEmote(event.detail.emoteType, true));
+		// this.addEventListener('launchOpponentEmoteEvent', (event) => this.launchEmote(event.detail.emoteType, true));
 	}
 
 
-	displayEmote(emoteType) {
+	launchEmote(emoteType) {
 		if (!this.isDisplayEmoteAvailable)
 			return;
-
-		let emoteInGame = this.querySelector('.emote-in-game');
 
 		this.isDisplayEmoteAvailable = false;
 		this.isEmotesOpened = false;
 		this.closeEmotesContainer();
-
-		// const emoteInGameImgElement = document.createElement('img');
-
-		// emoteInGameImgElement.src = `../../../assets/emotes/${emoteType}/gorilla-${emoteType}.gif`;
-		// emoteInGame.append(emoteInGameImgElement);
 
 		this.emotesChoice.src = "../../../assets/emotes/emote-choice-unavailable.png";
 		this.emotesChoice.style.cursor = 'inherit';
@@ -72,23 +65,6 @@ class EmotesComponent extends HTMLElement {
 			this.emotesChoice.src = "../../../assets/emotes/emote-choice.png";
 			this.emotesChoice.style.cursor = 'pointer';
 			this.isDisplayEmoteAvailable = true;
-			// emoteInGame.innerHTML = '';
-		}, 3500);
-
-		this.loadEmoteSound(emoteType);
-	}
-
-
-	displayOpponentEmote(emoteType) {
-		let emoteInGame = this.querySelector('.opponent-emote-in-game');
-
-		const emoteInGameImgElement = document.createElement('img');
-
-		emoteInGameImgElement.src = `../../../assets/emotes/${emoteType}/gorilla-${emoteType}.gif`;
-		emoteInGame.append(emoteInGameImgElement);
-
-		setTimeout(() => {
-			emoteInGame.innerHTML = '';
 		}, 3500);
 
 		this.loadEmoteSound(emoteType);
