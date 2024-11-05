@@ -1,25 +1,26 @@
-export default class TournamentWaitingRoom extends HTMLElement {
-	constructor() {
-		super();
+export default class TournamentWaitingRoom {
+	constructor(tournamentData) {
 		this.redirectState = "tournament-waiting-room";
 		this.class = "tournament-waiting-room";
-		// this.render();
+		this.tournamentName = tournamentData.tournament_name;
+		this.tournamentSize = tournamentData.tournament_size;
+		this.tournamentCreator = tournamentData.creator.username;
+		this.tournamentMemberCount = tournamentData.member_count;
 	}
 
 	render() {
-		this.innerHTML = `
-			<ul class="members-list">
-				<li>Player1</li>
-				<li>Player2</li>
-				<li>Player3</li>
-				<li>Player4</li>
-				<li>Player5</li>
-				<li>Player6</li>
-			</ul>
-			<button type="button">Leave</button>
-			<button type="button">Ready</button>
+		return `
+			<div class="waiting-room">
+				<h3 class="waiting-room-title">Waiting Room</h3>
+				<div class="waiting-room-background">
+					<div class="waiting-room-content">
+						<h4 class="tournament-name">${this.tournamentName}</h4>
+						<p>Creator: <span>${this.tournamentCreator}</span></p>
+						<p>Joined players: <span>${this.tournamentMemberCount}/${this.tournamentSize}</span></p>
+						<button type="button" class="leave-tournament-button">Leave</button>
+					</div>
+				</div>
+			</div>
 		`;
 	}
 }
-
-customElements.define('tournament-waiting-room', TournamentWaitingRoom);

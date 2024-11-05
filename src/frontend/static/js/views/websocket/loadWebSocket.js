@@ -4,7 +4,7 @@ import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms, ad
 import { updateCurrentChatroomId, messageReceptionDOMUpdate } from '../../utils/chatUtils/sendPrivateMessage.js';
 import { UpdateChatContactWebsocket } from './updateChatContactWebsocket.js';
 import { UpdateChatroomTopBarWebsocket } from './updateChatroomTopBarWebsocket.js';
-import { putNewTournamentToDOM } from '../../utils/tournamentUtils/joinTournamentUtils.js';
+import { putNewTournamentToDOM, redirectToTournamentWaitingRoom } from '../../utils/tournamentUtils/joinTournamentUtils.js';
 
 
 export let contactSocket = null;
@@ -162,16 +162,15 @@ function loadTournamentWebSocket() {
 
 	tournamentSocket.onopen = function (e) {
 		console.log("The tournament websocket connection was setup successfully !");
-
-		// chatroomsList = await fetchChatroomsList();
-		// joinAllInvitedChatrooms(chatroomsList);
 	};
 
 	tournamentSocket.onmessage = function(e) {
 		const data = JSON.parse(e.data)
 		console.log(data)
 
-		if (data.type === 'new_tournament') {
+		if (data.type === 'create_tournament' && data.status === 'success') {
+			redirectToTournamentWaitingRoom(data.tournament);
+		} else if (data.type === 'new_tournament') {
 			console.log(data.tournament)
 			putNewTournamentToDOM(data.tournament);
 		}

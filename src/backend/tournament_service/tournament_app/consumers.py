@@ -36,7 +36,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			tournament, result = await self.createTournamentInDB(data)
 			if result != 'Tournament created successfully':
 				return await self.send_error_message(message_type, result)
-			await self.send_success_message(message_type, result)
+			await self.send_success_message(message_type, result, tournament)
 			await self.channel_layer.group_send('tournament_updates',
 												{'type': 'new.tournament',
 												'tournament': await tournament.to_dict()})
@@ -81,9 +81,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'message': message,
 		}))
 
-	async def send_success_message(self, type, message):
+	async def send_success_message(self, type, message, tournament):
 		await self.send(text_data=json.dumps({
 			'type': type,
 			'status': 'success',
 			'message': message,
+			'tournament': await tournament.to_dict()
 		}))
