@@ -435,7 +435,6 @@ export default class Game {
 		this.throwLoadOutroAnimationEvent(isWin);
 		this.isOutroAnimationEnabled = true;
 
-		console.log(this.userId, data);
 		// Not definitive
 		setTimeout(() => {
 			this.gameInProgress = false;

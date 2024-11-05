@@ -3,8 +3,11 @@ from game_app.game.game_engine import PongGameEngine
 from urllib.parse import parse_qs
 import json
 import asyncio
+from channels.layers import get_channel_layer
+
 
 connections = {}
+channel_layer = get_channel_layer()
 
 class GameConsumer(AsyncWebsocketConsumer):
 
@@ -107,7 +110,16 @@ class GameConsumer(AsyncWebsocketConsumer):
 		emote_type = str(data['emote_type'])
 		if emote_type != 'happy' and emote_type != 'mad' and emote_type != 'cry' and emote_type != 'laugh':
 			raise Exception('invalid emote type received')
-		await self.game_instance.send_emote(player_id=self.player_id, emote_type=emote_type)
+		player_id_to_send = PongGameEngine.check_last_emote_timestamp(player_id=self.player_id)
+
+		print('id to send ======================================= ', player_id_to_send)
+		await channel_layer.group_send(
+            f'game_{player_id_to_send}',
+            {
+				'type': 'send_emote',
+				'emote_type': emote_type
+			}
+        )
        
 
  #//---------------------------------------> Sender <--------------------------------------\\#
@@ -160,9 +172,8 @@ class GameConsumer(AsyncWebsocketConsumer):
   
 	# Sender for emotes
 	async def send_emote(self, event):
-		print('---------------> SEND EMOTE')
 		await self.send(text_data=json.dumps({
 			'type': 'emote_received',
-			'message': event['message']
+            'message': event['emote_type'],
 		}
 	))
