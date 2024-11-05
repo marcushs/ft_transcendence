@@ -304,7 +304,7 @@ class PongGameEngine:
         self.winner_id = self.player_one_id if surrend_id == self.player_two_id else self.player_two_id
         self.game_active = False
         PongGameEngine.active_games.remove(self)
-        await self.send_surrender_update(loser_id)
+        await self.send_surrender_update()
 
  #//---------------------------------------> Send message to client websocket method <--------------------------------------\\#
 
@@ -371,11 +371,13 @@ class PongGameEngine:
             await send_websocket_info(self.loser_id, loser_payload)
 
 
-    async def send_surrender_update(self, loser_id):
+    async def send_surrender_update(self):
         payload = {
             'type': 'game_update_info',
             'event': 'game_finished',
-            'message': f'Player {loser_id} has surrendered. {self.winner_id} wins!'
+                'message': {
+                    'is_win' : True,
+                }
         }
         await self.websocket_sender(payload)
 
