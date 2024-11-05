@@ -173,6 +173,8 @@ function loadTournamentWebSocket() {
 		} else if (data.type === 'new_tournament') {
 			console.log(data.tournament)
 			putNewTournamentToDOM(data.tournament);
+		} else if (data.type === 'join_tournament') {
+			console.log('join tournament', data.tournament)
 		}
 	};
 

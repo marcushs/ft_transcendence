@@ -40,11 +40,27 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await self.channel_layer.group_send('tournament_updates',
 												{'type': 'new.tournament',
 												'tournament': await tournament.to_dict()})
+		elif message_type == 'join_tournament':
+			try:
+				tournament = await aget_object_or_404(Tournament, tournament_name=data['tournament_name'])
+				if await self.get_members_count(tournament) < tournament.tournament_size:
+					await self.add_user_to_tournament(tournament)
+					await self.channel_layer.group_send('tournament_updates',
+										 				{'type': 'join.tournament',
+														'tournament': await tournament.to_dict()})
+			except Http404:
+				return
 
 	async def new_tournament(self, event):
 		await self.send(text_data=json.dumps({
 			'type': 'new_tournament',
 			'tournament': event['tournament']
+		}))
+
+	async def join_tournament(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'join_tournament',
+			'tournament': event['tournament'] 
 		}))
 
 	@database_sync_to_async
@@ -65,6 +81,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		new_tournament = Tournament.objects.create(creator=creator, tournament_name=tournament_name, tournament_size=tournament_size)
 		new_tournament.members.add(creator)
 		return new_tournament, 'Tournament created successfully'
+	
 
 	def is_valid_size(self, size):
 		return size in {4, 8, 16} 
@@ -88,3 +105,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'message': message,
 			'tournament': await tournament.to_dict()
 		}))
+	
+	@database_sync_to_async
+	def add_user_to_tournament(self, tournament):
+		return tournament.members.add(self.user)
+	
+	@database_sync_to_async
+	def get_members_count(self, tournament):
+		return tournament.members.count()

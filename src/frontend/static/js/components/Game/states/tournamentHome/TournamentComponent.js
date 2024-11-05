@@ -1,4 +1,5 @@
 import { getString } from "../../../../utils/languageManagement.js";
+import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
 
 export class TournamentComponent extends HTMLElement {
 	constructor(tournamentData) {
@@ -7,6 +8,7 @@ export class TournamentComponent extends HTMLElement {
 		this.tournamentSize = tournamentData.tournament_size;
 		this.tournamentMembersCount = tournamentData.member_count;
 		this.render();
+		this.addEventListeners();
 	}
 
 	render() {
@@ -23,13 +25,19 @@ export class TournamentComponent extends HTMLElement {
 		`;
 	}
 
-	// addEventListeners() {
-	// 	const btn = this.querySelector('button-component');
+	addEventListeners() {
+		const btn = this.querySelector('button-component');
 
-	// 	btn.addEventListener('click', () => {
-			
-	// 	});
-	// }
+		btn.addEventListener('click', () => {
+			console.log('tournament component join btn clicked')
+			const payload = {
+				'type': 'join_tournament',
+				'tournament_name': this.tournamentName,
+			};
+
+			tournamentSocket.send(JSON.stringify(payload))
+		});
+	}
 }
 
 customElements.define('tournament-component', TournamentComponent);

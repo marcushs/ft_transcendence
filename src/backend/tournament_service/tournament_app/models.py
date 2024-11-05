@@ -51,6 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return obj_dict
 
 class Tournament(models.Model):
+    tournament_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     tournament_name = models.CharField(max_length=30, unique=True, editable=False)
     creator = models.ForeignKey(User, related_name='created_tournaments', on_delete=models.CASCADE)
     tournament_size = models.IntegerField()
@@ -62,9 +63,12 @@ class Tournament(models.Model):
         # Convert the main object to a dict
         obj_dict = await sync_to_async(model_to_dict)(self)
 
+        obj_dict['tournament_id'] = str(self.tournament_id)
         obj_dict['tournament_name'] = self.tournament_name
         obj_dict['tournament_size'] = int(self.tournament_size)
-        obj_dict['creator'] = await self.creator.to_dict()
+        creator = await sync_to_async(lambda: self.creator)()
+
+        obj_dict['creator'] = await creator.to_dict()
 
         # Convert members (ManyToMany field) to list of dicts with 'id' and 'username'
         members = await sync_to_async(list)(
