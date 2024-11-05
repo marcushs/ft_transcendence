@@ -4,6 +4,7 @@ import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
 export class TournamentComponent extends HTMLElement {
 	constructor(tournamentData) {
 		super();
+		this.tournamentId = tournamentData.tournament_id;
 		this.tournamentName = tournamentData.tournament_name;
 		this.tournamentSize = tournamentData.tournament_size;
 		this.tournamentMembersCount = tournamentData.member_count;

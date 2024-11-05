@@ -17,3 +17,14 @@ export function redirectToTournamentWaitingRoom(tournamentData) {
 
 	gameComponent.changeState(new TournamentWaitingRoom(tournamentData), tournamentWaitingRoomState.context);
 }
+
+export function updateTournamentInfo(tournamentData) {
+	const waitingRoom = document.querySelector('.waiting-room');
+	
+	if (waitingRoom) console.log('waitingRoom.tournamentId: ', waitingRoom.tournamentId);
+	console.log('tournamentData.tournament_id: ', tournamentData.tournament_id);
+	// if (waitingRoom && waitingRoom.tournamentId === tournamentData.tournament_id) {
+
+	// 	return ;
+	// }
+}

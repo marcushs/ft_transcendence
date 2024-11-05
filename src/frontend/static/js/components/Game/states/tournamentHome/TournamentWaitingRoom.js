@@ -2,6 +2,7 @@ export default class TournamentWaitingRoom {
 	constructor(tournamentData) {
 		this.redirectState = "tournament-waiting-room";
 		this.class = "tournament-waiting-room";
+		this.tournamentId = tournamentData.tournament_id;
 		this.tournamentName = tournamentData.tournament_name;
 		this.tournamentSize = tournamentData.tournament_size;
 		this.tournamentCreator = tournamentData.creator.username;
