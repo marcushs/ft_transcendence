@@ -1,3 +1,5 @@
+import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
+
 export default class TournamentWaitingRoom {
 	constructor(tournamentData) {
 		this.redirectState = "tournament-waiting-room";
@@ -29,6 +31,7 @@ class TournamentWaitingRoomElement extends HTMLElement {
 
 	connectedCallback() {
 		this.render();
+		this.addEventListeners();
 	}
 
 	render() {
@@ -45,6 +48,20 @@ class TournamentWaitingRoomElement extends HTMLElement {
 				</div>
 			</div>
 		`;	
+	}
+
+	addEventListeners() {
+		const leaveBtn = this.querySelector('.leave-tournament-button');
+
+		leaveBtn.addEventListener('click', () => {
+			console.log('clicked');
+			const payload = {
+				'type': 'leave_tournament',
+				'tournament_id': this.tournamentId,
+			};
+
+			tournamentSocket.send(JSON.stringify(payload))
+		})
 	}
 }
 
