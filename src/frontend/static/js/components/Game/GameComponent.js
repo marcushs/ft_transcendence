@@ -75,7 +75,7 @@ class GameComponent extends HTMLElement {
 
     attachEventListener() {
         this.statesContainer.addEventListener('click', (event) => {
-            if (event.target.hasAttribute('state-redirect')) {
+            if (event.target.hasAttribute('state-redirect') && event.target.className !== 'unavailable-matchmaking-choice') {
                 this.handleStateRedirection(event);
             }
         });

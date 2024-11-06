@@ -1,11 +1,11 @@
 import {getString} from "./languageManagement.js";
 
 export default function resetButtonsOnMatchmakingCanceled() {
-	const genericDisabledButtons = document.querySelectorAll('.generic-btn-disabled');
+	const buttons = document.querySelectorAll('button-component');
 	let playButtons = [];
 
-	genericDisabledButtons.forEach((button) => {
-		if (button.innerHTML === `${getString('buttonComponent/play')}`)
+	buttons.forEach((button) => {
+		if (button.className === "generic-btn-disabled" && button.querySelector('button').innerHTML === `${getString('buttonComponent/play')}`)
 			playButtons.push(button);
 	});
 

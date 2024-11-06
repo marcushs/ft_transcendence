@@ -1,15 +1,14 @@
 import {getString} from "./languageManagement.js";
 
 export default function disableButtonsInGameResearch() {
-	const genericButtons = document.querySelectorAll('.generic-btn');
+	const buttons = document.querySelectorAll('button-component');
 	let playButtons = [];
 
-	genericButtons.forEach((button) => {
-		if (button.innerHTML === `${getString('buttonComponent/play')}`)
+	buttons.forEach((button) => {
+		if (button.className === "generic-btn" && button.querySelector('button').innerHTML === `${getString('buttonComponent/play')}`)
 			playButtons.push(button);
 	});
 
-	console.log(genericButtons);
 	playButtons.forEach((button) => {
 		button.className = "generic-btn-disabled";
 	});

@@ -14,11 +14,25 @@ class PrivateMatchComponent extends HTMLElement {
 <!--				<img src="../../../../../assets/loading-wheel.svg" alt="loading wheel" class="loading-wheel"> &lt;!&ndash; While waiting for backend implementation &ndash;&gt;-->
 			</div>
 		`;
+	}
+
+
+	connectedCallback() {
+		this.playButton = this.querySelector('.generic-btn');
+
+		const isSearchingGame = JSON.parse(localStorage.getItem('isSearchingGame'));
+
+		if (isSearchingGame)
+			this.playButton.className = "generic-btn-disabled";
+
 		this.attachEventsListener();
 	}
 
+
 	attachEventsListener() {
 		this.querySelector('button-component').addEventListener('click', () => {
+			if (this.playButton.className !== "generic-btn")
+				return ;
 			this.handlePlayButtonClick();
 		});
 
