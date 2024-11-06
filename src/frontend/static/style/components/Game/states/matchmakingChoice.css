@@ -18,3 +18,16 @@
 	margin: 1.75rem 0;
 	text-shadow: 0 10px 10px black;
 }
+
+.matchmaking-choice .unavailable-matchmaking-choice {
+	color: var(--light-grey);
+	cursor: inherit;
+}
+
+.matchmaking-choice .unavailable-matchmaking-choice:hover {
+	color: var(--light-grey);
+	cursor: inherit;
+	font-size: 3rem;
+	margin: 2rem 0;
+	text-shadow: 0 2px 10px black;
+}
