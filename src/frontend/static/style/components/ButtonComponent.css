@@ -12,6 +12,15 @@ button-component .generic-btn {
 	padding: 0 1.5rem;
 }
 
+button-component .generic-btn-cancel {
+	border: 1px solid var(--error-color);
+	color: var(--error-color);
+	border-radius: 5px;
+	font-size: 2rem;
+	padding: 0 1.5rem;
+	/*display: none;*/
+}
+
 button-component .generic-btn-disabled {
 	border: 1px solid var(--light-grey);
 	color: var(--light-grey);

@@ -56,7 +56,8 @@
 	  "play": "Play",
 	  "change": "Change",
 	  "save": "Save",
-	  "verify": "Verify"
+	  "verify": "Verify",
+	  "cancel": "Cancel"
 	},
 	"navBarComponent": {
 	  "home": "Home"
@@ -202,7 +203,8 @@
 	  "play": "Jouer",
 	  "change": "Changer",
 	  "save": "Sauvegarder",
-	  "verify": "Vérifier"
+	  "verify": "Vérifier",
+	  "cancel": "Annuler"
 	},
 	"navBarComponent": {
 	  "home": "Accueil"

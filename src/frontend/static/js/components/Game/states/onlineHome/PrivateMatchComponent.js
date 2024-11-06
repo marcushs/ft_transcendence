@@ -14,7 +14,6 @@ class PrivateMatchComponent extends HTMLElement {
 <!--				<img src="../../../../../assets/loading-wheel.svg" alt="loading wheel" class="loading-wheel"> &lt;!&ndash; While waiting for backend implementation &ndash;&gt;-->
 			</div>
 		`;
-
 		this.attachEventsListener();
 	}
 
@@ -25,7 +24,7 @@ class PrivateMatchComponent extends HTMLElement {
 
 		this.querySelector('input').addEventListener('input', () => {
 			this.resetError();
-		})
+		});
 	}
 
 	handlePlayButtonClick() {
@@ -37,7 +36,6 @@ class PrivateMatchComponent extends HTMLElement {
 			// fetch
 		}
 	}
-
 
 	resetError() {
 		this.querySelector('.invite-player-field-error').innerHTML = '';

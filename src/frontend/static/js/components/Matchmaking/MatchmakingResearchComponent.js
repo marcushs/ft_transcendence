@@ -6,6 +6,7 @@ class MatchmakingResearchComponent extends HTMLElement {
         super();
         this.isSearching = JSON.parse(localStorage.getItem('isSearchingGame'));
         this.isResearchRendered = document.querySelector('matchmaking-research-component');
+        this.cancelResearchEventHandler = async () => await this.cancelMatchmakingResearch();
     }
 
     connectedCallback() {
@@ -43,7 +44,9 @@ class MatchmakingResearchComponent extends HTMLElement {
     attachEventListener() {
         this.cancelResearchIcon.addEventListener('click', async () => {
             await this.cancelMatchmakingResearch();
-        })
+        });
+
+        document.addEventListener('cancelMatchmakingResearchEvent', this.cancelResearchEventHandler);
     }
 
     async cancelMatchmakingResearch() {
@@ -51,12 +54,13 @@ class MatchmakingResearchComponent extends HTMLElement {
             const response = await sendRequest('POST', '/api/matchmaking/remove_waiting/', null);
             if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
                 matchmakingSocket.close();
-            this.classList.add('matchmaking-research-component-hide');
+            this.style.animation = "ease-in 0.25s animate-opacity forwards";
             localStorage.removeItem('isSearchingGame');
             console.log('remove response: ', response);
             setTimeout(() => {
+                this.throwMatchmakingResearchCanceledEvent();
                 this.remove();
-            }, 500);
+            }, 250);
         } catch (error) {
             this.remove();
             console.error(error.message); 
@@ -77,6 +81,20 @@ class MatchmakingResearchComponent extends HTMLElement {
     setInitialRender() {
         this.render()
     }
+
+    throwMatchmakingResearchCanceledEvent() {
+        const event = new CustomEvent('matchmakingResearchCanceledEvent', {
+            bubbles: true
+        });
+
+        document.dispatchEvent(event);
+    }
+
+
+    disconnectedCallback() {
+        document.removeEventListener('cancelMatchmakingResearchEvent', this.cancelResearchEventHandler);
+    }
+
 }
 
 customElements.define('matchmaking-research-component', MatchmakingResearchComponent);  

@@ -1,6 +1,6 @@
-import './RankedComponent.js'
-import './UnrankedComponent.js'
-import './PrivateMatchComponent.js'
+import './RankedComponent.js';
+import './UnrankedComponent.js';
+import './PrivateMatchComponent.js';
 import {getString} from "../../../../utils/languageManagement.js";
 
 class onlineHome {
@@ -8,6 +8,7 @@ class onlineHome {
 	constructor() {
 		this.redirectState = "online-home";
 		this.class = "online-home";
+
 	}
 
 	render() {
