@@ -8,6 +8,7 @@ import onlineHome from "./states/onlineHome/onlineHome.js";
 import localHome from "./states/localHome/localHome.js";
 import bracket from "./states/tournamentHome/bracket/bracket.js";
 import rotatingGradient from "../../anim/rotatingGradient.js";
+import TournamentMatch from './states/tournamentHome/TournamentMatch.js';
 
 class GameComponent extends HTMLElement {
     constructor() {

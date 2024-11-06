@@ -5,6 +5,7 @@ import { updateCurrentChatroomId, messageReceptionDOMUpdate } from '../../utils/
 import { UpdateChatContactWebsocket } from './updateChatContactWebsocket.js';
 import { UpdateChatroomTopBarWebsocket } from './updateChatroomTopBarWebsocket.js';
 import { putNewTournamentToDOM, redirectToTournamentWaitingRoom, updateTournamentInfo } from '../../utils/tournamentUtils/joinTournamentUtils.js';
+import { redirectToTournamentMatch } from '../../utils/tournamentUtils/tournamentMatchUtils.js';
 
 
 export let contactSocket = null;
@@ -184,7 +185,7 @@ function loadTournamentWebSocket() {
 			updateTournamentInfo(data.tournament);
 		} else if (data.type === 'load_match') {
 			console.log('loading tournament match...');
-			redirectToMatch()
+			redirectToTournamentMatch(data.tournament)
 		}
 	};
 

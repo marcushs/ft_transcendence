@@ -57,7 +57,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 														'tournament': await tournament.to_dict()})
 					if await self.get_members_count(tournament) == tournament.tournament_size:
 						await self.channel_layer.group_send(str(tournament.tournament_id),
-															{'type': 'load_match',})
+															{'type': 'load_match',
+															'tournament': await tournament.to_dict()})
 				else:
 					await self.send_error_message(message_type, 'Tournament is full')
 			except Http404:
@@ -78,6 +79,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def load_match(self, event):
 		await self.send(text_data=json.dumps({
 			'type': 'load_match',
+			'tournament': event['tournament'],
 		}))
 
 	@database_sync_to_async
