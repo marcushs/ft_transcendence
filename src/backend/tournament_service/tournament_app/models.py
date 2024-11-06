@@ -45,9 +45,10 @@ class User(AbstractBaseUser, PermissionsMixin):
       return self.username
 
     async def to_dict(self):
-        obj_dict = await sync_to_async(model_to_dict)(self)
-
-        obj_dict['id'] = str(self.id)
+        obj_dict = {
+            'id': str(self.id),
+            'username': self.username
+        }
         return obj_dict
 
 class Tournament(models.Model):

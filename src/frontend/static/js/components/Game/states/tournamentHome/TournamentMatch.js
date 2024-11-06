@@ -2,6 +2,24 @@ export default class TournamentMatch {
 	constructor(tournamentData) {
 		this.redirectState = "tournament-match";
 		this.class = "tournament-match";
+		let jsonString = JSON.stringify(tournamentData);
+		this.tournamentData = jsonString.replace(/&/g, '&amp;')
+										.replace(/'/g, '&apos;')
+										.replace(/"/g, '&quot;')
+										.replace(/</g, '&lt;')
+										.replace(/>/g, '&gt;');
+	}
+
+	render() {
+		return `<tournament-match data-tournament="${this.tournamentData}"></tournament-match>`;
+	}
+}
+
+class TournamentMatchElement extends HTMLElement {
+	constructor() {
+		super();
+		const tournamentData = JSON.parse(this.getAttribute('data-tournament'));
+
 		this.tournamentId = tournamentData.tournament_id;
 		this.tournamentName = tournamentData.tournament_name;
 		this.tournamentSize = tournamentData.tournament_size;
@@ -9,8 +27,12 @@ export default class TournamentMatch {
 		this.opponent = 'Alex' //tournamentData.opponent;
 	}
 
+	connectedCallback() {
+		this.render();
+	}
+
 	render() {
-		return `
+		this.innerHTML = `
 			<div class="waiting-room" data-tournament="${this.tournamentId}">
 				<h3 class="waiting-room-title">Waiting Room</h3>
 				<div class="waiting-room-background">
@@ -31,3 +53,5 @@ export default class TournamentMatch {
 		`;	
 	}
 }
+
+customElements.define('tournament-match', TournamentMatchElement);

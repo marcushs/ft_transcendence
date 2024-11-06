@@ -56,15 +56,12 @@ class GameComponent extends HTMLElement {
 
     removeCurrentState() {
         this.statesContainer.innerHTML = '';
-        console.log('removing class name: ', this.states[this.currentState].state.class, 'current state = ', this.currentState)
         this.statesContainer.classList.remove(this.states[this.currentState].state.class);
     }
 
     changeState(state, context) {
         this.removeCurrentState();
         this.pushNewState(state);
-        console.log('currentContext: ', this.currentContext)
-        console.log('context: ', context)
         this.currentContext = context;
         this.manageBackButtonDisplay();
     }
@@ -121,7 +118,6 @@ class GameComponent extends HTMLElement {
             }
         }
     }
-
 }
 
 customElements.define("game-component", GameComponent);
