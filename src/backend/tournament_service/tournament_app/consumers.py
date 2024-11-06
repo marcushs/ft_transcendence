@@ -44,7 +44,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			try:
 				tournament = await aget_object_or_404(Tournament, tournament_name=data['tournament_name'])
 				if await self.get_members_count(tournament) < tournament.tournament_size:
-					await self.add_user_to_tournament(tournament)
+					if await self.add_user_to_tournament(tournament) == 'User already in tournament':
+						return await self.send_error_message(message_type, 'User already in tournament')
 					await self.channel_layer.group_send('tournament_updates',
 										 				{'type': 'join.tournament',
 														'tournament': await tournament.to_dict()})
@@ -71,6 +72,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		if isinstance(creator, AnonymousUser):
 			return None, 'No user found'
+		if self.is_user_in_any_tournament():
+			return None, 'User already in tournament'
 		if tournament_name is None or self.is_valid_name(tournament_name) is False:
 			return None, 'Invalid tournament name'
 		if tournament_size is None or self.is_valid_size(int(tournament_size)) is False:
@@ -108,8 +111,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	
 	@database_sync_to_async
 	def add_user_to_tournament(self, tournament):
-		return tournament.members.add(self.user)
+		if self.is_user_in_any_tournament() == False:
+			return tournament.members.add(self.user)
+		return 'User already in tournament'
 	
 	@database_sync_to_async
 	def get_members_count(self, tournament):
 		return tournament.members.count()
+
+	def is_user_in_any_tournament(self):
+		return self.user.joined_tournaments.exists()
+
