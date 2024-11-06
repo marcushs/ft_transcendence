@@ -170,20 +170,25 @@ function loadTournamentWebSocket() {
 
 		if (data.type === 'create_tournament' && data.status === 'success') {
 			redirectToTournamentWaitingRoom(data.tournament);
+		} else if (data.type === 'create_tournament' && data.status === 'error') {
+			// implement error message in frontend
+			console.log(data.message)
 		} else if (data.type === 'new_tournament') {
-			console.log(data.tournament)
 			putNewTournamentToDOM(data.tournament);
 		} else if (data.type === 'join_tournament' && data.status === 'error') {
+			// implement error message in frontend
 			console.log(data.message)
 		} else if (data.type === 'redirect_to_waiting_room') {
 			redirectToTournamentWaitingRoom(data.tournament);
 		} else if (data.type === 'join_tournament') {
-			console.log('join tournament', data.tournament)
 			updateTournamentInfo(data.tournament);
+		} else if (data.type === 'load_match') {
+			console.log('loading tournament match...');
+			redirectToMatch()
 		}
 	};
 
-	chatSocket.onclose = function(e) {
+	tournamentSocket.onclose = function(e) {
 		console.log(e);
 	};
 }

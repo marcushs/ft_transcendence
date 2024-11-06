@@ -30,10 +30,9 @@ export class TournamentComponent extends HTMLElement {
 		const btn = this.querySelector('button-component');
 
 		btn.addEventListener('click', () => {
-			console.log('tournament component join btn clicked')
 			const payload = {
 				'type': 'join_tournament',
-				'tournament_name': this.tournamentName,
+				'tournament_id': this.tournamentId,
 			};
 
 			tournamentSocket.send(JSON.stringify(payload))

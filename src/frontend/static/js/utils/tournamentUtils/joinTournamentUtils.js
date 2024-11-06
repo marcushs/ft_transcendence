@@ -14,8 +14,11 @@ export function putNewTournamentToDOM(tournament) {
 export function redirectToTournamentWaitingRoom(tournamentData) {
 	const gameComponent = document.querySelector('game-component');
 	const tournamentWaitingRoomState = gameComponent.states['tournamentWaitingRoom'];
+	const tournamentWaitingRoom = new TournamentWaitingRoom(tournamentData);
 
-	gameComponent.changeState(new TournamentWaitingRoom(tournamentData), tournamentWaitingRoomState.context);
+	tournamentWaitingRoomState['state'] = tournamentWaitingRoom;
+	gameComponent.changeState(tournamentWaitingRoomState.state, tournamentWaitingRoomState.context);
+	gameComponent.currentState = "tournamentWaitingRoom";
 }
 
 export function updateTournamentInfo(tournamentData) {

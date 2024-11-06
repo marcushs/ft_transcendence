@@ -7,7 +7,6 @@ import tournamentHome from "./states/tournamentHome/tournamentHome.js";
 import onlineHome from "./states/onlineHome/onlineHome.js";
 import localHome from "./states/localHome/localHome.js";
 import bracket from "./states/tournamentHome/bracket/bracket.js";
-import TournamentWaitingRoom from './states/tournamentHome/TournamentWaitingRoom.js';
 import rotatingGradient from "../../anim/rotatingGradient.js";
 
 class GameComponent extends HTMLElement {
@@ -20,7 +19,8 @@ class GameComponent extends HTMLElement {
             "onlineHome": { context: "/onlineHome", state: new onlineHome() },
             "localHome": { context: "/localHome", state: new localHome() },
             "bracket": {context: "/tournamentHome/bracket", state: new bracket()},
-            "tournamentWaitingRoom": {context: "/tournamentHome/tournamentWaitingRoom"}
+            "tournamentWaitingRoom": {context: "/tournamentHome/tournamentWaitingRoom"},
+            "tournamentMatch": {context: "/tournamentHome/tournamentMatch"},
         }
 
         this.innerHTML = `
@@ -55,12 +55,15 @@ class GameComponent extends HTMLElement {
 
     removeCurrentState() {
         this.statesContainer.innerHTML = '';
+        console.log('removing class name: ', this.states[this.currentState].state.class, 'current state = ', this.currentState)
         this.statesContainer.classList.remove(this.states[this.currentState].state.class);
     }
 
     changeState(state, context) {
         this.removeCurrentState();
         this.pushNewState(state);
+        console.log('currentContext: ', this.currentContext)
+        console.log('context: ', context)
         this.currentContext = context;
         this.manageBackButtonDisplay();
     }

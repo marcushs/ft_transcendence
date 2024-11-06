@@ -37,15 +37,17 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			if result != 'Tournament created successfully':
 				return await self.send_error_message(message_type, result)
 			await self.send_success_message(message_type, result, tournament)
+			await self.channel_layer.group_add(str(tournament.tournament_id), self.channel_name)
 			await self.channel_layer.group_send('tournament_updates',
 												{'type': 'new.tournament',
 												'tournament': await tournament.to_dict()})
 		elif message_type == 'join_tournament':
 			try:
-				tournament = await aget_object_or_404(Tournament, tournament_name=data['tournament_name'])
+				tournament = await aget_object_or_404(Tournament, tournament_id=data['tournament_id'])
 				if await self.get_members_count(tournament) < tournament.tournament_size:
 					if await self.add_user_to_tournament(tournament) == 'User already in tournament':
 						return await self.send_error_message(message_type, 'User already in tournament')
+					await self.channel_layer.group_add(str(tournament.tournament_id), self.channel_name) 
 					await self.send(text_data=json.dumps({
 						'type': 'redirect_to_waiting_room',
 						'tournament': await tournament.to_dict()
@@ -53,6 +55,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					await self.channel_layer.group_send('tournament_updates',
 										 				{'type': 'join.tournament',
 														'tournament': await tournament.to_dict()})
+					if await self.get_members_count(tournament) == tournament.tournament_size:
+						await self.channel_layer.group_send(str(tournament.tournament_id),
+															{'type': 'load_match',})
+				else:
+					await self.send_error_message(message_type, 'Tournament is full')
 			except Http404:
 				return
 
@@ -66,6 +73,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps({
 			'type': 'join_tournament',
 			'tournament': event['tournament'],
+		}))
+
+	async def load_match(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'load_match',
 		}))
 
 	@database_sync_to_async
