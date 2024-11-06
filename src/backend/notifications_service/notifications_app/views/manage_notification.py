@@ -71,7 +71,6 @@ class manage_notification_view(View):
                     sender=await get_user_id_by_username(data['sender']),
                     receiver=await get_user_id_by_username(data['receiver']))
                     async for notification in notifications:
-                        print('---------- NOTIF --------------- ') 
                         await self.send_delete_notification_to_channel(notification, data)
                         await sync_to_async(notification.delete)()
                     

@@ -24,6 +24,7 @@ export default class Game {
 		this.playerTwoScore = 0;
 		this.sparks = [];
 		this.lastTime = performance.now();
+
 		this.keysPlayerOne = {
 			up: false,
 			down: false,
@@ -43,6 +44,9 @@ export default class Game {
 		setTimeout(() => {
 			this.isIntroAnimationEnabled = false;
 		}, 7300);
+
+		this.gameTopBar = document.querySelector('game-top-bar');
+		this.gameTopBar.classList.add('in-game-top-bar');
 	}
 
 
@@ -68,6 +72,14 @@ export default class Game {
 	}
 
 
+	loadImage(path) {
+		const img = new Image();
+
+		img.src = path;
+		return img;
+	}
+
+
 	gameLoop() {
 		this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		if (this.isIntroAnimationEnabled) {
@@ -80,6 +92,12 @@ export default class Game {
 			this.drawScore();
 			this.drawFrame();
 			this.Outro.drawOutro();
+		}
+
+		if (this.isEmoteAnimationEnabled) {
+			this.backgroundImage = this.emoteFramesList.get();
+			this.drawEmote();
+			this.drawOpponentEmote();
 		}
 		requestAnimationFrame(() => this.gameLoop());
 	}

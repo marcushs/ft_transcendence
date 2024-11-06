@@ -38,10 +38,24 @@ private-match-component {
 }
 
 .private-match-component-content img {
-	width: 2rem;
 	position: absolute;
+}
+
+.private-match-component-content .invite-icon {
+	top: 10rem;
+	left: 29.5rem;
+	width: 3rem;
+}
+
+.private-match-component-content .invite-icon:hover {
+	cursor: pointer;
+	opacity: 0.7;
+}
+
+.private-match-component-content .loading-wheel {
 	top: 10.5rem;
 	left: 29rem;
+	width: 2rem;
 	animation: loading-wheel 1.5s infinite;
 }
 

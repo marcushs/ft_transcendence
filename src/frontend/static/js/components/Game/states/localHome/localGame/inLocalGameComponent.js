@@ -26,6 +26,7 @@ class InLocalGameComponent extends HTMLElement {
 
 	connectedCallback() {
 		new Game(this.canvas, this.attributes['ball-speed'].value, this.attributes['paddle-speed'].value, this.attributes['score-to-win'].value);
+
 		this.initCanvas();
 	}
 

@@ -3,6 +3,7 @@ import asyncio
 import json
 import time
 import math
+from datetime import datetime, timedelta
 
 class PongGameEngine:
 
@@ -40,7 +41,7 @@ class PongGameEngine:
         self.speed_limit = 45
         self.ball_direction_x = self.ball_speed
         self.ball_direction_y = 0
-        self.max_score = 1
+        self.max_score = 100
         self.has_ball_hit_wall = False
         self.is_player_one_collide = False
         self.is_player_two_collide = False
@@ -51,6 +52,10 @@ class PongGameEngine:
         self.player_size = {
             'width': self.map['width'] * 0.005,
             'height': self.map['height'] * 0.2,
+        }
+        self.last_emotes_timestamp = {
+            'player_one': None,
+            'player_two': None
         }
         
         
@@ -91,10 +96,10 @@ class PongGameEngine:
  #//---------------------------------------> Game Class Method <--------------------------------------\\#
 
     @classmethod
-    def add_active_games(cls, game_instance): 
+    def add_active_games(cls, game_instance):
         cls.active_games.append(game_instance)
-        
-        
+
+
     @classmethod
     def get_active_game(cls, game_id):
         for game in cls.active_games:
@@ -112,6 +117,22 @@ class PongGameEngine:
                     'game_state': game.state,
                     'map_dimension': get_map_dimension()
                 }
+        return None
+    
+    
+    @classmethod
+    def check_last_emote_timestamp(cls, player_id):
+        for game in cls.active_games:
+            if game.player_is_in_game(player_id):
+                player = 'player_one' if player_id == game.player_one_id else 'player_two'
+                  
+                if not game.last_emotes_timestamp[player]:
+                    game.last_emotes_timestamp[player] = datetime.now()
+                elif datetime.now() - game.last_emotes_timestamp[player] < timedelta(seconds=3.5):
+                    return None
+                else:
+                    game.last_emotes_timestamp[player] = datetime.now()
+                return game.player_one_id if player_id == game.player_one_id else game.player_two_id
         return None
 
  #//---------------------------------------> Game Engine <--------------------------------------\\#

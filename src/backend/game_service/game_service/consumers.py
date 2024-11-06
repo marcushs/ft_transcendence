@@ -3,8 +3,11 @@ from game_app.game.game_engine import PongGameEngine
 from urllib.parse import parse_qs
 import json
 import asyncio
+from channels.layers import get_channel_layer
+
 
 connections = {}
+channel_layer = get_channel_layer()
 
 class GameConsumer(AsyncWebsocketConsumer):
 
@@ -44,11 +47,13 @@ class GameConsumer(AsyncWebsocketConsumer):
 			self.check_received_id(data)
 			match str(data['type']):
 				case 'player_action':
-					await self.handle_player_action(data) 
+					await self.handle_player_action(data)
 				case 'client_disconnected':
 					await self.handle_player_disconnect()
 				case 'client_reconnected':
 					await self.handle_player_reconnect()
+				case 'emote_sent':
+					await self.handle_emote_sent(data)
 				case _:
 					raise Exception(f"unrecognized message type : {str(data['type'])}")
 		except Exception as e:
@@ -98,11 +103,29 @@ class GameConsumer(AsyncWebsocketConsumer):
 		if not (self.game_instance.player_is_in_game(self.player_id)):
 			raise Exception('player is not in the game')
 		await self.game_instance.handle_player_disconnect(self.player_id)
+  
+	async def handle_emote_sent(self, data):
+		if not 'emote_type' in data :
+			raise Exception('no emote type provided')
+		emote_type = str(data['emote_type'])
+		if emote_type != 'happy' and emote_type != 'mad' and emote_type != 'cry' and emote_type != 'laugh':
+			raise Exception('invalid emote type received')
+		player_id_to_send = PongGameEngine.check_last_emote_timestamp(player_id=self.player_id)
+
+		print('id to send ======================================= ', player_id_to_send)
+		await channel_layer.group_send(
+            f'game_{player_id_to_send}',
+            {
+				'type': 'send_emote',
+				'emote_type': emote_type
+			}
+        )
+       
 
  #//---------------------------------------> Sender <--------------------------------------\\#
 
 	# Sender for start game client
-	async def game_ready_to_start(self, event): 
+	async def game_ready_to_start(self, event):
 		await self.send(text_data=json.dumps( 
 		{
 			'type' : event['type'], 
@@ -143,5 +166,14 @@ class GameConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps({
 			'type': event['type'],
 			'message': 'game connection timeout, game is canceled'
+		}
+	))
+  
+  
+	# Sender for emotes
+	async def send_emote(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'emote_received',
+            'message': event['emote_type'],
 		}
 	))

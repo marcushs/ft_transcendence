@@ -9,5 +9,5 @@ urlpatterns = [
     path('update_user/', user_utils.update_user.as_view(), name='update_user'),
     path("matchmaking/", matchmaking.MatchmakingQueueManager.as_view(), name="matchmaking"), 
     path("remove_waiting/", matchmaking.RemoveUserFromWaitingQueue.as_view(), name="remove_waiting"),
-    path("change_game_status/", matchmaking.ChangeInGameUserStatus.as_view(), name="change_game_status"), 
+    path("change_game_status/", matchmaking.ChangeInGameUserStatus.as_view(), name="change_game_status"),
 ]
