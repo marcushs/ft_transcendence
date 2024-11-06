@@ -14,20 +14,19 @@ class GameConsumer(AsyncWebsocketConsumer):
  #//---------------------------------------> Connector <--------------------------------------\\#
 
 	async def connect(self):
-		query_string = parse_qs(self.scope['query_string'].decode()) 
+		query_string = parse_qs(self.scope['query_string'].decode())
 		self.user_id = str(query_string.get('user_id', [None])[0])
 		try:
-			if not self.user_id or self.user_id == 'undefined':  
+			if not self.user_id or self.user_id == 'undefined':
 				await self.close()
 			else:
 				self.group_name = f'game_{self.user_id}'
 				await self.channel_layer.group_add(self.group_name, self.channel_name)
 				async with asyncio.Lock():
-					print(f'!!!!!!!!!!!!!!!!!!!!!!---------> add user : {self.user_id} to connections list')
-					connections[self.user_id] = self 
+					connections[self.user_id] = self
 				await self.accept()
 		except Exception as e:
-			print('Error: ', e) 
+			print('Error: ', e)
 
  #//---------------------------------------> Disconnector <--------------------------------------\\#
 
@@ -36,7 +35,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 			if self.user_id in connections:
 				del connections[self.user_id]
 		if hasattr(self, 'group_name'):
-			await self.channel_layer.group_discard(self.group_name, self.channel_name) 
+			await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
  #//---------------------------------------> Receiver <--------------------------------------\\#
 
@@ -64,7 +63,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 			}))
 
 
-	def check_received_id(self, data): 
+	def check_received_id(self, data):
 		if not 'type' in data:
 			raise Exception('No type provided')
 		if not 'player_id' in data:
@@ -103,7 +102,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 		if not (self.game_instance.player_is_in_game(self.player_id)):
 			raise Exception('player is not in the game')
 		await self.game_instance.handle_player_disconnect(self.player_id)
-  
+
 	async def handle_emote_sent(self, data):
 		if not 'emote_type' in data :
 			raise Exception('no emote type provided')
@@ -112,7 +111,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 			raise Exception('invalid emote type received')
 		player_id_to_send = PongGameEngine.check_last_emote_timestamp(player_id=self.player_id)
 
-		print('id to send ======================================= ', player_id_to_send)
 		await channel_layer.group_send(
             f'game_{player_id_to_send}',
             {
@@ -120,7 +118,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 				'emote_type': emote_type
 			}
         )
-       
+
 
  #//---------------------------------------> Sender <--------------------------------------\\#
 
@@ -168,8 +166,8 @@ class GameConsumer(AsyncWebsocketConsumer):
 			'message': 'game connection timeout, game is canceled'
 		}
 	))
-  
-  
+
+
 	# Sender for emotes
 	async def send_emote(self, event):
 		await self.send(text_data=json.dumps({

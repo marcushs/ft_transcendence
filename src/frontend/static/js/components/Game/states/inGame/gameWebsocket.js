@@ -1,4 +1,3 @@
-import { surrenderHandler, handleGameConnectionTimeOut } from "../../../../utils/game/gameConnection.js";
 import { gameInstance, resetGameInstance } from "./inGameComponent.js";
 import { GameStillActive } from "./gameNetworkManager.js";
 import { startGame } from "./Game.js";
@@ -8,7 +7,6 @@ let reconnectTimeout;
 
 
 export async function gameWebsocket(userId) {
-	console.trace('calling function: ')
 	if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
 		console.log('already connected to game Websocket');
 		return;
@@ -39,6 +37,9 @@ export async function gameWebsocket(userId) {
 			},
 			'game_canceled': (data) => {
 				if (gameInstance) gameInstance.canceledGame(data.message);
+			},
+			'game_surrended': (data) => {
+				if (gameInstance) gameInstance.gameSurrended(data.message);
 			},
 			'player_disconnected': (data) => {
 				if (gameInstance) gameInstance.updateMessage(data.message);

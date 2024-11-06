@@ -28,7 +28,8 @@ export async function matchmakingWebsocket() {
 		}
 		if (data.type === 'game_found') {
 			const matchmakingPopUp = document.querySelector('matchmaking-research-component');
-			matchmakingPopUp.setFoundGameRender();
+			if (matchmakingPopUp)
+				matchmakingPopUp.setFoundGameRender();
 			await gameWebsocket(data.player_id);
 			matchmakingSocket.close();
 		}

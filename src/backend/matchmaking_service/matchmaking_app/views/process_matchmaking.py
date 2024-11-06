@@ -5,22 +5,22 @@ from asgiref.sync import async_to_sync
 from time import sleep
 import random
 import redis
+import json
 
 redis_instance = redis.Redis(host='redis', port=6379, db=0)
 
 def proccess_matchmaking(game_type): 
-    print(f'-> thread: proccess matchmaking reached !')
     try:
-        player_one, player_two = get_players_from_redis(game_type)
-        print(f'-> thread: player_one: {player_one} -- player_two: {player_two}')
-        change_is_ingame_state(value=True, user_instance=player_one)
-        change_is_ingame_state(value=True, user_instance=player_two)
-        redis_instance.lrem(f'{game_type}_waiting_users', 0, str(player_one.id)) 
-        redis_instance.lrem(f'{game_type}_waiting_users', 0, str(player_two.id))
-        send_websocket_game_found(player_id=str(player_one.id), payload={'type': 'game_found'})
-        send_websocket_game_found(player_id=str(player_two.id), payload={'type': 'game_found'})
-        send_start_game(game_type=game_type, player_one_id=str(player_one.id), player_two_id=str(player_two.id))
-        print('-> thread: game init started ! tasks done !') 
+        players = get_players_data(game_type)
+        if not players:
+            return
+        change_is_ingame_state(value=True, user_instance=players[0])
+        change_is_ingame_state(value=True, user_instance=players[1])
+        redis_instance.lrem(f'{game_type}_waiting_users', 0, str(players[0].id)) 
+        redis_instance.lrem(f'{game_type}_waiting_users', 0, str(players[1].id))
+        send_websocket_game_found(player_id=str(players[0].id), payload={'type': 'game_found'})
+        send_websocket_game_found(player_id=str(players[1].id), payload={'type': 'game_found'})
+        send_start_game(game_type=game_type, player_one_id=str(players[0].id), player_two_id=str(players[1].id))
     except Exception as e:
         print(f'Error: thread: {str(e)}')
     
@@ -28,14 +28,27 @@ def proccess_matchmaking(game_type):
         proccess_matchmaking(game_type)
 
 
+def get_players_data(game_type):
+    if game_type == 'unranked':
+        return get_players_from_redis(game_type)
+    elif game_type == 'ranked':
+        raw_data_response = async_to_sync(send_request)(request_type='GET', url='http://statistics:8000/api/statistics/get_ranked_pair/')
+        data_response = raw_data_response.json() 
+        if data_response['status'] == 'error':
+            return None
+        player_one = get_user_by_id(data_response['players'][0])
+        player_two = get_user_by_id(data_response['players'][1])
+        return (player_one, player_two)
+
+
 def get_players_from_redis(game_type): 
-    waiting_users = redis_instance.lrange(f'{game_type}_waiting_users', 0, -1) 
+    waiting_users = redis_instance.lrange(f'{game_type}_waiting_users', 0, -1)
     waiting_users = [user_id.decode() for user_id in waiting_users] 
     if len(waiting_users) >= 3:
         random.shuffle(waiting_users)
     player_one = get_user_by_id(waiting_users.pop())
     player_two = get_user_by_id(waiting_users.pop())
-    return player_one, player_two
+    return (player_one, player_two)
 
 def send_start_game(game_type, player_one_id, player_two_id): 
     payload = { 

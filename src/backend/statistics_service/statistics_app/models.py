@@ -39,7 +39,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     rankPoints = models.IntegerField(default=0)
     gamesWin = models.IntegerField(default=0)
     gamesLoose = models.IntegerField(default=0)
-
+    goals_scored = models.IntegerField(default=0)
+    goals_conceded = models.IntegerField(default=0)
 
     USERNAME_FIELD = 'username' 
     REQUIRED_FIELDS = []
