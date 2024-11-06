@@ -37,6 +37,9 @@ export async function gameWebsocket(userId) {
 			'game_canceled': (data) => {
 				if (gameInstance) gameInstance.canceledGame(data.message) 
 			},
+			'game_surrended': (data) => {
+				if (gameInstance) gameInstance.gameSurrended(data.message)
+			},
 			'player_disconnected': (data) => {
 				if (gameInstance) gameInstance.updateMessage(data.message) 
 			},

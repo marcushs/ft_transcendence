@@ -69,7 +69,7 @@ async def starting_game_instance(data):
         asyncio.sleep(0.5)
         print(f'-> async_tasks: connections ok, sending websocket...')
         await send_client_game_init(game_data=game_users_data, game_instance=game_instance)
-        await running_game_instance(instance=game_instance, game_type=data['game_type'])
+        await running_game_instance(instance=game_instance, data=game_users_data)
     except Exception as e:
         print(f'-> async_tasks: error: {str(e)}')
 
@@ -97,30 +97,21 @@ async def check_connections(data):
     return True
 
 
-async def running_game_instance(instance, game_type):
+async def running_game_instance(instance, data):
     print(f'-> async_tasks: Game <{instance.game_id}> running...') 
     await asyncio.sleep(8)
-    winner, loser = await instance.game_loop()
+    await instance.game_loop()
     print(f'-> async_tasks: Game <{instance.game_id}> stopping...')
-    if not (winner and loser):
-        return
-    await ending_game_instance(winner=winner, loser=loser, game_type=game_type)
+    await ending_game_instance(data) 
 
-async def ending_game_instance(winner, loser, game_type):
+
+async def ending_game_instance(data):
     try:
         payload = {
-            'player_one_id': winner['id'],
-            'player_two_id': loser['id']
+            'player_one_id': data['player_one']['id'],
+            'player_two_id': data['player_two']['id']
         }
         await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)
-        payload = {
-            'winner': winner,
-            'loser': loser,
-            'type': game_type
-        }
-        print(f'------------> payload === {payload}')
-        response = await send_request(request_type='POST', url='http://statistics:8000/api/statistics/match_result/', payload=payload)
-        print(f'-> async_tasks: Matchmaking update result responded with: {response.json()}') 
     except Exception as e:
         print(f'-> async_tasks: {e}')
 

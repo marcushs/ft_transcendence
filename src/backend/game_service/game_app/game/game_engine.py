@@ -130,30 +130,6 @@ class PongGameEngine:
                 last_update_time = current_time
             else:
                 await asyncio.sleep(0.01)
-        return self.get_game_result()
-    
-    def get_game_result(self):
-        if self.winner_id == -1:
-            return None, None
-        if self.winner_id == self.player_one_id:
-            winner = {
-                'id': self.player_one_id,
-                'score': self.player_one_score
-            }
-            loser = {
-                'id': self.player_two_id,
-                'score': self.player_two_score
-            }
-        else:
-            winner = {
-                'id': self.player_two_id,
-                'score': self.player_two_score
-            }
-            loser = {
-                'id': self.player_one_id,
-                'score': self.player_one_score
-            }
-        return winner, loser
 
  #//---------------------------------------> Ball movement <--------------------------------------\\#
 
@@ -208,7 +184,6 @@ class PongGameEngine:
 
 
  #//---------------------------------------> Game update <--------------------------------------\\#
-          
 
     async def manage_game_update(self):
         if not self.player_one_connected and not self.player_two_connected:
@@ -218,7 +193,7 @@ class PongGameEngine:
         if update_state == 'reset':
             await asyncio.sleep(1)
         elif update_state == 'finish':
-            await self.end_game()
+            await self.end_game(is_canceled=False)
             self.game_active = False
 
     async def handle_game_pause(self):
@@ -228,7 +203,7 @@ class PongGameEngine:
         else:
             if time.perf_counter() - self.pause_start_time >= self.pause_time:
                 self.game_active = False
-                await self.end_game()
+                await self.end_game(is_canceled=True)
     
     def update_score(self):
         update_state = 'running'
@@ -251,18 +226,27 @@ class PongGameEngine:
         return update_state
         
 
-    async def end_game(self):
+    async def end_game(self, is_canceled):
+        is_draw = False
+        if not self.set_winner_and_loser():
+            is_draw = True
+            self.winner_id = self.player_one_id
+            self.loser_id = self.player_two_id
+        self.game_active = False
+        PongGameEngine.active_games.remove(self)
+        await self.manage_end_update(is_surrend=False, is_draw=is_draw, is_canceled=is_canceled)
+
+
+    async def set_winner_and_loser(self):
         if self.player_one_score > self.player_two_score:
             self.winner_id = self.player_one_id
             self.loser_id = self.player_two_id
+            return True
         elif self.player_one_score < self.player_two_score:
             self.winner_id = self.player_two_id
             self.loser_id = self.player_one_id
-        else:
-            self.winner_id = -1
-        self.game_active = False
-        PongGameEngine.active_games.remove(self)
-        await self.send_end_update(is_surrend=False)
+            return True
+        return False
 
  #//---------------------------------------> Player movement-(websocket receiver) <--------------------------------------\\#     
         
@@ -302,12 +286,12 @@ class PongGameEngine:
             
 
     async def player_surrender(self, surrend_id):
-        loser_id = surrend_id
+        self.loser_id = surrend_id
         self.winner_id = self.player_one_id if surrend_id == self.player_two_id else self.player_two_id
         self.game_active = False
         PongGameEngine.active_games.remove(self)
-        # await self.send_end_update(is_surrend=True)
-        await self.send_surrender_update(loser_id)
+        is_draw = False if self.player_one_score != self.player_two_score else True
+        await self.manage_end_update(is_surrend=True, is_draw=is_draw)
 
  #//---------------------------------------> Send message to client websocket method <--------------------------------------\\#
 
@@ -340,21 +324,62 @@ class PongGameEngine:
         await self.websocket_sender(payload)
 
 
-    async def send_end_update(self, is_surrend):
-        await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)
+    async def manage_end_update(self, is_surrend, is_draw, is_canceled=None):
+        results = await self.send_results_to_statistics(is_surrend=is_surrend, is_draw=is_draw, is_canceled=is_canceled)
+        if is_canceled:
+            await self.send_game_canceled()
+        elif is_surrend:
+            await self.send_end_update(results)
+            # await self.send_surrender_update()
+        else:
+            await self.send_end_update(results)
+
+
+    async def send_results_to_statistics(self, is_surrend, is_draw, is_canceled):
+        winner, loser = await self.get_winner_and_loser_dict()
         payload = {
-            'winner': self.winner_id,
-            'loser': self.loser_id,
+            'is_draw': is_draw,
+            'is_surrend': is_surrend,
+            'is_canceled': True if is_canceled is not None else False, 
+            'winner': winner,
+            'loser': loser,
             'type': self.game_type
         }
-        if self.winner_id == -1:
-            payload = {
-                'type': 'game_update_info',
-                'event': 'game_canceled',
-                'message': f'Game canceled: reconnection time to the paused game has been exceeded'
+        result_response = await send_request(request_type='POST', url='http://statistics:8000/api/statistics/match_result/', payload=payload)
+        print(f' !!!!!!!!!!!!!!  result_response: ', result_response.json()) 
+        return result_response.json()
+        
+    async def get_winner_and_loser_dict(self):
+        if self.winner_id == self.player_one_id:
+            winner = {
+                'id': self.player_one_id,
+                'score': self.player_one_score
             }
-            await self.websocket_sender(payload)
+            loser = {
+                'id': self.player_two_id,
+                'score': self.player_two_score
+            }
         else:
+            winner = {
+                'id': self.player_two_id,
+                'score': self.player_two_score
+            }
+            loser = {
+                'id': self.player_one_id,
+                'score': self.player_one_score
+            }
+        return winner, loser 
+    
+    async def send_end_update(self, results): 
+        winner_payload, loser_payload = await self.get_end_game_payload(results)
+        print(f'------------------- {self.winner_id}, {self.loser_id} -----------------')
+        print(f'------------------- {self.player_one_score}, {self.player_two_score} -----------------')
+        print(f'------------------- {self.player_one_id}, {self.player_two_id} -----------------')   
+        await send_websocket_info(self.winner_id, winner_payload) 
+        await send_websocket_info(self.loser_id, loser_payload)
+
+    async def get_end_game_payload(self, results):
+        if self.game_type != 'ranked':
             winner_payload = {
                 'type': 'game_update_info',
                 'event': 'game_finished',
@@ -373,18 +398,53 @@ class PongGameEngine:
                     'loser_id': self.loser_id
                 }
             }
-            print(f'------------------- {self.winner_id}, {self.loser_id} -----------------')
-            print(f'------------------- {self.player_one_score}, {self.player_two_score} -----------------')
-            print(f'------------------- {self.player_one_id}, {self.player_two_id} -----------------')   
-            await send_websocket_info(self.winner_id, winner_payload) 
-            await send_websocket_info(self.loser_id, loser_payload)
+        else:
+            print('--------- test1')
+            winner_payload = {
+                'type': 'game_update_info',
+                'event': 'game_finished',
+                'message': {
+                    'is_win' : True,
+                    'winner_id': self.winner_id,
+                    'loser_id': self.loser_id,
+                    'old_rank_points': results['results']['winner']['old_rank_points'],
+                    'new_rank_points': results['results']['winner']['new_rank_points'],
+                    'rank': results['results']['winner']['rank'],
+                    'new_rank': results['results']['winner']['new_rank']
+                }
+            }
+            print('--------- test2')
+            loser_payload = {
+                'type': 'game_update_info',
+                'event': 'game_finished',
+                'message': {
+                    'is_win' : False,
+                    'winner_id': self.winner_id,
+                    'loser_id': self.loser_id,
+                    'old_rank_points': results['results']['loser']['old_rank_points'],
+                    'new_rank_points': results['results']['loser']['new_rank_points'],
+                    'rank': results['results']['loser']['rank'],
+                    'new_rank': results['results']['loser']['new_rank'] 
+                }
+            }
+            print('--------- test3')
+        return winner_payload, loser_payload
+        
 
-
-    async def send_surrender_update(self, loser_id):
+    async def send_game_canceled(self):
         payload = {
             'type': 'game_update_info',
-            'event': 'game_finished',
-            'message': f'Player {loser_id} has surrendered. {self.winner_id} wins!'
+            'event': 'game_canceled',
+            'message': f'Game canceled: reconnection time to the paused game has been exceeded'
+        }
+        await self.websocket_sender(payload)
+
+
+    async def send_surrender_update(self):
+        payload = {
+            'type': 'game_update_info',
+            'event': 'game_surrended',
+            'message': f'Player {self.loser_id} has surrendered. {self.winner_id} wins!'
         }
         await self.websocket_sender(payload)
 

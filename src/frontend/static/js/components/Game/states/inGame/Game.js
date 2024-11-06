@@ -286,6 +286,19 @@ export default class Game {
 		}, 10000);
 	}
 
+	gameSurrended(message) {
+		console.log(message);
+		
+		this.throwLoadOutroAnimationEvent(true);
+		this.isOutroAnimationEnabled = true;
+		// Not definitive
+		setTimeout(() => {
+			this.gameInProgress = false;
+			disconnectGameWebSocket(this.userId, false);
+			throwRedirectionEvent('/');
+		}, 10000);
+	}
+
 	cleanup() {
 		resetGameInstance();
 		this.gameInProgress = false;

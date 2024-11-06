@@ -10,13 +10,38 @@ import json
 class MatchResultManager(View):
     def __init__(self):
         super()
+        
+        self.ranks = {
+            'bronze': (0, 999),
+            'silver': (1000, 2999),
+            'gold': (3000, 5999),
+            'diamond': (6000, 9999),
+            'master': (10000, float('inf')) 
+        } 
 
     def post(self, request):
         try:
             data = json.loads(request.body.decode('utf-8'))
-            if not self.is_valid_data(data):
-                raise(Exception('Invalid matchmaking result'))
+            self.is_valid_data(data)
             self.update_match_result_data(data)
+            if data['type'] == 'ranked':
+                winner_rank = self.get_rank(self.winner.rankPoints)
+                loser_rank = self.get_rank(self.loser.rankPoints)
+                payload = {
+                    'winner': {
+                        'old_rank_points': self.winner_old_points,
+                        'new_rank_points': self.winner.rankPoints,
+                        'rank': self.winner_old_rank,
+                        'new_rank': winner_rank if winner_rank != self.winner_old_rank else None
+                    },
+                    'loser': {
+                        'old_rank_points': self.loser_old_points,
+                        'new_rank_points': self.loser.rankPoints,
+                        'rank': self.loser_old_rank,
+                        'new_rank': loser_rank if loser_rank != self.loser_old_rank else None
+                    }
+                } 
+                return JsonResponse({'status': 'success', 'results': payload}, status=200)
             return JsonResponse({'status': 'success', 'message': 'match data updated'}, status=200)
         except Exception as e:
             print(f'-----------> ERROR: {str(e)}')
@@ -25,40 +50,43 @@ class MatchResultManager(View):
 
     def is_valid_data(self, data):
         if 'winner' not in data or 'loser' not in data:
-            return False
+            raise Exception('Missing user in data')
         winner = data['winner']
         loser = data['loser']
         if not (isinstance(winner, dict) and 'id' in winner and 'score' in winner):
-            return False
+            raise Exception('Missing data in winner object')
         if not (isinstance(loser, dict) and 'id' in loser and 'score' in loser):
-            return False
+            raise Exception('Missing data in loser object')
         if not 'type' in data:
-            return False
+            raise Exception('Missing match type in data')
+        if 'is_draw' not in data or 'is_surrend' not in data or 'is_canceled' not in data:
+            raise Exception('Missing data')
         for field in ['unranked', 'ranked', 'tournament']:
             if field == data['type']:
-                return True
-        return False
+                return
+        raise Exception('Invalid data') 
+
 
 
     def update_match_result_data(self, data):
-        winner, loser = self.get_users_from_result(data)
-        self.change_user_games_count(is_game_win=True, user=winner)
-        self.change_user_games_count(is_game_win=False, user=loser)
-        self.create_new_match_history(data=data, winner_instance=winner, loser_instance=loser)
+        self.get_users_from_result(data)
+        self.change_user_games_count(is_game_win=True, user=self.winner)
+        self.change_user_games_count(is_game_win=False, user=self.loser)
+        self.create_new_match_history(data=data, winner_instance=self.winner, loser_instance=self.loser)
         if data['type'] == 'ranked':
-            self.manage_ranked_result(data=data, winner=winner, loser=loser)
-        winner.goals_scored += data['winner']['score']
-        winner.goals_conceded += data['loser']['score']
-        loser.goals_scored += data['loser']['score']
-        loser.goals_conceded += data['winner']['score']
-        winner.save()
-        loser.save()
-
+            self.save_old_ranks_value(data=data, winner=self.winner, loser=self.loser)
+            self.manage_ranked_result(data=data, winner=self.winner, loser=self.loser)
+        self.winner.goals_scored += data['winner']['score']
+        self.winner.goals_conceded += data['loser']['score']
+        self.loser.goals_scored += data['loser']['score']
+        self.loser.goals_conceded += data['winner']['score']
+        self.winner.save()
+        self.loser.save()
+        
 
     def get_users_from_result(self, data):
-        winner = User.objects.get(id=data['winner']['id']) 
-        loser = User.objects.get(id=data['loser']['id'])
-        return winner, loser
+        self.winner = User.objects.get(id=data['winner']['id']) 
+        self.loser = User.objects.get(id=data['loser']['id'])
 
 
     def change_user_games_count(self, is_game_win, user): 
@@ -76,6 +104,20 @@ class MatchResultManager(View):
             loser_score=int(data['loser']['score']),
             match_type=str(data['type']) 
         )
+
+
+    def save_old_ranks_value(self, data, winner, loser):
+        self.winner_old_rank = self.get_rank(winner.rankPoints)
+        self.winner_old_points = winner.rankPoints
+        self.loser_old_points = winner.rankPoints
+        self.loser_old_rank = self.get_rank(loser.rankPoints)
+        
+
+    def get_rank(self, points):
+        for rank, (min, max) in self.ranks.items():
+            if min <= points < max:
+                return rank
+        return None
 
 
     def manage_ranked_result(self, data, winner, loser):
