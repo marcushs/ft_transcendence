@@ -2,6 +2,7 @@
 @import "./CreateComponent.css";
 @import "./bracket/bracket.css";
 @import "./TournamentWaitingRoom.css";
+@import "./TournamentComponent.css";
 
 .tournament-home-container {
 	height: 100%;

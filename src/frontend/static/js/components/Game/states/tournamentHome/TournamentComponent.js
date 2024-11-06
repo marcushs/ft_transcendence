@@ -19,7 +19,7 @@ export class TournamentComponent extends HTMLElement {
 					<p class="tournament-name">${this.tournamentName}</p>
 				</div>
 				<div class="tournament-right-infos">
-					<p>${this.tournamentMembersCount}/${this.tournamentSize}</p>
+					<p>${this.tournamentMembersCount} / ${this.tournamentSize}</p>
 					<button-component label="${getString('buttonComponent/join')}" class="generic-btn"></button-component>
 				</div>
 			</div>
