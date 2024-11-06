@@ -24,19 +24,26 @@ export function updateTournamentInfo(tournamentData) {
 	const joinComponent = document.querySelector('join-component');
 	
 	if (waitingRoom && (waitingRoom.getAttribute('data-tournament') === joinedTournamentId)) {
-		const joinedPlayersSpan = document.getElementById('tournament-waiting-room-joined-players');
-		
-		joinedPlayersSpan.innerText = `${tournamentData.member_count} / ${tournamentData.tournament_size}`
+		updateWaitingRoomPlayerCount(tournamentData);
 	} else if (joinComponent) {
-		const joinableTournaments = joinComponent.querySelectorAll('tournament-component');
-
-		joinableTournaments.forEach(tournament => {
-			if (tournament.tournamentId === joinedTournamentId) {
-				const joinedPlayers = tournament.querySelector('.tournament-right-infos > p');
-
-				joinedPlayers.innerText = `${tournamentData.member_count} / ${tournamentData.tournament_size}`; 
-				redirectToTournamentWaitingRoom(tournamentData);
-			}
-		})
+		updateTournamentComponentPlayerCount(tournamentData, joinComponent, joinedTournamentId);
 	}
+}
+
+function updateWaitingRoomPlayerCount(tournamentData) {
+	const joinedPlayersSpan = document.getElementById('tournament-waiting-room-joined-players');
+		
+	joinedPlayersSpan.innerText = `${tournamentData.member_count} / ${tournamentData.tournament_size}`
+}
+
+function updateTournamentComponentPlayerCount(tournamentData, joinComponent, joinedTournamentId) {
+	const joinableTournaments = joinComponent.querySelectorAll('tournament-component');
+
+	joinableTournaments.forEach(tournament => {
+		if (tournament.tournamentId === joinedTournamentId) {
+			const joinedPlayers = tournament.querySelector('.tournament-right-infos > p');
+
+			joinedPlayers.innerText = `${tournamentData.member_count} / ${tournamentData.tournament_size}`; 
+		}
+	})
 }

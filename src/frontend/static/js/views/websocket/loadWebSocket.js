@@ -175,6 +175,8 @@ function loadTournamentWebSocket() {
 			putNewTournamentToDOM(data.tournament);
 		} else if (data.type === 'join_tournament' && data.status === 'error') {
 			console.log(data.message)
+		} else if (data.type === 'redirect_to_waiting_room') {
+			redirectToTournamentWaitingRoom(data.tournament);
 		} else if (data.type === 'join_tournament') {
 			console.log('join tournament', data.tournament)
 			updateTournamentInfo(data.tournament);

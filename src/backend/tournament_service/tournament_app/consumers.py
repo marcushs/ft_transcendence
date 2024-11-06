@@ -46,6 +46,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				if await self.get_members_count(tournament) < tournament.tournament_size:
 					if await self.add_user_to_tournament(tournament) == 'User already in tournament':
 						return await self.send_error_message(message_type, 'User already in tournament')
+					await self.send(text_data=json.dumps({
+						'type': 'redirect_to_waiting_room',
+						'tournament': await tournament.to_dict()
+					}))
 					await self.channel_layer.group_send('tournament_updates',
 										 				{'type': 'join.tournament',
 														'tournament': await tournament.to_dict()})
@@ -61,7 +65,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def join_tournament(self, event):
 		await self.send(text_data=json.dumps({
 			'type': 'join_tournament',
-			'tournament': event['tournament'] 
+			'tournament': event['tournament'],
 		}))
 
 	@database_sync_to_async
