@@ -1,6 +1,7 @@
 import {sendRequest} from "../utils/sendRequest.js";
 import getUserId from "../utils/getUserId.js";
 import getUsernameById from "../utils/getUsernameById.js";
+import checkAuthentication from "../utils/checkAuthentication.js";
 
 class MatchHistory extends HTMLElement {
     constructor() {
@@ -10,13 +11,18 @@ class MatchHistory extends HTMLElement {
         this.classList.add('component');
     }
 
+
     async connectedCallback() {
-        this.history = await sendRequest("GET", "/api/statistics/get_history/", null);
-        this.userId = await getUserId();
+        const isConnected = await checkAuthentication();
 
-        await this.fillHistoryList();
 
-        console.log('history = ', this.history);
+        if (isConnected) {
+            this.history = await sendRequest("GET", "/api/statistics/get_history/", null);
+            this.userId = await getUserId();
+            await this.fillHistoryList();
+        } else {
+            this.displayUnloggedUser();
+        }
     }
 
 
@@ -37,7 +43,19 @@ class MatchHistory extends HTMLElement {
 <!--                    </li>-->
                 </ul>
             </div>
-        `
+        `;
+    }
+
+
+    displayUnloggedUser() {
+        console.log('test')
+        const matchHistoryContainer = this.querySelector('.match-history-container');
+        const p = document.createElement("p");
+
+        p.innerHTML = "To access to match history, please login or sign in";
+
+        matchHistoryContainer.appendChild(p);
+        matchHistoryContainer.querySelector('h1').style.color = "#8C8FA4";
     }
 
 

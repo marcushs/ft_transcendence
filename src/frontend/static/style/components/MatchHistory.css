@@ -1,4 +1,5 @@
 match-history-component {
+    position: relative;
     height: 60rem;
     width: 60rem;
     background: var(--neon-gradiant);
@@ -9,6 +10,13 @@ match-history-component {
 match-history-component h1 {
     font-size: 3rem;
     font-weight: 500;
+}
+
+match-history-component p {
+    font-size: 2.5rem;
+    width: 85%;
+    position: absolute;
+    text-align: center;
 }
 
 .match-history-container {

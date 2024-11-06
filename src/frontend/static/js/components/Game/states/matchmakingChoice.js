@@ -1,5 +1,6 @@
 import './inGame/inGameComponent.js';
 import {getString} from "../../../utils/languageManagement.js";
+import checkAuthentication from "../../../utils/checkAuthentication.js";
 
 class matchmakingChoice {
 
@@ -11,12 +12,13 @@ class matchmakingChoice {
 		document.addEventListener('matchmakingResearchCanceledEvent', () => this.handleMatchmakingResearchCanceledEvent());
 	}
 
-	render() {
+	async render() {
+		this.isConnected = await checkAuthentication();
+
 		const isSearchingGame = JSON.parse(localStorage.getItem('isSearchingGame'));
 		const tournamentPClass = this.getPElementClass(isSearchingGame, "tournament");
 		const onlinePClass = this.getPElementClass(isSearchingGame, "online");
 		const localPClass = this.getPElementClass(isSearchingGame, "local");
-
 
 		return `
 			<p state-redirect tournament-home class="${tournamentPClass}">${getString('gameComponent/tournaments')}</p>
@@ -26,6 +28,8 @@ class matchmakingChoice {
 	}
 
 	getPElementClass(isSearchingGame, matchmakingType) {
+		if (this.isConnected === false && matchmakingType !== "local")
+			return 'unavailable-matchmaking-choice';
 		if (isSearchingGame === null)
 			return '';
 		if (isSearchingGame.type !== "tournament" && matchmakingType !== "tournament" && matchmakingType !== "local")

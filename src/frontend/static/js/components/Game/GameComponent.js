@@ -32,21 +32,21 @@ class GameComponent extends HTMLElement {
         this.currentContext = this.states["matchmakingChoice"].context;
         this.currentState = "matchmakingChoice";
 
-        this.pushNewState(this.states[this.currentState].state);
 
         this.attachEventListener();
     }
 
-    connectedCallback() {
+    async connectedCallback() {
+        await this.pushNewState(this.states[this.currentState].state);
         rotatingGradient('game-component', '#FF16C6', '#00D0FF');
         rotatingGradient('.game-background', '#FF16C6', '#00D0FF');
     }
 
-    pushNewState(state) {
+    async pushNewState(state) {
         this.statesContainer.innerHTML = `
                 <div class="left-player-paddle"></div>
                 <div class="right-player-paddle"></div>
-                <div class="middle-line"></div>` + state.render();
+                <div class="middle-line"></div>` + await state.render();
         // this.statesContainer.innerHTML =
         this.statesContainer.classList.add(state.class);
     }
@@ -56,9 +56,9 @@ class GameComponent extends HTMLElement {
         this.statesContainer.classList.remove(this.states[this.currentState].state.class);
     }
 
-    changeState(state, context) {
+    async changeState(state, context) {
         this.removeCurrentState();
-        this.pushNewState(state);
+        await this.pushNewState(state);
         this.currentContext = context;
         this.manageBackButtonDisplay();
     }
