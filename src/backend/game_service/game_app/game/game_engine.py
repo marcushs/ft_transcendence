@@ -49,7 +49,7 @@ class PongGameEngine:
         self.is_player_two_collide = False
         self.map = {
             'width': float(map_dimension['width']),
-            'height': float(map_dimension['height'])
+            'height': float(map_dimension['height']) 
         }
         self.player_size = {
             'width': self.map['width'] * 0.005,
@@ -248,24 +248,31 @@ class PongGameEngine:
 
     async def end_game(self, is_canceled):
         is_draw = False
-        if not self.set_winner_and_loser():
+        print(f'------------- END GAME REACHED --------------------')
+        if not await self.set_winner_and_loser():
+            print('------------- TESWT 3')
             is_draw = True
             self.winner_id = self.player_one_id
             self.loser_id = self.player_two_id
+        print(f'self.winner_id: {self.winner_id} -- self.loser_id: {self.loser_id}')
         self.game_active = False
         PongGameEngine.active_games.remove(self)
         await self.manage_end_update(is_surrend=False, is_draw=is_draw, is_canceled=is_canceled)
 
 
     async def set_winner_and_loser(self):
+        print(f'self.player_one_score: {self.player_one_score} -- self.loser_id: {self.loser_id}')
+        
         if self.player_one_score > self.player_two_score:
+            print('------------- TESWT 1')
             self.winner_id = self.player_one_id
             self.loser_id = self.player_two_id
             return True
         elif self.player_one_score < self.player_two_score:
+            print('------------- TESWT 2')
             self.winner_id = self.player_two_id
             self.loser_id = self.player_one_id
-            return True
+            return True 
         return False
 
  #//---------------------------------------> Player movement-(websocket receiver) <--------------------------------------\\#     
@@ -350,7 +357,6 @@ class PongGameEngine:
             await self.send_game_canceled()
         elif is_surrend:
             await self.send_end_update(results)
-            # await self.send_surrender_update()
         else:
             await self.send_end_update(results)
 
@@ -413,13 +419,12 @@ class PongGameEngine:
                 'type': 'game_update_info',
                 'event': 'game_finished',
                 'message': {
-                    'is_win' : False,
+                    'is_win' : False, 
                     'winner_id': self.winner_id,
                     'loser_id': self.loser_id
                 }
             }
         else:
-            print('--------- test1')
             winner_payload = {
                 'type': 'game_update_info',
                 'event': 'game_finished',
@@ -433,7 +438,6 @@ class PongGameEngine:
                     'new_rank': results['results']['winner']['new_rank']
                 }
             }
-            print('--------- test2')
             loser_payload = {
                 'type': 'game_update_info',
                 'event': 'game_finished',
@@ -447,7 +451,6 @@ class PongGameEngine:
                     'new_rank': results['results']['loser']['new_rank']
                 }
             }
-            print('--------- test3')
         return winner_payload, loser_payload
 
 
