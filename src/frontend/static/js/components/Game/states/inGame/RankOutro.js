@@ -21,7 +21,7 @@ export default class RankOutro {
 			master: 10000
 		}
 
-		this.colorPercentage = null;
+		this.currentRankProgressPercentage = null;
 
 		this.rankImages = {
 			bronze: null,
@@ -35,9 +35,9 @@ export default class RankOutro {
 
 		this.initializeImages();
 
-		this.sparks = [];
-		this.lastTime = performance.now();
-		this.deltaTime = (performance.now() - this.lastTime) / 1000;
+		// this.sparks = [];
+		// this.lastTime = performance.now();
+		// this.deltaTime = (performance.now() - this.lastTime) / 1000;
 
 		// this.isResultDrawable = false;
 		// this.isSparksDrawable = false;
@@ -69,18 +69,19 @@ export default class RankOutro {
 			this.rankData = JSON.parse(JSON.stringify(event.detail.rankData));
 			this.updateRankPoints();
 
-			this.colorPercentage = this.getNextRankPercentage(this.rankData.old_rank_points);
-			console.log('old percentage = ', this.oldRankPercentage);
-			this.newRankPercentage = this.getNextRankPercentage(this.rankData.new_rank_points);
-			console.log('new percentage = ', this.newRankPercentage);
-			this.rankPointsDiff = this.rankData.new_rank_points - this.rankData.old_rank_points;
-			console.log('diff = ', this.rankPointsDiff);
-			this.changePercentage = this.newRankPercentage - this.colorPercentage;
-			console.log('change = ', this.changePercentage, this.newRankPercentage, this.colorPercentage);
-			this.changePercentageValue = (1 / this.rankPointsDiff) * this.changePercentage;
-			// console.log(this.colorPercentage);
+			this.currentRankProgressPercentage = this.getNextRankPercentage(this.rankData.old_rank_points);
+			this.newRankProgressPercentage = this.getNextRankPercentage(this.rankData.new_rank_points);
+			this.oldRankProgressPercentage = this.getNextRankPercentage(this.rankData.old_rank_points);
 
-			// this.updateBackgroundOpacity();
+			const rankPointsDifference = this.rankData.new_rank_points - this.rankData.old_rank_points;
+			let changePercentage;
+			if (this.rankData.new_rank_points > this.rankData.old_rank_points)
+				changePercentage = this.newRankProgressPercentage - this.currentRankProgressPercentage;
+			else
+				changePercentage = this.currentRankProgressPercentage - this.oldRankProgressPercentage;
+
+
+			this.progressBarPercentage = (1 / rankPointsDifference) * changePercentage;
 		});
 	}
 
@@ -145,25 +146,28 @@ export default class RankOutro {
 		const width = 500;
 		const height = 30;
 		const radius = 10;
-		const colorWidth = this.colorPercentage * width / 100;
+		const colorWidth = this.currentRankProgressPercentage * width / 100;
 
 		x -= width / 2;
 		y -= height / 2;
 
-		this.canvas.ctx.beginPath();
-		this.canvas.ctx.moveTo(x + radius, y);
-		this.canvas.ctx.lineTo(x + colorWidth - radius, y);
-		this.canvas.ctx.arcTo(x + colorWidth, y, x + colorWidth, y + radius, radius);
-		this.canvas.ctx.lineTo(x + colorWidth, y + height - radius);
-		this.canvas.ctx.arcTo(x + colorWidth, y + height, x + colorWidth - radius, y + height, radius);
-		this.canvas.ctx.lineTo(x + radius, y + height);
-		this.canvas.ctx.arcTo(x, y + height, x, y + height - radius, radius);
-		this.canvas.ctx.lineTo(x, y + radius);
-		this.canvas.ctx.arcTo(x, y, x + radius, y, radius);
+		if (this.rankData.new_rank_points !== 0) {
+			this.canvas.ctx.beginPath();
+			this.canvas.ctx.moveTo(x + radius, y);
+			this.canvas.ctx.lineTo(x + colorWidth - radius, y);
+			this.canvas.ctx.arcTo(x + colorWidth, y, x + colorWidth, y + radius, radius);
+			this.canvas.ctx.lineTo(x + colorWidth, y + height - radius);
+			this.canvas.ctx.arcTo(x + colorWidth, y + height, x + colorWidth - radius, y + height, radius);
+			this.canvas.ctx.lineTo(x + radius, y + height);
+			this.canvas.ctx.arcTo(x, y + height, x, y + height - radius, radius);
+			this.canvas.ctx.lineTo(x, y + radius);
+			this.canvas.ctx.arcTo(x, y, x + radius, y, radius);
 
-		this.canvas.ctx.fillStyle = this.rankColors[this.rankData.rank];
-		this.canvas.ctx.fill();
-		this.canvas.ctx.closePath();
+			this.canvas.ctx.fillStyle = this.rankColors[this.rankData.rank];
+			this.canvas.ctx.fill();
+			this.canvas.ctx.closePath();
+		}
+
 
 		this.canvas.ctx.beginPath();
 		this.canvas.ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
@@ -213,32 +217,27 @@ export default class RankOutro {
 	}
 
 	increaseRankPoints() {
-		// console.log(this.rankData)
-		this.rankData.old_rank_points++;
-		if (this.colorPercentage < this.newRankPercentage)
-			this.colorPercentage += this.changePercentageValue;
-		if (this.rankData.old_rank_points === this.rankData.new_rank_points)
+		console.log('increaseRankPoints');
+		if (this.currentRankProgressPercentage < this.newRankProgressPercentage)
+			this.currentRankProgressPercentage += this.progressBarPercentage;
+		if (this.rankData.old_rank_points === this.rankData.new_rank_points) {
 			clearInterval(this.intervalId);
+			return ;
+		}
+		this.rankData.old_rank_points++;
 	}
 
 	decreaseRankPoints() {
-		// console.log(this.rankData)
-		this.rankData.old_rank_points--;
-		if (this.rankData.old_rank_points === this.rankData.new_rank_points)
+		console.log('decreaseRankPoints');
+		console.log(this.rankData.old_rank_points, this.rankData.new_rank_points)
+		if (this.currentRankProgressPercentage > this.oldRankProgressPercentage)
+			this.currentRankProgressPercentage += this.progressBarPercentage;
+		if (this.rankData.old_rank_points === this.rankData.new_rank_points) {
 			clearInterval(this.intervalId);
+			return ;
+		}
+		this.rankData.old_rank_points--;
 	}
-
-	//
-	// updateBackgroundOpacity() {
-	// 	const intervalId = setInterval(() => {
-	// 		this.backgroundOpacity += 0.01;
-	// 		if (this.backgroundOpacity >= 0.75) {
-	// 			this.waitToDrawResult();
-	// 			clearInterval(intervalId);
-	// 		}
-	// 	}, 7);
-	// }
-
 
 	// waitToDrawResult() {
 	// 	setTimeout(() => {
