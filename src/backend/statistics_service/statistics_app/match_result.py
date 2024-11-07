@@ -31,7 +31,7 @@ class MatchResultManager(View):
                 payload = {
                     'winner': {
                         'old_rank_points': self.winner_old_points,
-                        'new_rank_points': self.winner.rankPoints,
+                        'new_rank_points': self.winner.rankPoints, 
                         'rank': self.winner_old_rank,
                         'new_rank': winner_rank if winner_rank != self.winner_old_rank else None
                     },

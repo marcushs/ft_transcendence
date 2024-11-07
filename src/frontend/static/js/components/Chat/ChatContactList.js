@@ -60,10 +60,8 @@ class ChatContactList extends HTMLElement {
 		contactedListUl.innerHTML = '';
 	
 		chatroomsList.forEach(chatroom => { 
-			console.log('userId: ', userId, 'chatroom.members[0].id: ', chatroom.members[0].id, 'chatroom.members[1].id: ', chatroom.members[1].id)
 			let user_data = userId === chatroom.members[0].id ? chatroom.members[1] : chatroom.members[0];
 	
-			console.log('------------> ' + user_data);
 			const listElem = document.createElement('li');
 			console.log(chatroom.id)
 			const contactComp = new ChatContactComponent(user_data, chatroom.id);

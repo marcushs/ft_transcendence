@@ -136,13 +136,11 @@ document.addEventListener("userLoggedIn", setUserRender)
 
 // Handle game reconnection
 document.addEventListener("inactiveGame", () => {
-    setTimeout(() => {
-        const isRender = document.querySelector('game-inactivity-component');
-        if (!isRender) {
-            const gameInactivityComponent = document.createElement('game-inactivity-component');
-            app.appendChild(gameInactivityComponent);
-        }
-    }, 1000);
+    const isRender = document.querySelector('game-inactivity-component');
+    if (!isRender) {
+        const gameInactivityComponent = document.createElement('game-inactivity-component');
+        app.appendChild(gameInactivityComponent);
+    }
 })
 
 document.addEventListener("matchmakingResearch", () => {

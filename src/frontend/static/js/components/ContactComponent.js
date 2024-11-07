@@ -165,7 +165,6 @@ class ContactComponent extends HTMLElement {
                 switch (action.classList[0]) {
                     case 'contact-action-send-message':
                         sendMessageCallback(this.userData);
-                        console.log(`TEST: Send message to contact \'${this.userData.username}\' successfully reached`);
                         break;
                     case 'contact-action-invite-play':
                         console.log(`TEST: Invite contact \'${this.userData.username}\' to play successfully reached`);
