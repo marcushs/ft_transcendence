@@ -41,7 +41,7 @@ class MatchResultManager(View):
                         'rank': self.loser_old_rank,
                         'new_rank': loser_rank if loser_rank != self.loser_old_rank else None
                     }
-                } 
+                }
                 return JsonResponse({'status': 'success', 'results': payload}, status=200)
             return JsonResponse({'status': 'success', 'message': 'match data updated'}, status=200)
         except Exception as e:
@@ -82,6 +82,8 @@ class MatchResultManager(View):
         self.winner.goals_conceded += data['loser']['score']
         self.loser.goals_scored += data['loser']['score']
         self.loser.goals_conceded += data['winner']['score']
+#         self.winner.rankPoints = 0
+#         self.loser.rankPoints = 0
         self.create_new_match_history(data=data, winner_instance=self.winner, loser_instance=self.loser)
         self.winner.save()
         self.loser.save()
@@ -166,7 +168,7 @@ class MatchResultManager(View):
         rank_difference = user.rankPoints - opponent.rankPoints
         rank_percentage = (abs(rank_difference) * 100) / max(1, user.rankPoints, opponent.rankPoints)
         score_difference = user_score - opponent_score
-        print(f'------> rank_difference: {rank_difference} -- rank percentage : {rank_percentage} -- score_difference: {score_difference}') 
+        print(f'------> rank_difference: {rank_difference} -- rank percentage : {rank_percentage} -- score_difference: {score_difference}')
         if score_difference > 0:
             if rank_difference > 0:
                 points = base_point - rank_percentage + score_difference

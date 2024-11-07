@@ -5,10 +5,6 @@ export default class RankOutro {
 	constructor(canvas, rankData) {
 		this.canvas = canvas;
 
-		// this.rankData = rankData;
-		//
-		// this.isWin = true;
-
 		this.rankColors = {
 			bronze: '#C77428',
 			silver: '#7F87B4',
@@ -70,15 +66,30 @@ export default class RankOutro {
 
 	attachEventsListeners() {
 		document.addEventListener('loadRankOutroAnimationEvent', (event) => {
-			this.rankData = event.detail.rankData;
+			this.rankData = JSON.parse(JSON.stringify(event.detail.rankData));
 			this.updateRankPoints();
-			const minScore = this.rankPoints[this.rankData.rank][0];
-			const maxScore = this.rankPoints[this.rankData.rank][1];
-			this.colorPercentage = (this.rankData.old_rank_points - minScore) /  (maxScore - minScore) * 100;
-			console.log(this.colorPercentage);
+
+			this.colorPercentage = this.getNextRankPercentage(this.rankData.old_rank_points);
+			console.log('old percentage = ', this.oldRankPercentage);
+			this.newRankPercentage = this.getNextRankPercentage(this.rankData.new_rank_points);
+			console.log('new percentage = ', this.newRankPercentage);
+			this.rankPointsDiff = this.rankData.new_rank_points - this.rankData.old_rank_points;
+			console.log('diff = ', this.rankPointsDiff);
+			this.changePercentage = this.newRankPercentage - this.colorPercentage;
+			console.log('change = ', this.changePercentage, this.newRankPercentage, this.colorPercentage);
+			this.changePercentageValue = (1 / this.rankPointsDiff) * this.changePercentage;
+			// console.log(this.colorPercentage);
 
 			// this.updateBackgroundOpacity();
 		});
+	}
+
+
+	getNextRankPercentage(rankPoints) {
+		const minScore = this.rankPoints[this.rankData.rank][0];
+		const maxScore = this.rankPoints[this.rankData.rank][1];
+
+		return (rankPoints - minScore) /  (maxScore - minScore) * 100;
 	}
 
 
@@ -198,18 +209,20 @@ export default class RankOutro {
 	updateRankPoints() {
 		this.intervalId = setInterval(
 			(this.rankData.old_rank_points < this.rankData.new_rank_points) ? this.increaseRankPoints.bind(this) : this.decreaseRankPoints.bind(this),
-			35);
+			15);
 	}
 
 	increaseRankPoints() {
-		console.log(this.rankData)
+		// console.log(this.rankData)
 		this.rankData.old_rank_points++;
+		if (this.colorPercentage < this.newRankPercentage)
+			this.colorPercentage += this.changePercentageValue;
 		if (this.rankData.old_rank_points === this.rankData.new_rank_points)
 			clearInterval(this.intervalId);
 	}
 
 	decreaseRankPoints() {
-		console.log(this.rankData)
+		// console.log(this.rankData)
 		this.rankData.old_rank_points--;
 		if (this.rankData.old_rank_points === this.rankData.new_rank_points)
 			clearInterval(this.intervalId);

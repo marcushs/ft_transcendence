@@ -440,6 +440,7 @@ export default class Game {
 		this.throwLoadOutroAnimationEvent(isWin);
 		this.isOutroAnimationEnabled = true;
 
+		console.log(data.message);
 		setTimeout(() => {
 			this.isOutroAnimationEnabled = false;
 			this.isRankOutroAnimationEnabled = true;

@@ -425,6 +425,8 @@ class PongGameEngine:
                 }
             }
         else:
+            print(f" ----- AND THE WINNER IS -----> old rank points = {results['results']['winner']['old_rank_points']} ||||| new rank points = {results['results']['winner']['new_rank_points']}")
+            print(f" ----- AND THE WINNER IS -----> old rank points = {type(results['results']['winner']['old_rank_points'])} ||||| new rank points = {type(results['results']['winner']['new_rank_points'])}")
             winner_payload = {
                 'type': 'game_update_info',
                 'event': 'game_finished',
@@ -432,12 +434,13 @@ class PongGameEngine:
                     'is_win' : True,
                     'winner_id': self.winner_id,
                     'loser_id': self.loser_id,
-                    'old_rank_points': results['results']['winner']['old_rank_points'],
+                    'old_rank_points': results['results']['winner']['old_rank_points'], 
                     'new_rank_points': results['results']['winner']['new_rank_points'],
                     'rank': results['results']['winner']['rank'],
                     'new_rank': results['results']['winner']['new_rank']
                 }
             }
+            print(f" ----- BOOO LOSER -----> old rank points = {results['results']['loser']['old_rank_points']} ||||| new rank points = {results['results']['loser']['new_rank_points']}")
             loser_payload = {
                 'type': 'game_update_info',
                 'event': 'game_finished',

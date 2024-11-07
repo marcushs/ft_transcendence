@@ -33,6 +33,7 @@ export async function gameWebsocket(userId) {
 				if (gameInstance) throwReceivedEmoteEvent(data.message);
 			},
 			'game_finished': (data) => {
+				console.log('data on websocket = ', data);
 				if (gameInstance) gameInstance.gameFinished(data.message.is_win, data);
 			},
 			'game_canceled': (data) => {
