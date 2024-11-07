@@ -53,6 +53,7 @@ class MatchHistory extends HTMLElement {
         const p = document.createElement("p");
 
         p.innerHTML = "To access to match history, please login or sign in";
+        p.className = "unlogged-sentence";
 
         matchHistoryContainer.appendChild(p);
         matchHistoryContainer.querySelector('h1').style.color = "#8C8FA4";
