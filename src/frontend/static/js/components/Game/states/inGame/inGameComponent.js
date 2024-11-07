@@ -81,6 +81,7 @@ class InGameComponent extends HTMLElement {
 	}
 
 	async disconnectedCallback() {
+		console.trace('disco callback:')
 		if (gameInstance) {
 			disconnectGameWebSocket(this.userId, true);
 			gameInstance.cleanup();

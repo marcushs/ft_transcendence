@@ -1,13 +1,16 @@
 import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
-import { waitForStatesContainer } from "./gameNetworkManager.js";
+import { waitForStatesContainer } from "../../../../utils/game/gameConnection.js";
+import { gameSocket, websocketReconnection } from "./gameWebsocket.js";
 import { disconnectGameWebSocket } from "./gameWebsocket.js";
 import getUserId from "../../../../utils/getUserId.js";
 import { resetGameInstance } from "./inGameComponent.js";
-import { gameSocket } from "./gameWebsocket.js";
+import { gameWebsocket } from "./gameWebsocket.js";
 import Player from "./Player.js";
 import Spark from "./Spark.js";
 import Ball from "./Ball.js";
 import Intro from "./Intro.js";
+import Outro from "./Outro.js";
+import CircularList from "../../../../utils/CircularList.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
 	localStorage.removeItem('isSearchingGame');
@@ -21,6 +24,8 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 	const userId = await getUserId();
 	const statesContainerDiv = document.querySelector('.states-container');
 
+	if (statesContainerDiv.querySelector('in-game-component'))
+		return;
 	statesContainerDiv.innerHTML = '';
 	for (let i = 0; i < statesContainerDiv.classList.length; i++) {
 		if (statesContainerDiv.classList[i] === 'states-container')
@@ -43,10 +48,18 @@ export default class Game {
 		this.gameId = gameId;
 		this.gameState = gameState;
 		this.isGameRunning = false;
-		this.isAnimationEnabled = true;
+		this.isIntroAnimationEnabled = true;
+		this.isOutroAnimationEnabled = false;
+		this.isSentEmoteAnimationEnabled = false;
+		this.isReceivedEmoteAnimationEnabled = false;
 
-		this.Intro = new Intro(this.canvas);
+		this.Intro = new Intro(this.canvas, gameState.player_two.user_infos, gameState.player_one.user_infos);
+		this.Outro = new Outro(this.canvas);
 
+		this.gameTopBar = document.querySelector('game-top-bar');
+		this.gameTopBar.classList.add('in-game-top-bar');
+
+		this.initEmotesLists();
 		this.initGameRender();
 		this.renderLoop();
 	}
@@ -58,13 +71,15 @@ export default class Game {
 		this.speed = this.gameState.ball_speed;
 		this.speedLimit = this.gameState.speedLimit;
 		this.ball = new Ball(this.canvas, this.gameState.ball_position.x, this.gameState.ball_position.y, this.speed);
-		const playerOneBackId = Number(this.gameState.player_one.id);
-		const playerTwoBackId = Number(this.gameState.player_two.id);
+		const playerOneBackId = this.gameState.player_one.id;
+		const playerTwoBackId = this.gameState.player_two.id;
 
-		if (this.userId === playerOneBackId) {
+		if (this.userId !== playerOneBackId) {
+			this.isLeftPlayer = true;
 			this.playerOne = new Player(this.canvas, true, playerOneBackId);
 			this.playerTwo = new Player(this.canvas, false, playerTwoBackId);
 		} else {
+			this.isLeftPlayer = false;
 			this.playerOne = new Player(this.canvas, true, playerTwoBackId);
 			this.playerTwo = new Player(this.canvas, false, playerOneBackId);
 		}
@@ -76,15 +91,55 @@ export default class Game {
 			up: false,
 			down: false,
 		}
-		this.keysPlayerTwo = {
-			up: false,
-			down: false,
-		}
 		this.attachEventsListener();
 
 		setTimeout(() => {
 			this.Intro.isAnimationEnabled = true;
 		}, 3000);
+	}
+
+	attachEventsListener() {
+		document.addEventListener('keydown', event => this.handleKeyDown(event));
+		document.addEventListener('keyup', event => this.handleKeyUp(event));
+
+		document.addEventListener('sendEmoteEvent', event => this.handleSentEvent(event));
+		document.addEventListener('receivedEmoteEvent', event => this.handleReceivedEmote(event));
+
+		document.querySelector('game-top-bar .increase-game-top-bar-button').addEventListener('click', () => this.handleIncreaseTopBar());
+		document.querySelector('game-top-bar').addEventListener('mouseleave', () => this.handleDecreaseTopBar());
+	}
+
+	loadImage(path) {
+		const img = new Image();
+
+		img.src = path;
+		return img;
+	}
+
+	initEmotesLists() {
+		this.sentEmoteFramesList = null;
+		this.receivedEmoteFramesList = null;
+
+		let framesArr = [];
+
+		for (let i = 0; i < 18; i++)
+			framesArr.push(this.loadImage(`../../../../../../assets/emotes/happy/frames/${i}.gif`));
+		this.happyFramesList = new CircularList(framesArr);
+		framesArr = [];
+
+		for (let i = 0; i < 12; i++)
+			framesArr.push(this.loadImage(`../../../../../../assets/emotes/mad/frames/${i}.gif`));
+		this.madFramesList = new CircularList(framesArr);
+		framesArr = [];
+
+		for (let i = 0; i < 39; i++)
+			framesArr.push(this.loadImage(`../../../../../../assets/emotes/cry/frames/${i}.gif`));
+		this.cryFramesList = new CircularList(framesArr);
+		framesArr = [];
+
+		for (let i = 0; i < 9; i++)
+			framesArr.push(this.loadImage(`../../../../../../assets/emotes/laugh/frames/${i}.gif`));
+		this.laughFramesList = new CircularList(framesArr);
 	}
 
 // --------------------------------------- Render loop -------------------------------------- //
@@ -100,8 +155,10 @@ export default class Game {
 		this.movePlayer();
 		this.drawFrame();
 		this.drawSparks();
-		if (this.isAnimationEnabled)
+		if (this.isIntroAnimationEnabled)
 			this.Intro.drawIntro();
+		if (this.isOutroAnimationEnabled)
+			this.Outro.drawOutro();
 
 		requestAnimationFrame(() => this.renderLoop());
 	}
@@ -115,7 +172,7 @@ export default class Game {
 			action = 'move_up';
 		if (this.keysPlayerOne.down)
 			action = 'move_down'
-		if (action) {			
+		if (action) {
 			if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
 				gameSocket.send(JSON.stringify({
 					'type': 'player_action',
@@ -129,11 +186,12 @@ export default class Game {
 
 	// Draw new frame render
 	drawFrame() {
-		if (!this.isAnimationEnabled)
+		if (!this.isIntroAnimationEnabled)
 			this.drawScore();
 		this.drawMiddleLine();
 		this.playerOne.draw();
 		this.playerTwo.draw();
+		this.drawEmotes();
 		this.ball.draw();
 	}
 
@@ -164,7 +222,54 @@ export default class Game {
 		this.canvas.ctx.stroke();
 		this.canvas.ctx.closePath();
 		this.canvas.ctx.fill();
+	}
 
+	drawEmotes() {
+		if (this.isSentEmoteAnimationEnabled) {
+			this.sentEmoteFrame = this.sentEmoteFramesList.get();
+			this.drawSentEmote(this.sentEmoteFrame, this.isLeftPlayer);
+		}
+
+		if (this.isReceivedEmoteAnimationEnabled) {
+			this.receivedEmoteFrame = this.receivedEmoteFramesList.get();
+			this.drawReceivedEmote(this.receivedEmoteFrame, this.isLeftPlayer);
+		}
+	}
+
+	drawSentEmote(emoteFrame, isLeftPlayer) {
+		this.canvas.ctx.save();
+		this.canvas.ctx.beginPath();
+		if (isLeftPlayer)
+			this.canvas.ctx.scale(-1, 1);
+		if (emoteFrame) {
+			if (isLeftPlayer)
+				this.canvas.ctx.drawImage(emoteFrame, -175, this.canvas.height - 150, 175, 150);
+			else
+				this.canvas.ctx.drawImage(emoteFrame, this.canvas.width - 175, 0, 175, 150);
+		}
+		this.canvas.ctx.translate(this.canvas.width, 0);
+		this.canvas.ctx.fillStyle = 'rgba(0, 208, 255, 0.65)';
+		this.canvas.ctx.fill();
+		this.canvas.ctx.restore();
+		this.canvas.ctx.closePath();
+	}
+
+	drawReceivedEmote(emoteFrame, isLeftPlayer) {
+		this.canvas.ctx.save();
+		this.canvas.ctx.beginPath();
+		if (!isLeftPlayer)
+			this.canvas.ctx.scale(-1, 1);
+		if (emoteFrame) {
+			if (isLeftPlayer)
+				this.canvas.ctx.drawImage(emoteFrame, this.canvas.width - 175, 0, 175, 150);
+			else
+				this.canvas.ctx.drawImage(emoteFrame, -175, this.canvas.height - 150, 175, 150);
+		}
+		this.canvas.ctx.translate(this.canvas.width, 0);
+		this.canvas.ctx.fillStyle = 'rgba(0, 208, 255, 0.65)';
+		this.canvas.ctx.fill();
+		this.canvas.ctx.restore();
+		this.canvas.ctx.closePath();
 	}
 
 	drawSparks() {
@@ -184,8 +289,8 @@ export default class Game {
 
 		if (!this.isGameRunning)
 			this.isGameRunning = true;
-		if (this.isAnimationEnabled)
-			this.isAnimationEnabled = false;
+		if (this.isIntroAnimationEnabled)
+			this.isIntroAnimationEnabled = false;
 
 		this.updatePlayersPosition(newState);
 		this.updateBallPosition(newState);
@@ -212,29 +317,6 @@ export default class Game {
 
 
 // --------------------------------------- Update render method -------------------------------------- //
-
-	attachEventsListener() {
-		document.addEventListener('keydown', event => this.handleKeyDown(event));
-		document.addEventListener('keyup', event => this.handleKeyUp(event));
-	}
-
-	handleKeyUp(event) {
-		if (this.isGameRunning) {
-			if (event.key === 'w') this.keysPlayerOne.up = false;
-			if (event.key === 's') this.keysPlayerOne.down = false;
-			if (event.key === 'W') this.keysPlayerOne.up = false;
-			if (event.key === 'S') this.keysPlayerOne.down = false;
-		}
-	}
-
-	handleKeyDown(event) {
-		if (this.isGameRunning) {
-			if (event.key === 'w') this.keysPlayerOne.up = true;
-			if (event.key === 's') this.keysPlayerOne.down = true;
-			if (event.key === 'W') this.keysPlayerOne.up = true;
-			if (event.key === 'S') this.keysPlayerOne.down = true;
-		}
-	}
 
 	updatePlayersPosition(newState) {
 		if (this.playerOne.y !== newState.player_one_y)
@@ -264,13 +346,102 @@ export default class Game {
 		}
 	}
 
+// --------------------------------------- Handler methods -------------------------------------- //
+
+	handleKeyUp(event) {
+		if (this.isGameRunning) {
+			if (event.key === 'w') this.keysPlayerOne.up = false;
+			if (event.key === 's') this.keysPlayerOne.down = false;
+			if (event.key === 'W') this.keysPlayerOne.up = false;
+			if (event.key === 'S') this.keysPlayerOne.down = false;
+		}
+	}
+
+	handleKeyDown(event) {
+		if (this.isGameRunning) {
+			if (event.key === 'w') this.keysPlayerOne.up = true;
+			if (event.key === 's') this.keysPlayerOne.down = true;
+			if (event.key === 'W') this.keysPlayerOne.up = true;
+			if (event.key === 'S') this.keysPlayerOne.down = true;
+		}
+	}
+
+	handleSentEvent(event) {
+		this.sentEmoteFramesList = this.getEmoteFramesListByType(event.detail.emoteType);
+
+		if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
+			gameSocket.send(JSON.stringify({
+				'type': 'emote_sent',
+				'game_id': this.gameId,
+				'player_id': this.playerOne.playerId,
+				'emote_type' : event.detail.emoteType,
+			}));
+		}
+
+		this.isSentEmoteAnimationEnabled = true;
+		setTimeout(() => {
+			this.isSentEmoteAnimationEnabled = false;
+		}, 3500);
+	}
+
+	handleReceivedEmote(event) {
+		console.log('Emote received = ', event.detail.emoteType);
+		this.receivedEmoteFramesList = this.getEmoteFramesListByType(event.detail.emoteType);
+
+		this.isReceivedEmoteAnimationEnabled = true;
+		setTimeout(() => {
+			this.isReceivedEmoteAnimationEnabled = false;
+		}, 3500);
+	}
+
+	getEmoteFramesListByType(emoteType) {
+		let emoteFramesList;
+
+		if (emoteType === "happy")
+			emoteFramesList = this.happyFramesList;
+		if (emoteType === "mad")
+			emoteFramesList = this.madFramesList;
+		if (emoteType === "cry")
+			emoteFramesList = this.cryFramesList;
+		if (emoteType === "laugh")
+			emoteFramesList = this.laughFramesList;
+
+		return emoteFramesList;
+	}
+
+	handleIncreaseTopBar() {
+		this.gameTopBar.style.animation = "increase-top-bar-size 0.25s linear forwards";
+		document.querySelector('game-top-bar emotes-component').style.visibility = 'visible';
+		document.querySelector('game-top-bar .extend-game-button').style.visibility = 'visible';
+		document.querySelector('game-top-bar .reduce-game-button').style.visibility = 'visible';
+		setTimeout(() => { this.isTopBarOpened = true; }, 250);
+	}
+
+	handleDecreaseTopBar() {
+		if (this.isTopBarOpened) {
+			this.gameTopBar.style.animation = "decrease-top-bar-size 0.25s linear forwards";
+			this.isTopBarOpened = false;
+			this.gameTopBar.classList.add('in-game-top-bar');
+			document.querySelector('game-top-bar emotes-component').style.visibility = 'hidden';
+			document.querySelector('game-top-bar .increase-game-top-bar-button').style.visibility = 'visible';
+			document.querySelector('game-top-bar .extend-game-button').style.visibility = 'hidden';
+			document.querySelector('game-top-bar .reduce-game-button').style.visibility = 'hidden';
+		}
+	}
+
 // --------------------------------------- Game finished render -------------------------------------- //
 
-	gameFinished(message) {
-		this.gameInProgress = false;
-		alert(message);
-		disconnectGameWebSocket(this.userId, false);
-		throwRedirectionEvent('/');
+	gameFinished(isWin, data) {
+		this.throwLoadOutroAnimationEvent(isWin);
+		this.isOutroAnimationEnabled = true;
+
+		console.log(data);
+		// Not definitive
+		setTimeout(() => {
+			this.gameInProgress = false;
+			disconnectGameWebSocket(this.userId, false);
+			throwRedirectionEvent('/');
+		}, 10000);
 	}
 
 	cleanup() {
@@ -313,9 +484,20 @@ export default class Game {
 
 			(y < 50) ? sparkY = 0 : sparkY = this.canvas.height;
 
-	        let spark = new Spark(x, sparkY, angle, speed, lifetime, this.deltaTime);
+	        let spark = new Spark(x, sparkY, angle, speed, lifetime, this.deltaTime, 2, "rgb(255, 165, 0)");
 	        this.sparks.push(spark);
 	    }
+	}
+
+	throwLoadOutroAnimationEvent(isWin) {
+		const event = new CustomEvent('loadOutroAnimationEvent', {
+			bubbles: true,
+			detail: {
+				isWin: isWin
+			}
+		});
+
+		document.dispatchEvent(event);
 	}
 
 }

@@ -13,3 +13,9 @@
     --offline-status-color: gray;
     --away-status-color: rgb(184, 151, 60);
 }
+
+.test {
+    width: 30rem;
+    height: 30rem;
+    background: red;
+}

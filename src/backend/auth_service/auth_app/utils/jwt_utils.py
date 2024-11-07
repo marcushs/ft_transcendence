@@ -45,8 +45,8 @@ def get_user_from_jwt(token):
         user = User.objects.get(id=payload['user_id'])
         return user
     except jwt.ExpiredSignatureError:
-        # call auth jwt endpoint for refresh attempt here
-        return None
+        print('EXPIRED !!!')
+        return 'expired'
     except Exception:
         return None
 
@@ -58,6 +58,7 @@ class UpdateJwtToken(View):
 
 
     def get(self, request):
+        print(f'!!!!!!!!!!!!!!!!!!!!!! UpdateJwtToken reached with request: {request}')
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'No token provided'}, status=401)
         return JsonResponse({'message': 'tokens updated'}, status=200)

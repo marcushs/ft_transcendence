@@ -1,4 +1,5 @@
 import {getString, getUserLanguage} from "../../../../utils/languageManagement.js";
+import './localGame/inLocalGameComponent.js';
 
 class LocalComponent extends HTMLElement {
 
@@ -58,11 +59,11 @@ class LocalComponent extends HTMLElement {
 		});
 
 		paddleSpeedInput.addEventListener('input', () => {
-			this.handleInputValueChanged(paddleSpeedInput, this.paddleSpeed, '#paddleSpeedValue')
+			this.handleInputValueChanged(paddleSpeedInput, "paddle", '#paddleSpeedValue')
 		});
 
 		ballSpeedInput.addEventListener('input', () => {
-			this.handleInputValueChanged(ballSpeedInput, this.ballSpeed, '#ballSpeedValue');
+			this.handleInputValueChanged(ballSpeedInput, "ball", '#ballSpeedValue');
 		});
 
 		this.querySelector('#localPlay').addEventListener('click', () => this.handlePlayButtonClick());
@@ -80,13 +81,17 @@ class LocalComponent extends HTMLElement {
 		}
 	}
 
-	handleInputValueChanged(input, valueToChange, displayedValueId) {
-		valueToChange = input.value;
-		this.querySelector(displayedValueId).innerText = input.value;
+	handleInputValueChanged(input, valueToChange, inputId) {
+		(valueToChange === "paddle") ? this.paddleSpeed = input.value : this.ballSpeed = input.value;
+		this.querySelector(inputId).innerText = input.value;
 	}
 
 	handlePlayButtonClick() {
-		// Start game in local
+		document.querySelector('.states-container').innerHTML = `<in-local-game-component 
+																				paddle-speed="${this.paddleSpeed}" 
+																				ball-speed="${this.ballSpeed}" 
+																				score-to-win="${this.scoreToWin}">
+																			</in-local-game-component>`;
 	}
 
 }

@@ -6,6 +6,7 @@
 @import './states/localHome/localHome.css';
 @import './inactivityPopUp.css'; /* pop Up to move in Pop up folders when created */
 @import './matchmakingSearchPopUp.css'; /* pop Up to move in Pop up folders when created */
+@import './EmotesComponent.css';
 
 
 

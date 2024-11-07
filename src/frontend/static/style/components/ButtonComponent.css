@@ -12,6 +12,15 @@ button-component .generic-btn {
 	padding: 0 1.5rem;
 }
 
+button-component .generic-btn-cancel {
+	border: 1px solid var(--error-color);
+	color: var(--error-color);
+	border-radius: 5px;
+	font-size: 2rem;
+	padding: 0 1.5rem;
+	/*display: none;*/
+}
+
 button-component .generic-btn-disabled {
 	border: 1px solid var(--light-grey);
 	color: var(--light-grey);
@@ -83,20 +92,54 @@ button-component .button-background:hover .login-nav-bar-btn {
 	border-radius: 5px;
 }
 
-/* style for oauth button */
-.generic-auth-btn .logo_42,
-.generic-auth-btn .logo_google,
-.generic-auth-btn .logo_github {
-	width: 13%;
-	display: inline;
-	margin-left: 20px;
-}
-
 .generic-auth-btn-disabled .button-background {
 	padding: 1px;
 	background: var(--light-grey);
 	border-radius: 5px;
 	cursor: initial;
+}
+
+/* style for oauth button */
+
+.o-auth-btn .button-background {
+	position: relative;
+	border-radius: 6px;
+	cursor: initial;
+	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
+	padding: 1px;
+}
+
+button-component .o-auth-btn {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: none;
+	color: var(--text-primary-color);
+	font-size: 2.2rem;
+}
+
+#oauth42LoginBtn button,
+#oauthGoogleLoginBtn button,
+#oauthGithubLoginBtn button {
+	height: 6rem;
+	width: 6rem;
+	border-radius: 6px;
+	background-color: rgba(30, 32, 43, 1);
+	background-size: 75%;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+#oauth42LoginBtn button {
+	background-image: url("../../assets/logo_42.png");
+}
+
+#oauthGoogleLoginBtn button {
+	background-image: url("../../assets/logo_google.png");
+}
+
+#oauthGithubLoginBtn button {
+	background-image: url("../../assets/logo_github.png");
 }
 
 /* Player number */

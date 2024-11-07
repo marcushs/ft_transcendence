@@ -26,12 +26,14 @@ export default () => {
 						<a href="/change-password" id="forgotten-password">${getString('loginView/forgottenPassword')}</a>
 					</div>
 					<button-component id="loginBtn" label="Login" class="generic-auth-btn-disabled"></button-component>
-					<button-component id="oauth42LoginBtn" label="Login with " class="generic-auth-btn" icon="logo_42">
-					</button-component>
-					<button-component id="oauthGoogleLoginBtn" label="Login with " class="generic-auth-btn" icon="logo_google">
-					</button-component>
-					<button-component id="oauthGithubLoginBtn" label="Login with " class="generic-auth-btn" icon="logo_github">
-					</button-component>
+					<div class="o-auth-container">					
+						<button-component id="oauth42LoginBtn" label="" class="o-auth-btn" icon="logo_42">
+						</button-component>
+						<button-component id="oauthGoogleLoginBtn" label="" class="o-auth-btn" icon="logo_google">
+						</button-component>
+						<button-component id="oauthGithubLoginBtn" label="" class="o-auth-btn" icon="logo_github">
+						</button-component>
+					</div>
 					<p>${getString('loginView/noAccountSentence')} <a href="/signup">${getString('loginView/signup')}</a></p>
 					<span id="feedbackElement" class="input-feedback"></span>
 				</form>

@@ -10,17 +10,17 @@ def get_map_dimension():
     return {'width': 1587.30, 'height': 1000}
 
 
-async def send_client_game_init(game_id_data, game_instance): 
+async def send_client_game_init(game_data, game_instance): 
     map_dimension = get_map_dimension()
     game_state = game_instance.state
     payload = json.dumps({
         'type': 'game_ready_to_start',
-        'game_id': game_id_data['game'],
+        'game_id': game_data['game'],
         'game_state': game_state,
         'map_dimension': map_dimension
     })
-    await send_websocket_info(player_id=game_id_data['player_one'], payload=payload) 
-    await send_websocket_info(player_id=game_id_data['player_two'], payload=payload)
+    await send_websocket_info(player_id=game_data['player_one']['id'], payload=payload) 
+    await send_websocket_info(player_id=game_data['player_two']['id'], payload=payload)
 
 
 async def get_player_info(player_id):
@@ -37,6 +37,20 @@ async def send_websocket_info(player_id, payload):
         )
     except Exception as e:
         print(f'---------------->> Error sending websocket info: {e}')
+
+@method_decorator(jwt_required, name='dispatch') 
+class GetUserGameData(View):
+    def __init__(self):
+        super()
+
+    async def get(self, request, user_id):
+        from .game_engine import PongGameEngine 
+        
+        game_data = PongGameEngine.get_user_game_data(str(user_id))
+        if game_data:
+            return JsonResponse({'status': 'success', 'game_data': json.dumps(game_data)}, status=200)
+        return JsonResponse({'status': 'error'}, status=200)  
+
 
 @method_decorator(jwt_required, name='dispatch') 
 class CheckGameStillActive(View):

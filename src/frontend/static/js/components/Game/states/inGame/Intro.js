@@ -1,11 +1,16 @@
 
 
 export default class Intro {
-	constructor(canvas) {
+	constructor(canvas, leftPlayer, rightPlayer) {
 		this.canvas = canvas;
 		this.isAnimationEnabled = false;
 		this.isCountDownEnabled = false;
 		this.countDownNumber = '3';
+
+		this.leftPlayer = leftPlayer;
+		this.rightPlayer = rightPlayer;
+
+		this.isRanked = false;
 
 		this.playersInfos = {
 			isRanked: false,
@@ -21,7 +26,6 @@ export default class Intro {
 			}
 		}
 
-		this.isRanked = this.playersInfos.isRanked;
 
 		this.initializeImages();
 		this.initializeCoordinates();
@@ -39,10 +43,10 @@ export default class Intro {
 	initializeImages() {
 		this.backgroundImage = this.loadImage("../../../../../assets/gameStartAnimationBackground.svg");
 
-		this.playerOneImage = this.loadImage(this.playersInfos.playerOne.profileImage);
+		this.playerOneImage = this.loadImage(this.leftPlayer.profile_image);
 		this.playerOneRankImage = this.loadImage(`../../../../../assets/rank-${this.playersInfos.playerOne.rank}.svg`);
 
-		this.playerTwoImage = this.loadImage(this.playersInfos.playerTwo.profileImage);
+		this.playerTwoImage = this.loadImage(this.rightPlayer.profile_image);
 		this.playerTwoRankImage = this.loadImage(`../../../../../assets/rank-${this.playersInfos.playerTwo.rank}.svg`);
 	}
 
@@ -57,8 +61,8 @@ export default class Intro {
 		this.vLetterX = this.canvas.width / 2 - 50;
 		this.sLetterX = this.canvas.width / 2 + 95;
 
-		this.playerOneInfosX = this.canvas.width / 4;
-		this.playerTwoInfosX = this.canvas.width / 4 * 3;
+		this.leftPlayerX = this.canvas.width / 4;
+		this.rightPlayerX = this.canvas.width / 4 * 3;
 	}
 
 
@@ -93,7 +97,7 @@ export default class Intro {
 			this.updateCountDown();
 	}
 
-	drawLeftSection(topX, bottomX) {
+	drawLeftSection() {
 		this.canvas.ctx.save();
 
 		this.canvas.ctx.beginPath();
@@ -108,9 +112,9 @@ export default class Intro {
 		this.canvas.ctx.restore();
 		this.canvas.ctx.closePath();
 
-		this.drawPlayer(this.playerOneInfosX, this.canvas.height / 4 * 2.8, this.playerOneImage, this.playersInfos.playerOne.name);
+		this.drawPlayer(this.leftPlayerX, this.canvas.height / 4 * 2.8, this.playerOneImage, this.leftPlayer.username);
 		if (this.isRanked)
-			this.drawRank(this.playerOneInfosX, this.canvas.height / 4 * 2.8, this.playerOneRankImage);
+			this.drawRank(this.leftPlayerX, this.canvas.height / 4 * 2.8, this.playerOneRankImage);
 		this.drawLine(this.leftSectionTopRightX, this.leftSectionBottomRightX);
 	}
 
@@ -130,9 +134,9 @@ export default class Intro {
 		this.canvas.ctx.restore();
 		this.canvas.ctx.closePath();
 
-		this.drawPlayer(this.playerTwoInfosX, this.canvas.height / 4, this.playerTwoImage, this.playersInfos.playerTwo.name);
+		this.drawPlayer(this.rightPlayerX, this.canvas.height / 4, this.playerTwoImage, this.rightPlayer.username);
 		if (this.isRanked)
-			this.drawRank(this.playerTwoInfosX, this.canvas.height / 4, this.playerTwoRankImage);
+			this.drawRank(this.rightPlayerX, this.canvas.height / 4, this.playerTwoRankImage);
 
 		this.drawLine(this.rightSectionBottomLeftX, this.rightSectionTopLeftX);
 	}
@@ -234,8 +238,8 @@ export default class Intro {
 		this.vLetterX -= 10;
 		this.sLetterX += 10;
 
-		this.playerOneInfosX -= 10;
-		this.playerTwoInfosX += 10;
+		this.leftPlayerX -= 10;
+		this.rightPlayerX += 10;
 	}
 
 

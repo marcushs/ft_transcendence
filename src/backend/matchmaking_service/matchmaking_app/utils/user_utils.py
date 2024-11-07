@@ -19,6 +19,16 @@ def get_user_by_id(user_id):
     
     return user
 
+async def async_get_user_by_id(user_id): 
+    print(f'get_user reached: user_id: {user_id} !!!!')
+    try:
+        user = await sync_to_async(User.objects.get)(id=user_id)
+    except Exception as e:
+        print(f'!!!!! --> {str(e)}')
+    print(f'user: {user}')
+    
+    return user
+
 
 class add_new_user(View):
     def __init__(self):

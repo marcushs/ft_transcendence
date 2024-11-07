@@ -1,5 +1,5 @@
 import { gameInstance, resetGameInstance } from "./inGameComponent.js";
-import { surrenderHandler, GameStillActive } from "./gameNetworkManager.js";
+import { GameStillActive } from "./gameNetworkManager.js";
 import { startGame } from "./Game.js";
 
 export let gameSocket = null;
@@ -11,10 +11,10 @@ export async function gameWebsocket(userId) {
 		console.log('already connected to game Websocket');
 		return;
 	}
-	if (gameSocket)
-		disconnectGameWebSocket();
+	// if (gameSocket)
+	// 	disconnectGameWebSocket();
 
-	gameSocket = new WebSocket(`wss://localhost:8005/ws/game/?user_id=${userId}`);
+	gameSocket = new WebSocket(`wss://localhost:3000/ws/game/?user_id=${userId}`);
 
 	gameSocket.onopen = () => {
 		console.log('Connected to game websocket');
@@ -24,25 +24,35 @@ export async function gameWebsocket(userId) {
 		const data = JSON.parse(event.data)
 		const actions = {
 			'game_ready_to_start': (data) => {
-				startGame(data.game_id, data.game_state, data.map_dimension)
+				startGame(data.game_id, data.game_state, data.map_dimension);
 			},
 			'data_update': (data) => {
-				if (gameInstance) gameInstance.updateGameRender(data.game_state)
+				if (gameInstance) gameInstance.updateGameRender(data.game_state);
+			},
+			'emote_received': (data) => {
+				if (gameInstance) throwReceivedEmoteEvent(data.message);
 			},
 			'game_finished': (data) => {
-				if (gameInstance) gameInstance.gameFinished(data.message) 
+				console.log('----->!!!!!<------ ', data)
+				if (gameInstance) gameInstance.gameFinished(data.message.is_win, data);
 			},
 			'game_canceled': (data) => {
-				if (gameInstance) gameInstance.canceledGame(data.message) 
+				if (gameInstance) gameInstance.canceledGame(data.message);
+			},
+			'game_surrended': (data) => {
+				if (gameInstance) gameInstance.gameSurrended(data.message);
 			},
 			'player_disconnected': (data) => {
-				if (gameInstance) gameInstance.updateMessage(data.message) 
+				if (gameInstance) gameInstance.updateMessage(data.message);
 			},
 			'player_reconnected': (data) => {
-				if (gameInstance) gameInstance.updateMessage(data.message) 
+				if (gameInstance) gameInstance.updateMessage(data.message);
 			},
 			'game_resumed': (data) => {
-				if (gameInstance) gameInstance.updateMessage(data.message) 
+				if (gameInstance) gameInstance.updateMessage(data.message);
+			},
+			'connections_time_out': (data) => {
+				handleGameConnectionTimeOut(data.message);
 			},
 			'error_log': (data) => console.log(data.message)
 			
@@ -173,4 +183,16 @@ export function disconnectGameWebSocket(userId, sendMessage) {
 		gameSocket.close();
 		console.log('Game connection closed');
 	}
+}
+
+
+function throwReceivedEmoteEvent(emoteType) {
+	const event = new CustomEvent('receivedEmoteEvent', {
+		bubbles: true,
+		detail: {
+			emoteType: emoteType
+		}
+	});
+
+	document.dispatchEvent(event);
 }

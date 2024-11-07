@@ -133,7 +133,7 @@ function loadChatWebSocket() {
 	chatSocket = new WebSocket('wss://localhost:3000/ws/chat/');
 
 	chatSocket.onopen = async function (e) {
-		console.log("The chat websocket connection was setup successfully !");
+		console.log("Chat websocket started");
 
 		chatroomsList = await fetchChatroomsList();
 		joinAllInvitedChatrooms(chatroomsList);

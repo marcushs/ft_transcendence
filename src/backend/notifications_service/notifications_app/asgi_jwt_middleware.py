@@ -14,7 +14,7 @@ class JWTAuthMiddleware:
         self.inner = inner
 
     async def __call__(self, scope, receive, send):
-        instance = JWTAuthMiddlewareInstance(scope, receive, send, self.inner)
+        instance = JWTAuthMiddlewareInstance(scope, receive, send, self.inner) 
         return await instance()
 
 
