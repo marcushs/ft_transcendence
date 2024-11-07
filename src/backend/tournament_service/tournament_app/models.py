@@ -1,10 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
+from django.contrib.postgres.fields import ArrayField
 import uuid
 from django.utils import timezone
 import datetime
 from asgiref.sync import sync_to_async
 from django.forms.models import model_to_dict
+import shortuuid
+from shortuuid.django_fields import ShortUUIDField
 
 def user_directory_path(instance, filename):
     return f'profile_images/{instance.id}/{filename}'
@@ -81,17 +84,31 @@ class Tournament(models.Model):
 
         return obj_dict
     
+    def get_members(self):
+        members = list(self.members.values('id', 'username'))
+        return [{'id': str(member['id']), 'username': member['username']} for member in members]
+    
     def format_datetime(self, datetime):
         return datetime.strftime('%d/%m/%Y %H:%M')
     
     def is_not_full(self):
         return self.members.count() < self.tournament_size
-
+    
 class TournamentMatch(models.Model):
+    match_id = ShortUUIDField(primary_key=True)
     tournament = models.ForeignKey(Tournament, related_name='tournament_match', on_delete=models.CASCADE)
-    winner = models.ForeignKey(User, related_name='won_matches', on_delete=models.CASCADE)
-    loser = models.ForeignKey(User, related_name='lost_matches', on_delete=models.CASCADE)
-    winner_score = models.IntegerField()
-    loser_score = models.IntegerField()
+    players = models.ManyToManyField(User, related_name='matches')
+    winner = models.ForeignKey(User, related_name='won_matches', on_delete=models.CASCADE, null=True, blank=True)
+    loser = models.ForeignKey(User, related_name='lost_matches', on_delete=models.CASCADE, null=True, blank=True)
+    winner_score = models.IntegerField(default=0)
+    loser_score = models.IntegerField(default=0)
     date = models.DateTimeField(default=timezone.now)
     tournament_round = models.CharField()
+
+class Bracket(models.Model):
+    tournament = models.ForeignKey(Tournament, related_name='tournament_bracket', on_delete=models.CASCADE)
+    eighth_finals = models.ManyToManyField(TournamentMatch, related_name='eighth_finals_games')
+    quarter_finals = models.ManyToManyField(TournamentMatch, related_name='quarter_finals_games')    
+    semi_finals = models.ManyToManyField(TournamentMatch, related_name='semi_finals_games')
+    finals = models.ForeignKey(TournamentMatch, related_name='finals_game', on_delete=models.CASCADE)   
+

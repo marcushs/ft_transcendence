@@ -1,4 +1,5 @@
 import json
+import random
 from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import aget_object_or_404
 from django.utils import timezone
@@ -12,6 +13,7 @@ from django.contrib.auth import get_user_model
 from .models import *
 from django.utils import timezone
 from datetime import timedelta
+import shortuuid
 
 User = get_user_model()
 
@@ -40,7 +42,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await self.channel_layer.group_add(str(tournament.tournament_id), self.channel_name)
 			await self.channel_layer.group_send('tournament_updates',
 												{'type': 'new.tournament',
-												'tournament': await tournament.to_dict()})
+												'tournament': await tournament.to_dict()}) 
 		elif message_type == 'join_tournament':
 			try:
 				tournament = await aget_object_or_404(Tournament, tournament_id=data['tournament_id'])
@@ -56,6 +58,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 										 				{'type': 'join.tournament',
 														'tournament': await tournament.to_dict()})
 					if await self.get_members_count(tournament) == tournament.tournament_size:
+						await self.init_bracket(tournament)
 						await self.channel_layer.group_send(str(tournament.tournament_id),
 															{'type': 'load_match',
 															'tournament': await tournament.to_dict()})
@@ -168,6 +171,22 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	def is_user_in_any_tournament(self):
 		return self.user.joined_tournaments.exists()
+	
+	@database_sync_to_async
+	def init_bracket(self, tournament):
+		members_copy = tournament.get_members().copy()
+		random.shuffle(members_copy)
+
+		
+		match = TournamentMatch.objects.create(match_id=shortuuid.uuid(), tournament=tournament, tournament_round='semi_finals')
+		match.players.add(members_copy[0]['id'])
+		match.players.add(members_copy[1]['id'])
+
+
+	# @database_sync_to_async
+	# def create_match_pairs(self, members):
+
+
 	
 
 
