@@ -1,6 +1,7 @@
 import { websocketReconnection } from "../../components/Game/states/inGame/gameWebsocket.js";
 import { disconnectGameWebSocket } from "../../components/Game/states/inGame/gameWebsocket.js";
 import { matchmakingSocket } from "../matchmaking/matchmakingWebsocket.js";
+import { throwRedirectionEvent } from "../throwRedirectionEvent.js";
 import { sendRequest } from "../sendRequest.js";
 
 export async function handleGameReconnection(userId, gameState) {

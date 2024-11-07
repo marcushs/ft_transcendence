@@ -33,8 +33,16 @@ export async function GameStillActive(game_id) {
 }
 
 class GameInactivityComponent extends HTMLElement {
+    static instance = null;
+
     constructor() {
         super();
+
+        if (GameInactivityComponent.instance) {
+            return;
+        }
+        GameInactivityComponent.instance = this
+
         const savedState = localStorage.getItem('inGameComponentState');
         this.gameState = savedState ? JSON.parse(savedState) : null;
         this.isGameRendered = document.querySelector('in-game-component');
@@ -73,12 +81,17 @@ class GameInactivityComponent extends HTMLElement {
     attachEventsListener() {
         this.reconnectChoice.addEventListener('click', async () => {
             await handleGameReconnection(this.gameState.userId, this.gameState)
-            this.remove();
+            this.removeInstance();
         })
         this.LeaveChoice.addEventListener('click', async () => {            
             await surrenderHandler();
-            this.remove();
+            this.removeInstance();
         })
+    }
+
+    removeInstance() {
+        GameInactivityComponent.instance = null;
+        this.remove();
     }
 }
 

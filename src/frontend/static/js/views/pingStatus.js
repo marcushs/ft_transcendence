@@ -18,20 +18,14 @@ export class PingStatus {
         this.isHandlingInactivity = true;
         await this.sendPingStatus(); 
         setTimeout(() => {
-            console.log('ping STOPPED');
             this.isHandlingInactivity = false;
         }, this.timeoutDuration);
     }
 
     async sendPingStatus() {
         const url = '/api/user/ping_status/';
-        // console.log('ping backend');
         try {
-            const data = await sendRequest('POST', url, null);
-            // if (data.status === ' success')
-                // console.log('backend: ', data.message);
-            // else
-                // console.log('backend: ', data.message);
+            await sendRequest('POST', url, null);
         } catch (error) {
             console.log(error.message); 
         }
