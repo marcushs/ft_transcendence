@@ -62,7 +62,22 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				else:
 					await self.send_error_message(message_type, 'Tournament is full')
 			except Http404:
-				return
+				await self.send_error_message(message_type, 'Cannot find requested tournament')
+		elif message_type == 'leave_tournament':
+			try:
+				tournament = await aget_object_or_404(Tournament, tournament_id=data['tournament_id'])
+				if await self.is_user_in_this_tournament(tournament):
+					await self.remove_user_from_tournament(tournament)
+					await self.channel_layer.group_discard(str(tournament.tournament_id), self.channel_name)
+					await self.send(text_data=json.dumps({'type': 'redirect_to_tournament_home'}))
+					await self.channel_layer.group_send('tournament_updates', 
+														{'type': 'leave.tournament',
+			   											'tournament': await tournament.to_dict()})
+				else:
+					await self.send_error_message(message_type, 'You are not in this tournament')
+			except Http404:
+				await self.send_error_message(message_type, 'Cannot find requested tournament')
+
 
 	async def new_tournament(self, event):
 		await self.send(text_data=json.dumps({
@@ -79,6 +94,12 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def load_match(self, event):
 		await self.send(text_data=json.dumps({
 			'type': 'load_match',
+			'tournament': event['tournament'],
+		}))
+
+	async def leave_tournament(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'leave_tournament',
 			'tournament': event['tournament'],
 		}))
 
@@ -137,6 +158,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	def get_members_count(self, tournament):
 		return tournament.members.count()
 
+	@database_sync_to_async
+	def is_user_in_this_tournament(self, tournament):
+		return tournament.members.filter(id=self.user.id).exists()
+	
+	@database_sync_to_async
+	def remove_user_from_tournament(self, tournament):
+		return tournament.members.remove(self.user)
+
 	def is_user_in_any_tournament(self):
 		return self.user.joined_tournaments.exists()
+	
+
 

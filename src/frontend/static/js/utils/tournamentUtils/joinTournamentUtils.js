@@ -21,14 +21,24 @@ export function redirectToTournamentWaitingRoom(tournamentData) {
 	gameComponent.currentState = "tournamentWaitingRoom";
 }
 
+export function redirectToTournamentHome() {
+	const gameComponent = document.querySelector('game-component');
+	const tournamentHomeState = gameComponent.states['tournamentHome'];
+
+	gameComponent.changeState(tournamentHomeState.state, tournamentHomeState.context);
+	gameComponent.currentState = "tournamentHome";
+}
+
 export function updateTournamentInfo(tournamentData) {
 	const joinedTournamentId = tournamentData.tournament_id;
 	const waitingRoom = document.querySelector('.waiting-room');
 	const joinComponent = document.querySelector('join-component');
 	
 	if (waitingRoom && (waitingRoom.getAttribute('data-tournament') === joinedTournamentId)) {
+		console.log('updateWaitingRoomPlayerCount')
 		updateWaitingRoomPlayerCount(tournamentData);
 	} else if (joinComponent) {
+		console.log('updateTournamentComponentPlayerCount')
 		updateTournamentComponentPlayerCount(tournamentData, joinComponent, joinedTournamentId);
 	}
 }
@@ -50,3 +60,4 @@ function updateTournamentComponentPlayerCount(tournamentData, joinComponent, joi
 		}
 	})
 }
+

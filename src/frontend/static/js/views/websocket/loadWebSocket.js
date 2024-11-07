@@ -4,7 +4,7 @@ import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms, ad
 import { updateCurrentChatroomId, messageReceptionDOMUpdate } from '../../utils/chatUtils/sendPrivateMessage.js';
 import { UpdateChatContactWebsocket } from './updateChatContactWebsocket.js';
 import { UpdateChatroomTopBarWebsocket } from './updateChatroomTopBarWebsocket.js';
-import { putNewTournamentToDOM, redirectToTournamentWaitingRoom, updateTournamentInfo } from '../../utils/tournamentUtils/joinTournamentUtils.js';
+import { putNewTournamentToDOM, redirectToTournamentWaitingRoom, updateTournamentInfo, redirectToTournamentHome } from '../../utils/tournamentUtils/joinTournamentUtils.js';
 import { redirectToTournamentMatch } from '../../utils/tournamentUtils/tournamentMatchUtils.js';
 
 
@@ -186,6 +186,10 @@ function loadTournamentWebSocket() {
 		} else if (data.type === 'load_match') {
 			console.log('loading tournament match...');
 			redirectToTournamentMatch(data.tournament)
+		} else if (data.type === 'redirect_to_tournament_home') {
+			redirectToTournamentHome()
+		} else if (data.type === 'leave_tournament') {
+			updateTournamentInfo(data.tournament);
 		}
 	};
 
