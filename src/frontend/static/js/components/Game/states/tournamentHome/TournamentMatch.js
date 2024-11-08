@@ -1,3 +1,5 @@
+import { getUserId } from "../../../../utils/chatUtils/joinRoomUtils.js";
+
 export default class TournamentMatch {
 	constructor(tournamentBracket) {
 		this.redirectState = "tournament-match";
@@ -23,15 +25,18 @@ class TournamentMatchElement extends HTMLElement {
 		this.tournamentId = tournamentBracket.tournament.tournament_id;
 		this.tournamentName = tournamentBracket.tournament.tournament_name;
 		this.tournamentSize = tournamentBracket.tournament.tournament_size;
-		this.stage = this.formatCurrentStage(tournamentBracket.tournament.current_stage);
-		this.opponent = 'Alex' //tournamentData.opponent;
+		this.stage = tournamentBracket.tournament.current_stage;
+		this.matches = tournamentBracket[this.stage];
+		this.clientMatch = null;
+		this.userId = null;
 	}
 
-	connectedCallback() {
-		this.render();
+	async connectedCallback() {
+		await this.findMatch();
+		await this.render();
 	}
 
-	render() {
+	async render() {
 		this.innerHTML = `
 			<div class="waiting-room" data-tournament="${this.tournamentId}">
 				<h3 class="waiting-room-title">Waiting Room</h3>
@@ -41,8 +46,8 @@ class TournamentMatchElement extends HTMLElement {
 							<img id="bracket-icon" src="../../../../assets/bracket_icon.svg" alt="bracket_icon">
 						</div>
 						<h4 class="tournament-name">${this.tournamentName}</h4>
-						<p>Stage: <span>${this.stage}</span></p>
-						<p>Opponent: <span>${this.opponent}</span></p>
+						<p>Stage: <span>${this.formatCurrentStage(this.stage)}</span></p>
+						<p>Opponent: <span>${this.getOpponent()}</span></p>
 						<div class="countdown-container">
 							<button type="button" class="tournament-match-ready-btn">Ready</button>
 							<p class="match-countdown">Match starts in <span>47s</span></p>
@@ -58,6 +63,20 @@ class TournamentMatchElement extends HTMLElement {
 
 		round = round.replace('_', '-');
 		return round[0].toUpperCase() + round.slice(1);
+	}
+
+	async findMatch() {
+		this.userId = await getUserId();
+		
+		if (!this.userId) return ;
+
+		this.clientMatch = this.matches.find(match => 
+			match.players.some(player => player.id === this.userId)
+		);
+	}
+
+	getOpponent() {
+		return this.clientMatch.players[0].id === this.userId ? this.clientMatch.players[1].username : this.clientMatch.players[0].username;
 	}
 }
 
