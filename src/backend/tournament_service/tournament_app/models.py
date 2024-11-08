@@ -13,6 +13,13 @@ from django.db.models import Prefetch
 def user_directory_path(instance, filename):
     return f'profile_images/{instance.id}/{filename}'
 
+ROUND_CHOICES = [
+    ('finals', 'Finals'),
+    ('semi_finals', 'Semi-Finals'),
+    ('quarter_finals', 'Quarter-Finals'),
+    ('eighth_finals', 'Eighth-Finals'),
+]
+
 class UserManager(BaseUserManager):
     def create_user(self, email, username, user_id):
         if not email:
@@ -62,6 +69,7 @@ class Tournament(models.Model):
     tournament_size = models.IntegerField()
     members = models.ManyToManyField(User, related_name='joined_tournaments', blank=True)
     creation_time = models.DateTimeField(default=timezone.now)
+    current_stage = models.CharField(max_length=20, choices=ROUND_CHOICES)
     isOver = models.BooleanField(default=False)
     
     async def to_dict(self):
@@ -82,6 +90,7 @@ class Tournament(models.Model):
         obj_dict['members'] = [{'id': str(member['id']), 'username': member['username']} for member in members]
         obj_dict['member_count'] = len(members)
         obj_dict['creation_time'] = format_datetime(self.creation_time)
+        obj_dict['current_stage'] = self.current_stage
 
         return obj_dict
     
@@ -101,7 +110,7 @@ class TournamentMatch(models.Model):
     winner_score = models.IntegerField(default=0)
     loser_score = models.IntegerField(default=0)
     date = models.DateTimeField(default=timezone.now)
-    tournament_round = models.CharField()
+    tournament_round = models.CharField(max_length=20, choices=ROUND_CHOICES)
 
     async def to_dict(self):
         obj_dict = {
@@ -129,7 +138,6 @@ class Bracket(models.Model):
     finals = models.ManyToManyField(TournamentMatch, related_name='finals_game')
 
     async def to_dict(self):
-        print('-----------------called bracket to_dict-----------------------------')
         # Prefetch related TournamentMatch objects
         bracket = await sync_to_async(Bracket.objects.prefetch_related(
             Prefetch('eighth_finals', queryset=TournamentMatch.objects.select_related('tournament').prefetch_related('players')),
@@ -152,7 +160,6 @@ class Bracket(models.Model):
         obj_dict['semi_finals'] = await matches_to_dicts(bracket.semi_finals.all())
         obj_dict['finals'] = await matches_to_dicts(bracket.finals.all())
 
-        print(obj_dict)
         return obj_dict
 
 def format_datetime(datetime):

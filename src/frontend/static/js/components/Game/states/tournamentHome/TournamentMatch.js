@@ -1,9 +1,9 @@
 export default class TournamentMatch {
-	constructor(tournamentData) {
+	constructor(tournamentBracket) {
 		this.redirectState = "tournament-match";
 		this.class = "tournament-match";
-		let jsonString = JSON.stringify(tournamentData);
-		this.tournamentData = jsonString.replace(/&/g, '&amp;')
+		let jsonString = JSON.stringify(tournamentBracket);
+		this.tournamentBracket = jsonString.replace(/&/g, '&amp;')
 										.replace(/'/g, '&apos;')
 										.replace(/"/g, '&quot;')
 										.replace(/</g, '&lt;')
@@ -11,19 +11,19 @@ export default class TournamentMatch {
 	}
 
 	render() {
-		return `<tournament-match data-tournament="${this.tournamentData}"></tournament-match>`;
+		return `<tournament-match data-tournament-match="${this.tournamentBracket}"></tournament-match>`;
 	}
 }
 
 class TournamentMatchElement extends HTMLElement {
 	constructor() {
 		super();
-		const tournamentData = JSON.parse(this.getAttribute('data-tournament'));
+		const tournamentBracket = JSON.parse(this.getAttribute('data-tournament-match'));
 
-		this.tournamentId = tournamentData.tournament_id;
-		this.tournamentName = tournamentData.tournament_name;
-		this.tournamentSize = tournamentData.tournament_size;
-		this.stage = '8th final' //tournamentData.stage;
+		this.tournamentId = tournamentBracket.tournament.tournament_id;
+		this.tournamentName = tournamentBracket.tournament.tournament_name;
+		this.tournamentSize = tournamentBracket.tournament.tournament_size;
+		this.stage = this.formatCurrentStage(tournamentBracket.tournament.current_stage);
 		this.opponent = 'Alex' //tournamentData.opponent;
 	}
 
@@ -51,6 +51,13 @@ class TournamentMatchElement extends HTMLElement {
 				</div>
 			</div>
 		`;	
+	}
+
+	formatCurrentStage(round) {
+		if (round === 'eighth_finals') return "Round of sixteen";
+
+		round = round.replace('_', '-');
+		return round[0].toUpperCase() + round.slice(1);
 	}
 }
 

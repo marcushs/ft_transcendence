@@ -126,7 +126,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		if Tournament.objects.filter(tournament_name=tournament_name).filter(isOver=False).exists():
 			return None, 'Tournament already exists'
 		
-		new_tournament = Tournament.objects.create(creator=creator, tournament_name=tournament_name, tournament_size=tournament_size)
+		round_str = ['finals', 'semi_finals', 'quarter_finals', 'eighth-finals']
+		round_str_idx = int(math.log2(int(tournament_size))) - 1
+
+		new_tournament = Tournament.objects.create(creator=creator, tournament_name=tournament_name, tournament_size=tournament_size, current_stage=round_str[round_str_idx])
 		new_tournament.members.add(creator)
 		return new_tournament, 'Tournament created successfully'
 	
@@ -181,25 +184,24 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		random.shuffle(members_copy)
 
 		nb_of_players = tournament.members.count()
-
-		round_str = ['semi', 'quarter', 'eighth']
-		round_str_idx = int(math.log2(nb_of_players)) - 2
+		round = tournament.current_stage
 
 		tournament_bracket = Bracket.objects.create(tournament=tournament)
 		round_mapping = {
-			0: tournament_bracket.semi_finals,
-			1: tournament_bracket.quarter_finals,
-			2: tournament_bracket.eighth_finals
+			'finals': tournament_bracket.semi_finals,
+			'semi_finals': tournament_bracket.semi_finals,
+			'quarter_finals': tournament_bracket.quarter_finals,
+			'eighth_finals': tournament_bracket.eighth_finals
 		}
 
 		i = 0
 		while i < nb_of_players:
 			match = TournamentMatch.objects.create(match_id=shortuuid.uuid(),
 												tournament=tournament,
-												tournament_round=f'{round_str[round_str_idx]}_finals')
+												tournament_round=round)
 			match.players.add(members_copy[i]['id'])
 			match.players.add(members_copy[i + 1]['id'])
-			round_mapping[round_str_idx].add(match)
+			round_mapping[round].add(match)
 			i += 2
 
 		return tournament_bracket

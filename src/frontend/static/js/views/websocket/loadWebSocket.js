@@ -185,7 +185,7 @@ function loadTournamentWebSocket() {
 			updateTournamentInfo(data.tournament);
 		} else if (data.type === 'load_match') {
 			console.log('loading tournament match...');
-			redirectToTournamentMatch(data.tournament);
+			redirectToTournamentMatch(data.tournament_bracket);
 		} else if (data.type === 'redirect_to_tournament_home') {
 			redirectToTournamentHome()
 		} else if (data.type === 'leave_tournament') {

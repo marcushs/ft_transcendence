@@ -1,9 +1,9 @@
 import TournamentMatch from "../../components/Game/states/tournamentHome/TournamentMatch.js";
 
-export function redirectToTournamentMatch(tournamentData) {
+export function redirectToTournamentMatch(tournamentBracket) {
 	const gameComponent = document.querySelector('game-component');
 	const tournamentMatchState = gameComponent.states['tournamentMatch'];
-	const tournamentMatch = new TournamentMatch(tournamentData);
+	const tournamentMatch = new TournamentMatch(tournamentBracket);
 
 	tournamentMatchState['state'] = tournamentMatch;
 	gameComponent.changeState(tournamentMatchState.state, tournamentMatchState.context);

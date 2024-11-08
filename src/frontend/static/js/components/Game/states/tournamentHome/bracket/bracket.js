@@ -119,9 +119,9 @@ class bracket {
 
         return `
             <div class="${className}">
-                ${this.generateMatches(bracket.eighthFinal, `${side}-height-player`)}       
-                ${this.generateMatches(bracket.quarterFinal, `${side}-four-player`)}       
-                ${this.generateMatches(bracket.semiFinal, `${side}-two-player`)}       
+                ${this.generateMatches(bracket.eighthFinal, `${side}-height-player`)}
+                ${this.generateMatches(bracket.quarterFinal, `${side}-four-player`)}
+                ${this.generateMatches(bracket.semiFinal, `${side}-two-player`)}
             </div>
         `
     }
