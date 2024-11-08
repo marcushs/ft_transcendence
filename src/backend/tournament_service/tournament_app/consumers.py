@@ -1,5 +1,6 @@
 import json
 import random
+import math
 from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import aget_object_or_404
 from django.utils import timezone
@@ -58,10 +59,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 										 				{'type': 'join.tournament',
 														'tournament': await tournament.to_dict()})
 					if await self.get_members_count(tournament) == tournament.tournament_size:
-						await self.init_bracket(tournament)
+						tournament_bracket = await self.init_bracket(tournament)
 						await self.channel_layer.group_send(str(tournament.tournament_id),
 															{'type': 'load_match',
-															'tournament': await tournament.to_dict()})
+															'tournament': await tournament.to_dict(),
+															'tournament_bracket': await tournament_bracket.to_dict()})
 				else:
 					await self.send_error_message(message_type, 'Tournament is full')
 			except Http404:
@@ -98,6 +100,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps({
 			'type': 'load_match',
 			'tournament': event['tournament'],
+			'tournament_bracket': event['tournament_bracket']
 		}))
 
 	async def leave_tournament(self, event):
@@ -177,10 +180,29 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		members_copy = tournament.get_members().copy()
 		random.shuffle(members_copy)
 
-		
-		match = TournamentMatch.objects.create(match_id=shortuuid.uuid(), tournament=tournament, tournament_round='semi_finals')
-		match.players.add(members_copy[0]['id'])
-		match.players.add(members_copy[1]['id'])
+		nb_of_players = tournament.members.count()
+
+		round_str = ['semi', 'quarter', 'eighth']
+		round_str_idx = int(math.log2(nb_of_players)) - 2
+
+		tournament_bracket = Bracket.objects.create(tournament=tournament)
+		round_mapping = {
+			0: tournament_bracket.semi_finals,
+			1: tournament_bracket.quarter_finals,
+			2: tournament_bracket.eighth_finals
+		}
+
+		i = 0
+		while i < nb_of_players:
+			match = TournamentMatch.objects.create(match_id=shortuuid.uuid(),
+												tournament=tournament,
+												tournament_round=f'{round_str[round_str_idx]}_finals')
+			match.players.add(members_copy[i]['id'])
+			match.players.add(members_copy[i + 1]['id'])
+			round_mapping[round_str_idx].add(match)
+			i += 2
+
+		return tournament_bracket
 
 
 	# @database_sync_to_async

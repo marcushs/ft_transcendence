@@ -8,6 +8,7 @@ from asgiref.sync import sync_to_async
 from django.forms.models import model_to_dict
 import shortuuid
 from shortuuid.django_fields import ShortUUIDField
+from django.db.models import Prefetch
 
 def user_directory_path(instance, filename):
     return f'profile_images/{instance.id}/{filename}'
@@ -80,16 +81,13 @@ class Tournament(models.Model):
         )
         obj_dict['members'] = [{'id': str(member['id']), 'username': member['username']} for member in members]
         obj_dict['member_count'] = len(members)
-        obj_dict['creation_time'] = self.format_datetime(self.creation_time)
+        obj_dict['creation_time'] = format_datetime(self.creation_time)
 
         return obj_dict
     
     def get_members(self):
         members = list(self.members.values('id', 'username'))
         return [{'id': str(member['id']), 'username': member['username']} for member in members]
-    
-    def format_datetime(self, datetime):
-        return datetime.strftime('%d/%m/%Y %H:%M')
     
     def is_not_full(self):
         return self.members.count() < self.tournament_size
@@ -105,10 +103,57 @@ class TournamentMatch(models.Model):
     date = models.DateTimeField(default=timezone.now)
     tournament_round = models.CharField()
 
+    async def to_dict(self):
+        obj_dict = {
+            'match_id': self.match_id,
+            'tournament_id': str(self.tournament.tournament_id),
+            'winner': self.winner,
+            'loser': self.loser,
+            'winner_score': self.winner_score,
+            'loser_score': self.loser_score,
+            'date': format_datetime(self.date),
+            'tournament_round': self.tournament_round
+        }
+        players = await sync_to_async(list)(
+            self.players.values('id', 'username')
+        )
+        obj_dict['players'] = [{'id': str(player['id']), 'username': player['username']} for player in players]
+
+        return obj_dict
+
 class Bracket(models.Model):
     tournament = models.ForeignKey(Tournament, related_name='tournament_bracket', on_delete=models.CASCADE)
     eighth_finals = models.ManyToManyField(TournamentMatch, related_name='eighth_finals_games')
-    quarter_finals = models.ManyToManyField(TournamentMatch, related_name='quarter_finals_games')    
+    quarter_finals = models.ManyToManyField(TournamentMatch, related_name='quarter_finals_games')
     semi_finals = models.ManyToManyField(TournamentMatch, related_name='semi_finals_games')
-    finals = models.ForeignKey(TournamentMatch, related_name='finals_game', on_delete=models.CASCADE)   
+    finals = models.ManyToManyField(TournamentMatch, related_name='finals_game')
 
+    async def to_dict(self):
+        print('-----------------called bracket to_dict-----------------------------')
+        # Prefetch related TournamentMatch objects
+        bracket = await sync_to_async(Bracket.objects.prefetch_related(
+            Prefetch('eighth_finals', queryset=TournamentMatch.objects.select_related('tournament').prefetch_related('players')),
+            Prefetch('quarter_finals', queryset=TournamentMatch.objects.select_related('tournament').prefetch_related('players')),
+            Prefetch('semi_finals', queryset=TournamentMatch.objects.select_related('tournament').prefetch_related('players')),
+            Prefetch('finals', queryset=TournamentMatch.objects.select_related('tournament').prefetch_related('players'))
+        ).get)(pk=self.pk)
+
+        obj_dict = {
+            'tournament': await self.tournament.to_dict(), 
+        }
+
+        # Function to convert matches to dicts asynchronously
+        async def matches_to_dicts(matches):
+            return [await match.to_dict() for match in matches]
+ 
+        # Add match arrays to the dictionary
+        obj_dict['eighth_finals'] = await matches_to_dicts(bracket.eighth_finals.all())
+        obj_dict['quarter_finals'] = await matches_to_dicts(bracket.quarter_finals.all())
+        obj_dict['semi_finals'] = await matches_to_dicts(bracket.semi_finals.all())
+        obj_dict['finals'] = await matches_to_dicts(bracket.finals.all())
+
+        print(obj_dict)
+        return obj_dict
+
+def format_datetime(datetime):
+    return datetime.strftime('%d/%m/%Y %H:%M')
