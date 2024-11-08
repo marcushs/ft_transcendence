@@ -82,9 +82,9 @@ class RankedComponent extends HTMLElement {
 	async handlePlayButtonClick() {
 		if (this.playButton.className !== "generic-btn")
 			return ;
-		disableButtonsInGameResearch();
 		this.replacePlayBtnByCancel();
-		sendMatchSearchRequest('ranked');
+		if (await sendMatchSearchRequest('ranked'))
+			disableButtonsInGameResearch();
 	}
 
 	async handleCancelButtonClick() {

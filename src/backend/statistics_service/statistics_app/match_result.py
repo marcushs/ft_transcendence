@@ -85,8 +85,9 @@ class MatchResultManager(View):
         self.winner.goals_conceded += data['loser']['score']
         self.loser.goals_scored += data['loser']['score']
         self.loser.goals_conceded += data['winner']['score']
-#         self.winner.rankPoints = 0
-#         self.loser.rankPoints = 0
+        if data['type'] == 'unranked':
+            self.winner.rankPoints = 999
+            self.loser.rankPoints = 999
         self.create_new_match_history(data=data, winner_instance=self.winner, loser_instance=self.loser)
         self.winner.save()
         self.loser.save()

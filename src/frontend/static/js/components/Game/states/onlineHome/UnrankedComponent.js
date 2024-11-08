@@ -48,9 +48,9 @@ class UnrankedComponent extends HTMLElement {
 	async handlePlayButtonClick() {
 		if (this.playButton.className !== "generic-btn")
 			return ;
-		disableButtonsInGameResearch();
 		this.replacePlayBtnByCancel();
-		sendMatchSearchRequest('unranked');
+		if (await sendMatchSearchRequest('unranked'))
+			disableButtonsInGameResearch();
 	}
 
 	async handleCancelButtonClick() {

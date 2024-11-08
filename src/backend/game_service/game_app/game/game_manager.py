@@ -98,7 +98,7 @@ async def check_connections(data):
 
 async def running_game_instance(instance, data):
     print(f'-> async_tasks: Game <{instance.game_id}> running...') 
-    await asyncio.sleep(8)
+    # await asyncio.sleep(8)
     await instance.game_loop()
     print(f'-> async_tasks: Game <{instance.game_id}> stopping...')
     await ending_game_instance(data)

@@ -60,6 +60,7 @@ class GetMatchableRankedPlayers(View):
     def is_matchable_pair(self, player_one, player_two):
         player_one_rank = self.get_rank(player_one.rankPoints)
         player_two_rank = self.get_rank(player_two.rankPoints)
+        print(f'player_one_rank = {player_one_rank} ||| two = {player_two_rank}')
         if player_one_rank is None or player_two_rank is None:
             raise Exception('Bad user rank point')
         if player_one_rank == player_two_rank: 
@@ -72,6 +73,5 @@ class GetMatchableRankedPlayers(View):
 
     def get_rank(self, points):
         for rank, (min, max) in self.ranks.items():
-            if min <= points < max:
+            if min <= points <= max:
                 return rank
-        return None
