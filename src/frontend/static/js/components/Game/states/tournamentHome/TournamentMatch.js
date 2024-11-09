@@ -22,20 +22,25 @@ export default class TournamentMatch {
 class TournamentMatchElement extends HTMLElement {
 	constructor() {
 		super();
-		const tournamentBracket = JSON.parse(this.getAttribute('data-tournament-match'));
-		this.bracketObj = null;
-		this.stage_mapping = {
-			'eighth_finals': this.bracketObj['eighthFinal'],
-			'quarter_finals': this.bracketObj['quarterFinal'],
-			'semi_finals': this.bracketObj['semiFinal'],
-			'finals': this.bracketObj['final']
+		this.tournamentBracket = JSON.parse(this.getAttribute('data-tournament-match'));
+		this.tournamentId = this.tournamentBracket.tournament.tournament_id;
+		this.tournamentName = this.tournamentBracket.tournament.tournament_name;
+		this.tournamentSize = this.tournamentBracket.tournament.tournament_size;
+		this.bracketObj = {
+			nbOfPlayers: this.tournamentSize,
+			eighthFinal: {},
+			quarterFinal: {},
+			semiFinal: {},
+			final: [],
+		};
+		this.stageMapping = {
+			'eighth_finals': {target: this.bracketObj.eighthFinal, length: 4},
+			'quarter_finals': {target: this.bracketObj.quarterFinal, length: 2},
+			'semi_finals': {target: this.bracketObj.semiFinal, length: 1},
+			'finals': {target: this.bracketObj.final},
 		}
-
-		this.tournamentId = tournamentBracket.tournament.tournament_id;
-		this.tournamentName = tournamentBracket.tournament.tournament_name;
-		this.tournamentSize = tournamentBracket.tournament.tournament_size;
-		this.stage = tournamentBracket.tournament.current_stage;
-		this.matches = tournamentBracket[this.stage];
+		this.stage = this.tournamentBracket.tournament.current_stage;
+		this.matches = this.tournamentBracket[this.stage];
 		this.clientMatch = null;
 		this.userId = null;
 	}
@@ -94,24 +99,70 @@ class TournamentMatchElement extends HTMLElement {
 
 		bracketBtn.addEventListener('click', () => {
 			console.log('clicked on bracket')
-
-
+			this.makeBracketObject();
+			console.log('bracketObj', this.bracketObj);
 		})
 	}
 
 	makeBracketObject() {
-		this.bracketObj = {
-			nbOfPlayers: this.tournamentSize,
-			eighthFinal: null,
-			quarterFinal: null,
-			semiFinal: null,
-			final: null,
-		};
+		const eighthFinalsMatches = this.tournamentBracket.eighth_finals;
+		const quarterFinalsMatches = this.tournamentBracket.quarter_finals;
+		const semiFinalsMatches = this.tournamentBracket.semi_finals;
+		const finalsMatches = this.tournamentBracket.finals;
 
-		for (let i = 0; i < this.matches.length; i++) {
-			this.stage_mapping[this.stage]
+		(eighthFinalsMatches.length === 0) ? this.fillNullMatches('eighth_finals') : this.fillBracketMatches('eighth_finals',eighthFinalsMatches);
+		(quarterFinalsMatches.length === 0) ? this.fillNullMatches('quarter_finals') : this.fillBracketMatches('quarter_finals', quarterFinalsMatches);
+		(semiFinalsMatches.length === 0) ? this.fillNullMatches('semi_finals') : this.fillBracketMatches('semi_finals', semiFinalsMatches);
+		(finalsMatches.length === 0) ? this.fillNullMatches('finals') : this.fillBracketMatches('finals', finalsMatches);
+	}
 
+	fillBracketMatches(stage, stageMatches) {
+		let target = this.stageMapping[stage].target;
+
+		if (stage === 'finals') {
+			target = []
+			
+			target.push([
+				{name: stageMatches.players[0].username, score: '0'},
+				{name: stageMatches.players[1].username, score: '0'}
+			])
+			return ;
 		}
+
+		target['leftMatches'] = [];
+		target['rightMatches'] = [];
+
+		stageMatches.forEach((match, idx) => {
+			if (idx % 2 === 0) {
+				target.leftMatches.push(this.makeMatch(match))
+			} else {
+				target.rightMatches.push(this.makeMatch(match))
+			}
+		});
+	}
+
+	fillNullMatches(stage) {
+		let target = this.stageMapping[stage].target;
+		const length = this.stageMapping[stage].length;
+
+		if (stage === 'finals') {
+			target.push(this.nullMatch());
+			return ;
+		}
+		target['leftMatches'] = Array.from({ length: length }, () => this.nullMatch());
+		target['rightMatches'] = Array.from({ length: length }, () => this.nullMatch());
+	}
+
+	nullMatch() {
+		return [null, null];
+	}
+
+	makeMatch(match) {
+		match = [
+			{name: match.players[0].username, score: '0'}, 
+			{name: match.players[1].username, score: '0'}
+		];
+		return match;
 	}
 }
 

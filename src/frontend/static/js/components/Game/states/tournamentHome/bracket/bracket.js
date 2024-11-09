@@ -8,44 +8,6 @@ class bracket {
 
         this.temporaryPlayersList = {
             nbOfPlayers: 16,
-            // eighthFinal: {
-            //     leftMatches: [
-            //         [
-            //             {name: 'Sowoo', score: '8'},
-            //             {name: 'Sowoo', score: '11'},
-            //         ],
-            //         [
-            //             {name: 'Sowoo', score: '6'},
-            //             {name: 'Sowoo', score: '11'},
-            //         ],
-            //         [
-            //             {name: 'Sowoo', score: '1'},
-            //             {name: 'Sowoo', score: '11'},
-            //         ],
-            //         [
-            //             {name: 'Sowoo', score: '11'},
-            //             {name: 'Sowoo', score: '4'},
-            //         ],
-            //     ],
-            //     rightMatches: [
-            //         [
-            //             {name: 'Sowoo', score: '11'},
-            //             {name: 'Sowoo', score: '10'},
-            //         ],
-            //         [
-            //             {name: 'Sowoo', score: '8'},
-            //             {name: 'Sowoo', score: '11'},
-            //         ],
-            //         [
-            //             {name: 'Sowoo', score: '8'},
-            //             {name: 'Sowoo', score: '11'},
-            //         ],
-            //         [
-            //             {name: 'Sowoo', score: '8'},
-            //             {name: 'Sowoo', score: '11'},
-            //         ]
-            //     ]
-            // },
             eighthFinal: {
                 leftMatches: [
                     [
