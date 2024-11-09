@@ -21,7 +21,7 @@ export async function handleGameReconnection(userId, gameState) {
         statesContainerDiv.classList.remove(statesContainerDiv.classList[i])
     }
     const inGameComponent = document.createElement('in-game-component');
-    inGameComponent.setState(gameState)
+    inGameComponent.setState(gameState);
     statesContainerDiv.appendChild(inGameComponent);
 }
 

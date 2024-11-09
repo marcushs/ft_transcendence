@@ -82,3 +82,7 @@ player-in-bracket .score p {
 .player-in-bracket-basic .score-basic {
     background: var(--light-grey);
 }
+
+.no-player-in-bracket {
+    visibility: hidden;
+}

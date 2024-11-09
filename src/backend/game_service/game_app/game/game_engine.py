@@ -65,6 +65,7 @@ class PongGameEngine:
 
     def set_initial_game_state(self, player_one_score, player_two_score):
         self.state = {
+            'is_ranked': True if self.game_type == "ranked" else False,
             'player_one': {
                 'score': player_one_score,
                 'id': self.player_one_id,

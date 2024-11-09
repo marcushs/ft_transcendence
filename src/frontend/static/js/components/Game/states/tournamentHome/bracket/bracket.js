@@ -8,10 +8,48 @@ class bracket {
 
         this.temporaryPlayersList = {
             nbOfPlayers: 16,
+            // eighthFinal: {
+            //     leftMatches: [
+            //         [
+            //             {name: 'Sowoo', score: '8'},
+            //             {name: 'Sowoo', score: '11'},
+            //         ],
+            //         [
+            //             {name: 'Sowoo', score: '6'},
+            //             {name: 'Sowoo', score: '11'},
+            //         ],
+            //         [
+            //             {name: 'Sowoo', score: '1'},
+            //             {name: 'Sowoo', score: '11'},
+            //         ],
+            //         [
+            //             {name: 'Sowoo', score: '11'},
+            //             {name: 'Sowoo', score: '4'},
+            //         ],
+            //     ],
+            //     rightMatches: [
+            //         [
+            //             {name: 'Sowoo', score: '11'},
+            //             {name: 'Sowoo', score: '10'},
+            //         ],
+            //         [
+            //             {name: 'Sowoo', score: '8'},
+            //             {name: 'Sowoo', score: '11'},
+            //         ],
+            //         [
+            //             {name: 'Sowoo', score: '8'},
+            //             {name: 'Sowoo', score: '11'},
+            //         ],
+            //         [
+            //             {name: 'Sowoo', score: '8'},
+            //             {name: 'Sowoo', score: '11'},
+            //         ]
+            //     ]
+            // },
             eighthFinal: {
                 leftMatches: [
                     [
-                        {name: 'Sowoo', score: '9'},
+                        {name: 'Sowoo', score: '8'},
                         {name: 'Sowoo', score: '11'},
                     ],
                     [
@@ -108,20 +146,20 @@ class bracket {
 
 
         return `
-            ${this.generateBracketSide(leftBracket,  'left','left-matches')}
-            ${this.generateBracketSide(rightBracket, 'right', 'right-matches')}
+            ${this.generateBracketSide(bracketObj.nbOfPlayers, leftBracket,  'left','left-matches')}
+            ${this.generateBracketSide(bracketObj.nbOfPlayers, rightBracket, 'right', 'right-matches')}
         `;
     }
 
 
-    generateBracketSide(bracket, side, className) {
+    generateBracketSide(nbOfPlayers, bracket, side, className) {
         let leftMatches = '';
 
         return `
             <div class="${className}">
-                ${this.generateMatches(bracket.eighthFinal, `${side}-height-player`)}       
-                ${this.generateMatches(bracket.quarterFinal, `${side}-four-player`)}       
-                ${this.generateMatches(bracket.semiFinal, `${side}-two-player`)}       
+                ${this.generateMatches(bracket.eighthFinal, `${side}-height-player`)}
+                ${this.generateMatches(bracket.quarterFinal, `${side}-four-player`)}
+                ${this.generateMatches(bracket.semiFinal, `${side}-two-player`)}
             </div>
         `
     }
@@ -130,10 +168,12 @@ class bracket {
         let index = 1;
         let matchesRes = '';
 
-        console.log(matches)
         for (const match of matches) {
             match.forEach(player => {
-                matchesRes += this.createPlayer(player,`${idPrefix}${index}`, (player.score === '11') ? `player-in-bracket-game-win` :  `player-in-bracket-basic`);
+                if (player)
+                    matchesRes += this.createPlayer(player,`${idPrefix}${index}`, (player.score === '11') ? `player-in-bracket-game-win` :  `player-in-bracket-basic`);
+                else
+                    matchesRes += this.createPlayer(player,`${idPrefix}${index}`, `no-player-in-bracket`);
                 index++;
             });
         }
@@ -142,6 +182,8 @@ class bracket {
     }
 
     createPlayer(player, id, className) {
+        if (!player)
+            return `<player-in-bracket name="" score="" id="${id}" class="${className}"></player-in-bracket>`;
         return `
             <player-in-bracket name="${player.name}" score="${player.score}" id="${id}" class="${className}"></player-in-bracket>
         `;

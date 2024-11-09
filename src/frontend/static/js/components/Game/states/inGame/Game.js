@@ -55,7 +55,9 @@ export default class Game {
 		this.isSentEmoteAnimationEnabled = false;
 		this.isReceivedEmoteAnimationEnabled = false;
 
-		this.Intro = new Intro(this.canvas, gameState.player_two.user_infos, gameState.player_one.user_infos);
+		console.log('is ranked : ', gameState.is_ranked);
+
+		this.Intro = new Intro(this.canvas, gameState.is_ranked, gameState.player_two.user_infos, gameState.player_one.user_infos);
 		this.Outro = new Outro(this.canvas);
 		this.RankOutro = new RankOutro(this.canvas);
 
@@ -445,7 +447,7 @@ export default class Game {
 			this.isOutroAnimationEnabled = false;
 			this.isRankOutroAnimationEnabled = true;
 			this.throwLoadRankOutroAnimationEvent(data.message, isWin);
-		}, 0);
+		}, 7000);
 
 		// Not definitive
 		setTimeout(() => {

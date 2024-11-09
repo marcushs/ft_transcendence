@@ -29,7 +29,7 @@ class InGameComponent extends HTMLElement {
 		gameInstance = new Game(this.canvas, this.gameId, this.gameState, this.userId);
 	}
 
-	setState(newState) {		
+	setState(newState) {
 		this.userId = newState.userId;
 		this.gameId = newState.gameId;
 		this.gameState = newState.gameState;
