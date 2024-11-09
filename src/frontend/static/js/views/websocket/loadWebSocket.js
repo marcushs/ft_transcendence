@@ -1,8 +1,11 @@
+
 import {removeContactFromList, addNewContactToList, UpdateContactInList} from './updateContactWebsocket.js'
 import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms, addNewContactToContactedList, removeChatContactFromDOM} from '../../utils/chatUtils/joinRoomUtils.js';
 import { updateCurrentChatroomId, messageReceptionDOMUpdate } from '../../utils/chatUtils/sendPrivateMessage.js';
 import { UpdateChatContactWebsocket } from './updateChatContactWebsocket.js';
 import { UpdateChatroomTopBarWebsocket } from './updateChatroomTopBarWebsocket.js';
+import { putNewTournamentToDOM, redirectToTournamentWaitingRoom, updateTournamentInfo, redirectToTournamentHome } from '../../utils/tournamentUtils/joinTournamentUtils.js';
+import { redirectToTournamentMatch } from '../../utils/tournamentUtils/tournamentMatchUtils.js';
 
 
 export let contactSocket = null;
@@ -10,11 +13,15 @@ export let notificationSocket = null;
 
 export let chatSocket;
 export let chatroomsList;
+export let tournamentSocket;
+
+
 
 export async function loadWebSocket() {
     await loadContactsWebSocket();
     await loadNotificationsWebSocket();
-	await loadChatWebSocket();
+	loadChatWebSocket();
+	await loadTournamentWebSocket();
 }
 
 //--------------> CONTACT WEBSOCKET <--------------\\
@@ -122,7 +129,7 @@ function throwDeleteNotificationElementEvent(notification) {
 
 //--------------> CHAT WEBSOCKET <--------------\\
 
-async function loadChatWebSocket() {
+function loadChatWebSocket() {
 	chatSocket = new WebSocket('wss://localhost:3000/ws/chat/');
 
 	chatSocket.onopen = async function (e) {
@@ -139,7 +146,6 @@ async function loadChatWebSocket() {
 			await messageReceptionDOMUpdate(data);
 		} else if (data.type === 'chatgroup_update') {
 			await receiveChatgroupUpdate(data);
-			// chatroomsList = await fetchChatroomsList();
 			await updateCurrentChatroomId(data.target_user);
 			await addNewContactToContactedList(data.chatroom);
 		} else if (data.type === 'remove_room') {
@@ -148,6 +154,46 @@ async function loadChatWebSocket() {
 	};
 
 	chatSocket.onclose = function(e) {
+		console.log('chatSocket', e);
+	};
+}
+
+function loadTournamentWebSocket() {
+	tournamentSocket = new WebSocket('wss://localhost:3000/ws/tournament/');
+
+	tournamentSocket.onopen = function (e) {
+		console.log("The tournament websocket connection was setup successfully !");
+	};
+
+	tournamentSocket.onmessage = function(e) {
+		const data = JSON.parse(e.data)
+		console.log(data)
+
+		if (data.type === 'create_tournament' && data.status === 'success') {
+			redirectToTournamentWaitingRoom(data.tournament);
+		} else if (data.type === 'create_tournament' && data.status === 'error') {
+			// implement error message in frontend
+			console.log(data.message)
+		} else if (data.type === 'new_tournament') {
+			putNewTournamentToDOM(data.tournament);
+		} else if (data.type === 'join_tournament' && data.status === 'error') {
+			// implement error message in frontend
+			console.log(data.message)
+		} else if (data.type === 'redirect_to_waiting_room') {
+			redirectToTournamentWaitingRoom(data.tournament);
+		} else if (data.type === 'join_tournament') {
+			updateTournamentInfo(data.tournament);
+		} else if (data.type === 'load_match') {
+			console.log('loading tournament match...');
+			redirectToTournamentMatch(data.tournament)
+		} else if (data.type === 'redirect_to_tournament_home') {
+			redirectToTournamentHome()
+		} else if (data.type === 'leave_tournament') {
+			updateTournamentInfo(data.tournament);
+		}
+	};
+
+	tournamentSocket.onclose = function(e) {
 		console.log(e);
 	};
 }

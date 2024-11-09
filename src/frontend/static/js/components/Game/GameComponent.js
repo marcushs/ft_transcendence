@@ -8,6 +8,7 @@ import onlineHome from "./states/onlineHome/onlineHome.js";
 import localHome from "./states/localHome/localHome.js";
 import bracket from "./states/tournamentHome/bracket/bracket.js";
 import rotatingGradient from "../../anim/rotatingGradient.js";
+import TournamentMatch from './states/tournamentHome/TournamentMatch.js';
 
 class GameComponent extends HTMLElement {
     constructor() {
@@ -18,7 +19,9 @@ class GameComponent extends HTMLElement {
             "tournamentHome": { context: "/tournamentHome", state: new tournamentHome() },
             "onlineHome": { context: "/onlineHome", state: new onlineHome() },
             "localHome": { context: "/localHome", state: new localHome() },
-            "bracket": {context: "/tournamentHome/bracket", state: new bracket()}
+            "bracket": {context: "/tournamentHome/bracket", state: new bracket()},
+            "tournamentWaitingRoom": {context: "/tournamentHome/tournamentWaitingRoom"},
+            "tournamentMatch": {context: "/tournamentHome/tournamentMatch"},
         }
 
         this.innerHTML = `
@@ -115,7 +118,6 @@ class GameComponent extends HTMLElement {
             }
         }
     }
-
 }
 
 customElements.define("game-component", GameComponent);

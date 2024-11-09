@@ -1,6 +1,9 @@
 @import "./JoinComponent.css";
 @import "./CreateComponent.css";
 @import "./bracket/bracket.css";
+@import "./TournamentWaitingRoom.css";
+@import "./TournamentComponent.css";
+@import "./TournamentMatch.css";
 
 .tournament-home-container {
 	height: 100%;

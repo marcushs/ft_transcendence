@@ -99,7 +99,8 @@ class oauth42AccessResourceView(View):
                 'http://notifications:8000/api/notifications/add_user/',
                 'http://matchmaking:8000/api/matchmaking/add_user/',
                 'http://statistics:8000/api/statistics/add_user/',
-                'http://chat:8000/api/chat/add_user/'] 
+                'http://chat:8000/api/chat/add_user/', 
+                'http://tournament:8000/api/tournament/add_user/',] 
         for url in urls: 
             response = send_post_request(url=url, payload=self.payload, csrf_token=self.csrf_token)
             if response.status_code == 400:

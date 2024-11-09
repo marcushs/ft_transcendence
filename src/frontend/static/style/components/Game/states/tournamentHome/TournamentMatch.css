@@ -1,0 +1,71 @@
+.tournament-match-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: center;
+	height: 100%;
+	width: 100%;
+	background: var(--component-background-color);
+	border-radius: 5px;
+	padding: 2rem 2rem;
+	position: relative;
+}
+
+.bracket-btn {
+	position: absolute;
+	right: 1.5rem;
+	top: 1.5rem;
+	opacity: 0.5;
+	transition: all 0.2s ease-in;
+	cursor: pointer;
+}
+
+.bracket-btn img {
+	width: 4rem;
+	height: 4rem;
+}
+
+.bracket-btn:hover {
+	transform: scale(1.1);
+	opacity: 1;
+	transition: all 0.2s ease-in;
+}
+
+.tournament-match-ready-btn {
+	background: none;
+	color: var(--neon-blue);
+	font-size: 2.2rem;
+	padding: 1rem 2rem;
+	border: 1px solid var(--neon-blue);
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.tournament-match-content p, .tournament-match-content span {
+	font-size: 2.5rem;
+	margin-left: 1rem;
+}
+
+.tournament-match-content span {
+	font-weight: bold;
+}
+
+
+.countdown-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.tournament-match-content .countdown-container p.match-countdown {
+	font-size: 1.7rem;
+	color: #32CD32;
+	transform: translateX(-2%);
+	margin-top: 1rem;
+}
+
+.countdown-container span {
+	font-size: 1.7rem;
+	margin: 0;
+}

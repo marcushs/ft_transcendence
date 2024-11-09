@@ -10,3 +10,4 @@ migrations/
 chat_models.txt
 result.txt
 .DS_Store
+tournament_models.txt

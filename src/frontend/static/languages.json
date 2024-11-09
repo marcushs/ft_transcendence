@@ -57,6 +57,7 @@
 	  "change": "Change",
 	  "save": "Save",
 	  "verify": "Verify",
+	  "leave": "Leave",
 	  "cancel": "Cancel"
 	},
 	"navBarComponent": {
@@ -204,7 +205,8 @@
 	  "change": "Changer",
 	  "save": "Sauvegarder",
 	  "verify": "Vérifier",
-	  "cancel": "Annuler"
+	  "cancel": "Annuler",
+	  "leave": "Quitter"
 	},
 	"navBarComponent": {
 	  "home": "Accueil"

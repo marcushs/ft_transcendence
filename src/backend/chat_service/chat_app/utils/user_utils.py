@@ -95,7 +95,7 @@ class delete_user(View):
     def post(self, request):
         return JsonResponse({'message': 'Method not allowed', 'status': 'Error'}, status=405)
     
-async def send_async_request(request_type, request, url, payload=None):
+async def send_async_request(request_type, request, url, payload=None): 
         headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',

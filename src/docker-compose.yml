@@ -567,6 +567,52 @@ services:
       timeout: 5s
       retries: 5
 
+  # -----> TOURNAMENT <----- #
+
+  # Service
+  tournament:
+    container_name: tournament
+    restart: always
+    build:
+      context: ./backend/tournament_service
+      dockerfile: docker/Dockerfile
+    image: tournament
+    env_file:
+      - ./backend/.env
+    command: >
+      sh -c "
+          python3 manage.py makemigrations &&
+          python3 manage.py migrate &&
+          python3 manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./backend/tournament_service:/app
+    depends_on:
+      - tournament_db
+    networks:
+      - transcendence-network
+
+  # DB
+  tournament_db:
+    container_name: tournament_db
+    image: postgres
+    restart: always
+    env_file: ./backend/.env
+    environment:
+      - POSTGRES_USER=${TOURNAMENT_DB_USER}
+      - POSTGRES_DB=${TOURNAMENT_DB_NAME}
+      - POSTGRES_PASSWORD=${TOURNAMENT_DB_PASSWORD}
+    shm_size: 128mb
+    volumes:
+      - tournament_pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${TOURNAMENT_DB_USER} -d ${TOURNAMENT_DB_NAME}"]
+      interval: 8s
+      timeout: 5s
+      retries: 5
+
   # ---------------> REDIS <---------------
 
   # Service
@@ -616,6 +662,8 @@ volumes:
     name: oauth_github_data
   chat_pgdata:
     name: chat_data
+  tournament_pgdata:
+    name: tournament_data
 
 networks:
   transcendence-network:
