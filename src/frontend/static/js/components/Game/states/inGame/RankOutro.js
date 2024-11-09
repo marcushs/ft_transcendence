@@ -161,14 +161,15 @@ export default class RankOutro {
 		const radius = 10;
 		let currentRankBarPercentage;
 
+
 		if (this.currentRankProgressPercentage > 100)
 			currentRankBarPercentage = (this.currentRankProgressPercentage - 100) / 2;
+		else if (this.currentRankProgressPercentage < 0)
+			currentRankBarPercentage = (100 + this.currentRankProgressPercentage);
 		else
 			currentRankBarPercentage = this.currentRankProgressPercentage;
 
 		this.colorWidth = (currentRankBarPercentage / 100) * width;
-		// console.log('currentRankBarPercentage = ', currentRankBarPercentage);
-		// console.log('color width = ', this.colorWidth);
 
 		x -= width / 2;
 		y -= height / 2;
@@ -180,6 +181,8 @@ export default class RankOutro {
 
 
 	drawRankBarColor(x, y, width, height, radius) {
+		const rankColor = this.rankColors[this.getRankByPoints(this.rankData.old_rank_points)];
+
 		this.canvas.ctx.beginPath();
 		this.canvas.ctx.moveTo(x + radius, y);
 		this.canvas.ctx.lineTo(x + width - radius, y);
@@ -191,7 +194,7 @@ export default class RankOutro {
 		this.canvas.ctx.lineTo(x, y + radius);
 		this.canvas.ctx.arcTo(x, y, x + radius, y, radius);
 
-		this.canvas.ctx.fillStyle = this.rankColor;
+		this.canvas.ctx.fillStyle = rankColor;
 		this.canvas.ctx.fill();
 		this.canvas.ctx.closePath();
 	}
@@ -245,14 +248,6 @@ export default class RankOutro {
 	}
 
 	increaseRankPoints() {
-
-		if (this.rankData.old_rank_points < this.rankPoints[this.rankData.rank][1]) {
-			this.rankColor = this.rankColors[this.rankData.rank];
-		}
-		else {
-			this.rankColor = this.rankColors[this.rankData.new_rank];
-		}
-
 		if (this.currentRankProgressPercentage < this.newRankProgressPercentage)
 			this.currentRankProgressPercentage += this.progressBarPercentage;
 		if (this.rankData.old_rank_points === this.rankData.new_rank_points) {
@@ -263,12 +258,6 @@ export default class RankOutro {
 	}
 
 	decreaseRankPoints() {
-		if (this.rankData.old_rank_points < this.rankPoints[this.rankData.rank][1])
-			this.rankColor = this.rankColors[this.rankData.rank];
-		else
-			this.rankColor = this.rankColors[this.rankData.new_rank];
-
-		console.log(this.currentRankProgressPercentage, this.newRankProgressPercentage, this.progressBarPercentage);
 		if (this.currentRankProgressPercentage > this.newRankProgressPercentage)
 			this.currentRankProgressPercentage -= this.progressBarPercentage;
 		if (this.rankData.old_rank_points === this.rankData.new_rank_points) {
@@ -276,6 +265,19 @@ export default class RankOutro {
 			return ;
 		}
 		this.rankData.old_rank_points--;
+	}
+
+
+	getRankByPoints(points) {
+		if (points >= 0 && points <= 999)
+			return "bronze";
+		if (points >= 1000 && points <= 2999)
+			return "silver";
+		if (points >= 3000 && points <= 5999)
+			return "gold";
+		if (points >= 6000 && points <= 9999)
+			return "diamond";
+		return "master";
 	}
 
 	// waitToDrawResult() {
