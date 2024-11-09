@@ -1,5 +1,6 @@
 import { getUserId } from "../../../../utils/chatUtils/joinRoomUtils.js";
 import Bracket from "./bracket/bracket.js";
+import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
 
 export default class TournamentMatch {
 	constructor(tournamentBracket) {
@@ -48,6 +49,7 @@ class TournamentMatchElement extends HTMLElement {
 		await this.findMatch();
 		await this.render();
 		this.addEventListeners();
+		this.showCountdown();
 	}
 
 	async render() {
@@ -64,7 +66,7 @@ class TournamentMatchElement extends HTMLElement {
 						<p>Opponent: <span>${this.getOpponent()}</span></p>
 						<div class="countdown-container">
 							<button type="button" class="tournament-match-ready-btn">Ready</button>
-							<p class="match-countdown">Match starts in <span>47s</span></p>
+							<p class="match-countdown">Match starts in <span>59</span>s</p>
 						</div>
 					</div>
 				</div>
@@ -95,12 +97,25 @@ class TournamentMatchElement extends HTMLElement {
 
 	addEventListeners() {
 		const bracketBtn = this.querySelector('#bracket-icon');
+		const readyBtn = this.querySelector('.tournament-match-ready-btn');
 
 		bracketBtn.addEventListener('click', () => {
 			console.log('clicked on bracket')
 			this.makeBracketObject();
 			console.log('bracketObj', this.bracketObj);
 			this.redirectToBracket();
+		})
+
+		readyBtn.addEventListener('click', () => {
+			console.log('ready clicked');
+			console.log('userId: ', this.userId);
+			console.log('match', this.clientMatch);
+			const payload = {
+				'type': 'user_ready_for_match',
+				'userId': this.userId,
+				'clientMatch': this.clientMatch
+			}
+			tournamentSocket.send(JSON.stringify(payload));
 		})
 	}
 
@@ -173,6 +188,17 @@ class TournamentMatchElement extends HTMLElement {
 		bracketState['state'] = bracket;
 		gameComponent.changeState(bracketState.state, bracketState.context);
 		gameComponent.currentState = "bracket";
+	}
+
+	showCountdown() {
+		const secondsSpan = this.querySelector('.match-countdown span');
+		let count = 59;
+
+		setInterval(() => {
+			count--;
+			if (count < 0) return ;
+			secondsSpan.innerText = count;
+		}, 1000);
 	}
 }
 

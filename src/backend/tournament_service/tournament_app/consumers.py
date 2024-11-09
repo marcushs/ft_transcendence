@@ -15,10 +15,16 @@ from .models import *
 from django.utils import timezone
 from datetime import timedelta
 import shortuuid
+import asyncio
+from channels.db import database_sync_to_async
 
 User = get_user_model()
 
 class TournamentConsumer(AsyncWebsocketConsumer):
+	countdown_task = None
+	# countdown_time = 60
+	countdown_time = 15
+
 	async def connect(self):
 		self.user = self.scope['user']
 		if isinstance(self.user, AnonymousUser):
@@ -82,6 +88,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					await self.send_error_message(message_type, 'You are not in this tournament')
 			except Http404:
 				await self.send_error_message(message_type, 'Cannot find requested tournament')
+		elif message_type == 'user_ready_for_match':
+			pass
 
 
 	async def new_tournament(self, event):
@@ -106,7 +114,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def leave_tournament(self, event):
 		await self.send(text_data=json.dumps({
 			'type': 'leave_tournament',
-			'tournament': event['tournament'],
+			'tournament': event['tournament'], 
 		}))
 
 	@database_sync_to_async
@@ -205,6 +213,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			i += 2
 
 		return tournament_bracket
+	
+	def start_match(self):
+		
 
 
 	# @database_sync_to_async
