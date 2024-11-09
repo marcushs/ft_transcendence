@@ -85,43 +85,15 @@ export default class RankOutro {
 			this.rankData = JSON.parse(JSON.stringify(event.detail.rankData));
 			this.isWin = event.detail.isWin;
 
-			// if (!this.rankData.rank) {
-			// 	switch (this.rankData.new_rank) {
-			// 		case "silver":
-			// 			this.rankData.rank = "bronze";
-			// 			break;
-			// 		case "gold":
-			// 			this.rankData.rank = "silver";
-			// 			break;
-			// 		case "diamond":
-			// 			this.rankData.rank = "gold";
-			// 			break;
-			// 		case "master":
-			// 			this.rankData.rank = "diamond";
-			// 			break;
-			// 	}
-			// }
-
 			this.updateRankPoints();
 
 			this.currentRankProgressPercentage = this.getNextRankPercentage(this.rankData.old_rank_points, this.rankData.rank);
-			console.log('current rank progress percentage = ')
 			this.newRankProgressPercentage = this.getNextRankPercentage(this.rankData.new_rank_points, this.rankData.rank);
-			this.oldRankProgressPercentage = this.getNextRankPercentage(this.rankData.old_rank_points, this.rankData.rank);
-
-			console.log(this.oldRankProgressPercentage);
-			console.log(this.newRankProgressPercentage);
 
 			const rankPointsDifference = this.rankData.new_rank_points - this.rankData.old_rank_points;
-			let changePercentage;
+			const changePercentage = Math.abs(this.newRankProgressPercentage - this.currentRankProgressPercentage);
 
-			if (this.rankData.new_rank_points > this.rankData.old_rank_points)
-				changePercentage = this.newRankProgressPercentage - this.currentRankProgressPercentage;
-			else
-				changePercentage = this.currentRankProgressPercentage - this.oldRankProgressPercentage;
-
-
-			this.progressBarPercentage = (1 / rankPointsDifference) * changePercentage;
+			this.progressBarPercentage = (1 / Math.abs(rankPointsDifference)) * changePercentage;
 		});
 	}
 
@@ -195,7 +167,8 @@ export default class RankOutro {
 			currentRankBarPercentage = this.currentRankProgressPercentage;
 
 		this.colorWidth = (currentRankBarPercentage / 100) * width;
-		console.log('color width = ', this.colorWidth);
+		// console.log('currentRankBarPercentage = ', currentRankBarPercentage);
+		// console.log('color width = ', this.colorWidth);
 
 		x -= width / 2;
 		y -= height / 2;
@@ -274,11 +247,9 @@ export default class RankOutro {
 	increaseRankPoints() {
 
 		if (this.rankData.old_rank_points < this.rankPoints[this.rankData.rank][1]) {
-
 			this.rankColor = this.rankColors[this.rankData.rank];
 		}
 		else {
-
 			this.rankColor = this.rankColors[this.rankData.new_rank];
 		}
 
@@ -297,8 +268,9 @@ export default class RankOutro {
 		else
 			this.rankColor = this.rankColors[this.rankData.new_rank];
 
-		if (this.currentRankProgressPercentage > this.oldRankProgressPercentage)
-			this.currentRankProgressPercentage += this.progressBarPercentage;
+		console.log(this.currentRankProgressPercentage, this.newRankProgressPercentage, this.progressBarPercentage);
+		if (this.currentRankProgressPercentage > this.newRankProgressPercentage)
+			this.currentRankProgressPercentage -= this.progressBarPercentage;
 		if (this.rankData.old_rank_points === this.rankData.new_rank_points) {
 			clearInterval(this.intervalId);
 			return ;

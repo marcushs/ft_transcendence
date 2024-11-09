@@ -445,7 +445,7 @@ export default class Game {
 			this.isOutroAnimationEnabled = false;
 			this.isRankOutroAnimationEnabled = true;
 			this.throwLoadRankOutroAnimationEvent(data.message, isWin);
-		}, 5000);
+		}, 0);
 
 		// Not definitive
 		setTimeout(() => {
