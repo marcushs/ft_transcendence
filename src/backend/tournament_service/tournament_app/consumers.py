@@ -188,7 +188,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		tournament_bracket = Bracket.objects.create(tournament=tournament)
 		round_mapping = {
-			'finals': tournament_bracket.semi_finals,
+			'finals': tournament_bracket.finals,
 			'semi_finals': tournament_bracket.semi_finals,
 			'quarter_finals': tournament_bracket.quarter_finals,
 			'eighth_finals': tournament_bracket.eighth_finals

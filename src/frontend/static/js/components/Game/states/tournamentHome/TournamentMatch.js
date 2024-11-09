@@ -1,5 +1,7 @@
 import { getUserId } from "../../../../utils/chatUtils/joinRoomUtils.js";
 
+
+
 export default class TournamentMatch {
 	constructor(tournamentBracket) {
 		this.redirectState = "tournament-match";
@@ -21,6 +23,13 @@ class TournamentMatchElement extends HTMLElement {
 	constructor() {
 		super();
 		const tournamentBracket = JSON.parse(this.getAttribute('data-tournament-match'));
+		this.bracketObj = null;
+		this.stage_mapping = {
+			'eighth_finals': this.bracketObj['eighthFinal'],
+			'quarter_finals': this.bracketObj['quarterFinal'],
+			'semi_finals': this.bracketObj['semiFinal'],
+			'finals': this.bracketObj['final']
+		}
 
 		this.tournamentId = tournamentBracket.tournament.tournament_id;
 		this.tournamentName = tournamentBracket.tournament.tournament_name;
@@ -34,6 +43,7 @@ class TournamentMatchElement extends HTMLElement {
 	async connectedCallback() {
 		await this.findMatch();
 		await this.render();
+		this.addEventListeners();
 	}
 
 	async render() {
@@ -77,6 +87,31 @@ class TournamentMatchElement extends HTMLElement {
 
 	getOpponent() {
 		return this.clientMatch.players[0].id === this.userId ? this.clientMatch.players[1].username : this.clientMatch.players[0].username;
+	}
+
+	addEventListeners() {
+		const bracketBtn = this.querySelector('#bracket-icon');
+
+		bracketBtn.addEventListener('click', () => {
+			console.log('clicked on bracket')
+
+
+		})
+	}
+
+	makeBracketObject() {
+		this.bracketObj = {
+			nbOfPlayers: this.tournamentSize,
+			eighthFinal: null,
+			quarterFinal: null,
+			semiFinal: null,
+			final: null,
+		};
+
+		for (let i = 0; i < this.matches.length; i++) {
+			this.stage_mapping[this.stage]
+
+		}
 	}
 }
 
