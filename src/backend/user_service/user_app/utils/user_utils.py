@@ -287,6 +287,7 @@ class getUsernameById(View):
             return JsonResponse({'status': 'success', 'username': user.username}, status=200)
         except User.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No user id found'}, status=200)
+        
 
 class getUserStatus(View):
     def __init__(self):

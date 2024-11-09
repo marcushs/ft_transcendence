@@ -7,29 +7,39 @@ import { throwRedirectionEvent } from '../utils/throwRedirectionEvent.js';
 import "../components/Chat/ChatComponent.js";
 import { getUserId } from '../utils/chatUtils/joinRoomUtils.js';
 import UserProfileSendMessageBtn from '../components/Profile/UserProfileSendMessageBtn.js';
+import {getString} from "../utils/languageManagement.js";
 
 export default () => {
     const html = `
     <section class="users-profile-page">
         <nav-bar-component></nav-bar-component>
-            <div class="users-profile-container-background"></div>
-            <div class="users-profile-container">
-                <div class="users-profile-content">
-                    <div class="user-info user-info-image">
+        <div class="users-profile-container-background"></div>
+        <div class="users-profile-container">
+            <div class="users-profile-content">
+                <div class="user-info">
                     <img id="profileImage" src="" alt="">
-                    </div>
-                    <div class="user-info">
-                    <p id="username">Username</p>
-                    <p class='user-info-username'></p>
-                    </div>
+                    <p class='username'></p>
                 </div>
+                <div class="user-stats"></div>
             </div>
-			<contact-menu-component></contact-menu-component>
-            <chat-component></chat-component>
+        </div>
+        <contact-menu-component></contact-menu-component>
+        <chat-component></chat-component>
         </section>
     `;
 
     setTimeout( async () => {
+        const targetUsername = location.pathname.split('/')[2];
+        let userInfos = await sendRequest('GET', `/api/user/get_user/?q=${targetUsername}`, null);
+        userInfos = userInfos.message;
+
+        await fillUserStats(userInfos);
+
+
+
+
+
+
         rotatingGradient('.users-profile-container', '#FF16C6', '#00D0FF');
         rotatingGradient('.users-profile-container-background', '#FF16C6', '#00D0FF');
         rotatingGradient('.users-profile-content', '#1c0015', '#001519');
@@ -39,34 +49,120 @@ export default () => {
             throwRedirectionEvent('/');
             return;
         }
+
         displayInformation(infoList);
         const friends_status = await checkFriendshipStatus();
         const divUserContent = document.querySelector('.users-profile-content');
 
-        if (friends_status) {
-            divUserContent.innerHTML += `<friendship-button-component button-status=${friends_status}></friendship-button-component>`
-        }
-        if (await isOneself(infoList.id) === false) {
-            const sendMessageBtn = new UserProfileSendMessageBtn(infoList);
+        if (friends_status)
+            divUserContent.innerHTML += `<friendship-button-component button-status=${friends_status}></friendship-button-component>`;
 
-            divUserContent.appendChild(sendMessageBtn);
-        }
+        if (await isOneself(infoList.id) === false)
+            divUserContent.innerHTML +=  '<user-profile-send-message-btn></user-profile-send-message-btn>';
+
     }, 0)
 
     return html;
 }
 
+
+async function fillUserStats(userInfos) {
+    const userStatsElements = document.querySelector('.user-stats');
+    let statistics = await sendRequest('GET', `/api/statistics/get_user_statistics/?q=${userInfos.id}`, null);
+
+    statistics = statistics.user_statistics;
+
+    userStatsElements.innerHTML = `
+        <div class="rank-infos">
+            ${createRankContainer(statistics.rank, statistics.rank_points)}
+        </div>
+        <div class="game-infos">
+            <div class="first-section">
+                <div class="info">
+                    <p>Games played</p>
+                    <div class="number-container">
+                        <p>${statistics.total_game_played}</p>
+                    </div>
+                </div>
+                <div class="info">
+                    <p>Games win</p>
+                    <div class="number-container">
+                        <p>${statistics.total_win}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="second-section">
+                <div class="info">
+                    <p>Win/Lose ratio</p>
+                    <div class="number-container">
+                        <p>${statistics.win_loose_ratio}</p>
+                    </div>
+                </div>
+                <div class="info">
+                    <p>Games lose</p>
+                    <div class="number-container">
+                        <p>${statistics.total_loose}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+
+function createRankContainer(rank, rankPoints) {
+    return `
+			<div class="rank-container rank-container-${rank}">
+				<div class="rank-container-content">					
+					<div class="rank-logo rank-${rank}-logo"></div>
+					<p class="rank-name rank-name-${rank}">${getString(`ranks/${rank}`)}</p>
+					<div class="rank-elo-container">
+						<img src="../../../../../assets/rp-logo.svg" alt="rp logo">
+						<p class="elo">${rankPoints}</p>
+					</div>
+					<div class="next-rank-infos">
+						${createRankInfos(rank, rankPoints)}
+					</div>
+				</div>
+			</div>
+		`;
+}
+
+function createRankInfos(rank, rankPoints) {
+    const rankPointsTarget = {
+        bronze: [0, 999],
+        silver: [1000, 2999],
+        gold: [3000, 5999],
+        diamond: [6000, 9999],
+        master: 10000
+    }
+
+    if (rank === 'master')
+        return `<p class="max-rank">${getString('ranks/maxRank')}</p>`;
+
+    const innerBarPercentage = (rankPoints - rankPointsTarget[rank][0]) * 100 / (rankPointsTarget[rank][1] - rankPointsTarget[rank][0]);
+    return `
+			<p>${getString('ranks/nextRank')}</p>
+			<div class="next-rank-percentage-bar">	
+				<div class="inner-bar inner-bar-${rank}" style="width: ${innerBarPercentage}%"></div>
+			</div>
+			<div class="next-rank-elo">
+				<img src="../../../../../assets/rp-logo.svg" alt="rp logo">
+				<p>${rankPointsTarget[rank][1] + 1}</p>
+			</div>
+		`;
+}
+
+
 async function displayInformation(infoList) {
     document.querySelector('.user-info > img').src = getProfileImage(infoList);
-    document.querySelector('.user-info-username').textContent = infoList.username;
+    document.querySelector('.username').textContent = infoList.username;
 }
-    
+
 async function getInformation() {
-    const targetUsername = localStorage.getItem('users-profile-target-username');
-    if (targetUsername === null)
-        return null;
+    const targetUsername = location.pathname.split('/')[2];
     const url = `/api/user/get_user/?q=${targetUsername}`;
-    
+
     try {
         const data = await sendRequest('GET', url, null);
         if (data.status === 'success') {

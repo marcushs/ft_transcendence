@@ -1,6 +1,7 @@
 @import './PopUpComponent.css';
 @import './UserInfosComponent.css';
 @import './SecurityComponent.css';
+@import './StatsComponent.css';
 
 profile-component {
 	position: relative;
