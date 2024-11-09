@@ -48,12 +48,11 @@ class GetUserStatistics(View):
         
     def get_rank(self, points):
         for rank, (min, max) in self.ranks.items():
-            if min <= points < max:
+            if min <= points <= max:
                 return rank
-        return None
     
     def get_total_goal_ratio(self):
-        ratio = self.user.goal_scored / max(1, self.user.goal_conceded)
+        ratio = self.user.goals_scored / max(1, self.user.goals_conceded)
         return round(ratio, 2)
     
     def get_win_loose_ratio(self):

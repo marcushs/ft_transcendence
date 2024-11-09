@@ -444,8 +444,8 @@ export default class Game {
 		setTimeout(() => {
 			this.isOutroAnimationEnabled = false;
 			this.isRankOutroAnimationEnabled = true;
-			this.throwLoadRankOutroAnimationEvent(data.message);
-		}, 0);
+			this.throwLoadRankOutroAnimationEvent(data.message, isWin);
+		}, 5000);
 
 		// Not definitive
 		setTimeout(() => {
@@ -511,11 +511,12 @@ export default class Game {
 		document.dispatchEvent(event);
 	}
 
-	throwLoadRankOutroAnimationEvent(rankData) {
+	throwLoadRankOutroAnimationEvent(rankData, isWin) {
 		const event = new CustomEvent('loadRankOutroAnimationEvent', {
 			bubbles: true,
 			detail: {
-				rankData: rankData
+				rankData: rankData,
+				isWin: isWin
 			}
 		});
 

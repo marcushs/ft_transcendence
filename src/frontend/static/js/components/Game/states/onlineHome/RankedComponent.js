@@ -3,6 +3,8 @@ import {getString} from "../../../../utils/languageManagement.js";
 import "../../../Matchmaking/MatchmakingResearchComponent.js"
 import resetButtonsOnMatchmakingCanceled from "../../../../utils/resetButtonsOnMatchmakingCanceled.js";
 import disableButtonsInGameResearch from "../../../../utils/disableButtonsInGameResearch.js";
+import {sendRequest} from "../../../../utils/sendRequest.js";
+import getUserId from "../../../../utils/getUserId.js";
 
 class RankedComponent extends HTMLElement {
 	constructor() {
@@ -10,16 +12,21 @@ class RankedComponent extends HTMLElement {
 
 		this.innerHTML = `
 			<div class="ranked-component-content">
-				<h4>${getString('gameComponent/ranked')}</h4>
-				${this.createRankContainer('master')}
-				<button-component label="${getString('buttonComponent/play')}" class="generic-btn"></button-component>
-				<button-component label="${getString('buttonComponent/cancel')}" class="generic-btn-cancel" style="display: none"></button-component>
 			</div>
 		`;
+
+		this.rankPoints = {
+			bronze: [0, 999],
+			silver: [1000, 2999],
+			gold: [3000, 5999],
+			diamond: [6000, 9999]
+		}
 	}
 
+	async connectedCallback() {
 
-	connectedCallback() {
+		await this.fillRankComponentContent();
+
 		this.playButton = this.querySelector('.generic-btn');
 		this.cancelButton = this.querySelector('.generic-btn-cancel');
 
@@ -34,7 +41,21 @@ class RankedComponent extends HTMLElement {
 	}
 
 
-	createRankContainer(rank) {
+	async fillRankComponentContent(){
+		const rankedComponentContentElement = this.querySelector('.ranked-component-content');
+		const rankedData = await sendRequest("GET", `/api/statistics/get_user_statistics/?q=${await getUserId()}`, null);
+
+		console.log(rankedData)
+		rankedComponentContentElement.innerHTML += `
+			<h4>${getString('gameComponent/ranked')}</h4>
+			${this.createRankContainer(rankedData.user_statistics.rank, rankedData.user_statistics.rank_points)}
+			<button-component label="${getString('buttonComponent/play')}" class="generic-btn"></button-component>
+			<button-component label="${getString('buttonComponent/cancel')}" class="generic-btn-cancel" style="display: none"></button-component>
+		`
+	}
+
+
+	createRankContainer(rank, rankPoints) {
 		return `
 			<div class="rank-container rank-container-${rank}">
 				<div class="rank-container-content">					
@@ -42,28 +63,29 @@ class RankedComponent extends HTMLElement {
 					<p class="rank-name rank-name-${rank}">${getString(`ranks/${rank}`)}</p>
 					<div class="rank-elo-container">
 						<img src="../../../../../assets/rp-logo.svg" alt="rp logo">
-						<p class="elo">10255</p>
+						<p class="elo">${rankPoints}</p>
 					</div>
 					<div class="next-rank-infos">
-						${this.createRankInfos(rank)}
+						${this.createRankInfos(rank, rankPoints)}
 					</div>
 				</div>
 			</div>
 		`;
 	}
 
-	createRankInfos(rank) {
-		if (rank === 'master') {
+	createRankInfos(rank, rankPoints) {
+		if (rank === 'master')
 			return `<p class="max-rank">${getString('ranks/maxRank')}</p>`;
-		}
+
+		const innerBarPercentage = (rankPoints - this.rankPoints[rank][0]) * 100 / (this.rankPoints[rank][1] - this.rankPoints[rank][0]);
 		return `
 			<p>${getString('ranks/nextRank')}</p>
 			<div class="next-rank-percentage-bar">	
-				<div class="inner-bar inner-bar-${rank}"></div>
+				<div class="inner-bar inner-bar-${rank}" style="width: ${innerBarPercentage}%"></div>
 			</div>
 			<div class="next-rank-elo">
 				<img src="../../../../../assets/rp-logo.svg" alt="rp logo">
-				<p>10000</p>
+				<p>${this.rankPoints[rank][1] + 1}</p>
 			</div>
 		`;
 	}

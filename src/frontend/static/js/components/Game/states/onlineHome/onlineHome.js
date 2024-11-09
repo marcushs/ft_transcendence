@@ -1,6 +1,5 @@
 import './RankedComponent.js';
 import './UnrankedComponent.js';
-import './PrivateMatchComponent.js';
 import {getString} from "../../../../utils/languageManagement.js";
 
 class onlineHome {
@@ -21,7 +20,6 @@ class onlineHome {
 					</div>
 					<div class="right-section">
 						<unranked-component></unranked-component>
-						<private-match-component></private-match-component>
 					</div>
 				</div>
 			</div>

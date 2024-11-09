@@ -11,6 +11,9 @@ class MatchResultManager(View):
     def __init__(self):
         super()
         
+        self.winner_old_points = None
+        self.loser_old_points = None
+        
         self.ranks = {
             'bronze': (0, 999),
             'silver': (1000, 2999),
@@ -125,7 +128,7 @@ class MatchResultManager(View):
 
     def get_rank(self, points):
         for rank, (min, max) in self.ranks.items():
-            if min <= points < max:
+            if min <= points <= max:
                 return rank
         return None
 
