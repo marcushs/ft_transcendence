@@ -1,94 +1,94 @@
 import './PlayerInBracketComponent.js'
 
-class bracket {
+class Bracket {
 
-    constructor() {
+    constructor(bracketObj) {
         this.redirectState = "bracket";
         this.class = "bracket";
-
-        this.temporaryPlayersList = {
-            nbOfPlayers: 16,
-            eighthFinal: {
-                leftMatches: [
-                    [
-                        {name: 'Sowoo', score: '8'},
-                        {name: 'Sowoo', score: '11'},
-                    ],
-                    [
-                        {name: 'Sowoo', score: '6'},
-                        {name: 'Sowoo', score: '11'},
-                    ],
-                    [
-                        {name: 'Sowoo', score: '1'},
-                        {name: 'Sowoo', score: '11'},
-                    ],
-                    [
-                        {name: 'Sowoo', score: '11'},
-                        {name: 'Sowoo', score: '4'},
-                    ],
-                ],
-                rightMatches: [
-                    [
-                        {name: 'Sowoo', score: '11'},
-                        {name: 'Sowoo', score: '10'},
-                    ],
-                    [
-                        {name: 'Sowoo', score: '8'},
-                        {name: 'Sowoo', score: '11'},
-                    ],
-                    [
-                        {name: 'Sowoo', score: '8'},
-                        {name: 'Sowoo', score: '11'},
-                    ],
-                    [
-                        {name: 'Sowoo', score: '8'},
-                        {name: 'Sowoo', score: '11'},
-                    ]
-                ]
-            },
-            quarterFinal: {
-                leftMatches: [
-                    [
-                        {name: 'Sowoo', score: '9'},
-                        {name: 'Sowoo', score: '11'},
-                    ],
-                    [
-                        {name: 'Sowoo', score: '6'},
-                        {name: 'Sowoo', score: '11'},
-                    ],
-                ],
-                rightMatches: [
-                    [
-                        {name: 'Sowoo', score: '11'},
-                        {name: 'Sowoo', score: '10'},
-                    ],
-                    [
-                        {name: 'Sowoo', score: '8'},
-                        {name: 'Sowoo', score: '11'},
-                    ],
-                ]
-            },
-            semiFinal: {
-                leftMatches: [
-                    [
-                        {name: 'Sowoo', score: '9'},
-                        {name: 'Sowoo', score: '11'},
-                    ],
-                ],
-                rightMatches: [
-                    [
-                        {name: 'Sowoo', score: '11'},
-                        {name: 'Sowoo', score: '10'},
-                    ],
-                ]
-            },
-            final: [
-                [
-                    {name: 'Sowoo',score: '11'},
-                    {name: 'Sowoo',score: '4'},
-                ],
-            ]
-        }
+        this.bracketObj = bracketObj;
+        // this.temporaryPlayersList = {
+        //     nbOfPlayers: 16,
+        //     eighthFinal: {
+        //         leftMatches: [
+        //             [
+        //                 {name: 'Sowoo', score: '8'},
+        //                 {name: 'Sowoo', score: '11'},
+        //             ],
+        //             [
+        //                 {name: 'Sowoo', score: '6'},
+        //                 {name: 'Sowoo', score: '11'},
+        //             ],
+        //             [
+        //                 {name: 'Sowoo', score: '1'},
+        //                 {name: 'Sowoo', score: '11'},
+        //             ],
+        //             [
+        //                 {name: 'Sowoo', score: '11'},
+        //                 {name: 'Sowoo', score: '4'},
+        //             ],
+        //         ],
+        //         rightMatches: [
+        //             [
+        //                 {name: 'Sowoo', score: '11'},
+        //                 {name: 'Sowoo', score: '10'},
+        //             ],
+        //             [
+        //                 {name: 'Sowoo', score: '8'},
+        //                 {name: 'Sowoo', score: '11'},
+        //             ],
+        //             [
+        //                 {name: 'Sowoo', score: '8'},
+        //                 {name: 'Sowoo', score: '11'},
+        //             ],
+        //             [
+        //                 {name: 'Sowoo', score: '8'},
+        //                 {name: 'Sowoo', score: '11'},
+        //             ]
+        //         ]
+        //     },
+        //     quarterFinal: {
+        //         leftMatches: [
+        //             [
+        //                 {name: 'Sowoo', score: '9'},
+        //                 {name: 'Sowoo', score: '11'},
+        //             ],
+        //             [
+        //                 {name: 'Sowoo', score: '6'},
+        //                 {name: 'Sowoo', score: '11'},
+        //             ],
+        //         ],
+        //         rightMatches: [
+        //             [
+        //                 {name: 'Sowoo', score: '11'},
+        //                 {name: 'Sowoo', score: '10'},
+        //             ],
+        //             [
+        //                 {name: 'Sowoo', score: '8'},
+        //                 {name: 'Sowoo', score: '11'},
+        //             ],
+        //         ]
+        //     },
+        //     semiFinal: {
+        //         leftMatches: [
+        //             [
+        //                 {name: 'Sowoo', score: '9'},
+        //                 {name: 'Sowoo', score: '11'},
+        //             ],
+        //         ],
+        //         rightMatches: [
+        //             [
+        //                 {name: 'Sowoo', score: '11'},
+        //                 {name: 'Sowoo', score: '10'},
+        //             ],
+        //         ]
+        //     },
+        //     final: [
+        //         [
+        //             {name: 'Sowoo',score: '11'},
+        //             {name: 'Sowoo',score: '4'},
+        //         ],
+        //     ]
+        // }
         // this.generateBracket(this.temporaryPlayersList);
     }
 
@@ -108,13 +108,13 @@ class bracket {
 
 
         return `
-            ${this.generateBracketSide(bracketObj.nbOfPlayers, leftBracket,  'left','left-matches')}
-            ${this.generateBracketSide(bracketObj.nbOfPlayers, rightBracket, 'right', 'right-matches')}
+            ${this.generateBracketSide(leftBracket,  'left','left-matches')}
+            ${this.generateBracketSide(rightBracket, 'right', 'right-matches')}
         `;
     }
 
 
-    generateBracketSide(nbOfPlayers, bracket, side, className) {
+    generateBracketSide(bracket, side, className) {
         let leftMatches = '';
 
         return `
@@ -158,7 +158,7 @@ class bracket {
 
     render() {
         return `
-            ${this.generateBracket(this.temporaryPlayersList)}
+            ${this.generateBracket(this.bracketObj)}
 <!--             <div class="left-matches">-->
 <!--                <player-in-bracket name="Sowoo" score="11" id="left-height-player1" class="player-in-bracket-himself"></player-in-bracket>-->
 <!--                <player-in-bracket name="Hleung" score="1" id="left-height-player2" class="player-in-bracket-basic"></player-in-bracket>-->
@@ -204,4 +204,4 @@ class bracket {
     }
 }
 
-export default bracket;
+export default Bracket;

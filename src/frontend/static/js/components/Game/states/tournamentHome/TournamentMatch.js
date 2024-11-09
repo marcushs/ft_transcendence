@@ -1,6 +1,5 @@
 import { getUserId } from "../../../../utils/chatUtils/joinRoomUtils.js";
-
-
+import Bracket from "./bracket/bracket.js";
 
 export default class TournamentMatch {
 	constructor(tournamentBracket) {
@@ -101,6 +100,7 @@ class TournamentMatchElement extends HTMLElement {
 			console.log('clicked on bracket')
 			this.makeBracketObject();
 			console.log('bracketObj', this.bracketObj);
+			this.redirectToBracket();
 		})
 	}
 
@@ -163,6 +163,16 @@ class TournamentMatchElement extends HTMLElement {
 			{name: match.players[1].username, score: '0'}
 		];
 		return match;
+	}
+
+	redirectToBracket() {
+		const gameComponent = document.querySelector('game-component');
+		const bracketState = gameComponent.states['bracket'];
+		const bracket = new Bracket(this.bracketObj);
+	
+		bracketState['state'] = bracket;
+		gameComponent.changeState(bracketState.state, bracketState.context);
+		gameComponent.currentState = "bracket";
 	}
 }
 
