@@ -46,6 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=12, unique=True, default='default')
     email = models.EmailField(unique=True)
+    ready_for_match = models.BooleanField(default=False)
    
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -94,6 +95,9 @@ class Tournament(models.Model):
 
         return obj_dict
     
+    async def get_current_stage(self):
+        return self.current_stage
+    
     def get_members(self):
         members = list(self.members.values('id', 'username'))
         return [{'id': str(member['id']), 'username': member['username']} for member in members]
@@ -102,7 +106,7 @@ class Tournament(models.Model):
         return self.members.count() < self.tournament_size
     
 class TournamentMatch(models.Model):
-    match_id = ShortUUIDField(primary_key=True)
+    match_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     tournament = models.ForeignKey(Tournament, related_name='tournament_match', on_delete=models.CASCADE)
     players = models.ManyToManyField(User, related_name='matches')
     winner = models.ForeignKey(User, related_name='won_matches', on_delete=models.CASCADE, null=True, blank=True)
@@ -114,7 +118,7 @@ class TournamentMatch(models.Model):
 
     async def to_dict(self):
         obj_dict = {
-            'match_id': self.match_id,
+            'match_id': str(self.match_id),
             'tournament_id': str(self.tournament.tournament_id),
             'winner': self.winner,
             'loser': self.loser,
@@ -124,11 +128,15 @@ class TournamentMatch(models.Model):
             'tournament_round': self.tournament_round
         }
         players = await sync_to_async(list)(
-            self.players.values('id', 'username')
+            self.players.values('id', 'username', 'ready_for_match')
         )
-        obj_dict['players'] = [{'id': str(player['id']), 'username': player['username']} for player in players]
+        obj_dict['players'] = [{'id': str(player['id']), 'username': player['username'], 'ready': player['ready_for_match']} for player in players]
 
         return obj_dict
+    
+    def get_players(self):
+        players = list(self.players.values('id', 'username', 'ready_for_match'))
+        return [{'id': str(player['id']), 'username': player['username'], 'ready': player['ready_for_match']} for player in players]
 
 class Bracket(models.Model):
     tournament = models.ForeignKey(Tournament, related_name='tournament_bracket', on_delete=models.CASCADE)

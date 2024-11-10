@@ -109,11 +109,10 @@ class TournamentMatchElement extends HTMLElement {
 		readyBtn.addEventListener('click', () => {
 			console.log('ready clicked');
 			console.log('userId: ', this.userId);
-			console.log('match', this.clientMatch);
 			const payload = {
 				'type': 'user_ready_for_match',
 				'userId': this.userId,
-				'clientMatch': this.clientMatch
+				'matchId': this.clientMatch.match_id
 			}
 			tournamentSocket.send(JSON.stringify(payload));
 		})

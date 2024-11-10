@@ -33,3 +33,7 @@ docker exec -e PGPASSWORD=$TOURNAMENT_DB_PASSWORD tournament psql -U $TOURNAMENT
 #tournament_app_tournament
 echo -e "_________TOURNAMENT_APP_TOURNAMENT_________\n"
 docker exec -e PGPASSWORD=$TOURNAMENT_DB_PASSWORD tournament psql -U $TOURNAMENT_DB_USER -d $TOURNAMENT_DB_NAME -h $TOURNAMENT_DB_HOST -c "DELETE FROM tournament_app_tournament;"
+
+#tournament_app_matchready
+# echo -e "_________TOURNAMENT_APP_MATCHREADY_________\n"
+# docker exec -e PGPASSWORD=$TOURNAMENT_DB_PASSWORD tournament psql -U $TOURNAMENT_DB_USER -d $TOURNAMENT_DB_NAME -h $TOURNAMENT_DB_HOST -c "DELETE FROM tournament_app_matchready;"
