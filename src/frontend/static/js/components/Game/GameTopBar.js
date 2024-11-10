@@ -6,7 +6,7 @@ class GameTopBarComponent extends HTMLElement {
 		super();
 
 		this.innerHTML = `
-			<div class="top-bar-options" xmlns="http://www.w3.org/1999/html">			
+			<div class="top-bar-options">			
 				<div class="back-button">
 					<img src="../../../assets/backTopBarButton.svg" alt="back top bar button">
 					<p>${getString('gameTopBar/back')}</p>
@@ -33,7 +33,7 @@ class GameTopBarComponent extends HTMLElement {
 	throwEvents() {
 		this.backButton.addEventListener('click', () => {
 			const event = new CustomEvent('navigate-back', {
-				bubbles: true // To navigate throughout DOM
+				bubbles: true
 			});
 
 			this.dispatchEvent(event);

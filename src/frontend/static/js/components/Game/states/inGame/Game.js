@@ -55,8 +55,6 @@ export default class Game {
 		this.isSentEmoteAnimationEnabled = false;
 		this.isReceivedEmoteAnimationEnabled = false;
 
-		console.log('is ranked : ', gameState.is_ranked);
-
 		this.Intro = new Intro(this.canvas, gameState.is_ranked, gameState.player_two.user_infos, gameState.player_one.user_infos);
 		this.Outro = new Outro(this.canvas);
 		this.RankOutro = new RankOutro(this.canvas);
@@ -392,7 +390,6 @@ export default class Game {
 	}
 
 	handleReceivedEmote(event) {
-		console.log('Emote received = ', event.detail.emoteType);
 		this.receivedEmoteFramesList = this.getEmoteFramesListByType(event.detail.emoteType);
 
 		this.isReceivedEmoteAnimationEnabled = true;
@@ -442,19 +439,22 @@ export default class Game {
 		this.throwLoadOutroAnimationEvent(isWin);
 		this.isOutroAnimationEnabled = true;
 
-		console.log(data.message);
 		setTimeout(() => {
 			this.isOutroAnimationEnabled = false;
-			this.isRankOutroAnimationEnabled = true;
-			this.throwLoadRankOutroAnimationEvent(data.message, isWin);
+			if (!this.gameState.is_ranked) {
+				this.gameInProgress = false;
+				disconnectGameWebSocket(this.userId, false);
+				throwRedirectionEvent('/');
+			} else {
+				this.isRankOutroAnimationEnabled = true;
+				this.throwLoadRankOutroAnimationEvent(data.message, isWin);
+				setTimeout(() => {
+					this.gameInProgress = false;
+					disconnectGameWebSocket(this.userId, false);
+					throwRedirectionEvent('/');
+				}, 6000);
+			}
 		}, 7000);
-
-		// Not definitive
-		setTimeout(() => {
-			this.gameInProgress = false;
-			disconnectGameWebSocket(this.userId, false);
-			throwRedirectionEvent('/');
-		}, 20000);
 	}
 
 	cleanup() {

@@ -23,6 +23,7 @@ export default class Game {
 		this.playerOneScore = 0;
 		this.playerTwoScore = 0;
 		this.sparks = [];
+		this.isTopBarOpened = false;
 		this.lastTime = performance.now();
 
 		this.keysPlayerOne = {
@@ -69,14 +70,9 @@ export default class Game {
 			if (event.key === 'ArrowUp') this.keysPlayerTwo.up = false;
 			if (event.key === 'ArrowDown') this.keysPlayerTwo.down = false;
 		});
-	}
 
-
-	loadImage(path) {
-		const img = new Image();
-
-		img.src = path;
-		return img;
+		document.querySelector('game-top-bar .increase-game-top-bar-button').addEventListener('click', () => this.handleIncreaseTopBar());
+		document.querySelector('game-top-bar').addEventListener('mouseleave', () => this.handleDecreaseTopBar());
 	}
 
 
@@ -94,11 +90,6 @@ export default class Game {
 			this.Outro.drawOutro();
 		}
 
-		if (this.isEmoteAnimationEnabled) {
-			this.backgroundImage = this.emoteFramesList.get();
-			this.drawEmote();
-			this.drawOpponentEmote();
-		}
 		requestAnimationFrame(() => this.gameLoop());
 	}
 
@@ -327,6 +318,25 @@ export default class Game {
 		if (player.y + newPosY - player.height / 2 - 5 < 0)
 			return true;
 		return false;
+	}
+
+
+	handleIncreaseTopBar() {
+		this.gameTopBar.style.animation = "increase-top-bar-size 0.25s linear forwards";
+		document.querySelector('game-top-bar .extend-game-button').style.visibility = 'visible';
+		document.querySelector('game-top-bar .reduce-game-button').style.visibility = 'visible';
+		setTimeout(() => { this.isTopBarOpened = true; }, 250);
+	}
+
+	handleDecreaseTopBar() {
+		if (this.isTopBarOpened) {
+			this.gameTopBar.style.animation = "decrease-top-bar-size 0.25s linear forwards";
+			this.isTopBarOpened = false;
+			this.gameTopBar.classList.add('in-game-top-bar');
+			document.querySelector('game-top-bar .increase-game-top-bar-button').style.visibility = 'visible';
+			document.querySelector('game-top-bar .extend-game-button').style.visibility = 'hidden';
+			document.querySelector('game-top-bar .reduce-game-button').style.visibility = 'hidden';
+		}
 	}
 
 
