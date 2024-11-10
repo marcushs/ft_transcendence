@@ -3,13 +3,18 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding: 5px 10px;
-    background-color: rgb(58, 160, 183);
+    width: 15rem;
+    height: 5rem;
+    background: var(--neon-blue);
     color: white;
     border: none;
-    border-radius: 25px;
+    border-radius: 7px;
     cursor: pointer;
     transition: background-color 0.3s;
+}
+
+.add-friend-button:hover {
+    opacity: 0.8;
 }
 
 .add-friend-button p {
@@ -20,8 +25,8 @@
 }
 
 .add-friend-button img {
-	width: 3.5rem;
-	height: 3.5rem;
+	width: 2.5rem;
+	height: 2.5rem;
 }
 
 .add-friend-button:hover {

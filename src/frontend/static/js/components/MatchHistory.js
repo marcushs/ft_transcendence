@@ -52,7 +52,7 @@ class MatchHistory extends HTMLElement {
         const matchHistoryContainer = this.querySelector('.match-history-container');
         const p = document.createElement("p");
 
-        p.innerHTML = "To access to match history, please login or sign in";
+        p.innerHTML = "To access to match history, please login or sign in.";
         p.className = "unlogged-sentence";
 
         matchHistoryContainer.appendChild(p);

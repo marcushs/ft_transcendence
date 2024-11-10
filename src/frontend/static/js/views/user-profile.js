@@ -29,40 +29,37 @@ export default () => {
     `;
 
     setTimeout( async () => {
-        const targetUsername = location.pathname.split('/')[2];
-        let userInfos = await sendRequest('GET', `/api/user/get_user/?q=${targetUsername}`, null);
-        userInfos = userInfos.message;
-
-        await fillUserStats(userInfos);
-
-
-
-
-
-
         rotatingGradient('.users-profile-container', '#FF16C6', '#00D0FF');
         rotatingGradient('.users-profile-container-background', '#FF16C6', '#00D0FF');
         rotatingGradient('.users-profile-content', '#1c0015', '#001519');
 
-        const infoList = await getInformation();
-        if (infoList === null) {
-            throwRedirectionEvent('/');
-            return;
+        const targetUsername = location.pathname.split('/')[2];
+        let userInfos = await sendRequest('GET', `/api/user/get_user/?q=${targetUsername}`, null);
+
+        if (userInfos.status === "error") {
+            fillNoUserFound();
+            return ;
         }
 
-        displayInformation(infoList);
-        const friends_status = await checkFriendshipStatus();
-        const divUserContent = document.querySelector('.users-profile-content');
+        userInfos = userInfos.message;
 
-        if (friends_status)
-            divUserContent.innerHTML += `<friendship-button-component button-status=${friends_status}></friendship-button-component>`;
-
-        if (await isOneself(infoList.id) === false)
-            divUserContent.innerHTML +=  '<user-profile-send-message-btn></user-profile-send-message-btn>';
-
-    }, 0)
+        await fillUserInfos(userInfos);
+        await fillUserStats(userInfos);
+        await displayButtons(userInfos);
+    }, 0);
 
     return html;
+}
+
+
+function fillNoUserFound() {
+    const userProfileContent = document.querySelector('.users-profile-content');
+
+    userProfileContent.innerHTML = `
+        <div class="no-user-found">
+            <p>User doesn't exists.</p>
+        </div>
+    `;
 }
 
 
@@ -154,26 +151,20 @@ function createRankInfos(rank, rankPoints) {
 }
 
 
-async function displayInformation(infoList) {
-    document.querySelector('.user-info > img').src = getProfileImage(infoList);
-    document.querySelector('.username').textContent = infoList.username;
+async function fillUserInfos(userInfos) {
+    document.querySelector('.user-info > img').src = getProfileImage(userInfos);
+    document.querySelector('.username').textContent = userInfos.username;
 }
 
-async function getInformation() {
-    const targetUsername = location.pathname.split('/')[2];
-    const url = `/api/user/get_user/?q=${targetUsername}`;
+async function displayButtons(userInfos) {
+    const friends_status = await checkFriendshipStatus();
+    const divUserContent = document.querySelector('.users-profile-content');
 
-    try {
-        const data = await sendRequest('GET', url, null);
-        if (data.status === 'success') {
-            return data.message;
-        } else {
-            return null;
-        }
-    } catch (error) {
-        console.log(error);
-        return null;
-    }
+    if (friends_status)
+        divUserContent.innerHTML += `<friendship-button-component button-status=${friends_status}></friendship-button-component>`;
+
+    if (await isOneself(userInfos.id) === false)
+        divUserContent.innerHTML +=  '<user-profile-send-message-btn></user-profile-send-message-btn>';
 }
 
 async function checkFriendshipStatus() {
@@ -194,6 +185,5 @@ async function checkFriendshipStatus() {
 async function isOneself(targetUserId) {
     const userId = await getUserId();
 
-    console.log('and userId is: ', userId)
     return userId === targetUserId;
 }
