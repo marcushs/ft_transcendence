@@ -2,6 +2,7 @@ import {sendRequest} from "../utils/sendRequest.js";
 import getUserId from "../utils/getUserId.js";
 import getUsernameById from "../utils/getUsernameById.js";
 import checkAuthentication from "../utils/checkAuthentication.js";
+import {getString} from "../utils/languageManagement.js";
 
 class MatchHistory extends HTMLElement {
     constructor() {
@@ -29,7 +30,7 @@ class MatchHistory extends HTMLElement {
     initializeComponent() {
         this.innerHTML = `
             <div class="match-history-container">
-                <h1>Match history</h1>
+                <h1>${getString("matchHistoryComponent/matchHistory")}</h1>
                 <ul class="history-list-container">
 <!--                    <li class="win">-->
 <!--                        <div class="type">-->
@@ -48,11 +49,10 @@ class MatchHistory extends HTMLElement {
 
 
     displayUnloggedUser() {
-        console.log('test')
         const matchHistoryContainer = this.querySelector('.match-history-container');
         const p = document.createElement("p");
 
-        p.innerHTML = "To access to match history, please login or sign in.";
+        p.innerHTML = getString("matchHistoryComponent/unloggedSentence");
         p.className = "unlogged-sentence";
 
         matchHistoryContainer.appendChild(p);
@@ -99,7 +99,7 @@ class MatchHistory extends HTMLElement {
         return `
             <li class="${(isWin) ? "win" : "lose"}">
                 <div class="type">
-                    <p>Ranked</p>
+                    <p>${getString("matchHistoryComponent/ranked")}</p>
                     <div class="line"></div>
                 </div>
                 <div class="content">
@@ -115,15 +115,13 @@ class MatchHistory extends HTMLElement {
     async generateUnrankedItem(matchInfos) {
         const isWin = matchInfos.winner_id === this.userId;
         const opponent_id = (isWin) ? matchInfos.loser_id : matchInfos.winner_id;
-        console.log('opponent_id = ', opponent_id);
         const opponent_name = await getUsernameById(opponent_id);
-        console.log('opponent_name = ', opponent_name);
         const score = (isWin) ? `${matchInfos.winner_score} - ${matchInfos.loser_score}` : `${matchInfos.loser_score} - ${matchInfos.winner_score}`
 
         return `
             <li class="${(isWin) ? "win" : "lose"}">
                 <div class="type">
-                    <p>Unranked</p>
+                    <p>${getString("matchHistoryComponent/unranked")}</p>
                     <div class="line"></div>
                 </div>
                 <div class="content">

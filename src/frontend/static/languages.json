@@ -144,6 +144,13 @@
 	"accountInfosComponent" : {
 	  "profile": "Profile",
 	  "logout": "Logout"
+	},
+	"matchHistoryComponent" : {
+	  "matchHistory": "Match history",
+	  "ranked": "Ranked",
+	  "unranked": "Unranked",
+	  "tournament": "Tournament",
+	  "unloggedSentence": "To access to match history, please login or sign in."
 	}
   },
 
@@ -291,6 +298,13 @@
 	"accountInfosComponent" : {
 	  "profile": "Profil",
 	  "logout": "Déconnexion"
+	},
+	"matchHistoryComponent" : {
+	  "matchHistory": "Historique des matchs",
+	  "ranked": "Classé",
+	  "unranked": "Non classé",
+	  "tournament": "Tournois",
+	  "unloggedSentence": "Pour accéder à l'historique des matchs, veuillez vous connecter ou vous identifier."
 	}
   },
 
