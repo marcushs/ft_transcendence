@@ -11,6 +11,11 @@
     border-radius: 7px;
     cursor: pointer;
     transition: background-color 0.3s;
+    padding: 5px 10px;
+}
+
+.cancel-friend-button:hover {
+    opacity: 0.8;
 }
 
 .cancel-friend-button p {

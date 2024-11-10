@@ -151,7 +151,21 @@
 	  "unranked": "Unranked",
 	  "tournament": "Tournament",
 	  "unloggedSentence": "To access to match history, please login or sign in."
-	}
+	},
+	"statistics": {
+	  "gamesPlayed": "Games played",
+	  "gamesWin": "Games win",
+	  "gamesLose": "Games lose",
+	  "winLoseRatio": "Win/Lose ratio"
+	},
+	"friendshipButton": {
+	  "add": "Add contact",
+	  "cancel": "Cancel request",
+	  "remove": "Remove contact",
+	  "accept": "Accept invitation",
+	  "decline": "Decline invitation"
+	},
+	"sendMessageButton": "Send message"
   },
 
   "fr": {
@@ -305,7 +319,21 @@
 	  "unranked": "Non classé",
 	  "tournament": "Tournois",
 	  "unloggedSentence": "Pour accéder à l'historique des matchs, veuillez vous connecter ou vous identifier."
-	}
+	},
+	"statistics": {
+	  "gamesPlayed": "Parties jouées",
+	  "gamesWin": "Parties gagnées",
+	  "gamesLose": "Parties perdues",
+	  "winLoseRatio": "Ratio Victoire/Défaite"
+	},
+	"friendshipButton": {
+	  "add": "Demande de contact",
+	  "cancel": "Annuler la demande",
+	  "remove": "Supprimer le contact",
+	  "accept": "Accepter l'invitation",
+	  "decline": "Décliner l'invitation"
+	},
+	"sendMessageButton": "Envoyer un message"
   },
 
 

@@ -7,24 +7,18 @@ stats-component {
 	height: 100%;
 }
 
-stats-component > * {
-	margin: 3rem 0;
-}
-
 stats-component .game-infos {
 	width: 70%;
 	display: flex;
 	justify-content: space-between;
 }
 
-stats-component .game-infos .info {
-	width: calc(100% / 3);
-}
-
 stats-component .info {
+	height: 18rem;
+	width: calc(100% / 3);
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: flex-end;
 	align-items: center;
 }
 
@@ -34,6 +28,7 @@ stats-component .info > p {
 	font-size: 2.2rem;
 	font-weight: bold;
 	color: var(--text-primary-color);
+	text-align: center;
 }
 
 stats-component .info .number-container {

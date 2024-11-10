@@ -36,25 +36,25 @@ class StatsComponent extends HTMLElement {
 			</div>
 			<div class="game-infos">
 				<div class="info">
-					<p>Games played</p>
+					<p>${getString("statistics/gamesPlayed")}</p>
 					<div class="number-container">
 						<p>${statistics.total_game_played}</p>
 					</div>
 				</div>
 				<div class="info">
-					<p>Games win</p>
+					<p>${getString("statistics/gamesWin")}</p>
 					<div class="number-container">
 						<p>${statistics.total_win}</p>
 					</div>
 				</div>
 				<div class="info">
-					<p>Games lose</p>
+					<p>${getString("statistics/gamesLose")}</p>
 					<div class="number-container">
 						<p>${statistics.total_loose}</p>
 					</div>
 				</div>
 				<div class="info">
-					<p>Win/Lose ratio</p>
+					<p>${getString("statistics/winLoseRatio")}</p>
 					<div class="number-container">
 						<p>${statistics.win_loose_ratio}</p>
 					</div>

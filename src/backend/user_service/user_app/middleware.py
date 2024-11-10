@@ -72,6 +72,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
             else:
                     print('-> No refresh token, JWT_FAILED <-')
                     request.user = AnonymousUser()
+        print(f'------------------------->>>>> request.user = {request.user} --- type = {type(request.user)}')
         print('---------------> JWT TEST END <----------------')
         response = await self.get_response(request) 
         return response 

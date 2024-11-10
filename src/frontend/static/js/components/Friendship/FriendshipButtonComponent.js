@@ -27,7 +27,7 @@ class FriendshipButtonComponent extends HTMLElement {
         buttons.forEach(buttonConfig => {
             this.innerHTML += `
                 <div data-payload='${JSON.stringify(buttonConfig.payload)}' class="${buttonConfig.class}">
-                    <p>${buttonConfig.text.at(0).toUpperCase() + buttonConfig.text.slice(1)}</p>
+                    <p>${buttonConfig.text}</p>
                     <img src='${buttonConfig.img}' alt='${buttonConfig.alt}'></img>
                 </div>
             `

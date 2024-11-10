@@ -137,18 +137,19 @@ user-profile-send-message-btn {
 }
 
 .users-profile-page .game-infos .info {
-	margin: 3rem 0;
 	width: 100%;
 }
 
 .users-profile-page .info {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: flex-end;
 	align-items: center;
+	height: 14rem;
 }
 
 .users-profile-page .info > p {
+	text-align: center;
 	font-size: 2.2rem;
 	font-weight: bold;
 	color: var(--text-primary-color);

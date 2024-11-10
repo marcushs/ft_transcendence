@@ -3,7 +3,6 @@ user-profile-send-message-btn {
 	width: 15rem;
 	height: 5rem;
 	background-color: var(--neon-blue);
-	text-wrap: nowrap;
 	color: black;
 	font-size: 1.5rem;
 	font-weight: 500;
@@ -11,6 +10,11 @@ user-profile-send-message-btn {
 	align-items: center;
 	border-radius: 7px;
 }
+
+user-profile-send-message-btn p {
+	text-align: center;
+}
+
 
 user-profile-send-message-btn:hover {
 	opacity: 0.8;
@@ -20,4 +24,5 @@ user-profile-send-message-btn:hover {
 user-profile-send-message-btn i {
 	font-size: 2rem;
 	transform: translateY(15%);
+	padding: 0 1rem;
 }

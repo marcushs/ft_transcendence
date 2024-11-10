@@ -11,6 +11,7 @@
     border-radius: 7px;
     cursor: pointer;
     transition: background-color 0.3s;
+    padding-right: 3px;
 }
 
 .add-friend-button:hover {
