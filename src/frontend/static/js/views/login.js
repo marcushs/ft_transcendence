@@ -23,7 +23,6 @@ export default () => {
 					<div class="form-fields">
 						<input class="login-input" type="password" placeholder="${getString('loginView/password')}" name="password" required>
 						<i class="fa-solid fa-eye" id="password-eye"></i>
-						<a href="/change-password" id="forgotten-password">${getString('loginView/forgottenPassword')}</a>
 					</div>
 					<button-component id="loginBtn" label="Login" class="generic-auth-btn-disabled"></button-component>
 					<div class="o-auth-container">					

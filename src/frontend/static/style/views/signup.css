@@ -66,6 +66,7 @@
 	position: absolute;
 	right: 2rem;
 	font-size: 1.5rem;
+	cursor: pointer;
 }
 
 .signup-page .form-fields .input-feedback {
