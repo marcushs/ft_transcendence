@@ -17,8 +17,8 @@ nav {
     border-bottom-width: 1px;
     border-bottom-style: solid;
     border-image: var(--neon-gradiant) 30;
-    background: var(--background-color);
     padding: 0 8rem;
+    background: url("../../assets/navBarBackground.svg");
 }
 
 nav .nav-bar-link {

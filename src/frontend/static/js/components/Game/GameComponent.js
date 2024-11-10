@@ -32,8 +32,8 @@ class GameComponent extends HTMLElement {
 
         this.statesContainer = this.querySelector('.states-container');
         this.backButton = this.querySelector('.back-button');
-        this.currentContext = this.states["bracket"].context;
-        this.currentState = "bracket";
+        this.currentContext = this.states["matchmakingChoice"].context;
+        this.currentState = "matchmakingChoice";
 
 
         this.attachEventListener();
@@ -50,7 +50,6 @@ class GameComponent extends HTMLElement {
                 <div class="left-player-paddle"></div>
                 <div class="right-player-paddle"></div>
                 <div class="middle-line"></div>` + await state.render();
-        // this.statesContainer.innerHTML =
         this.statesContainer.classList.add(state.class);
     }
 
