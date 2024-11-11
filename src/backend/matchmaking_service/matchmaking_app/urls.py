@@ -10,4 +10,5 @@ urlpatterns = [
     path("matchmaking/", matchmaking.MatchmakingQueueManager.as_view(), name="matchmaking"),
     path("remove_waiting/", matchmaking.RemoveUserFromWaitingQueue.as_view(), name="remove_waiting"),
     path("change_game_status/", matchmaking.ChangeInGameUserStatus.as_view(), name="change_game_status"),
+    path("matchmaking_tournament/", matchmaking.MatchmakingTournament.as_view(), name="matchmaking_tournament"),
 ]

@@ -2,6 +2,8 @@ from django.contrib.auth.models import AnonymousUser
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
+from ..utils.user_utils import get_user_by_id, send_request
+from asgiref.sync import async_to_sync
 from django.http import JsonResponse 
 from django.views import View
 import random
@@ -17,6 +19,39 @@ unranked_queue = queue.Queue() # global for share unranked players waiting for g
 ranked_queue = queue.Queue() # global for share ranked players waiting for game
 
  #//---------------------------------------> matchmaking endpoint <--------------------------------------\\#
+
+class MatchmakingTournament(View):  
+    def __init__(self):
+        super()
+
+
+    async def post(self, request):
+        try:
+            if isinstance(request.user, AnonymousUser):  
+                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400)
+            data = json.loads(request.body.decode('utf-8'))
+            if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
+                    return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)
+            players = self.get_players_data(player_one_id=data['player_one_id'], player_two_id=data['player_two_id'])
+            change_is_ingame_state(value=True, user_instance=players[0])
+            change_is_ingame_state(value=True, user_instance=players[1])
+            payload = { 
+                'game_type': data['game_type'], 
+                'player1': data['player_one_id'], 
+                'player2': data['player_two_id']
+            }
+            await send_request(request_type='POST', url='http://game:8000/api/game/start_game/', payload=payload)
+        except Exception as e:
+            change_is_ingame_state(value=False, user_instance=players[0])
+            change_is_ingame_state(value=False, user_instance=players[1])
+            print(f'Error: {str(e)}')
+
+    def get_players_data(self, player_one_id, player_two_id):
+        player_one = get_user_by_id(player_one_id)
+        player_two = get_user_by_id(player_two_id)
+        return (player_one, player_two)
+
+        
 
 # --------> API: Add new player to matchmaking waiting queue <-------------- #
 

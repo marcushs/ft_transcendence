@@ -13,14 +13,12 @@ import shortuuid
 import asyncio
 from django.db import transaction
 from channels.db import database_sync_to_async
+from .utils.request import send_request
+from asgiref.sync import sync_to_async
 
 User = get_user_model()
 
 class TournamentConsumer(AsyncWebsocketConsumer):
-	# countdown_task = None
-	# countdown_time = 60
-	# countdown_time = 10
-
 	async def connect(self):
 		self.user = self.scope['user']
 		if isinstance(self.user, AnonymousUser):
@@ -52,7 +50,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				if await self.get_members_count(tournament) < tournament.tournament_size:
 					if await self.add_user_to_tournament(tournament) == 'User already in tournament':
 						return await self.send_error_message(message_type, 'User already in tournament')
-					await self.channel_layer.group_add(str(tournament.tournament_id), self.channel_name) 
+					await self.channel_layer.group_add(str(tournament.tournament_id), self.channel_name)  
 					await self.send(text_data=json.dumps({
 						'type': 'redirect_to_waiting_room',
 						'tournament': await tournament.to_dict()
@@ -67,7 +65,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 															'tournament_stage': await tournament.get_current_stage(),
 															'tournament_bracket': await tournament_bracket.to_dict()										  
 															})
-						await self.channel_layer.group_send(str(tournament.tournament_id),
+						await self.channel_layer.group_send(str(tournament.tournament_id), 
 															{'type': 'load_match',
 															'tournament': await tournament.to_dict(),
 															'tournament_bracket': await tournament_bracket.to_dict()}) 
@@ -190,7 +188,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'message': message,
 		}))
 
-	async def send_success_message(self, type, message, tournament):
+	async def send_success_message(self, type, message, tournament): 
 		await self.send(text_data=json.dumps({
 			'type': type,
 			'status': 'success',
@@ -204,6 +202,18 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'type': 'start_game_instance',
 			'match_id': match_id 
 		}))
+		try:
+			match = await sync_to_async(TournamentMatch.objects.get)(match_id=match_id)
+			players = await sync_to_async(match.get_players)()
+			payload = { 
+				'game_type': 'tournament',  
+				'player1': players[0]['id'], 
+				'player2': players[1]['id'] 
+			}
+			await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/matchmaking_tournament/', payload=payload)
+		except ObjectDoesNotExist:
+			return 'Match not found'
+
 
 
 # -------------------------------> Bracket Utils <---------------------------------
@@ -332,7 +342,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			tournament_stage = event['tournament_stage']
 			# for key, value in tournament_bracket.items(): 
 			# 	print(f"{key}: {value}")
-
+ 
 			round_mapping = {
 				'finals': tournament_bracket['finals'],
 				'semi_finals': tournament_bracket['semi_finals'],
@@ -366,4 +376,4 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			print(f"An error occurred: {e}") 
 			return None
 
-	
+	 
