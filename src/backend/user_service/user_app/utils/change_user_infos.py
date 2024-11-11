@@ -9,6 +9,7 @@ from django.views import View
 from .user_utils import get_user_id_by_username
 import requests
 import magic
+import base64
 import re
 
 
@@ -135,11 +136,17 @@ class ChangeUserInfosView(View):
 
 
     async def change_profile_image(self, request):
-        new_image = request.FILES.get('profile_image')
+        image = request.FILES.get('profile_image')
+        image.seek(0)
+        
+        bytes_image = image.read()
+        mime_type = image.content_type
 
-        request.user.profile_image = new_image
+        b64_image = f"data:{mime_type};base64,{base64.b64encode(bytes_image).decode('utf-8')}"
+
+        request.user.profile_image = b64_image
         request.user.profile_image_link = None
-        await sync_to_async(request.user.save)(has_new_image=True)
+        await sync_to_async(request.user.save)()
         await notify_user_info_display_change(request=request, change_info='picture')
 
         return {'profile-image_message': 'Profile image successfully changed'}
@@ -150,7 +157,7 @@ class ChangeUserInfosView(View):
 
         request.user.profile_image = None
         request.user.profile_image_link = new_image_link
-        await sync_to_async(request.user.save)(has_new_image=True)
+        await sync_to_async(request.user.save)()
         await notify_user_info_display_change(request=request, change_info='picture')
 
         return {'profile-image_message': 'Profile image successfully changed'}
