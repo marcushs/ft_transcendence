@@ -69,9 +69,6 @@ class ChatSearchBar extends HTMLElement {
 		let searchInput = this.searchContactInput.value;
 		const contacts = document.querySelectorAll('chat-contact-component')
 
-		console.log(contacts)
-		console.log(this.searchContactInput.value)
-
 		contacts.forEach(contact => {
 			const userData = JSON.parse(contact.getAttribute('data-user'));
 
@@ -81,14 +78,6 @@ class ChatSearchBar extends HTMLElement {
 			}
 		})
 	}
-
-	// displayResults(results) {
-	// 	searchResults.innerHTML = '';
-	// 	results.forEach(user => {
-	// 		const div = document.createElement('div');
-	// 		div.textContent = user.username;
-	// 		searchResults.appendChild(div);
-	// 	});
 };
 
 customElements.define('chat-search-bar', ChatSearchBar);

@@ -19,6 +19,7 @@ export default class ChatRoomConversation extends HTMLElement {
 		switch (name) {
             case 'data-user':
                 const userData = JSON.parse(newValue);
+				if (userData.username === 'Tournament Bot') break;
                 this.findMatchingChatroom(userData.id);
                 break;
             case 'data-chatroom':

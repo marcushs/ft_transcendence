@@ -45,6 +45,7 @@ function displayChatroomLayout(userData) {
 	chatRoom.appendChild(chatRoomConversation);
 	
 	// Create and append chatroom-bottom-bar
+	if (JSON.parse(userData).username === 'Tournament Bot') return;
 	const chatRoomBottomBar = new ChatRoomBottomBar();
 	chatRoom.appendChild(chatRoomBottomBar);
 }
@@ -77,6 +78,7 @@ function addEventListenersToTopBar(chatMainMenu, contactMenu, chatRoom, chatLobb
 
 function addEventListenersToMessageInput() {
 	const chatroomMessageInput = document.querySelector('.chatroom-message-input');
+	if (!chatroomMessageInput) return;
 	const sendMessageBtn = document.querySelector('.send-message-btn');
 	
 	chatroomMessageInput.focus();

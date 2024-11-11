@@ -1,6 +1,8 @@
 import { getUserId } from "../../../../utils/chatUtils/joinRoomUtils.js";
 import Bracket from "./bracket/bracket.js";
 import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
+import { displayChatroomComponent } from "../../../../utils/chatUtils/sendMessageCallback.js";
+import { putMessageToChatroomConversation } from "../../../../utils/chatUtils/sendPrivateMessage.js";
 
 export default class TournamentMatch {
 	constructor(tournamentBracket) {
@@ -50,6 +52,7 @@ class TournamentMatchElement extends HTMLElement {
 		await this.render();
 		this.addEventListeners();
 		this.showCountdown();
+		this.showMatchMessage();
 	}
 
 	async render() {
@@ -198,6 +201,25 @@ class TournamentMatchElement extends HTMLElement {
 			if (count < 0) return ;
 			secondsSpan.innerText = count;
 		}, 1000);
+	}
+
+	showMatchMessage() {
+		const botData = {
+			id: 'tournament_bot',
+			username: 'Tournament Bot',
+			profile_image_link: 'https://img.freepik.com/vecteurs-libre/chatbot-est-vecteur-message_78370-4104.jpg'
+		}
+
+		const matchMessage = {
+			chatroom: 'tournament_match',
+			author: botData,
+			message: `${this.formatCurrentStage(this.stage)} match against ${this.getOpponent()} will start soon!
+			Click the "Ready" button when ready! GLHF!`,
+			created: new Date(),
+		}
+
+		displayChatroomComponent(botData);
+		putMessageToChatroomConversation(matchMessage);
 	}
 }
 
