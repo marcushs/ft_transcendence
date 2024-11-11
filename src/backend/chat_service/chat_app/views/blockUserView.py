@@ -21,9 +21,9 @@ class blockUserView(View):
 			return JsonResponse({'message': 'No user found', 'status': 'error'}, status=404)
 		try:
 			blocked_user = get_object_or_404(User, id=blocked_user_id)
-			user.blocked_users.add(blocked_user_id)
 			if blocked_user == user:
 				return JsonResponse({'message': 'User and blocked user are identical', 'status': 'Error'}, status=401)
+			user.block_user(blocked_user)
 			return JsonResponse({'message': f'User {blocked_user_id} has been blocked', 'status': 'Success'}, status=200)
 		except Http404:
 			return JsonResponse({'message': 'Target User Not Found', 'status': 'Success'}, status=404)
@@ -40,9 +40,9 @@ class unblockUserView(View):
 			return JsonResponse({'message': 'No user found', 'status': 'error'}, status=404)
 		try:
 			blocked_user = get_object_or_404(User, id=blocked_user_id)
-			user.blocked_users.remove(blocked_user_id)
 			if blocked_user == user:
 				return JsonResponse({'message': 'User and blocked user are identical', 'status': 'Error'}, status=401)
+			user.unblock_user(blocked_user_id)
 			return JsonResponse({'message': f'User {blocked_user_id} has been unblocked', 'status': 'Success'}, status=200)
 		except Http404:
 			return JsonResponse({'message': 'Target User Not Found', 'status': 'Success'}, status=404)
@@ -60,7 +60,7 @@ class isUserBlockedView(View):
 		
 		try:
 			target_user = get_object_or_404(User, id=target_user_id)
-			is_blocked = user.blocked_users.filter(id=target_user_id).exists()
+			is_blocked = user.is_blocking(target_user)
 			return JsonResponse({'message': f'{is_blocked}', 'status': 'Success'}, status=200)
 		except Http404:
 			return JsonResponse({'message': 'Target User Not Found', 'status': 'Success'}, status=404)

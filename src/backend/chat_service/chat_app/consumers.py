@@ -174,4 +174,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
     @database_sync_to_async
     def is_user_blocked(self, user_id):
-        return self.user.blocked_users.filter(id=user_id).exists()
+        return self.user.is_blocking(user_id)

@@ -2,8 +2,6 @@ from django.views import View
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from ..models import *
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 

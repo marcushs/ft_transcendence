@@ -34,7 +34,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_image = models.ImageField(upload_to=user_directory_path, null=True)
     profile_image_link = models.CharField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
     status = models.CharField(max_length=10, choices=[('online', 'Online'), ('away', 'Away'), ('ingame', 'In Game'), ('offline', 'Offline')], default='offline')
-    blocked_users = models.ManyToManyField('self', symmetrical=False, related_name='blocked_by')
     last_active = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = 'username'
@@ -47,7 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def to_dict(self):
         return {
-            'id': self.id,
+            'id': str(self.id),
             'username': self.username,
             'email': self.email,
             'profile_image': self.profile_image.url if self.profile_image else None,
@@ -59,6 +58,22 @@ class User(AbstractBaseUser, PermissionsMixin):
             'status': self.status,
             'last_active': self.last_active,
         }
+    
+    def block_user(self, user_to_block):
+        Block.objects.get_or_create(blocker=self, blocked=user_to_block)
+
+    def unblock_user(self, user_to_unblock):
+        Block.objects.filter(blocker=self, blocked=user_to_unblock).delete()
+
+    def is_blocking(self, user):
+        return Block.objects.filter(blocker=self, blocked=user).exists()
+
+    def blocked_users(self):
+        return User.objects.filter(blocked_by__blocker=self)
+
+    def users_blocking_me(self):
+        return User.objects.filter(blocking__blocked=self)
+
     
 class ChatGroup(models.Model):
     group_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
@@ -74,3 +89,8 @@ class GroupMessage(models.Model):
     
 	class Meta:
 		ordering = ['-created']
+
+class Block(models.Model):
+    blocker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blocking')
+    blocked = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blocked_by')
+    created_at = models.DateTimeField(auto_now_add=True)
