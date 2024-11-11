@@ -83,14 +83,15 @@ class JWTAuthMiddleware(MiddlewareMixin):
             print(f'-> request_response: {request_response} <-')
             if request_response and request_response.cookies:
                 request.new_token = request_response.cookies.get('jwt')
-                request.new_token_refresh =  request_response.cookies.get('jwt_refresh') 
+                request.new_token_refresh =  request_response.cookies.get('jwt_refresh')
+                jwt_user = await get_user_from_jwt(request.new_token)
                 request.user = jwt_user
             else:
                 request.user = AnonymousUser()
         except Exception as e:
             print(f'-> Error while requesting: {str(e)} <-')
             request.jwt_failed = True
-            request.user = AnonymousUser() 
+            request.user = AnonymousUser()
     
     async def process_response(self, request, response):  
         if hasattr(request, 'jwt_failed'):

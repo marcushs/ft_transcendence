@@ -24,7 +24,7 @@ export default () => {
 						<input class="login-input" type="password" placeholder="${getString('loginView/password')}" name="password" required>
 						<i class="fa-solid fa-eye" id="password-eye"></i>
 					</div>
-					<button-component id="loginBtn" label="Login" class="generic-auth-btn-disabled"></button-component>
+					<button-component id="loginBtn" label="login" class="generic-auth-btn-disabled"></button-component>
 					<div class="o-auth-container">					
 						<button-component id="oauth42LoginBtn" label="" class="o-auth-btn" icon="logo_42">
 						</button-component>
