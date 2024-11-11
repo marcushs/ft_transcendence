@@ -165,7 +165,12 @@
 	  "accept": "Accept invitation",
 	  "decline": "Decline invitation"
 	},
-	"sendMessageButton": "Send message"
+	"gameOutro": {
+	  "win": "WIN",
+	  "lose": "LOSE"
+	},
+	"sendMessageButton": "Send message",
+	"logoutSentence": "Are you sure you want to logout?"
   },
 
   "fr": {
@@ -333,7 +338,12 @@
 	  "accept": "Accepter l'invitation",
 	  "decline": "Décliner l'invitation"
 	},
-	"sendMessageButton": "Envoyer un message"
+	"gameOutro": {
+	  "win": "VICTOIRE",
+	  "lose": "DEFAITE"
+	},
+	"sendMessageButton": "Envoyer un message",
+	"logoutSentence": "Êtes-vous sûr de vouloir vous déconnecter ?"
   },
 
 

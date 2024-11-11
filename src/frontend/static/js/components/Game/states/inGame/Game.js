@@ -164,6 +164,7 @@ export default class Game {
 			this.Outro.drawOutro();
 		if (this.isRankOutroAnimationEnabled)
 			this.RankOutro.drawRankOutro();
+		this.drawEmotes();
 
 		requestAnimationFrame(() => this.renderLoop());
 	}
@@ -196,7 +197,6 @@ export default class Game {
 		this.drawMiddleLine();
 		this.playerOne.draw();
 		this.playerTwo.draw();
-		this.drawEmotes();
 		this.ball.draw();
 	}
 

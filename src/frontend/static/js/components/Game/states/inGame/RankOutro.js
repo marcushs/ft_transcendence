@@ -1,4 +1,4 @@
-import Spark from "./Spark.js";
+import {getString} from "../../../../utils/languageManagement.js";
 
 
 export default class RankOutro {
@@ -8,26 +8,17 @@ export default class RankOutro {
 		this.initializeRankObjects();
 		this.initializeImages();
 		this.attachEventsListeners();
-
-		// this.sparks = [];
-		// this.lastTime = performance.now();
-		// this.deltaTime = (performance.now() - this.lastTime) / 1000;
-
-		// this.isResultDrawable = false;
-		// this.isSparksDrawable = false;
 	}
 
 
 
 	drawResult() {
-		// if (this.isSparksDrawable)
-		// 	this.drawSparks();
 		this.canvas.ctx.beginPath();
 		this.canvas.ctx.fillStyle = (this.isWin) ? `rgba(0, 206, 255, 1)` : `rgba(255, 22, 198, 1)`;
 		this.canvas.ctx.font = `bold 180px Poppins`;
 		this.canvas.ctx.textAlign = 'center';
 		this.canvas.ctx.textBaseline = 'middle';
-		this.canvas.ctx.fillText((this.isWin) ? "WIN" : "LOSE", this.canvas.width / 2, this.canvas.height / 2);
+		this.canvas.ctx.fillText((this.isWin) ? getString("gameOutro/win") : getString("gameOutro/lose"), this.canvas.width / 2, this.canvas.height / 2);
 		this.canvas.ctx.closePath();
 	}
 
@@ -129,14 +120,12 @@ export default class RankOutro {
 
 
 	drawTitle() {
-		// if (this.isSparksDrawable)
-		// 	this.drawSparks();
 		this.canvas.ctx.beginPath();
 		this.canvas.ctx.fillStyle = '#EDEDF1';
 		this.canvas.ctx.font = `bold 100px Poppins`;
 		this.canvas.ctx.textAlign = 'center';
 		this.canvas.ctx.textBaseline = 'middle';
-		this.canvas.ctx.fillText(`${this.currentRank.toUpperCase()}` , this.canvas.width / 2, this.canvas.height / 2 * 0.3);
+		this.canvas.ctx.fillText(`${getString(`ranks/${this.currentRank}`).toUpperCase()}` , this.canvas.width / 2, this.canvas.height / 2 * 0.3);
 		this.canvas.ctx.closePath();
 	}
 
@@ -285,57 +274,4 @@ export default class RankOutro {
 			return "diamond";
 		return "master";
 	}
-
-	// waitToDrawResult() {
-	// 	setTimeout(() => {
-	// 		this.isResultDrawable = true;
-	// 		this.updateResult();
-	// 	}, 750);
-	// }
-
-
-	// Need refactor
-	// updateResult() {
-	// 	const intervalId = setInterval(() => {
-	// 		if (this.resultFontSize > 180) {
-	// 			this.resultFontSize -= 30;
-	// 		} else if (this.isWin) {
-	// 			if (this.isWin)
-	// 				this.generateSparks(this.canvas.width / 2, this.canvas.height / 2);
-	// 			this.isSparksDrawable = true;
-	// 			clearInterval(intervalId);
-	// 		} else {
-	// 			clearInterval(intervalId);
-	// 		}
-	// 	}, 10);
-	// }
-
-	//
-	// drawSparks() {
-	// 	for (let i = 0; i < this.sparks.length; i++) {
-	// 		this.sparks[i].update(this.deltaTime);
-	//
-	// 		this.sparks[i].draw(this.canvas.ctx);
-	// 		if (!this.sparks[i].isAlive())
-	// 			this.sparks.splice(i, 1);
-	// 	}
-	// }
-	//
-	// generateSparks(x, y) {
-	// 	console.log('sparks')
-	// 	const numberOfSparks = 350;
-	// 	const angleRange = [0, 2 * Math.PI];
-	//
-	// 	for (let i = 0; i < numberOfSparks; i++) {
-	// 		const angle = angleRange[0] + Math.random() * (angleRange[1] - angleRange[0]);
-	// 		const speed = 20 + Math.random() * 50;
-	// 		const lifetime = 3 + Math.random() * 2;
-	//
-	// 		let color = (i % 2 === 0) ? "rgb(255, 165, 0)" : "#00ceff";
-	//
-	// 		let spark = new Spark(x, y, angle, speed, lifetime, this.deltaTime, 5, color);
-	// 		this.sparks.push(spark);
-	// 	}
-	// }
-
 }

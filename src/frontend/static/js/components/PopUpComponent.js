@@ -69,7 +69,13 @@ class PopUpComponent extends HTMLElement {
 
 		this.querySelector('i').addEventListener('click', (event) => this.remove());
 		document.addEventListener('keydown', (event) => {if (event.key === 'Escape') this.remove()});
-		this.querySelector('button-component').addEventListener('click', () => this.throwImageLinkSaved(input));
+
+		buttonComponent.addEventListener('click', () => {
+			this.throwImageLinkSaved(input);
+			if (buttonComponent.className === "generic-btn")
+				this.remove();
+		});
+
 		input.addEventListener('input', () => this.updateSaveButtonState(input));
 	}
 
@@ -100,7 +106,7 @@ class PopUpComponent extends HTMLElement {
 			const currentUserIndex = resultList.findIndex(user => user.username === currentUser)
 			if (currentUserIndex !== -1) {
 				resultList.splice(currentUserIndex, 1);
-				
+
 				if (resultList.length === 0) {
 					this.querySelector('ul').innerHTML = getString('popUpComponent/noContacts');
 					this.querySelector('ul').classList.add('no-add-contacts');
@@ -109,7 +115,7 @@ class PopUpComponent extends HTMLElement {
 
 			}
 			const sortedList = resultList.sort((a, b) => a.username.localeCompare(b.username));
-			
+
 			this.displaySearchResult(sortedList);
 			this.addContactButtonEventListener();
 		}
@@ -199,7 +205,6 @@ class PopUpComponent extends HTMLElement {
 				bubbles: true
 				// composed: true
 			}));
-			this.throwClosePopUpEvent();
 		}
 	}
 

@@ -1,5 +1,3 @@
-
-
 export default class Intro {
 	constructor(canvas, isRanked, leftPlayer, rightPlayer) {
 		this.canvas = canvas;

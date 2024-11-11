@@ -8,6 +8,7 @@ import { notificationSocket } from "./websocket/loadWebSocket.js";
 import { gameSocket } from "../components/Game/states/inGame/gameWebsocket.js";
 import { matchmakingSocket } from "../utils/matchmaking/matchmakingWebsocket.js";
 import { disconnectGameWebSocket } from "../components/Game/states/inGame/gameWebsocket.js";
+import {getString} from "../utils/languageManagement.js";
 
 export default () => {
 	const html = `
@@ -15,7 +16,7 @@ export default () => {
 			<div class="logout-container-background"></div>
 			<div class="logout-container">
 				<div class="logout-content">
-					<h1>Are you sure you want to logout?</h1>
+					<h1>${getString("logoutSentence")}</h1>
 					<div class="buttons-container">
 						<button-component label="Yes" class="generic-btn"></button-component>
 						<button-component label="Cancel" class="generic-btn-disabled"></button-component>

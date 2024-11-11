@@ -215,7 +215,10 @@ class FriendsMenuComponent extends HTMLElement {
             this.contactList.style.display = this.contactList.style.display === 'none' ? 'block' : 'none';
         });
         this.addContact.addEventListener('click', () => {
-            app.querySelector('section').innerHTML += '<pop-up-component class="add-new-contact-pop-up"></pop-up-component>' 
+            const popUp = document.createElement('pop-up-component');
+
+            popUp.classList.add('add-new-contact-pop-up');
+            document.querySelector('.home-page').appendChild(popUp);
         })
         this.searchContactInput.addEventListener('input', () => this.updateContactList());
         this.attachTestEventListener();
