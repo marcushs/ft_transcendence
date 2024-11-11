@@ -50,8 +50,8 @@ class TournamentMatchElement extends HTMLElement {
 	async connectedCallback() {
 		await this.findMatch();
 		await this.render();
-		this.addEventListeners();
 		this.showCountdown();
+		this.addEventListeners();
 		this.showMatchMessage();
 	}
 
@@ -118,6 +118,7 @@ class TournamentMatchElement extends HTMLElement {
 				'matchId': this.clientMatch.match_id
 			}
 			tournamentSocket.send(JSON.stringify(payload));
+			clearInterval(this.intervalId);
 		})
 	}
 
@@ -196,10 +197,19 @@ class TournamentMatchElement extends HTMLElement {
 		const secondsSpan = this.querySelector('.match-countdown span');
 		let count = 59;
 
-		setInterval(() => {
+		this.intervalId = setInterval(() => {
 			count--;
-			if (count < 0) return ;
-			secondsSpan.innerText = count;
+			if (count < 0) {
+				clearInterval(this.intervalId);
+				const payload = {
+					'type': 'start_game',
+					'userId': this.userId,
+					'matchId': this.clientMatch.match_id
+				}
+				tournamentSocket.send(JSON.stringify(payload));
+			} else {
+				secondsSpan.innerText = count;
+			}
 		}, 1000);
 	}
 

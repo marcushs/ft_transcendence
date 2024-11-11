@@ -9,3 +9,8 @@ export function redirectToTournamentMatch(tournamentBracket) {
 	gameComponent.changeState(tournamentMatchState.state, tournamentMatchState.context);
 	gameComponent.currentState = "tournamentMatch";
 }
+
+// export function stopTournamentMatchCountdown(matchId) {
+// 	const tournamentMatch = document.querySelector('tournament-match');
+// 	const matchData = JSON.parse(tournamentMatch.getAttribute('data-tournament-match')).
+// }

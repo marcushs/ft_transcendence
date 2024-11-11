@@ -190,7 +190,7 @@ function loadTournamentWebSocket() {
 			redirectToTournamentHome()
 		} else if (data.type === 'leave_tournament') {
 			updateTournamentInfo(data.tournament);
-		}
+		} 
 	};
 
 	tournamentSocket.onclose = function(e) {

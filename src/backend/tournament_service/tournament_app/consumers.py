@@ -17,9 +17,9 @@ from channels.db import database_sync_to_async
 User = get_user_model()
 
 class TournamentConsumer(AsyncWebsocketConsumer):
-	countdown_task = None
+	# countdown_task = None
 	# countdown_time = 60
-	countdown_time = 20
+	# countdown_time = 10
 
 	async def connect(self):
 		self.user = self.scope['user']
@@ -71,7 +71,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 															{'type': 'load_match',
 															'tournament': await tournament.to_dict(),
 															'tournament_bracket': await tournament_bracket.to_dict()}) 
-						# await self.start_countdown(match_id)
 				else:
 					await self.send_error_message(message_type, 'Tournament is full')
 			except Http404:
@@ -93,10 +92,20 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		elif message_type == 'user_ready_for_match':
 			result = await self.set_player_ready(data['matchId'])
 			if result == 'start game':
-				return await self.handle_countdown_finished(data['matchId'])
+				await self.channel_layer.group_send(data['matchId'], {
+					'type': 'launch.game',
+					'match_id': data['matchId']
+				})
+				return await self.start_game_instance(data['matchId'])
+				# return await self.handle_countdown_finished(data['matchId'])
 			elif result == 'Match not found':
 				return await self.send_error_message(message_type, result)
 			pass
+		elif message_type == 'start_game':
+			await self.channel_layer.group_send(data['matchId'], { 
+				'type': 'launch.game',
+				'match_id': data['matchId']
+			})
 
 
 
@@ -110,7 +119,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		}))
 
 	async def join_tournament(self, event):
-		await self.send(text_data=json.dumps({
+		await self.send(text_data=json.dumps({  
 			'type': 'join_tournament',
 			'tournament': event['tournament'],
 		}))
@@ -129,24 +138,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		}))
 	
 	async def add_players_to_match_group(self, event):
-		print('called add_players to match group')
 		match_id = await self.find_player_match(event)
-		print('returned match_id: ', match_id)
 		await self.channel_layer.group_add(match_id, self.channel_name)
-		await self.channel_layer.group_send(match_id, {
-											'type': 'start_countdown',
-											'match_id': match_id})
+		print(f'add {self.user.id} to channel group ${match_id}')
 
-	async def start_countdown(self, event):
-		await self.start_countdown(event['match_id'])
-
-	async def countdown_finished(self, event):
-		print('entered')
-		await self.stop_countdown()
-		await self.send(text_data=json.dumps({
-			'type': 'countdown_finished'
-		}))
-
+	async def launch_game(self, event):
+		print('start_game_instance')
+		await self.start_game_instance(event['match_id'])
 
 
 
@@ -158,14 +156,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		tournament_name = data['tournament_name']
 		tournament_size = data['tournament_size'] 
 
-		if isinstance(creator, AnonymousUser):
+		if isinstance(creator, AnonymousUser): 
 			return None, 'No user found'
 		if self.is_user_in_any_tournament():
 			return None, 'User already in tournament'
 		if tournament_name is None or self.is_valid_name(tournament_name) is False:
 			return None, 'Invalid tournament name'
 		if tournament_size is None or self.is_valid_size(int(tournament_size)) is False:
-			return None, 'Invalid tournament size'
+			return None, 'Invalid tournament size' 
 		if Tournament.objects.filter(tournament_name=tournament_name).filter(isOver=False).exists():
 			return None, 'Tournament already exists'
 		
@@ -175,7 +173,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		new_tournament = Tournament.objects.create(creator=creator, tournament_name=tournament_name, tournament_size=tournament_size, current_stage=round_str[round_str_idx])
 		new_tournament.members.add(creator)
 		return new_tournament, 'Tournament created successfully'
-	
+	 
 
 	def is_valid_size(self, size):
 		return size in {4, 8, 16} 
@@ -198,9 +196,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'status': 'success',
 			'message': message,
 			'tournament': await tournament.to_dict()
+		})) 
+	
+	async def start_game_instance(self, match_id):
+		await self.unset_user_ready()
+		await self.send(text_data=json.dumps({
+			'type': 'start_game_instance',
+			'match_id': match_id 
 		}))
-	
-	
 
 
 # -------------------------------> Bracket Utils <---------------------------------
@@ -235,33 +238,32 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 # -------------------------------> Countdown utils <---------------------------------
 
-	async def start_countdown(self, match_id):
-		self.countdown_task = asyncio.create_task(self.countdown(match_id))  
+	# async def start_countdown(self, match_id):
+	# 	print('in start_countdown', mat)
+	# 	self.countdown_task = asyncio.create_task(self.countdown(match_id))  
 
-	async def countdown(self, match_id):
-		while self.countdown_time > 0:
-			await asyncio.sleep(1)
-			self.countdown_time -= 1
+	# async def countdown(self, match_id):
+	# 	while self.countdown_time > 0:
+	# 		await asyncio.sleep(1)
+	# 		self.countdown_time -= 1
 
-		await self.handle_countdown_finished(match_id)
+	# 	await self.handle_countdown_finished(match_id)
 
-	async def handle_countdown_finished(self, match_id):
-		print(self.user.id)
-		print(match_id)
-		await self.channel_layer.group_send(match_id,{
-			'type': 'countdown.finished',
-		})
+	# async def handle_countdown_finished(self, match_id):
+	# 	await self.channel_layer.group_send(match_id,{
+	# 		'type': 'countdown.finished',
+	# 	})
 
-	async def stop_countdown(self):
-		if self.countdown_task and not self.countdown_task.done():
-			self.countdown_task.cancel()
-			try:
-				await self.countdown_task
-			except asyncio.CancelledError:
-				pass
-			# await self.send(text_data=json.dumps({
-			# 	'type': 'countdown_stopped',
-			# }))
+	# async def stop_countdown(self):
+	# 	if self.countdown_task and not self.countdown_task.done():
+	# 		self.countdown_task.cancel()
+	# 		try:
+	# 			await self.countdown_task
+	# 		except asyncio.CancelledError:
+	# 			pass
+	# 		# await self.send(text_data=json.dumps({
+	# 		# 	'type': 'countdown_stopped',
+	# 		# }))
 
 
 
@@ -317,14 +319,19 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	@database_sync_to_async
 	def user_in_match(self, match):
 		return match.players.filter(id=self.user.id).exists()
-
+	
+	@database_sync_to_async
+	def unset_user_ready(self):
+		self.user.ready_for_match = False
+		self.user.save()
+ 
 	@database_sync_to_async
 	def find_player_match(self, event):
 		try:
 			tournament_bracket = event['tournament_bracket']
 			tournament_stage = event['tournament_stage']
-			for key, value in tournament_bracket.items(): 
-				print(f"{key}: {value}")
+			# for key, value in tournament_bracket.items(): 
+			# 	print(f"{key}: {value}")
 
 			round_mapping = {
 				'finals': tournament_bracket['finals'],
@@ -344,7 +351,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					None)
 			
 			if user_match:
-				print('------------------------------------matchid: ' + user_match['match_id'])
 				return user_match['match_id']
 			else:
 				print(f"No match found for user {self.user.id} in stage {tournament_stage}") 
@@ -357,5 +363,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			print(f"Missing key in event: {e}")
 			return None
 		except Exception as e:
-			print(f"An error occurred: {e}")
+			print(f"An error occurred: {e}") 
 			return None
+
+	
