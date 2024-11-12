@@ -24,7 +24,6 @@ class MatchmakingTournament(View):
     def __init__(self):
         super()
 
-
     async def post(self, request):
         try:
             if isinstance(request.user, AnonymousUser):  

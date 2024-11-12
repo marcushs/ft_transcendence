@@ -17,6 +17,7 @@ class JWTAuthMiddleware(BaseMiddleware):
 		headers = dict(scope['headers'])
 		cookie_header = headers.get(b'cookie', b'').decode()
 		cookies = self.parse_cookies(cookie_header)
+		scope['cookies'] = cookies
 
 		# Get the JWT token from cookies
 		jwt_token = cookies.get('jwt')

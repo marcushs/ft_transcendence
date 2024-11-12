@@ -19,8 +19,13 @@ from asgiref.sync import sync_to_async
 User = get_user_model()
 
 class TournamentConsumer(AsyncWebsocketConsumer):
+	countdown_time = 60 
+	countdown_end = None
+
 	async def connect(self):
 		self.user = self.scope['user']
+		self.headers = self.scope['headers']
+		self.cookies = self.scope['cookies']
 		if isinstance(self.user, AnonymousUser):
 			await self.close()
 		else: 
@@ -29,9 +34,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	async def disconnect(self, close_code):
 		pass
-
+ 
 	# Receive message from WebSocket
-	async def receive(self, text_data): 
+	async def receive(self, text_data):  
 		data = json.loads(text_data)
 		message_type = data['type']
 
@@ -90,12 +95,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		elif message_type == 'user_ready_for_match':
 			result = await self.set_player_ready(data['matchId'])
 			if result == 'start game':
-				await self.channel_layer.group_send(data['matchId'], {
+				return await self.channel_layer.group_send(data['matchId'], {
 					'type': 'launch.game',
 					'match_id': data['matchId']
 				})
-				return await self.start_game_instance(data['matchId'])
-				# return await self.handle_countdown_finished(data['matchId'])
 			elif result == 'Match not found':
 				return await self.send_error_message(message_type, result)
 			pass
@@ -104,8 +107,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				'type': 'launch.game',
 				'match_id': data['matchId']
 			})
-
-
 
 
 # -------------------------------> Channel layer event handlers <---------------------------------
@@ -139,12 +140,49 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		match_id = await self.find_player_match(event)
 		await self.channel_layer.group_add(match_id, self.channel_name)
 		print(f'add {self.user.id} to channel group ${match_id}')
+		await self.start_countdown(match_id)
 
 	async def launch_game(self, event):
-		print('start_game_instance')
-		await self.start_game_instance(event['match_id'])
+		await self.start_game_instance(event)
+
+	async def countdown_update(self, event):
+		await self.send(text_data=json.dumps({  
+			'type': 'countdown_update',
+			'time': event['time'], 
+		}))
+
+# -------------------------------> Countdown function <---------------------------------
+
+	async def start_countdown(self, match_id):
+		match = await sync_to_async(TournamentMatch.objects.get)(match_id=match_id) 
+		players = await sync_to_async(match.get_players)()
+		if str(self.user.id) == players[0]['id']:  
+			asyncio.create_task(self.run_countdown(match_id, players))
 
 
+	async def run_countdown(self, match_id, players):
+		countdown = 10 
+		while countdown > 0:
+			await self.channel_layer.group_send(
+				match_id,
+				{
+					"type": "countdown.update",
+					"time": countdown
+				}
+			)
+			await asyncio.sleep(1)
+			countdown -= 1
+
+		# Countdown finished, start the game
+		await self.channel_layer.group_send(
+			match_id,
+			{
+				"type": "launch.game",
+				'match_id': match_id,
+				'player1': players[0]['id'],
+				'player2': players[1]['id']
+			}
+		)
 
 # -------------------------------> Create Tournament Utils <---------------------------------
 
@@ -196,23 +234,18 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'tournament': await tournament.to_dict()
 		})) 
 	
-	async def start_game_instance(self, match_id):
+	async def start_game_instance(self,event):
 		await self.unset_user_ready()
+		payload = { 
+			'game_type': 'tournament',
+			'match_id': event['match_id'],
+			'player1': event['player1'], 
+			'player2': event['player2'] 
+		}
 		await self.send(text_data=json.dumps({
-			'type': 'start_game_instance',
-			'match_id': match_id 
+			'type': 'start_game_instance', 
+			'payload': payload 
 		}))
-		try:
-			match = await sync_to_async(TournamentMatch.objects.get)(match_id=match_id)
-			players = await sync_to_async(match.get_players)()
-			payload = { 
-				'game_type': 'tournament',  
-				'player1': players[0]['id'], 
-				'player2': players[1]['id'] 
-			}
-			await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/matchmaking_tournament/', payload=payload)
-		except ObjectDoesNotExist:
-			return 'Match not found'
 
 
 
