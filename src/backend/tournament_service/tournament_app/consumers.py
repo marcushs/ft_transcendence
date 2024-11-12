@@ -270,16 +270,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'player1': event['player1'], 
 			'player2': event['player2'] 
 		}
+		await self.send(text_data=json.dumps({ 
+			'type': 'start_game_instance', 
+			'payload': payload 
+		})) 
 		if str(self.user.id) == event['player1']:
 			await send_request(request_type='POST', 
 							url='http://matchmaking:8000/api/matchmaking/matchmaking_tournament/', 
 							headers=self.headers, 
 							cookies=self.cookies, 
 							payload=payload)
-		await self.send(text_data=json.dumps({ 
-			'type': 'start_game_instance', 
-			'payload': payload 
-		})) 
 
 
 

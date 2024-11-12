@@ -1,5 +1,7 @@
 import TournamentMatch from "../../components/Game/states/tournamentHome/TournamentMatch.js";
 import { sendRequest } from "../sendRequest.js";
+import { gameWebsocket, gameSocket } from "../../components/Game/states/inGame/gameWebsocket.js";
+import getUserId from "../getUserId.js";
 
 export function redirectToTournamentMatch(tournamentBracket) {
 	const gameComponent = document.querySelector('game-component');
@@ -16,11 +18,8 @@ export function redirectToTournamentMatch(tournamentBracket) {
 // 	const matchData = JSON.parse(tournamentMatch.getAttribute('data-tournament-match')).
 // }
 
-export async function startTournamentMatchInstance(payload) {
-	try {
-		const response = await sendRequest('POST', '/api/matchmaking/matchmaking_tournament/', payload); 
-		return response;
-	} catch (error) {
-		throw error;
-	}
+export async function startTournamentMatchInstance() {
+	const userId = await getUserId();
+
+	gameWebsocket(userId);
 }

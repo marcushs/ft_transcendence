@@ -195,9 +195,9 @@ function loadTournamentWebSocket() {
 
 			if (!tournamentMatch) return;
 			tournamentMatch.updateCountdownSeconds(data.time);
-		} //else if (data.type === 'start_game_instance') {
-		// 	await startTournamentMatchInstance(data.payload);
-		// }
+		} else if (data.type === 'start_game_instance') {
+			await startTournamentMatchInstance(data.payload);
+		}
 	};
 
 	tournamentSocket.onclose = function(e) {
