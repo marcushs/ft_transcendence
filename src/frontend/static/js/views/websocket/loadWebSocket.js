@@ -190,7 +190,12 @@ function loadTournamentWebSocket() {
 			redirectToTournamentHome()
 		} else if (data.type === 'leave_tournament') {
 			updateTournamentInfo(data.tournament);
-		} 
+		} else if (data.type === 'countdown_update') {
+			const tournamentMatch = document.querySelector('tournament-match');
+
+			if (!tournamentMatch) return;
+			tournamentMatch.updateCountdownSeconds(data.time);
+		}
 	};
 
 	tournamentSocket.onclose = function(e) {
