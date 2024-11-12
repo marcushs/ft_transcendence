@@ -1,11 +1,7 @@
 import httpx
 import json
 
-async def send_request(request_type, url, request=None, payload=None):
-    if request:
-        headers, cookies = set_headers_cookies_request(request=request)
-    else:
-        headers, cookies = set_headers_cookies_request()
+async def send_request(request_type, url, headers, cookies, payload=None):
     try:
         async with httpx.AsyncClient() as client:
             if request_type == 'GET':

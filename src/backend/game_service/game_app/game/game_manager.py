@@ -21,7 +21,7 @@ class startGameEngine(View):
 
     async def post(self, request):
         try:
-            print('!!!! startGameEngine REACHED !!!!')
+            print('!!!! startGameEngine REACHED !!!!') 
             data = json.loads(request.body.decode('utf-8'))
             if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
                 return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)
@@ -54,7 +54,7 @@ async def starting_game_instance(data):
                 'id': str(data['player2']),
                 'user_infos': {
                     'profile_image': "http://user:8000/api/user" + player_two_infos['profile_image'] if player_two_infos['profile_image'] else player_two_infos['profile_image_link'],
-                    'username': player_two_infos['username']
+                    'username': player_two_infos['username'] 
                 }
             },
         }
@@ -67,6 +67,7 @@ async def starting_game_instance(data):
                 'player_two_id': game_users_data['player_two']['id']
             }
             await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)
+            print('finished here') 
             return
         asyncio.sleep(0.5)
         print(f'-> async_tasks: connections ok, sending websocket...')

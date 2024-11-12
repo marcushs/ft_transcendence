@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
 from ..utils.user_utils import get_user_by_id, send_request
 from asgiref.sync import async_to_sync
+from asgiref.sync import sync_to_async
 from django.http import JsonResponse 
 from django.views import View
 import random
@@ -24,27 +25,29 @@ class MatchmakingTournament(View):
     def __init__(self):
         super()
 
-    async def post(self, request):
+    async def post(self, request): 
         try:
             if isinstance(request.user, AnonymousUser):  
-                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400)
+                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400) 
             data = json.loads(request.body.decode('utf-8'))
             if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
-                    return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)
-            players = self.get_players_data(player_one_id=data['player_one_id'], player_two_id=data['player_two_id'])
-            change_is_ingame_state(value=True, user_instance=players[0])
-            change_is_ingame_state(value=True, user_instance=players[1])
+                return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)
+            players = await sync_to_async(self.get_players_data)(player_one_id=data['player1'], player_two_id=data['player2'])
+            await sync_to_async(change_is_ingame_state)(value=True, user_instance=players[0]) 
+            await sync_to_async(change_is_ingame_state)(value=True, user_instance=players[1])
             payload = { 
-                'game_type': data['game_type'], 
-                'player1': data['player_one_id'], 
-                'player2': data['player_two_id']
-            }
+                'game_type': data['game_type'],  
+                'player1': data['player1'],     
+                'player2': data['player2']     
+            } 
             await send_request(request_type='POST', url='http://game:8000/api/game/start_game/', payload=payload)
-        except Exception as e:
-            change_is_ingame_state(value=False, user_instance=players[0])
-            change_is_ingame_state(value=False, user_instance=players[1])
-            print(f'Error: {str(e)}')
-
+            return JsonResponse({'status': 'success', 'message': 'Game instance started'}, status=200)
+        except Exception as e: 
+            print(f'Error: {str(e)}') 
+            await sync_to_async(change_is_ingame_state)(value=False, user_instance=players[0])
+            await sync_to_async(change_is_ingame_state)(value=False, user_instance=players[1])
+            return JsonResponse({'status': 'error', 'message': 'An error occurred while starting the game'}, status=500)
+        
     def get_players_data(self, player_one_id, player_two_id):
         player_one = get_user_by_id(player_one_id)
         player_two = get_user_by_id(player_two_id)

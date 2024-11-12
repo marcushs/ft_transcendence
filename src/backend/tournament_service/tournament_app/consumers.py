@@ -25,8 +25,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	async def connect(self):
 		self.user = self.scope['user']
-		self.headers = self.scope['headers']
-		self.cookies = self.scope['cookies']
+		self.headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': self.scope['cookies'].get('csrftoken')
+            }
+		self.cookies = {
+				'csrftoken': self.scope['cookies'].get('csrftoken'),
+				'jwt': self.scope['cookies'].get('jwt'),
+				'jwt_refresh': self.scope['cookies'].get('jwt_refresh'),
+			}
 		if isinstance(self.user, AnonymousUser):
 			await self.close()
 		else: 
@@ -195,14 +203,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				}
 			)
 		except asyncio.CancelledError:
-			print('countdown task cancelled') 
+			pass
 		finally:
 			# Remove the task from the dictionary
 			self.countdown_tasks.pop(match_id, None) 
 
 	async def stop_countdown(self, match_id):
 		if match_id in self.countdown_tasks:
-			print("stopped countdown")
 			self.countdown_tasks[match_id].cancel() 
 
 # -------------------------------> Create Tournament Utils <---------------------------------
@@ -259,14 +266,20 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.unset_user_ready()
 		payload = { 
 			'game_type': 'tournament',
-			'match_id': event['match_id'],
+			'match_id': event['match_id'], 
 			'player1': event['player1'], 
 			'player2': event['player2'] 
 		}
-		await self.send(text_data=json.dumps({
+		if str(self.user.id) == event['player1']:
+			await send_request(request_type='POST', 
+							url='http://matchmaking:8000/api/matchmaking/matchmaking_tournament/', 
+							headers=self.headers, 
+							cookies=self.cookies, 
+							payload=payload)
+		await self.send(text_data=json.dumps({ 
 			'type': 'start_game_instance', 
 			'payload': payload 
-		}))
+		})) 
 
 
 
@@ -298,38 +311,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		return tournament_bracket
 	
-
-
-# -------------------------------> Countdown utils <---------------------------------
-
-	# async def start_countdown(self, match_id):
-	# 	print('in start_countdown', mat)
-	# 	self.countdown_task = asyncio.create_task(self.countdown(match_id))  
-
-	# async def countdown(self, match_id):
-	# 	while self.countdown_time > 0:
-	# 		await asyncio.sleep(1)
-	# 		self.countdown_time -= 1
-
-	# 	await self.handle_countdown_finished(match_id)
-
-	# async def handle_countdown_finished(self, match_id):
-	# 	await self.channel_layer.group_send(match_id,{
-	# 		'type': 'countdown.finished',
-	# 	})
-
-	# async def stop_countdown(self):
-	# 	if self.countdown_task and not self.countdown_task.done():
-	# 		self.countdown_task.cancel()
-	# 		try:
-	# 			await self.countdown_task
-	# 		except asyncio.CancelledError:
-	# 			pass
-	# 		# await self.send(text_data=json.dumps({
-	# 		# 	'type': 'countdown_stopped',
-	# 		# }))
-
-
 
 # -------------------------------> Check database utils <---------------------------------
 

@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import AnonymousUser
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 from django.views import View
 from ..models import User
 import httpx
@@ -19,7 +20,7 @@ def get_user_by_id(user_id):
     
     return user
 
-async def async_get_user_by_id(user_id): 
+async def async_get_user_by_id(user_id):  
     print(f'get_user reached: user_id: {user_id} !!!!')
     try:
         user = await sync_to_async(User.objects.get)(id=user_id)
