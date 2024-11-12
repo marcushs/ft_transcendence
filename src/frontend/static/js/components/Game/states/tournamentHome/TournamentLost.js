@@ -9,16 +9,17 @@ export default class TournamentLost {
 		this.redirectState = "tournament-lost";
 		this.class = "tournament-lost";
 		let tournamentBracketJsonString = JSON.stringify(tournamentBracket);
+		//html encode
 		this.tournamentBracket = tournamentBracketJsonString.replace(/&/g, '&amp;')
-										.replace(/'/g, '&apos;')
-										.replace(/"/g, '&quot;')
-										.replace(/</g, '&lt;')
-										.replace(/>/g, '&gt;');
+															.replace(/'/g, '&apos;')
+															.replace(/"/g, '&quot;')
+															.replace(/</g, '&lt;')
+															.replace(/>/g, '&gt;');
 		this.lostMatch = lostMatch;
 	}
 
 	render() {
-		return `<tournament-lost data-tournament-bracket="${this.tournamentBracket} data-match="${this.lostMatch}""></tournament-lost>`;
+		return `<tournament-lost data-tournament-bracket="${this.tournamentBracket}" data-match="${this.lostMatch}"></tournament-lost>`;
 	}
 }
 
@@ -29,6 +30,7 @@ class TournamentLostElement extends HTMLElement {
 		this.lostMatch = this.getAttribute('data-match');
 		this.tournamentId = this.tournamentBracket.tournament.tournament_id;
 		this.tournamentName = this.tournamentBracket.tournament.tournament_name;
+		this.tournamentSize = this.tournamentBracket.tournament.tournament_size;
 		this.bracketObj = {
 			nbOfPlayers: this.tournamentSize,
 			eighthFinal: {},

@@ -28,13 +28,18 @@ export function proceedInTournament(gameId, userId) {
 }
 
 export async function redirectToTournamentLostMatch(matchId) {
-	const tournamentBracket = await sendRequest('GET', `/api/tournament/get_bracket/?match_id=${matchId}`, null, false);
-
-	const gameComponent = document.querySelector('game-component');
-	const tournamentLostState = gameComponent.states['tournamentLost'];
-	const tournamentLost = new TournamentLost(tournamentBracket, matchId);
-
-	tournamentLostState['state'] = tournamentLost;
-	gameComponent.changeState(tournamentLostState.state, tournamentLostState.context);
-	gameComponent.currentState = "tournamentLost";
+	try {
+		const res = await sendRequest('GET', `/api/tournament/get_bracket/?match_id=${matchId}`, null, false);
+	
+		const tournamentBracket = res.bracket;
+		const gameComponent = document.querySelector('game-component');
+		const tournamentLostState = gameComponent.states['tournamentLost'];
+		const tournamentLost = new TournamentLost(tournamentBracket, matchId);
+	
+		tournamentLostState['state'] = tournamentLost;
+		gameComponent.changeState(tournamentLostState.state, tournamentLostState.context);
+		gameComponent.currentState = "tournamentLost";
+	} catch (error) {
+		
+	}
 }
