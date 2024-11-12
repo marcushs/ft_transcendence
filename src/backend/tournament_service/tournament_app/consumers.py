@@ -19,8 +19,9 @@ from asgiref.sync import sync_to_async
 User = get_user_model()
 
 class TournamentConsumer(AsyncWebsocketConsumer):
-	countdown_time = 60 
-	countdown_end = None
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.countdown_tasks = {}  # Store countdown tasks for each match
 
 	async def connect(self):
 		self.user = self.scope['user']
@@ -105,7 +106,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		elif message_type == 'start_game':
 			await self.channel_layer.group_send(data['matchId'], { 
 				'type': 'launch.game',
-				'match_id': data['matchId']
+				'match_id': data['matchId'] 
 			})
 
 
@@ -143,12 +144,18 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.start_countdown(match_id)
 
 	async def launch_game(self, event):
+		if 'player1' not in event and 'player2' not in event:
+			match = await sync_to_async(TournamentMatch.objects.get)(match_id=event['match_id'])
+			players = await sync_to_async(match.get_players)()
+			event['player1'] = players[0]['id']
+			event['player2'] = players[1]['id']
+		await self.stop_countdown(event['match_id'])
 		await self.start_game_instance(event)
 
 	async def countdown_update(self, event):
 		await self.send(text_data=json.dumps({  
 			'type': 'countdown_update',
-			'time': event['time'], 
+			'time': event['time'],  
 		}))
 
 # -------------------------------> Countdown function <---------------------------------
@@ -157,32 +164,46 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		match = await sync_to_async(TournamentMatch.objects.get)(match_id=match_id) 
 		players = await sync_to_async(match.get_players)()
 		if str(self.user.id) == players[0]['id']:  
-			asyncio.create_task(self.run_countdown(match_id, players))
+			if match_id in self.countdown_tasks:
+				self.countdown_tasks[match_id].cancel()
+            # Create a new task for the countdown
+			self.countdown_tasks[match_id] = asyncio.create_task(self.run_countdown(match_id, players))
 
 
 	async def run_countdown(self, match_id, players):
-		countdown = 10 
-		while countdown > 0:
+		countdown = 60 
+		try:
+			while countdown >= 0:
+				await self.channel_layer.group_send(
+					match_id,
+					{
+						"type": "countdown.update",
+						"time": countdown
+					}
+				)
+				await asyncio.sleep(1)
+				countdown -= 1
+ 
+			# Countdown finished, start the game 
 			await self.channel_layer.group_send(
 				match_id,
 				{
-					"type": "countdown.update",
-					"time": countdown
+					"type": "launch.game",
+					'match_id': match_id,
+					'player1': players[0]['id'], 
+					'player2': players[1]['id']
 				}
 			)
-			await asyncio.sleep(1)
-			countdown -= 1
+		except asyncio.CancelledError:
+			print('countdown task cancelled') 
+		finally:
+			# Remove the task from the dictionary
+			self.countdown_tasks.pop(match_id, None) 
 
-		# Countdown finished, start the game
-		await self.channel_layer.group_send(
-			match_id,
-			{
-				"type": "launch.game",
-				'match_id': match_id,
-				'player1': players[0]['id'],
-				'player2': players[1]['id']
-			}
-		)
+	async def stop_countdown(self, match_id):
+		if match_id in self.countdown_tasks:
+			print("stopped countdown")
+			self.countdown_tasks[match_id].cancel() 
 
 # -------------------------------> Create Tournament Utils <---------------------------------
 
