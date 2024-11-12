@@ -101,6 +101,6 @@ async function VerifyTwoFactorRequest(verificationCode, userCredentials) {
 		document.dispatchEvent(event);
 		setTwoFactorLocalStorage();
 	} catch (error) {
-		document.querySelector('.feedbackInformation').innerHTML = error.message;
+		document.querySelector('.feedbackInformation').innerHTML = getString(`twoFactorError/${error.message}`);
 	}
 }

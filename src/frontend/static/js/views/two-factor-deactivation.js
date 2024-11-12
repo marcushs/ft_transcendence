@@ -116,12 +116,12 @@ async function DeactivateTwoFactorRequest(verificationCode) {
 			else
 				throwRedirectionEvent('/two-factor-email');
 		} else {
-			localStorage.setItem('twoFactorFeedback', data.message);
+			localStorage.setItem('twoFactorFeedback', getString(`twoFactorDeactivationView/${data.message}`));
 			localStorage.setItem('state', 'security');
 			throwRedirectionEvent('/profile');
 		}
 		removeTwoFactorLocalStorage();
 	} catch (error) {
-		document.querySelector('.feedbackInformation').innerHTML = error.message;
+		document.querySelector('.feedbackInformation').innerHTML = getString(`twoFactorError/${error.message}`);
 	}
 }

@@ -4,9 +4,10 @@ from django.conf import settings
 from django.views import View
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.hashers import check_password
-from .send_request import send_request_with_token, send_request_without_token
+from .send_request import send_request_with_token, send_request_without_token, ExpectedException
 from django.contrib.auth import get_user_model
 import json
+import requests
  
 User = get_user_model()
 class login_view(View):
@@ -58,7 +59,7 @@ class login_view(View):
         return None
     
 
-    def _create_user_session(self, user, request):
+    def _create_user_session(self, user, request): 
         print('---------------------------------TEST LOGIN------------------------------') 
         token = create_jwt_token(user, 'access')
         refresh_token = create_jwt_token(user, 'refresh') 
@@ -85,8 +86,9 @@ class login_view(View):
             if response.status_code != 200:
                 return response
             return self._create_user_session(user=user, request=request)
-        except ObjectDoesNotExist:
-            return JsonResponse({'error': 'User not found'}, status=404)
-        except Exception:
-            pass
-
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'message': 'unknownUser'}, status=404)
+        except ExpectedException as e:
+            return JsonResponse({'message': str(e)}, status=400)
+        except Exception as e:
+            return JsonResponse({'message': 'unknownError'}, status=400)
