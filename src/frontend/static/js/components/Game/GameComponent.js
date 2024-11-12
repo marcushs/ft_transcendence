@@ -22,6 +22,7 @@ class GameComponent extends HTMLElement {
             "bracket": {context: "/tournamentHome/tournamentMatch/bracket"},
             "tournamentWaitingRoom": {context: "/tournamentHome/tournamentWaitingRoom"},
             "tournamentMatch": {context: "/tournamentHome/tournamentMatch"},
+            "tournamentLost": {context: "/tournamentHome/tournamentLost"},
         }
 
         this.innerHTML = `

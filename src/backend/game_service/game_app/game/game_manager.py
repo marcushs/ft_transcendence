@@ -17,7 +17,7 @@ import uuid
 @method_decorator(csrf_exempt, name='dispatch')
 class startGameEngine(View):
     def __init__(self):
-        super()
+        super() 
 
     async def post(self, request):
         try:
@@ -27,7 +27,7 @@ class startGameEngine(View):
                 return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)
             asyncio.create_task(starting_game_instance(data))
             return JsonResponse({'status': 'success', 'message': 'Game instance started'}, status=200)
-        except Exception as e:
+        except Exception as e: 
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
@@ -41,7 +41,7 @@ async def starting_game_instance(data):
     print(f'-----------> player one infos : {player_one_infos}') 
     try:
         game_users_data = {
-            'game': str(uuid.uuid4()),
+            'game': data['match_id'] if data['game_type'] == 'tournament' else str(uuid.uuid4()),
             'game_type': str(data['game_type']),
             'player_one': {
                 'id': str(data['player1']),
@@ -67,7 +67,6 @@ async def starting_game_instance(data):
                 'player_two_id': game_users_data['player_two']['id']
             }
             await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)
-            print('finished here')   
             return
         asyncio.sleep(0.5)
         print(f'-> async_tasks: connections ok, sending websocket...')

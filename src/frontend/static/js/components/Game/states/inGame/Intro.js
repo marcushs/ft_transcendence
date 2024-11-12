@@ -10,7 +10,7 @@ export default class Intro {
 		this.leftPlayer = leftPlayer;
 		this.rightPlayer = rightPlayer;
 
-		this.isRanked = true;
+		this.isRanked = isRanked;
 
 		this.playersInfos = {
 			isRanked: false,

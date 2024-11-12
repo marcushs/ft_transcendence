@@ -35,10 +35,11 @@ class MatchmakingTournament(View):
             players = await sync_to_async(self.get_players_data)(player_one_id=data['player1'], player_two_id=data['player2'])
             await sync_to_async(change_is_ingame_state)(value=True, user_instance=players[0]) 
             await sync_to_async(change_is_ingame_state)(value=True, user_instance=players[1])
-            payload = { 
+            payload = {
                 'game_type': data['game_type'],  
                 'player1': data['player1'],     
-                'player2': data['player2']     
+                'player2': data['player2'],
+                'match_id': data['match_id']  
             } 
             await send_request(request_type='POST', url='http://game:8000/api/game/start_game/', payload=payload)
             return JsonResponse({'status': 'success', 'message': 'Game instance started'}, status=200)

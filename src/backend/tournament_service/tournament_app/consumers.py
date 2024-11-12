@@ -270,6 +270,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'player1': event['player1'], 
 			'player2': event['player2'] 
 		}
+		await self.channel_layer.group_discard(event['match_id'], self.channel_name)
 		await self.send(text_data=json.dumps({ 
 			'type': 'start_game_instance', 
 			'payload': payload 

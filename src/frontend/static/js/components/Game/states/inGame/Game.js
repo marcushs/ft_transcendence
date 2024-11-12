@@ -12,6 +12,8 @@ import Intro from "./Intro.js";
 import Outro from "./Outro.js";
 import CircularList from "../../../../utils/CircularList.js";
 import RankOutro from "./RankOutro.js";
+import { proceedInTournament } from "../../../../utils/tournamentUtils/tournamentMatchUtils.js";
+import { redirectToTournamentLostMatch } from "../../../../utils/tournamentUtils/tournamentMatchUtils.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
 	localStorage.removeItem('isSearchingGame');
@@ -36,6 +38,7 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 	const inGameComponent = document.createElement('in-game-component');
 	inGameComponent.gameId = gameId;
 	inGameComponent.gameState = initialGameState;
+	console.log('inGameComponent.gameState', inGameComponent.gameState)
 	inGameComponent.map_dimension = map_dimension;
 	inGameComponent.userId = userId;
 	statesContainerDiv.appendChild(inGameComponent);
@@ -43,7 +46,9 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 
 export default class Game {
 	constructor(canvas, gameId, gameState, userId) {
+		console.log("gameType is: ", gameState.game_type)
 		this.gameInProgress = true;
+		this.gameType = gameState.game_type
 		this.userId = userId;
 		this.canvas = canvas;
 		this.gameId = gameId;
@@ -55,11 +60,11 @@ export default class Game {
 		this.isSentEmoteAnimationEnabled = false;
 		this.isReceivedEmoteAnimationEnabled = false;
 
-		console.log('is ranked : ', gameState.is_ranked);
-
-		this.Intro = new Intro(this.canvas, gameState.is_ranked, gameState.player_two.user_infos, gameState.player_one.user_infos);
-		this.Outro = new Outro(this.canvas);
-		this.RankOutro = new RankOutro(this.canvas);
+		const is_ranked = (this.gameType === 'ranked') ? true : false
+		this.Intro = new Intro(this.canvas, is_ranked, gameState.player_two.user_infos, gameState.player_one.user_infos);
+		this.Outro = new Outro(this.canvas, is_ranked);
+		if (is_ranked)
+			this.RankOutro = new RankOutro(this.canvas);
 
 		this.gameTopBar = document.querySelector('game-top-bar');
 		this.gameTopBar.classList.add('in-game-top-bar');
@@ -164,8 +169,8 @@ export default class Game {
 			this.Intro.drawIntro();
 		if (this.isOutroAnimationEnabled)
 			this.Outro.drawOutro();
-		if (this.isRankOutroAnimationEnabled)
-			this.RankOutro.drawRankOutro();
+		// if (this.isRankOutroAnimationEnabled)
+		// 	this.RankOutro.drawRankOutro();
 
 		requestAnimationFrame(() => this.renderLoop());
 	}
@@ -442,7 +447,17 @@ export default class Game {
 		this.throwLoadOutroAnimationEvent(isWin);
 		this.isOutroAnimationEnabled = true;
 
-		console.log(data.message);
+		console.log('game finished', data.message);
+		console.log(this.gameType)
+		if (this.gameType === 'tournament') {
+			setTimeout(() => {
+				this.gameInProgress = false;
+				if (isWin) return proceedInTournament(this.gameId, this.userId);
+				disconnectGameWebSocket(this.userId, false);
+				redirectToTournamentLostMatch(this.gameId); //temporary redirection for loser
+			}, 10000);
+			return 
+		}
 		setTimeout(() => {
 			this.isOutroAnimationEnabled = false;
 			this.isRankOutroAnimationEnabled = true;
@@ -454,7 +469,9 @@ export default class Game {
 			this.gameInProgress = false;
 			disconnectGameWebSocket(this.userId, false);
 			throwRedirectionEvent('/');
-		}, 20000);
+		}, 10000);
+
+
 	}
 
 	cleanup() {
