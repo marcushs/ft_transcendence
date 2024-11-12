@@ -149,7 +149,7 @@ AUTH_USER_MODEL = "auth_app.User"
 AUTH_PASSWORD_VALIDATORS = [
     # check similarity with email and username
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'auth_app.views.signup.CustomUserAttributeSimilarityValidator',
     },
     {
         'NAME': 'auth_app.views.signup.CustomCommonPasswordValidator',

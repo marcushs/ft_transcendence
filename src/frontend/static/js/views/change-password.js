@@ -98,11 +98,11 @@ function showFeedback(response) {
 	const confirmNewPasswordFeedbackElement = document.querySelector('#confirmNewPasswordFeedback');
 
 	if (response['current_password'])
-		currentPasswordFeedbackElement.textContent = response['current_password'];
+		currentPasswordFeedbackElement.textContent = getString(`changePasswordView/${response['current_password']}`);
 	if (response['new_password'])
-		newPasswordFeedbackElement.textContent = response['new_password'];
+		newPasswordFeedbackElement.textContent = getString(`changePasswordView/${response['new_password']}`);
 	if (response['confirm_new_password'])
-		confirmNewPasswordFeedbackElement.textContent = response['confirm_new_password'];
+		confirmNewPasswordFeedbackElement.textContent = getString(`changePasswordView/${response['confirm_new_password']}`);
 }
 
 async function postNewPassword(formData) {
@@ -113,9 +113,10 @@ async function postNewPassword(formData) {
 
 		if (data.status === 'success') {
 			localStorage.setItem('state', 'security');
-			localStorage.setItem('passwordFeedback', 'Password has been successfully changed');
+			localStorage.setItem('passwordFeedback', getString("changePasswordView/passwordSuccessfullyChanged"));
 			throwRedirectionEvent('/profile');
 		} else {
+			console.log(data);
 			localStorage.setItem('userUpdateResponse', JSON.stringify(data));
 			throwRedirectionEvent('/change-password');
 		}

@@ -48,7 +48,14 @@
 	  "changePasswordTitle": "Change password",
 	  "currentPassword": "Current password",
 	  "newPassword": "New password",
-	  "confirmPassword": "Confirm password"
+	  "confirmPassword": "Confirm password",
+	  "currentPasswordIsRequired": "Current password is required",
+	  "newPasswordIsRequired": "New password is required",
+	  "confirmPasswordIsRequired": "Confirm password is required",
+	  "incorrectCurrentPassword": "Incorrect current password",
+	  "samePassword": "New password is the same as current",
+	  "passwordDoNotMatch": "Passwords do not match",
+	  "passwordSuccessfullyChanged": "Password successfully changed"
 	},
 	"twoFactorAppView": {
 	  "title": "Enable 2fa by authenticator",
@@ -201,6 +208,9 @@
 	  "logoutSentence": "Are you sure you want to logout?",
 	  "yes": "Yes",
 	  "cancel": "Cancel"
+	},
+	"changeUserInfos": {
+
 	}
   },
 
@@ -253,7 +263,14 @@
 	  "changePasswordTitle": "Changement de mot de passe",
 	  "currentPassword": "Mot de passe actuel",
 	  "newPassword": "Nouveau mot de passe",
-	  "confirmPassword": "Confirmer le mot de passe"
+	  "confirmPassword": "Confirmer le mot de passe",
+	  "currentPasswordIsRequired": "Le mot de passe actuel est requis",
+	  "newPasswordIsRequired": "Un nouveau mot de passe est requis",
+	  "confirmPasswordIsRequired": "Confirmation du mot de passe requise",
+	  "incorrectCurrentPassword": "Mot de passe actuel incorrect",
+	  "samePassword": "Le nouveau mot de passe est identique au mot de passe actuel",
+	  "passwordDoNotMatch": "Les mots de passe ne correspondent pas",
+	  "passwordSuccessfullyChanged": "Le mot de passe a été modifié avec succès"
 	},
 	"twoFactorAppView": {
 	  "title": "Activer la 2FA par authenticator",

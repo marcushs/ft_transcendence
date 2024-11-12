@@ -34,18 +34,18 @@ class ChangePassword(View):
         error = {}
 
         if not current_password:
-            return {'status': 'error', 'current_password': 'Current password is required'}
+            return {'status': 'error', 'current_password': 'currentPasswordIsRequired'}
         if not new_password:
-            return {'status': 'error', 'new_password': 'New password is required'}
+            return {'status': 'error', 'new_password': 'newPasswordIsRequired'}
         if not new_password:
-            return {'status': 'error', 'confirm_new_password': 'Confirm password is required'}
+            return {'status': 'error', 'confirm_new_password': 'confirmPasswordIsRequired'}
 
         if not check_password(current_password, request.user.password):
-            return {'status': 'error', 'current_password': 'Incorrect current password'}
+            return {'status': 'error', 'current_password': 'incorrectCurrentPassword'}
         if check_password(new_password, request.user.password):
-            return {'status': 'error', 'new_password': 'New password is the same as current'}
+            return {'status': 'error', 'new_password': 'samePassword'}
         if new_password != confirm_new_password:
-            return {'status': 'error', 'confirm_new_password': 'Passwords do not match'}
+            return {'status': 'error', 'confirm_new_password': 'passwordDoNotMatch'}
 
         try:
             validate_password(new_password)
@@ -58,4 +58,4 @@ class ChangePassword(View):
     def change_password(self, User, request):
         request.user.set_password(request.POST.get('new_password'))
         request.user.save()
-        return {'status': 'success', "message": "Password successfully changed"}
+        return {'status': 'success', "message": "passwordSuccessfullyChanged"}
