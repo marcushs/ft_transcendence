@@ -15,7 +15,7 @@ export default () => {
 				<form>
 					<h1>${getString('signupView/signupTitle')}</h1>
 					<div class="form-fields">
-						<input class="signup-input" type="text" placeholder="${getString('signupView/username')}" name="username" required>
+						<input class="signup-input" type="text" placeholder="${getString('signupView/username')}" name="username" maxlength="12" required>
 					</div>
 					<div class="form-fields">
 						<input class="signup-input" type="text" placeholder="${getString('signupView/email')}" name="email" autofocus required>
@@ -84,10 +84,10 @@ async function postData(event, signupBtn) {
 	try {
 		const data = await sendRequest('POST', url, formValues);
 
-		localStorage.setItem('successFeedback', 'The account has been successfully created');
+		localStorage.setItem('successFeedback', getString(`loginView/${data.message}`));
 		throwRedirectionEvent('/login');
 	} catch (error) {
-		localStorage.setItem('errorFeedback', error.message);
+		localStorage.setItem('errorFeedback', getString(`signupView/${error.message}`));
 		throwRedirectionEvent('/signup');
 	}
 }

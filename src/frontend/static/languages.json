@@ -6,7 +6,18 @@
 	  "password": "Password",
 	  "forgottenPassword": "Forgotten password?",
 	  "noAccountSentence": "Don't have an account?",
-	  "signup": "Signup"
+	  "signup": "Signup",
+	  "invalidPassword": "Invalid password, please try again",
+	  "noExistsUsername": "This username does not exist, please try again",
+	  "invalidUsername": "Invalid username, please try again",
+	  "noUsernameProvided": "No username provided",
+	  "noPasswordProvided": "No password provided",
+	  "alreadyLog": "You are already logged in",
+	  "need2faVerification": "2FA activated on this account, need to verify before log",
+	  "errorWhileLogin": "An error occured while logging in",
+	  "userNotFound": "User not found",
+	  "loginSuccessfully": "Login successfully",
+	  "accountCreated": "Account successfully created"
 	},
 	"signupView": {
 	  "signupTitle": "Signup",
@@ -15,7 +26,23 @@
 	  "password": "Password",
 	  "confirmPassword": "Confirm password",
 	  "existingAccountSentence": "Already have an account?",
-	  "login": "Login"
+	  "login": "Login",
+	  "errorWhileSignup": "an error occured while creating user in different service",
+	  "noUsernameProvided": "No username provided",
+	  "noPasswordProvided": "No password provided",
+	  "invalidCharInUsername": "Invalid characters in username",
+	  "noEmailProvided": "No email provided",
+	  "accountHasAlreadyEmail": "This email have already an account",
+	  "invalidEmail": "Invalid email",
+	  "tooLongUsername": "Too long username",
+	  "usernameAlreadyExists": "Username already exists",
+	  "passwordDidNotMatch": "Password did not match",
+	  "passwordMustContainOneNumericChar": "The password must contain at least one numeric character",
+	  "passwordMustContainOneUppercase": "The password must contain at least one uppercase letter",
+	  "passwordMustContainOneLetter": "The password must contain at least one lowercase letter",
+	  "tooShortPassword": "The password must container at least 8 characters",
+	  "tooCommonPassword": "This password is too common. Choose another one",
+	  "tooCloseToUserInfosPassword": "Your password is too close to your username or e-mail address"
 	},
 	"changePasswordView": {
 	  "changePasswordTitle": "Change password",
@@ -170,7 +197,11 @@
 	  "lose": "LOSE"
 	},
 	"sendMessageButton": "Send message",
-	"logoutSentence": "Are you sure you want to logout?"
+	"logoutView": {
+	  "logoutSentence": "Are you sure you want to logout?",
+	  "yes": "Yes",
+	  "cancel": "Cancel"
+	}
   },
 
   "fr": {
@@ -180,7 +211,18 @@
 	  "password": "Mot de passe",
 	  "forgottenPassword": "Mot de passe oublié?",
 	  "noAccountSentence": "Vous n'avez pas de compte?",
-	  "signup": "S'inscrire"
+	  "signup": "S'inscrire",
+	  "invalidPassword": "Mot de passe invalide, veuillez réessayer",
+	  "noExistsUsername": "Ce nom d'utilisateur n'existe pas, veuillez réessayer",
+	  "invalidUsername": "Nom d'utilisateur invalide, veuillez réessayer",
+	  "noUsernameProvided": "Aucun nom d'utilisateur n'a été fourni",
+	  "noPasswordProvided": "Aucun mot de passe n'a été fourni",
+	  "alreadyLog": "Vous êtes déjà connecté",
+	  "need2faVerification": "2FA activé sur ce compte, à vérifier avant de se connecter",
+	  "errorWhileLogin": "Une erreur s'est produite lors de la connexion",
+	  "userNotFound": "Utilisateur non trouvé",
+	  "loginSuccessfully": "Connexion réussie",
+	  "accountCreated": "Le compte a été créé avec succès"
 	},
 	"signupView": {
 	  "signupTitle": "Inscription",
@@ -189,7 +231,23 @@
 	  "password": "Mot de passe",
 	  "confirmPassword": "Confirmer le mot de passe",
 	  "existingAccountSentence": "Vous avez déjà un compte?",
-	  "login": "Se connecter"
+	  "login": "Se connecter",
+	  "errorWhileSignup": "une erreur s'est produite lors de la création d'un utilisateur dans un autre service",
+	  "noUsernameProvided": "Aucun nom d'utilisateur n'a été fourni",
+	  "noPasswordProvided": "Aucun mot de passe n'est fourni",
+	  "invalidCharInUsername": "Caractères non valides dans le nom d'utilisateur",
+	  "noEmailProvided": "Aucun courriel n'a été fourni",
+	  "accountHasAlreadyEmail": "Cet email a déjà un compte",
+	  "invalidEmail": "Courriel non valide",
+	  "tooLongUsername": "Nom d'utilisateur trop long",
+	  "usernameAlreadyExists": "Le nom d'utilisateur existe déjà",
+	  "passwordDidNotMatch": "Le mot de passe ne correspond pas",
+	  "passwordMustContainOneNumericChar": "Le mot de passe doit contenir au moins un caractère numérique",
+	  "passwordMustContainOneUppercase": "Le mot de passe doit contenir au moins une lettre majuscule",
+	  "passwordMustContainOneLetter": "Le mot de passe doit contenir au moins une lettre minuscule",
+	  "tooShortPassword": "Le mot de passe doit contenir au moins 8 caractères",
+	  "tooCommonPassword": "Ce mot de passe est trop courant. Choisissez-en un autre",
+	  "tooCloseToUserInfosPassword": "Votre mot de passe est trop proche de votre nom d'utilisateur ou e-mail"
 	},
 	"changePasswordView": {
 	  "changePasswordTitle": "Changement de mot de passe",
@@ -343,7 +401,11 @@
 	  "lose": "DEFAITE"
 	},
 	"sendMessageButton": "Envoyer un message",
-	"logoutSentence": "Êtes-vous sûr de vouloir vous déconnecter ?"
+	"logoutView": {
+	  "logoutSentence": "Êtes-vous sûr de vouloir vous déconnecter ?",
+	  "yes": "Oui",
+	  "cancel": "Annuler"
+	}
   },
 
 
