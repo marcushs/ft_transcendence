@@ -5,7 +5,7 @@ from django.views import View
 from ..models import User
 import json
 
-class add_new_user(View):
+class AddNewUser(View):
     def __init__(self):
         super().__init__
     
@@ -70,30 +70,6 @@ class check_username(View):
         if User.objects.filter(username=username).exists():
             return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
         return JsonResponse({"message": "Username is free", "status": "Success"}, status=200)
-
-class delete_user(View):
-    def __init__(self):
-        super().__init__
-
-    def delete(self, request):
-        data = json.loads(request.body)
-        user_id = data.get('id')
-        if not user_id:
-            return JsonResponse({'message': 'User ID is required', 'status': 'Error'}, status=400)
-
-        try:
-            user = User.objects.get(id=user_id)
-            username = user.username
-            user.delete()
-            return JsonResponse({'message': f'User {username} deleted successfully', 'status': 'Success'}, status=200)
-        except User.DoesNotExist:
-            return JsonResponse({'message': 'User not found, no action taken', 'status': 'Success'}, status=204)
-    
-    def get(self, request):
-        return JsonResponse({'message': 'Method not allowed', 'status': 'Error'}, status=405)
-
-    def post(self, request):
-        return JsonResponse({'message': 'Method not allowed', 'status': 'Error'}, status=405)
     
 async def send_async_request(request_type, request, url, payload=None):
         headers = {

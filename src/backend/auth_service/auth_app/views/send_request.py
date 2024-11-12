@@ -45,7 +45,6 @@ def send_request_without_token(request_type, url, payload, csrf_token):
         if response.status_code == 200:
             return response
         else:
-            print('!!!!!!!!!!!!!!!!!!!!!!!!!!!')
             response.raise_for_status()
     except requests.exceptions.HTTPError as e:
         error_message = e.response.json().get('message', 'unknown error')

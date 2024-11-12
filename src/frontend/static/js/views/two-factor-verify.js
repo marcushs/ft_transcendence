@@ -77,10 +77,12 @@ export class TwoFactorVerify {
 }
 
 async function sendTwoFactorCode(userCredentials) {
-	const url = '/api/twofactor/get_2fa_code/';
-
 	try {
-		await sendRequest('POST', url, userCredentials );
+		const payload = {
+			'username': userCredentials.username,
+			'email_type': 'verify'
+		}
+		await sendRequest('POST', '/api/twofactor/get_2fa_code/', payload );
 	} catch (error) {
 		console.error(error);
 	}

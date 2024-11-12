@@ -4,6 +4,8 @@ from django.contrib.auth.models import AnonymousUser
 from django.core.mail import send_mail
 from django.conf import settings
 from .two_factor_utils import twofactor_verify_view, send_update_request
+from ..utils.get_user_language import get_user_language
+from asgiref.sync import async_to_sync
 
 import secrets
 import pyotp
@@ -32,23 +34,56 @@ class twofactor_enable_view(View):
                 return self._authenticator_handler(request)
             case _:
                 return JsonResponse({'message': 'We\'ve encountered an issue with the selected authentication method.'}, status=201)
-        
+       
     def _email_handler(self, request):
-        # verification_code = secrets.token_hex(6)
+        language = async_to_sync(get_user_language)(request) 
         verification_code = self._generate_6_digits_code()
-        subject='Two Factor Activation'
-        message=f"""
-                Hi {request.user.username},
-
-                You have requested activation of double authentication on your KingPong account.
-                To complete this activation, please use the code below:
-
-                Verification code : {verification_code}
-
-                This code is valid for a short period of time(5 minutes). Do not share this code with others.
-
-                If you have not requested this action, please ignore this email.
+        print('LANGUAGE: ', language)
+        match language:
+            case 'en':
+                subject='Two Factor Auth Activation'
+                message=f"""
+                    Hi {request.user.username},
+    
+                    You have requested activation of double authentication on your KingPong account.
+                    To complete this activation, please use the code below:
+    
+                    Verification code : {verification_code}
+    
+                    This code is valid for a short period of time(5 minutes). Do not share this code with others.
+    
+                    If you have not requested this action, please ignore this email.
                 """
+            case 'fr':
+                subject='Activation de l\'authentification à deux facteurs'
+                message=f"""
+                    Bonjour {request.user.username},
+    
+                    Vous avez demandé l'activation de la double authentification sur votre compte KingPong.
+                    Pour compléter cette activation, veuillez utiliser le code ci-dessous :
+    
+                    Code de vérification : {verification_code}
+    
+                    Ce code est valable pour une courte période de temps (5 minutes). Ne partagez pas ce code avec d'autres personnes.
+    
+                    Si vous n'avez pas demandé cette action, veuillez ignorer cet e-mail.
+                """
+            case 'zh':
+                subject='双因素激活'
+                message=f"""
+                    您好 {request.user.username}、
+    
+                    您请求在 KingPong 帐户上激活双重认证。
+                    要完成激活，请使用下面的验证码
+    
+                    验证码 - {verification_code}
+    
+                    此验证码在短时间内 - 5分钟 - 有效。请勿与他人共享此验证码
+    
+                    如果您没有要求进行此操作，请忽略此邮件
+                """
+            case _:
+                return JsonResponse({'message': 'An error occured with email sending'}, status=400)
         recipient_list = [request.user.email]
         error_message = self._send_mail(subject, message, recipient_list)
         if error_message is not None:

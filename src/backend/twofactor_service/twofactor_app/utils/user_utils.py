@@ -3,9 +3,10 @@ from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
 from django.views import View
 from ..models import User
+from .send_request import send_request 
 import json
 
-class add_new_user(View):
+class AddNewUser(View):
     def __init__(self):
         super().__init__
     
@@ -51,23 +52,3 @@ class check_username(View):
         if User.objects.filter(username=username).exists():
             return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
         return JsonResponse({"message": "Username is free", "status": "Success"}, status=200)
-    
-class delete_user(View):
-    def __init__(self):
-        super().__init__
-
-    def delete(self, request):
-        id = request.DELET.get('id')
-        if User.objects.filter(id=id).exists():
-            user = User.objects.get(id=id)
-        else:
-            return JsonResponse({'message': 'User not found, no action taken', 'status': 'Success'}, status=204)
-        username = user.username
-        user.delete()
-        return JsonResponse({'message': f'User {username} deleted successfully', 'status': "Success"}, status=200)
-    
-    def get(self, request):
-        return JsonResponse({'message': 'Method not allowed', 'status': 'Error'}, status=405)
-
-    def post(self, request):
-        return JsonResponse({'message': 'Method not allowed', 'status': 'Error'}, status=405)

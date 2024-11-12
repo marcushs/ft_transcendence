@@ -54,9 +54,9 @@ def twofactor_verify_view(request, two_factor_code, two_factor_method):
         if request.user.two_factor_code != two_factor_code:
             return JsonResponse({'message': 'invalidCode'}, status=400)
         if request.user.two_factor_code_expiry < timezone.now():
-            return JsonResponse({'message': 'ExpiredCode'}, status=400)
+            return JsonResponse({'message': 'ExpiredCode'}, status=400) 
     else:
-        return JsonResponse({'message': 'invalidMethod'}, status=400)
+        return JsonResponse({'message': 'invalidMethod'}, status=400) 
     return JsonResponse({'message': 'twoFactorSuccess'}, status=200)
 
 class twofactor_get_status_view(View):
@@ -66,7 +66,7 @@ class twofactor_get_status_view(View):
     
     def get(self, request):
         if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'message': 'You are not logged in'}, status=401)
+            return JsonResponse({'message': 'You are not logged in'}, status=401) 
         if request.user.is_verified == True:
             return JsonResponse({'message': 'You have setup twofactor on your account', 'is_verified': True, 'method': request.user.two_factor_method}, status=200)
         else:

@@ -13,7 +13,7 @@ async def get_user_id_by_username(username):
     return user.id
 
 
-class add_new_user(View):
+class AddNewUser(View):
     def __init__(self):
         super().__init__()
     

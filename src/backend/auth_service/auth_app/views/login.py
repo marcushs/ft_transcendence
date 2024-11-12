@@ -82,9 +82,7 @@ class login_view(View):
     def _send_twofactor_request(self, data, csrf_token, request):   
         try:
             user = User.objects.get(username=data['username'])
-            response = send_request_without_token(request_type='POST', url='http://twofactor:8000/api/twofactor/twofactor_login/', payload=data, csrf_token=csrf_token)
-            if response.status_code != 200:
-                return response
+            send_request_without_token(request_type='POST', url='http://twofactor:8000/api/twofactor/twofactor_login/', payload=data, csrf_token=csrf_token)
             return self._create_user_session(user=user, request=request)
         except ObjectDoesNotExist as e:
             return JsonResponse({'message': 'unknownUser'}, status=404)
