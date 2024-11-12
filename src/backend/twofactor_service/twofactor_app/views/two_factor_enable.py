@@ -38,7 +38,6 @@ class twofactor_enable_view(View):
     def _email_handler(self, request):
         language = async_to_sync(get_user_language)(request) 
         verification_code = self._generate_6_digits_code()
-        print('LANGUAGE: ', language)
         match language:
             case 'en':
                 subject='Two Factor Auth Activation'

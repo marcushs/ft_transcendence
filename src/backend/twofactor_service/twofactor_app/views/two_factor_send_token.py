@@ -76,7 +76,6 @@ class twofactor_send_token_view(View):
     
     def get_verify_message_by_language(self):
         language = async_to_sync(get_user_language)(self.request)  
-        print('----> LANGUAGE: ', language)
         
         match language:
             case 'en':
@@ -129,7 +128,6 @@ class twofactor_send_token_view(View):
             
     def get_deactivation_message_by_language(self):
             language = async_to_sync(get_user_language)(self.request)
-            print('----> LANGUAGE: ', language)
 
             match language:
                 case 'en':

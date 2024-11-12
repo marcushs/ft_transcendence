@@ -102,7 +102,6 @@ class update_user(View):
         old_status = None
         for field in ['username', 'email', 'is_verified', 'two_factor_method', 'status', 'last_active']:
             if field in data:
-                print('-----------> field:')
                 if field == 'last_active':
                     setattr(request.user, field, timezone.now())
                 elif field == 'status':
