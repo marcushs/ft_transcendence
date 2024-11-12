@@ -157,7 +157,7 @@ class UserInfosComponent extends HTMLElement {
 				this.newProfileImageLink = null;
 				this.newUploadedImage = file;
 			} else {
-				this.updateImageFeedback(isValidImage, 'Invalid image file');
+				this.updateImageFeedback(isValidImage, getString("profileComponent/invalidImageFile"));
 			}
 			this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), this.isValidEmail(this.emailInput.value));
 		};
@@ -178,7 +178,7 @@ class UserInfosComponent extends HTMLElement {
 			this.hasProfilePictureChanged = true;
 		}
 		else {
-			this.updateImageFeedback(isValidImageUrl, 'Invalid image link');
+			this.updateImageFeedback(isValidImageUrl, getString("profileComponent/invalidImageLink"));
 		}
 		this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), this.isValidEmail(this.emailInput.value));
 	}
@@ -335,9 +335,9 @@ class UserInfosComponent extends HTMLElement {
 			const feedbackSuccessElement = input.parentElement.querySelector('.input-feedback');
 
 			if (`${input.name}_error` in response)
-				this.updateFeedback(feedbackErrorElement, response[`${input.name}_error`], false);
+				this.updateFeedback(feedbackErrorElement, getString(`profileComponent/${response[`${input.name}_error`]}`), false);
 			else if (`${input.name}_message` in response)
-				this.updateFeedback(feedbackSuccessElement, response[`${input.name}_message`], true);
+				this.updateFeedback(feedbackSuccessElement, getString(`profileComponent/${response[`${input.name}_message`]}`), true);
 		});
 	}
 
@@ -348,9 +348,9 @@ class UserInfosComponent extends HTMLElement {
 		const usernameFeedbackElement = this.usernameInput.parentElement.querySelector('.input-feedback');
 
 		if (!isValidUsername && username === '')
-			this.updateFeedback(usernameFeedbackElement, 'Username cannot be empty', isValidUsername);
+			this.updateFeedback(usernameFeedbackElement, getString("profileComponent/usernameFormatWarning"), isValidUsername);
 		else if (!isValidUsername && !isAlphanumeric(username))
-			this.updateFeedback(usernameFeedbackElement, "Username: letters, numbers, _ , -", isValidUsername);
+			this.updateFeedback(usernameFeedbackElement, getString("profileComponent/invalidUsernameFormat"), isValidUsername);
 		else if (usernameFeedbackElement.textContent !== '' && isValidUsername)
 			usernameFeedbackElement.textContent = '';
 	}
@@ -360,9 +360,9 @@ class UserInfosComponent extends HTMLElement {
 		const emailFeedbackElement = this.emailInput.parentElement.querySelector('.input-feedback');
 
 		if (!isValidEmail && email === '')
-			this.updateFeedback(emailFeedbackElement, 'Email address cannot be empty', isValidEmail);
+			this.updateFeedback(emailFeedbackElement, getString("profileComponent/emailCannotBeEmpty"), isValidEmail);
 		else if (!isValidEmail)
-			this.updateFeedback(emailFeedbackElement, 'Invalid email address', isValidEmail);
+			this.updateFeedback(emailFeedbackElement, getString("profileComponent/invalidEmail"), isValidEmail);
 		else if (emailFeedbackElement.textContent !== '' && isValidEmail)
 			emailFeedbackElement.textContent = '';
 	}
@@ -400,6 +400,6 @@ async function postNewUserInfos(newUserInfos) {
 		localStorage.setItem('userUpdateResponse', JSON.stringify(data));
 		throwRedirectionEvent('/profile');
 	} catch (error) {
-		document.querySelector('.error-feedback').innerHTML = error.message;
+		document.querySelector('.error-feedback').innerHTML = getString(`profileComponent/${error.message}`);
 	}
 }

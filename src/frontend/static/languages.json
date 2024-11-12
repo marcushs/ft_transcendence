@@ -140,7 +140,22 @@
 	  "twoFactorByEmail": "2FA by email",
 	  "twoFactorByAuthenticator": "2FA by authenticator",
 	  "changePasswordTitle": "Change password",
-	  "changePasswordInformation": "Change your password regularly to keep your account secure."
+	  "changePasswordInformation": "Change your password regularly to keep your account secure.",
+	  "usernameAlreadyExists": "This username already exists",
+	  "usernameLenError": "Username must be less than 12 characters",
+	  "usernameFormatError": "Username must container only letters, numbers, _ , -",
+	  "emailAlreadyExists": "This email is already associated with an account",
+	  "invalidEmailFormat": "This email format is invalid",
+	  "invalidImageFormat": "Invalid profile image format, valid formats are: (png, jpg, jpeg, gif, svg, webp)",
+	  "usernameSuccessfullyChanged": "Username successfully changed",
+	  "emailSuccessfullyChanged": "Email successfully changed",
+	  "profileImageSuccessfullyChanged": "Profile image successfully changed",
+	  "invalidImageFile": "Invalid image file",
+	  "invalidImageLink": "Invalid image link",
+	  "usernameFormatWarning": "Username cannot be empty",
+	  "invalidUsernameFormat": "Username: letters, numbers, _ , -",
+	  "emailCannotBeEmpty": "Email address cannot be empty",
+	  "invalidEmail": "Invalid email address"
 	},
 	"profileNavBarComponent": {
 	  "personalInformation": "Personal information",
@@ -208,9 +223,6 @@
 	  "logoutSentence": "Are you sure you want to logout?",
 	  "yes": "Yes",
 	  "cancel": "Cancel"
-	},
-	"changeUserInfos": {
-
 	}
   },
 
@@ -354,7 +366,22 @@
 	  "twoFactorByEmail": "2FA par email",
 	  "twoFactorByAuthenticator": "2FA par authenticator",
 	  "changePasswordTitle": "Changer de mot de passe",
-	  "changePasswordInformation": "Changez régulièrement votre mot de passe pour assurer la sécurité de votre compte."
+	  "changePasswordInformation": "Changez régulièrement votre mot de passe pour assurer la sécurité de votre compte.",
+	  "usernameAlreadyExists": "Ce nom d'utilisateur existe déjà",
+	  "usernameLenError": "Le nom d'utilisateur doit comporter 12 caractères au moins",
+	  "usernameFormatError": "Le nom d'utilisateur ne doit contenir que des lettres, chiffres, _, -.",
+	  "emailAlreadyExists": "Cet email est déjà associé à un compte",
+	  "invalidEmailFormat": "Ce format d'email n'est pas valide",
+	  "invalidImageFormat": "Format d'image de profil non valide, les formats valides sont : (png, jpg, jpeg, gif, svg, webp)",
+	  "usernameSuccessfullyChanged": "Le nom d'utilisateur a été modifié avec succès",
+	  "emailSuccessfullyChanged": "L'email a été modifié avec succès",
+	  "profileImageSuccessfullyChanged": "L'image du profil a été modifiée avec succès",
+	  "invalidImageFile": "Fichier image invalide",
+	  "invalidImageLink": "Lien d'image invalide",
+	  "usernameFormatWarning": "Le nom d'utilisateur ne peut pas être vide",
+	  "invalidUsernameFormat": "Nom d'utilisateur : lettres, chiffres, _ , -",
+	  "emailCannotBeEmpty": "L'adresse email ne peut pas être vide",
+	  "invalidEmail": "Adresse email invalide"
 	},
 	"profileNavBarComponent": {
 	  "personalInformation": "Informations personnelles",

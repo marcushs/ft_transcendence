@@ -67,13 +67,13 @@ class ChangeUserInfosView(View):
         error = {}
 
         if await sync_to_async(lambda: User.objects.filter(username=new_username).exists())() and new_username != request.user.username:
-            error['error'] = f"Username '{new_username}' already exists"
+            error['error'] = "usernameAlreadyExists"
             raise ValidationError(error)
         if len(new_username) > 12:
-            error['error'] = f"Username must be less than 12 characters"
+            error['error'] = "usernameLenError"
             raise ValidationError(error)
         if re.search(r"^[a-zA-Z0-9_-]+$", new_username) is None:
-            error['error'] = f"Username must container only letters, numbers, _ , -"
+            error['error'] = "usernameFormatError"
             raise ValidationError(error)
 
 
@@ -81,10 +81,10 @@ class ChangeUserInfosView(View):
         error = {}
 
         if await sync_to_async(lambda: User.objects.filter(email=new_email).exists())() and new_email != request.user.email:
-            error['error'] = f'Email {new_email} is already associated with an account'
+            error['error'] = 'emailAlreadyExists'
             raise ValidationError(error)
         if re.search(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', new_email) is None:
-            raise ValueError('Invalid email format')
+            raise ValueError('invalidEmailFormat')
 
 
     def check_profile_image_errors(self, new_profile_image):
@@ -94,7 +94,7 @@ class ChangeUserInfosView(View):
 
         valid_mime_type = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp']
         if myme_type not in valid_mime_type:
-            error['error'] = f'Invalid profile image format, valid formats are: (png, jpg, jpeg, gif, svg, webp)'
+            error['error'] = 'invalidImageFormat'
             raise ValidationError(error)
 
 
@@ -119,7 +119,7 @@ class ChangeUserInfosView(View):
         await sync_to_async(request.user.save)()
         await notify_user_info_display_change(request=request, change_info='username', old_value=old_username)
 
-        return {'username_message': 'Username successfully changed'} 
+        return {'username_message': 'usernameSuccessfullyChanged'}
 
     async def change_email(self, User, request):
         request.user.email = request.POST.get('email') 
@@ -132,7 +132,7 @@ class ChangeUserInfosView(View):
             pass
         await sync_to_async(request.user.save)() 
 
-        return {'email_message': 'Email successfully changed'}
+        return {'email_message': 'emailSuccessfullyChanged'}
 
 
     async def change_profile_image(self, request):
@@ -149,7 +149,7 @@ class ChangeUserInfosView(View):
         await sync_to_async(request.user.save)()
         await notify_user_info_display_change(request=request, change_info='picture')
 
-        return {'profile-image_message': 'Profile image successfully changed'}
+        return {'profile-image_message': 'profileImageSuccessfullyChanged'}
 
 
     async def change_profile_image_link(self, request):
@@ -160,4 +160,4 @@ class ChangeUserInfosView(View):
         await sync_to_async(request.user.save)()
         await notify_user_info_display_change(request=request, change_info='picture')
 
-        return {'profile-image_message': 'Profile image successfully changed'}
+        return {'profile-image_message': 'profileImageSuccessfullyChanged'}
