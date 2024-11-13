@@ -5,7 +5,7 @@ import { updateCurrentChatroomId, messageReceptionDOMUpdate } from '../../utils/
 import { UpdateChatContactWebsocket } from './updateChatContactWebsocket.js';
 import { UpdateChatroomTopBarWebsocket } from './updateChatroomTopBarWebsocket.js';
 import { putNewTournamentToDOM, redirectToTournamentWaitingRoom, updateTournamentInfo, redirectToTournamentHome } from '../../utils/tournamentUtils/joinTournamentUtils.js';
-import { redirectToTournamentMatch } from '../../utils/tournamentUtils/tournamentMatchUtils.js';
+import { redirectToTournamentMatch, startTournamentMatchInstance } from '../../utils/tournamentUtils/tournamentMatchUtils.js';
 
 
 export let contactSocket = null;
@@ -165,7 +165,7 @@ function loadTournamentWebSocket() {
 		console.log("The tournament websocket connection was setup successfully !");
 	};
 
-	tournamentSocket.onmessage = function(e) {
+	tournamentSocket.onmessage = async function(e) {
 		const data = JSON.parse(e.data)
 		console.log(data)
 
@@ -185,11 +185,18 @@ function loadTournamentWebSocket() {
 			updateTournamentInfo(data.tournament);
 		} else if (data.type === 'load_match') {
 			console.log('loading tournament match...');
-			redirectToTournamentMatch(data.tournament)
+			redirectToTournamentMatch(data.tournament_bracket);
 		} else if (data.type === 'redirect_to_tournament_home') {
 			redirectToTournamentHome()
 		} else if (data.type === 'leave_tournament') {
 			updateTournamentInfo(data.tournament);
+		} else if (data.type === 'countdown_update') {
+			const tournamentMatch = document.querySelector('tournament-match');
+
+			if (!tournamentMatch) return;
+			tournamentMatch.updateCountdownSeconds(data.time);
+		} else if (data.type === 'start_game_instance') {
+			await startTournamentMatchInstance(data.payload);
 		}
 	};
 

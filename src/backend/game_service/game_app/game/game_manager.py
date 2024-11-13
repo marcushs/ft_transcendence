@@ -21,7 +21,6 @@ class startGameEngine(View):
 
     async def post(self, request):
         try:
-            print('!!!! startGameEngine REACHED !!!!')
             data = json.loads(request.body.decode('utf-8'))
             if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
                 return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)
@@ -41,7 +40,7 @@ async def starting_game_instance(data):
     print(f'-----------> player one infos : {player_one_infos}') 
     try:
         game_users_data = {
-            'game': str(uuid.uuid4()),
+            'game': data['match_id'] if data['game_type'] == 'tournament' else str(uuid.uuid4()),
             'game_type': str(data['game_type']),
             'player_one': {
                 'id': str(data['player1']),

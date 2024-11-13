@@ -33,14 +33,14 @@ export async function fetchChatroomsList() {
 }
 
 export async function getUserId() {
-	let res = await sendRequest('GET', '/api/user/user_info/', null, false);
 
-	if (res.status === 'error') {
-		console.log('Cannot get userId: ', res.message);
+	try {
+		let res = await sendRequest('GET', '/api/user/user_info/', null, false);
+		
+		return res.user.id;
+	} catch (error) {
 		return null;
 	}
-	
-	return res.user.id;
 }
 
 export async function addNewContactToContactedList(chatroomId) {

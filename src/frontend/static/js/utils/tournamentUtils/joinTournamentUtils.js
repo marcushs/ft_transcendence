@@ -56,7 +56,9 @@ function updateTournamentComponentPlayerCount(tournamentData, joinComponent, joi
 		if (tournament.tournamentId === joinedTournamentId) {
 			const joinedPlayers = tournament.querySelector('.tournament-right-infos > p');
 
-			joinedPlayers.innerText = `${tournamentData.member_count} / ${tournamentData.tournament_size}`; 
+			joinedPlayers.innerText = `${tournamentData.member_count} / ${tournamentData.tournament_size}`;
+			
+			if (tournamentData.member_count === tournamentData.tournament_size) tournament.remove();
 		}
 	})
 }

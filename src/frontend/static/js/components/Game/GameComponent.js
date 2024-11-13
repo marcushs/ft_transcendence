@@ -19,9 +19,10 @@ class GameComponent extends HTMLElement {
             "tournamentHome": { context: "/tournamentHome", state: new tournamentHome() },
             "onlineHome": { context: "/onlineHome", state: new onlineHome() },
             "localHome": { context: "/localHome", state: new localHome() },
-            "bracket": {context: "/tournamentHome/bracket", state: new bracket()},
+            "bracket": {context: "/tournamentHome/tournamentMatch/bracket"},
             "tournamentWaitingRoom": {context: "/tournamentHome/tournamentWaitingRoom"},
             "tournamentMatch": {context: "/tournamentHome/tournamentMatch"},
+            "tournamentLost": {context: "/tournamentHome/tournamentLost"},
         }
 
         this.innerHTML = `

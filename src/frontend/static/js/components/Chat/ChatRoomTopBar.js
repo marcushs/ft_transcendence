@@ -41,20 +41,21 @@ export default class ChatRoomTopBar extends HTMLElement {
 				<p class="chatroom-top-bar-username">${this.userData.username}</p>
 				<p class="${status}">${status}</p>
 			</div>
+			${this.userData.username !== "Tournament Bot" ? `
 			<div id="chat-block-user" class="chat-block-user ${isUserBlocked ? 'blocked' : ''}">
 				<p>
 					<i class="fa-solid fa-ban"></i>
 					<i class="fa-regular fa-circle-check"></i>
 					<span>${isUserBlocked ? 'Unblock' : 'Block'} ${this.userData.username}</span>
 				</p>
-			</div>
+			</div>` : ''}
 		`;
 
 	};
 
 	async getUserStatus() {
+		if (this.userData.username === 'Tournament Bot') return 'online';
 		try {
-			console.log('chatroom top bar: ', this.userData.id)
 			let res = await sendRequest('GET', `/api/user/get_user_status/?userId=${this.userData.id}`, null, false);
 			
 			console.log('chatroom top bar: ', res.user_status)
@@ -65,6 +66,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 
 	addEventListeners() {
 		const chatBlockUser = this.querySelector('#chat-block-user');
+		if (!chatBlockUser) return; 
 		const chatBlockUserSpan = chatBlockUser.querySelector('span');
 
 		chatBlockUser.firstElementChild.addEventListener('click', async () => {
@@ -82,6 +84,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 
 	async isTargetUserBlocked() {
 		try {
+			if (this.userData.id === 'tournament_bot') return;
 			let res = await sendRequest('GET', `/api/chat/is_user_blocked/?targetUserId=${this.userData.id}`, null, false);
 
 			console.log('is targetuser blocked: ', res)

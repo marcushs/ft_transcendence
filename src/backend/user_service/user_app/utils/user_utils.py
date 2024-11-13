@@ -49,8 +49,7 @@ class ping_status_user(View):
 
     async def post(self, request):
         from .websocket_utils import notify_user_info_display_change
-        
-        
+
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status': 'fail', 'message': 'User not found'}, status=200)
         request.user.last_active = timezone.now()
@@ -115,6 +114,16 @@ class update_user(View):
             async_to_sync(notify_user_info_display_change)(request=request, change_info='status', old_value=old_status)
         return JsonResponse({'message': 'User updated successfully'}, status=200) 
 
+class check_username(View):
+    def __init__(self):
+        super().__init__
+
+    def get(self, request):
+        username = request.GET.get('username')
+        print(username) 
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
+        return JsonResponse({"message": "Username is free", "status": "Success"}, status=200)
 
 async def send_request(request_type, url, request=None, payload=None):
     if request:

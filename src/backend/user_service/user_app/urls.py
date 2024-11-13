@@ -22,5 +22,5 @@ urlpatterns = [
     path('ping_status/', user_utils.ping_status_user.as_view(), name='ping_status'),
     path('set_offline/', user_utils.set_offline_user.as_view(), name='set_offline'),
     path('user_game_info/', user_utils.getUserGameInfo.as_view(), name='user_game_info'),
-    
+    path('check_username/', user_utils.check_username.as_view(), name='check_username'),
 ]

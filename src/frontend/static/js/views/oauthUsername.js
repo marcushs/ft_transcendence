@@ -1,38 +1,77 @@
 import { getCookie } from "../utils/cookie.js";
 import { getPortNumber } from "../utils/oauthUtils.js";
+import {getString} from "../utils/languageManagement.js";
+import rotatingGradient from "../anim/rotatingGradient.js";
 
 export default () => {
 	const html = `
-		<h1>Username already taken, please choose a new one (max char. : 12)</h1>
-		<form>
-			<input type="text" placeholder="username" name="newUsername" id="username" style="background-color: white;"/>
-			<span id="inputFeedback"></span>
-		</form>
-		<button type="button" id="btn">Submit</button>
+		<section class="oauth-username-page">
+			<div class="oauth-username-container-background"></div>
+			<div class="oauth-username-container">
+				<div class="oauth-username-content">
+					<h1>${getString("oauthUsernameView/title")}</h1>
+					<form>
+						<input type="text" placeholder="username" name="newUsername" id="username" maxlength="12"/>
+						<div class="feedback-container">
+							<span id="feedbackElement"></span>
+						</div>
+					</form>
+					<button-component label="submit" id="btn" class="generic-btn-disabled"></button-component>
+				</div>
+			</div>
+		</section>
 	`;
 
 	setTimeout(() => {
+		attachEventListeners();
 		const btn = document.getElementById('btn');
-		
+
 		btn.addEventListener("click", postNewUsername);
+		rotatingGradient('.oauth-username-container-background', '#FF16C6', '#00D0FF');
+		rotatingGradient('.oauth-username-container', '#FF16C6', '#00D0FF');
+		rotatingGradient('.oauth-username-content', '#1c0015', '#001519');
 	}, 0);
 	return html;
 }
 
+
+function attachEventListeners() {
+	const inputElement = document.querySelector('.oauth-username-content input');
+	const feedbackElement = document.querySelector('.oauth-username-content #feedbackElement');
+	const button = document.querySelector('.oauth-username-content button-component');
+
+	inputElement.addEventListener("input", event => manageInputValidity(inputElement, feedbackElement, button));
+}
+
+
+function manageInputValidity(inputElement, feedbackElement, button) {
+	if (inputElement.value === '') {
+		button.className = 'generic-btn-disabled';
+		feedbackElement.innerText = '';
+		return ;
+	}
+
+	if (feedbackElement.innerText !== '' || inputElement.value === '')
+		feedbackElement.innerText = '';
+
+	if (!/^[a-zA-Z0-9_-]+$/.test(inputElement.value) && inputElement.value !== '') {
+		feedbackElement.textContent = getString("oauthUsernameView/usernameFormatError");
+		button.className = "generic-btn-disabled";
+	}
+	else
+		button.className = "generic-btn";
+}
+
+
 async function postNewUsername() {
-	const inputFeedback = document.getElementById("inputFeedback");
+	const feedbackElement = document.getElementById("feedbackElement");
 	const newUsername = document.getElementById('username').value;
 	const urlParams = new URLSearchParams(window.location.search);
+	console.log(urlParams)
 	const oauthProvider = urlParams.get('oauth_provider');
 
-	inputFeedback.innerText = '';
+	feedbackElement.innerText = '';
 
-	if (checkUsernameValidity(newUsername) === false) {
-
-		inputFeedback.innerText = "Invalid input";
-		inputFeedback.style = "red";
-	}
-	console.log(newUsername)
 	const config = {
 		method: 'POST',
 		headers: {
@@ -57,12 +96,3 @@ async function postNewUsername() {
 		// console.log('Catch error :', error);
 	}
 }
-
-function checkUsernameValidity(username) {
-	username = username.replace(/[^\x20-\x7E]/g, '')
-	username = username.trim();
-
-	if (username === '' || username.length > 12 )
-		return false;
-	return true;
-}username

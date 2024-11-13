@@ -65,7 +65,7 @@ class PongGameEngine:
 
     def set_initial_game_state(self, player_one_score, player_two_score):
         self.state = {
-            'is_ranked': True if self.game_type == "ranked" else False,
+            'game_type': self.game_type,
             'player_one': {
                 'score': player_one_score,
                 'id': self.player_one_id,
@@ -262,7 +262,6 @@ class PongGameEngine:
 
 
     async def set_winner_and_loser(self):
-        print(f'self.player_one_score: {self.player_one_score} -- self.loser_id: {self.loser_id}')
         
         if self.player_one_score > self.player_two_score:
             print('------------- TESWT 1')
@@ -365,6 +364,7 @@ class PongGameEngine:
     async def send_results_to_statistics(self, is_surrend, is_draw, is_canceled):
         winner, loser = await self.get_winner_and_loser_dict()
         payload = {
+            'game_id': self.game_id,
             'is_draw': is_draw,
             'is_surrend': is_surrend,
             'is_canceled': True if is_canceled is not None else False,
@@ -372,11 +372,15 @@ class PongGameEngine:
             'loser': loser,
             'type': self.game_type
         }
+        # !!!!!!!!!! mettre un truc special pour tournois
+        if self.game_type == 'tournament':
+            print('end of a tournament match')
+            result_response = await send_request(request_type='POST', url='http://tournament:8000/api/tournament/match_result/', payload=payload)
         result_response = await send_request(request_type='POST', url='http://statistics:8000/api/statistics/match_result/', payload=payload)
         print(f' !!!!!!!!!!!!!!  result_response: ', result_response.json())
-        return result_response.json()
+        return result_response.json() 
 
-    async def get_winner_and_loser_dict(self):
+    async def get_winner_and_loser_dict(self):  
         if self.winner_id == self.player_one_id:
             winner = {
                 'id': self.player_one_id,
@@ -401,7 +405,7 @@ class PongGameEngine:
         winner_payload, loser_payload = await self.get_end_game_payload(results)
         print(f'------------------- {self.winner_id}, {self.loser_id} -----------------')
         print(f'------------------- {self.player_one_score}, {self.player_two_score} -----------------')
-        print(f'------------------- {self.player_one_id}, {self.player_two_id} -----------------')
+        print(f'------------------- {self.player_one_id}, {self.player_two_id} -----------------') 
         await send_websocket_info(self.winner_id, winner_payload)
         await send_websocket_info(self.loser_id, loser_payload)
 

@@ -52,19 +52,20 @@ export async function putMessageToChatroomConversation(messageData) {
 	}
 	
 	const currentChatroomId = chatroomConversation.getAttribute('data-chatroom');
-	if (!isTargetChatroom(currentChatroomId, messageData.chatroom)) return ;
 	
-	const chatroomConversationUl = chatroomConversation.querySelector('.chatroom-conversation-message-container > ul');
-	const liElem = document.createElement('li');
-	const messageComponent = new ChatMessageComponent(messageData);
-
-	console.log('putMessageToChatroom: ', messageData);
-	const isSent = await isSentOrReceivedMessage(messageData.author);
-	console.log(isSent)
- 	messageComponent.classList.add(isSent);
-	liElem.appendChild(messageComponent);
-	chatroomConversationUl.appendChild(liElem);
-	chatroomConversation.scrollTop = chatroomConversation.scrollHeight;
+	if (messageData.chatroom === 'tournament_match' || isTargetChatroom(currentChatroomId, messageData.chatroom)) {
+		const chatroomConversationUl = chatroomConversation.querySelector('.chatroom-conversation-message-container > ul');
+		const liElem = document.createElement('li');
+		const messageComponent = new ChatMessageComponent(messageData);
+	
+		console.log('putMessageToChatroom: ', messageData);
+		const isSent = await isSentOrReceivedMessage(messageData.author);
+		console.log(isSent)
+		messageComponent.classList.add(isSent);
+		liElem.appendChild(messageComponent);
+		chatroomConversationUl.appendChild(liElem);
+		chatroomConversation.scrollTop = chatroomConversation.scrollHeight;
+	}
 }
 
 function isTargetChatroom(currentChatroomId, targetChatroomId) {

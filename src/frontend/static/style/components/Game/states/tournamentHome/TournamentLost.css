@@ -1,0 +1,21 @@
+.tournament-match-content .countdown-container p.tournament-lost-countdown {
+	font-size: 1.7rem;
+	color: red;
+	transform: translateX(-2%);
+	margin-top: 1rem;
+}
+
+.countdown-container span {
+	font-size: 1.7rem;
+	margin: 0;
+}
+
+.tournament-lost-leave-btn{
+	background: none;
+	color: red;
+	font-size: 2.2rem;
+	padding: 1rem 2rem;
+	border: 1px solid red;
+	border-radius: 5px;
+	cursor: pointer;
+}

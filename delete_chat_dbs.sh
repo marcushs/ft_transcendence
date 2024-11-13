@@ -7,8 +7,8 @@ export $(grep -v '^#' ./src/backend/.env | xargs)
 # docker exec -e PGPASSWORD=$CHAT_DB_PASSWORD chat psql -U $CHAT_DB_USER -d $CHAT_DB_NAME -h $CHAT_DB_HOST -c "DELETE FROM chat_app_user;"
 
 #chat_app_user_blocked_users
-echo -e "_________CHAT_APP_USER_BLOCKED_USERS________\n"
-docker exec -e PGPASSWORD=$CHAT_DB_PASSWORD chat psql -U $CHAT_DB_USER -d $CHAT_DB_NAME -h $CHAT_DB_HOST -c "DELETE FROM chat_app_user_blocked_users;"
+echo -e "_________CHAT_APP_BLOCK_________\n" 
+docker exec -e PGPASSWORD=$CHAT_DB_PASSWORD chat psql -U $CHAT_DB_USER -d $CHAT_DB_NAME -h $CHAT_DB_HOST -c "DELETE FROM chat_app_block;" 
 
 #chat_app_chatgroup_members
 echo -e "_________CHAT_APP_CHATGROUP_MEMBERS_________\n"

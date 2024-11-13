@@ -80,7 +80,7 @@ function sendDisconnectMessage(userId) {
     if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
 		gameSocket.send(JSON.stringify({
 			'type': 'client_disconnected',
-			'game_id': gameInstance.gameId,
+			'game_id': gameInstance ? gameInstance.gameId : null,
 			'player_id': userId,
 		}));	
     }

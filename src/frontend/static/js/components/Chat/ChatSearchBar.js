@@ -3,7 +3,9 @@ class ChatSearchBar extends HTMLElement {
 		super();
 		this.render();
 		this.boundHandleClick = this.handleClick.bind(this);
+		this.boundHandleInput = this.handleInput.bind(this);
 		this.attachEventListener();
+		this.searchContactsRemoved = [];
 	};
 
 	render() {
@@ -44,6 +46,7 @@ class ChatSearchBar extends HTMLElement {
 			popUp.classList.add('add-new-contact-pop-up');
 			document.querySelector('.home-page').appendChild(popUp);
         });
+		this.searchContactInput.addEventListener('input', this.boundHandleInput)
 	};
 
 	handleClick(e) {
@@ -57,6 +60,26 @@ class ChatSearchBar extends HTMLElement {
 		this.searchBarCloseBtn.classList.toggle('active');
 		this.searchContactInput.focus();
 		if (e.target.id === 'search-bar-close-btn') this.searchContactInput.value = '';
+	}
+
+	handleInput(e) {
+		const contactedList = document.querySelector('.contacted-list > ul');
+
+		for (let i = this.searchContactsRemoved.length - 1; i >= 0; i--) {
+			contactedList.appendChild(this.searchContactsRemoved[i]);
+			this.searchContactsRemoved.pop();
+		}
+		let searchInput = this.searchContactInput.value;
+		const contacts = document.querySelectorAll('chat-contact-component')
+
+		contacts.forEach(contact => {
+			const userData = JSON.parse(contact.getAttribute('data-user'));
+
+			if (!userData.username.includes(searchInput)) {
+				this.searchContactsRemoved.push(contact.parentElement);
+				contact.parentElement.remove()
+			}
+		})
 	}
 };
 

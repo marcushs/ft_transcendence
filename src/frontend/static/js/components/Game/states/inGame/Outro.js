@@ -3,11 +3,11 @@ import {getString} from "../../../../utils/languageManagement.js";
 
 
 export default class Outro {
-	constructor(canvas) {
+	constructor(canvas, isRanked) {
 		this.canvas = canvas;
 
 		this.isWin = true;
-		this.isRanked = false;
+		this.isRanked = isRanked;
 
 		this.backgroundOpacity = 0;
 		this.resultFontSize = 1500;

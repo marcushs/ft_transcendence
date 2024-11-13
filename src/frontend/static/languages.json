@@ -223,6 +223,10 @@
 	  "logoutSentence": "Are you sure you want to logout?",
 	  "yes": "Yes",
 	  "cancel": "Cancel"
+	},
+	"oauthUsernameView": {
+	  "title": "Username already taken, please choose a new one",
+	  "usernameFormatError": "Username must container only letters, numbers, _ , -"
 	}
   },
 
@@ -369,7 +373,7 @@
 	  "changePasswordInformation": "Changez régulièrement votre mot de passe pour assurer la sécurité de votre compte.",
 	  "usernameAlreadyExists": "Ce nom d'utilisateur existe déjà",
 	  "usernameLenError": "Le nom d'utilisateur doit comporter 12 caractères au moins",
-	  "usernameFormatError": "Le nom d'utilisateur ne doit contenir que des lettres, chiffres, _, -.",
+	  "usernameFormatError": "Le nom d'utilisateur ne doit contenir que des lettres, chiffres, _, -",
 	  "emailAlreadyExists": "Cet email est déjà associé à un compte",
 	  "invalidEmailFormat": "Ce format d'email n'est pas valide",
 	  "invalidImageFormat": "Format d'image de profil non valide, les formats valides sont : (png, jpg, jpeg, gif, svg, webp)",
@@ -449,6 +453,10 @@
 	  "logoutSentence": "Êtes-vous sûr de vouloir vous déconnecter ?",
 	  "yes": "Oui",
 	  "cancel": "Annuler"
+	},
+	"oauthUsernameView": {
+	  "title": "Nom d'utilisateur déjà pris, veuillez en choisir un nouveau",
+	  "usernameFormatError": "Le nom d'utilisateur ne doit contenir que des lettres, chiffres, _, -"
 	}
   },
 

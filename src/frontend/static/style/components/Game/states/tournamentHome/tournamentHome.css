@@ -4,6 +4,7 @@
 @import "./TournamentWaitingRoom.css";
 @import "./TournamentComponent.css";
 @import "./TournamentMatch.css";
+@import "./TournamentLost.css";
 
 .tournament-home-container {
 	height: 100%;
