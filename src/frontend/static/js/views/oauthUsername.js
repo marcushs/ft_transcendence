@@ -65,4 +65,4 @@ function checkUsernameValidity(username) {
 	if (username === '' || username.length > 12 )
 		return false;
 	return true;
-}
+}username
