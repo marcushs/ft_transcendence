@@ -31,7 +31,7 @@ async def async_get_user_by_id(user_id):
     return user
 
 
-class add_new_user(View):
+class AddNewUser(View):
     def __init__(self):
         super().__init__()
     

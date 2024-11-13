@@ -24,7 +24,7 @@ export class TwoFactorVerify {
 				        <two-factor-input-component></two-factor-input-component>
 						</div>
 						<p class="feedbackInformation"></p>
-						<button-component label="Verify" class="generic-auth-btn"></button-component>
+						<button-component label="verify" class="generic-auth-btn"></button-component>
 					</form>
 				</div>
 			</section>
@@ -77,10 +77,12 @@ export class TwoFactorVerify {
 }
 
 async function sendTwoFactorCode(userCredentials) {
-	const url = '/api/twofactor/get_2fa_code/';
-
 	try {
-		await sendRequest('POST', url, userCredentials );
+		const payload = {
+			'username': userCredentials.username,
+			'email_type': 'verify'
+		}
+		await sendRequest('POST', '/api/twofactor/get_2fa_code/', payload );
 	} catch (error) {
 		console.error(error);
 	}
@@ -101,6 +103,6 @@ async function VerifyTwoFactorRequest(verificationCode, userCredentials) {
 		document.dispatchEvent(event);
 		setTwoFactorLocalStorage();
 	} catch (error) {
-		document.querySelector('.feedbackInformation').innerHTML = error.message;
+		document.querySelector('.feedbackInformation').innerHTML = getString(`twoFactorError/${error.message}`);
 	}
 }

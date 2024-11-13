@@ -225,6 +225,8 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     async updateContactList() {
+        console.log('test');
+        
         const contacts = await this.getDataRequest('search_contacts');
         const contactsData = await this.getDataRequest('users_data', contacts.friends);
         const searchValue = this.searchContactInput.value.toLowerCase();

@@ -1,24 +1,35 @@
 from django.contrib.auth.models import AnonymousUser
+from ..models import User
 from django.http import JsonResponse
 from django.views import View
 import json
-# from ..decorator import check_jwt
-# from django.utils.decorators import method_decorator
 
 class language_view(View):
     def __init__(self):
         super().__init__
 
-#     @method_decorator(check_jwt)
     def get(self, request):
-        return JsonResponse({'language': request.user.language}, status=200)
+        try:
+            username = request.GET.get('username', None)
+            if username:
+                language = self.get_user_language(username)
+                return JsonResponse({'status': 'success', 'language': language}, status=200)
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'status': 'error', 'message': 'UnknownUser'}, status=200)
+            return JsonResponse({'status': 'success', 'language': request.user.language}, status=200)
+        except Exception as e:
+            print(f'Unexpected error with language view: {str(e)}')
+            return JsonResponse({'message': 'can\'t find user language preference'}, status=400)
+    
+    def get_user_language(self, username):
+        user = User.objects.get(username=username) 
+        return user.language
 
-#     @method_decorator(check_jwt)
-    def post(self, request):
-        if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'message': 'Language setup failed'}, status=200)
-        data = json.loads(request.body.decode('utf-8'))
-        if data['language'] == 'fr' or 'en' or 'zh':
+    def post(self, request): 
+        if isinstance(request.user, AnonymousUser): 
+            return JsonResponse({'message': 'Language setup failed'}, status=400)
+        data = json.loads(request.body.decode('utf-8'))  
+        if data['language'] == 'fr' or 'en' or 'zh': 
             request.user.language = data['language']
         else:
             request.user.language = 'en'

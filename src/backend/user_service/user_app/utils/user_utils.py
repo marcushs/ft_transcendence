@@ -64,7 +64,7 @@ class ping_status_user(View):
         return JsonResponse({'status': 'success', "message": 'pong'}, status=200) 
 
 
-class add_new_user(View):
+class AddNewUser(View):
     def __init__(self):
         super().__init__
     
@@ -102,7 +102,6 @@ class update_user(View):
         old_status = None
         for field in ['username', 'email', 'is_verified', 'two_factor_method', 'status', 'last_active']:
             if field in data:
-                print('-----------> field:')
                 if field == 'last_active':
                     setattr(request.user, field, timezone.now())
                 elif field == 'status':
@@ -176,6 +175,17 @@ class searchUsers(View):
             return JsonResponse({'status': 'success', 'message': users_list}, safe=False, status=200)
         else:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+        
+
+class getClientUsername(View):
+    def __init__(self):
+        super().__init__
+    
+    def get(self, request):
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'message': 'User not found'}, status=400)
+        return JsonResponse({'status': 'success', 'username': request.user.username}, status=200)
+
 
 class getUserId(View):
     def __init__(self):

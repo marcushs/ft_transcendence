@@ -3,7 +3,7 @@ from .views import matchmaking
 from .utils import user_utils
 
 urlpatterns = [
-    path('add_user/', user_utils.add_new_user.as_view(), name='add_user'),
+    path('add_user/', user_utils.AddNewUser.as_view(), name='add_user'),
     path("is_waiting/", matchmaking.CheckUserInWaitingQueue.as_view(), name="is_waiting"),
     path('user_is_in_game/', matchmaking.CheckUserInGame.as_view(), name='user_is_in_game'),
     path('update_user/', user_utils.update_user.as_view(), name='update_user'),

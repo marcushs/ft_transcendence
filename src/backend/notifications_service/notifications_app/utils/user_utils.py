@@ -13,7 +13,7 @@ async def get_user_id_by_username(username):
     return user.id
 
 
-class add_new_user(View):
+class AddNewUser(View):
     def __init__(self):
         super().__init__()
     
@@ -27,17 +27,6 @@ class add_new_user(View):
             return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
         await sync_to_async(User.objects.create_user)(username=data['username'], user_id=data['user_id'])
         return JsonResponse({"message": 'user added with success'}, status=200)
-    
-class check_username(View):
-    def __init__(self):
-        super().__init__
-
-    def get(self, request):
-        username = request.GET.get('username')
-        print(username) 
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
-        return JsonResponse({"message": "Username is free", "status": "Success"}, status=200)
     
 class update_user(View):
     def __init__(self):

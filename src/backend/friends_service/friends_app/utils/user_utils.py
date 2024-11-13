@@ -9,7 +9,7 @@ import json
 import requests
 import httpx
 
-class add_new_user(View):
+class AddNewUser(View):
     def __init__(self):
         super().__init__
     
@@ -39,30 +39,6 @@ class update_user(View):
         request.user.save()
         return JsonResponse({'message': 'User updated successfully'}, status=200)
 
-class check_username(View):
-    def __init__(self):
-        super().__init__
-
-    def get(self, request):
-        username = request.GET.get('username')
-        print(username) 
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
-        return JsonResponse({"message": "Username is free", "status": "Success"}, status=200)
-    
-class delete_user(View):
-    def __init__(self):
-        super().__init__
-
-    def delete(self, request):
-        id = request.DELET.get('id')
-        if User.objects.filter(id=id).exists():
-            user = User.objects.get(id=id)
-        else:
-            return JsonResponse({'message': 'User not found, no action taken', 'status': 'Success'}, status=204)
-        username = user.username
-        user.delete()
-        return JsonResponse({'message': f'User {username} deleted successfully', 'status': "Success"}, status=200)
     
 async def send_async_request(request_type, request, url, payload=None):
         headers = {

@@ -7,7 +7,7 @@
 # import json
 # import requests
 
-# class add_new_user(View):
+# class AddNewUser(View):
 #     def __init__(self):
 #         super().__init__
     

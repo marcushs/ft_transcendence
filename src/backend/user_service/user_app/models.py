@@ -26,7 +26,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    language = models.CharField(max_length=4, null=True, default=None)
+    language = models.CharField(max_length=4, null=True, default='en')
     username = models.CharField(max_length=12, unique=True, default='default')
     email = models.EmailField(unique=True)
     profile_image = models.CharField(blank=True, null=True, default=None)
