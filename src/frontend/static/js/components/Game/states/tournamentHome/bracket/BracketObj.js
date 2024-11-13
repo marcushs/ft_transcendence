@@ -58,7 +58,8 @@ export default class BracketObj {
 		target['rightMatches'] = [];
 
 		stageMatches.forEach((match, idx) => {
-			(idx < stageMatches.length / 2) ? 
+			console.log('BracketObj: ', match.bracket_index);
+			(match.bracket_index < stageMatches.length / 2) ? 
 			target.leftMatches.push(this.makeMatch(match)) :
 			target.rightMatches.push(this.makeMatch(match));
 		});

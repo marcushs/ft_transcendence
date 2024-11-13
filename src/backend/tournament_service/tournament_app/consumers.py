@@ -319,6 +319,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				match.bracket_index = i
 			else:
 				match.bracket_index = i / 2
+			match.save()
 			round_mapping[round].add(match)
 			i += 2
 
@@ -426,8 +427,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	@database_sync_to_async
 	def match_in_next_round(self, user, last_match):
+		print('------------------------reached here')
 		tournament = last_match.tournament
 		tournament_bracket = Bracket.objects.filter(tournament=tournament).first()
+
+		round_mapping = {
+			'finals': {'target': tournament_bracket.finals, 'matches_per_side': 0},
+			'semi_finals': {'target': tournament_bracket.semi_finals, 'matches_per_side': 1},
+			'quarter_finals': {'target': tournament_bracket.quarter_finals, 'matches_per_side': 2},
+			'eighth_finals': {'target': tournament_bracket.eighth_finals, 'matches_per_side': 4}
+		}
 		
 		next_rounds = {
 			'eighth_finals': 'quarter_finals',
@@ -435,12 +444,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'semi_finals': 'finals'
 		}
 
-		round_mapping = {
-			'finals': tournament_bracket.finals,
-			'semi_finals': tournament_bracket.semi_finals,
-			'quarter_finals': tournament_bracket.quarter_finals,
-			'eighth_finals': tournament_bracket.eighth_finals
-		}
+		last_round = last_match.tournament_round
+		last_round_matches = round_mapping[last_round]
+		next_round = next_rounds[last_round]
+
+		if last_round_matches['matches_per_side'] > 2:
+			last_match_index = last_match.bracket_index
+			adjacent_match_index = last_match_index + 1 if last_match_index % 2 == 0 else last_match_index - 1
+			adjacent_match = last_round_matches['target'].filter(bracket_index=adjacent_match_index)
+
+
 		# new_match = TournamentMatch.objects.create(tournament=tournament, tournament_round=next_rounds[last_match.tournament_round])
 		# new_match.players.add(user)
 		# round_mapping[last_match.tournament_round].add(new_match)

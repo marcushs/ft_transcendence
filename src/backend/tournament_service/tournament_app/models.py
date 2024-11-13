@@ -153,7 +153,8 @@ class TournamentMatch(models.Model):
             'winner_score': self.winner_score,
             'loser_score': self.loser_score,
             'date': format_datetime(self.date),
-            'tournament_round': self.tournament_round
+            'tournament_round': self.tournament_round,
+            'bracket_index': self.bracket_index
         }
         if self.winner is not None:
             obj_dict['winner'] = await self.winner.to_dict()
@@ -175,7 +176,8 @@ class TournamentMatch(models.Model):
             'winner_score': self.winner_score,
             'loser_score': self.loser_score,
             'date': format_datetime(self.date),
-            'tournament_round': self.tournament_round
+            'tournament_round': self.tournament_round,
+            'bracket_index': self.bracket_index
         }
         if self.winner is not None:
             obj_dict['winner'] = self.winner.to_dict_sync()
