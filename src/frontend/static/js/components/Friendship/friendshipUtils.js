@@ -1,3 +1,5 @@
+import {getString} from "../../utils/languageManagement.js";
+
 export function createButtonStatusList() {
     const statusList = {
         own_profile: {
@@ -6,7 +8,7 @@ export function createButtonStatusList() {
         pending_sent: {
             buttons: [{
                 payload: {status: 'cancel'},
-                text: 'cancel request',
+                text: getString("friendshipButton/cancel"),
                 img: '../../../assets/cancel_icon.svg',
                 alt: 'cancel_friend_logo',
                 class: 'cancel-friend-button',
@@ -15,14 +17,14 @@ export function createButtonStatusList() {
         pending_received: {
             buttons: [{
                 payload: {status: 'accept'},
-                text: 'accept invitation',
+                text: getString("friendshipButton/accept"),
                 img: '../../../assets/accept_icon.svg',
                 alt: 'accept_friend_logo',
                 class: 'accept-friend-button',
             },
             {
                 payload: {status: 'decline'},
-                text: 'decline invitation',
+                text: getString("friendshipButton/decline"),
                 img: '../../../assets/cancel_icon.svg',
                 alt: 'decline_friend_logo',
                 class: 'decline-friend-button',
@@ -31,7 +33,7 @@ export function createButtonStatusList() {
         mutual_friend: {
             buttons: [{ 
                 payload: {status: 'remove'},
-                text: 'remove contact',
+                text: getString("friendshipButton/remove"),
                 img: '../../../assets/cancel_icon.svg',
                 alt: 'remove_friend_logo',
                 class: 'remove-friend-button',
@@ -40,7 +42,7 @@ export function createButtonStatusList() {
         not_friend: {
             buttons: [{
                 payload: {status: 'add'},
-                text: 'add contact',
+                text: getString("friendshipButton/add"),
                 img: '../../../assets/add_friend.svg',
                 alt: 'add_friend_logo',
                 class: 'add-friend-button',

@@ -48,7 +48,7 @@ export default class Game {
 	constructor(canvas, gameId, gameState, userId) {
 		console.log("gameType is: ", gameState.game_type)
 		this.gameInProgress = true;
-		this.gameType = gameState.game_type
+		this.gameType = gameState.game_type;
 		this.userId = userId;
 		this.canvas = canvas;
 		this.gameId = gameId;
@@ -60,7 +60,8 @@ export default class Game {
 		this.isSentEmoteAnimationEnabled = false;
 		this.isReceivedEmoteAnimationEnabled = false;
 
-		const is_ranked = (this.gameType === 'ranked') ? true : false
+		const is_ranked = (this.gameType === 'ranked') ? true : false;
+
 		this.Intro = new Intro(this.canvas, is_ranked, gameState.player_two.user_infos, gameState.player_one.user_infos);
 		this.Outro = new Outro(this.canvas, is_ranked);
 		if (is_ranked)
@@ -169,8 +170,9 @@ export default class Game {
 			this.Intro.drawIntro();
 		if (this.isOutroAnimationEnabled)
 			this.Outro.drawOutro();
-		// if (this.isRankOutroAnimationEnabled)
-		// 	this.RankOutro.drawRankOutro();
+		if (this.isRankOutroAnimationEnabled)
+			this.RankOutro.drawRankOutro();
+		this.drawEmotes();
 
 		requestAnimationFrame(() => this.renderLoop());
 	}
@@ -203,7 +205,6 @@ export default class Game {
 		this.drawMiddleLine();
 		this.playerOne.draw();
 		this.playerTwo.draw();
-		this.drawEmotes();
 		this.ball.draw();
 	}
 
@@ -397,7 +398,6 @@ export default class Game {
 	}
 
 	handleReceivedEmote(event) {
-		console.log('Emote received = ', event.detail.emoteType);
 		this.receivedEmoteFramesList = this.getEmoteFramesListByType(event.detail.emoteType);
 
 		this.isReceivedEmoteAnimationEnabled = true;
@@ -447,31 +447,32 @@ export default class Game {
 		this.throwLoadOutroAnimationEvent(isWin);
 		this.isOutroAnimationEnabled = true;
 
-		console.log('game finished', data.message);
-		console.log(this.gameType)
 		if (this.gameType === 'tournament') {
 			setTimeout(() => {
 				this.gameInProgress = false;
 				if (isWin) return proceedInTournament(this.gameId, this.userId);
 				disconnectGameWebSocket(this.userId, false);
 				redirectToTournamentLostMatch(this.gameId); //temporary redirection for loser
-			}, 10000);
-			return 
+			}, 7000);
+			return ;
 		}
+
 		setTimeout(() => {
 			this.isOutroAnimationEnabled = false;
-			this.isRankOutroAnimationEnabled = true;
-			this.throwLoadRankOutroAnimationEvent(data.message, isWin);
+			if (!this.gameState.is_ranked) {
+				this.gameInProgress = false;
+				disconnectGameWebSocket(this.userId, false);
+				throwRedirectionEvent('/');
+			} else {
+				this.isRankOutroAnimationEnabled = true;
+				this.throwLoadRankOutroAnimationEvent(data.message, isWin);
+				setTimeout(() => {
+					this.gameInProgress = false;
+					disconnectGameWebSocket(this.userId, false);
+					throwRedirectionEvent('/');
+				}, 6000);
+			}
 		}, 7000);
-
-		// Not definitive
-		setTimeout(() => {
-			this.gameInProgress = false;
-			disconnectGameWebSocket(this.userId, false);
-			throwRedirectionEvent('/');
-		}, 10000);
-
-
 	}
 
 	cleanup() {

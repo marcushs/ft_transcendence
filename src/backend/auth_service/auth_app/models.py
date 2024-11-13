@@ -35,7 +35,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=12, unique=True, default='default')
     email = models.EmailField(unique=True)
     is_verified = models.BooleanField(default=False)
-    two_factor_method = models.CharField(max_length=20,  choices=[('email', 'Email'), ('authenticator', 'Authenticator App')], blank=True)
+    two_factor_method = models.CharField(choices=[('email', 'Email'), ('authenticator', 'Authenticator App')], blank=True)
     logged_in_with_oauth = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'

@@ -51,7 +51,6 @@ class GameComponent extends HTMLElement {
                 <div class="left-player-paddle"></div>
                 <div class="right-player-paddle"></div>
                 <div class="middle-line"></div>` + await state.render();
-        // this.statesContainer.innerHTML =
         this.statesContainer.classList.add(state.class);
     }
 

@@ -149,31 +149,20 @@ AUTH_USER_MODEL = "auth_app.User"
 AUTH_PASSWORD_VALIDATORS = [
     # check similarity with email and username
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', 
+        'NAME': 'auth_app.views.signup.CustomUserAttributeSimilarityValidator',
     },
-    # setup min length password
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {
-            'min_length': 8,
-        }
+        'NAME': 'auth_app.views.signup.CustomCommonPasswordValidator',
     },
-    # check low password strength
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    # check password contains only numeric char
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'auth_app.views.signup.password_len_validator',
     },
     {
         'NAME': 'auth_app.views.signup.numeric_validator',
     },
-    # check password contains uppercase char
     {
         'NAME': 'auth_app.views.signup.uppercase_validator',
     },
-    # check password contains lowercase char
     {
         'NAME': 'auth_app.views.signup.lowercase_validator',
     },

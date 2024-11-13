@@ -26,43 +26,42 @@ class login_view(View):
             user = User.objects.get(username=data['username'])
             if check_password(data['password'], user.password):
                 if user.is_verified is True:
-                    return JsonResponse({'message': '2FA activated on this account, need to verify before log', 'is_verified': user.is_verified, 'two_factor_method': user.two_factor_method, 'email': user.email}, status=200)
+                    return JsonResponse({'message': 'need2faVerification', 'is_verified': user.is_verified, 'two_factor_method': user.two_factor_method, 'email': user.email}, status=200)
                 response = self._create_user_session(user=user, request=request)
             else:
-                response = JsonResponse({'message': 'Invalid password, please try again'}, status=400)
+                response = JsonResponse({'message': 'invalidPassword'}, status=400)
         except User.DoesNotExist:
-            response = JsonResponse({'message': 'This username does not exist, please try again'}, status=400)
+            response = JsonResponse({'message': 'noExistsUsername'}, status=400)
         return response
     
     def _oauth_login(self, request, data):
         if 'twofactor' in data:
             return self._send_twofactor_request(data=data, csrf_token=request.headers.get('X-CSRFToken'))
         if request.COOKIES.get('jwt'):
-            return JsonResponse({'message': 'You are already logged in'}, status=400)
+            return JsonResponse({'message': 'alreadyLog'}, status=400)
         try:
             user = User.objects.get(username=data['username']) 
             if user.is_verified is True:
-                return JsonResponse({'message': '2FA activated on this account, need to verify before log', 'is_verified': user.is_verified}, status=200)
+                return JsonResponse({'message': 'need2faVerification', 'is_verified': user.is_verified}, status=200)
             response = self._create_user_session(user=user)
         except User.DoesNotExist:
-            response = JsonResponse({'message': 'Invalid username, please try again'}, status=400)
+            response = JsonResponse({'message': 'invalidUsername'}, status=400)
         return response
     
     def _check_data(self, request, data):
         if not data['username']:
-            return JsonResponse({'message': 'No username provided'}, status=400)
+            return JsonResponse({'message': 'noUsernameProvided'}, status=400)
         if not data['password']:
-            return JsonResponse({'message': 'No password provided'}, status=400)
+            return JsonResponse({'message': 'noPasswordProvided'}, status=400)
         if request.COOKIES.get('jwt'):
-            return JsonResponse({'message': 'You are already logged in'}, status=400)
+            return JsonResponse({'message': 'alreadyLog'}, status=400)
         return None
     
 
     def _create_user_session(self, user, request):
-        print('---------------------------------TEST LOGIN------------------------------') 
         token = create_jwt_token(user, 'access')
         refresh_token = create_jwt_token(user, 'refresh') 
-        response = JsonResponse({'message': 'Login successfully'}, status=200)
+        response = JsonResponse({'message': 'loginSuccessfully'}, status=200)
         response.set_cookie('jwt', token, httponly=True, max_age=settings.ACCESS_TOKEN_LIFETIME)
         response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.REFRESH_TOKEN_LIFETIME)
         request.jwt = token
@@ -76,7 +75,7 @@ class login_view(View):
             return response 
         except Exception as e: 
             print(e)
-            return JsonResponse({'message': 'An error occured while logging in'}, status=400) 
+            return JsonResponse({'message': 'errorWhileLogin'}, status=400)
 
     def _send_twofactor_request(self, data, csrf_token, request):   
         try:
@@ -86,7 +85,7 @@ class login_view(View):
                 return response
             return self._create_user_session(user=user, request=request)
         except ObjectDoesNotExist:
-            return JsonResponse({'error': 'User not found'}, status=404)
+            return JsonResponse({'error': 'userNotFound'}, status=404)
         except Exception:
             pass
 

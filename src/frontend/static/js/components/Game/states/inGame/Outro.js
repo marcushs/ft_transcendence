@@ -1,4 +1,5 @@
 import Spark from "./Spark.js";
+import {getString} from "../../../../utils/languageManagement.js";
 
 
 export default class Outro {
@@ -53,7 +54,7 @@ export default class Outro {
 		this.canvas.ctx.font = `bold ${this.resultFontSize}px Poppins`;
 		this.canvas.ctx.textAlign = 'center';
 		this.canvas.ctx.textBaseline = 'middle';
-		this.canvas.ctx.fillText((this.isWin) ? "WIN" : "LOSE", this.canvas.width / 2, this.canvas.height / 2);
+		this.canvas.ctx.fillText((this.isWin) ? getString("gameOutro/win") : getString("gameOutro/lose"), this.canvas.width / 2, this.canvas.height / 2);
 		this.canvas.ctx.closePath();
 	}
 

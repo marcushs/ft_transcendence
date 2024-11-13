@@ -6,7 +6,18 @@
 	  "password": "Password",
 	  "forgottenPassword": "Forgotten password?",
 	  "noAccountSentence": "Don't have an account?",
-	  "signup": "Signup"
+	  "signup": "Signup",
+	  "invalidPassword": "Invalid password, please try again",
+	  "noExistsUsername": "This username does not exist, please try again",
+	  "invalidUsername": "Invalid username, please try again",
+	  "noUsernameProvided": "No username provided",
+	  "noPasswordProvided": "No password provided",
+	  "alreadyLog": "You are already logged in",
+	  "need2faVerification": "2FA activated on this account, need to verify before log",
+	  "errorWhileLogin": "An error occured while logging in",
+	  "userNotFound": "User not found",
+	  "loginSuccessfully": "Login successfully",
+	  "accountCreated": "Account successfully created"
 	},
 	"signupView": {
 	  "signupTitle": "Signup",
@@ -15,13 +26,36 @@
 	  "password": "Password",
 	  "confirmPassword": "Confirm password",
 	  "existingAccountSentence": "Already have an account?",
-	  "login": "Login"
+	  "login": "Login",
+	  "errorWhileSignup": "an error occured while creating user in different service",
+	  "noUsernameProvided": "No username provided",
+	  "noPasswordProvided": "No password provided",
+	  "invalidCharInUsername": "Invalid characters in username",
+	  "noEmailProvided": "No email provided",
+	  "accountHasAlreadyEmail": "This email have already an account",
+	  "invalidEmail": "Invalid email",
+	  "tooLongUsername": "Too long username",
+	  "usernameAlreadyExists": "Username already exists",
+	  "passwordDidNotMatch": "Password did not match",
+	  "passwordMustContainOneNumericChar": "The password must contain at least one numeric character",
+	  "passwordMustContainOneUppercase": "The password must contain at least one uppercase letter",
+	  "passwordMustContainOneLetter": "The password must contain at least one lowercase letter",
+	  "tooShortPassword": "The password must container at least 8 characters",
+	  "tooCommonPassword": "This password is too common. Choose another one",
+	  "tooCloseToUserInfosPassword": "Your password is too close to your username or e-mail address"
 	},
 	"changePasswordView": {
 	  "changePasswordTitle": "Change password",
 	  "currentPassword": "Current password",
 	  "newPassword": "New password",
-	  "confirmPassword": "Confirm password"
+	  "confirmPassword": "Confirm password",
+	  "currentPasswordIsRequired": "Current password is required",
+	  "newPasswordIsRequired": "New password is required",
+	  "confirmPasswordIsRequired": "Confirm password is required",
+	  "incorrectCurrentPassword": "Incorrect current password",
+	  "samePassword": "New password is the same as current",
+	  "passwordDoNotMatch": "Passwords do not match",
+	  "passwordSuccessfullyChanged": "Password successfully changed"
 	},
 	"twoFactorAppView": {
 	  "title": "Enable 2fa by authenticator",
@@ -106,7 +140,22 @@
 	  "twoFactorByEmail": "2FA by email",
 	  "twoFactorByAuthenticator": "2FA by authenticator",
 	  "changePasswordTitle": "Change password",
-	  "changePasswordInformation": "Change your password regularly to keep your account secure."
+	  "changePasswordInformation": "Change your password regularly to keep your account secure.",
+	  "usernameAlreadyExists": "This username already exists",
+	  "usernameLenError": "Username must be less than 12 characters",
+	  "usernameFormatError": "Username must container only letters, numbers, _ , -",
+	  "emailAlreadyExists": "This email is already associated with an account",
+	  "invalidEmailFormat": "This email format is invalid",
+	  "invalidImageFormat": "Invalid profile image format, valid formats are: (png, jpg, jpeg, gif, svg, webp)",
+	  "usernameSuccessfullyChanged": "Username successfully changed",
+	  "emailSuccessfullyChanged": "Email successfully changed",
+	  "profileImageSuccessfullyChanged": "Profile image successfully changed",
+	  "invalidImageFile": "Invalid image file",
+	  "invalidImageLink": "Invalid image link",
+	  "usernameFormatWarning": "Username cannot be empty",
+	  "invalidUsernameFormat": "Username: letters, numbers, _ , -",
+	  "emailCannotBeEmpty": "Email address cannot be empty",
+	  "invalidEmail": "Invalid email address"
 	},
 	"profileNavBarComponent": {
 	  "personalInformation": "Personal information",
@@ -144,6 +193,40 @@
 	"accountInfosComponent" : {
 	  "profile": "Profile",
 	  "logout": "Logout"
+	},
+	"matchHistoryComponent" : {
+	  "matchHistory": "Match history",
+	  "ranked": "Ranked",
+	  "unranked": "Unranked",
+	  "tournament": "Tournament",
+	  "unloggedSentence": "To access to match history, please login or sign in."
+	},
+	"statistics": {
+	  "gamesPlayed": "Games played",
+	  "gamesWin": "Games win",
+	  "gamesLose": "Games lose",
+	  "winLoseRatio": "Win/Lose ratio"
+	},
+	"friendshipButton": {
+	  "add": "Add contact",
+	  "cancel": "Cancel request",
+	  "remove": "Remove contact",
+	  "accept": "Accept invitation",
+	  "decline": "Decline invitation"
+	},
+	"gameOutro": {
+	  "win": "WIN",
+	  "lose": "LOSE"
+	},
+	"sendMessageButton": "Send message",
+	"logoutView": {
+	  "logoutSentence": "Are you sure you want to logout?",
+	  "yes": "Yes",
+	  "cancel": "Cancel"
+	},
+	"oauthUsernameView": {
+	  "title": "Username already taken, please choose a new one",
+	  "usernameFormatError": "Username must container only letters, numbers, _ , -"
 	}
   },
 
@@ -154,7 +237,18 @@
 	  "password": "Mot de passe",
 	  "forgottenPassword": "Mot de passe oublié?",
 	  "noAccountSentence": "Vous n'avez pas de compte?",
-	  "signup": "S'inscrire"
+	  "signup": "S'inscrire",
+	  "invalidPassword": "Mot de passe invalide, veuillez réessayer",
+	  "noExistsUsername": "Ce nom d'utilisateur n'existe pas, veuillez réessayer",
+	  "invalidUsername": "Nom d'utilisateur invalide, veuillez réessayer",
+	  "noUsernameProvided": "Aucun nom d'utilisateur n'a été fourni",
+	  "noPasswordProvided": "Aucun mot de passe n'a été fourni",
+	  "alreadyLog": "Vous êtes déjà connecté",
+	  "need2faVerification": "2FA activé sur ce compte, à vérifier avant de se connecter",
+	  "errorWhileLogin": "Une erreur s'est produite lors de la connexion",
+	  "userNotFound": "Utilisateur non trouvé",
+	  "loginSuccessfully": "Connexion réussie",
+	  "accountCreated": "Le compte a été créé avec succès"
 	},
 	"signupView": {
 	  "signupTitle": "Inscription",
@@ -163,13 +257,36 @@
 	  "password": "Mot de passe",
 	  "confirmPassword": "Confirmer le mot de passe",
 	  "existingAccountSentence": "Vous avez déjà un compte?",
-	  "login": "Se connecter"
+	  "login": "Se connecter",
+	  "errorWhileSignup": "une erreur s'est produite lors de la création d'un utilisateur dans un autre service",
+	  "noUsernameProvided": "Aucun nom d'utilisateur n'a été fourni",
+	  "noPasswordProvided": "Aucun mot de passe n'est fourni",
+	  "invalidCharInUsername": "Caractères non valides dans le nom d'utilisateur",
+	  "noEmailProvided": "Aucun courriel n'a été fourni",
+	  "accountHasAlreadyEmail": "Cet email a déjà un compte",
+	  "invalidEmail": "Courriel non valide",
+	  "tooLongUsername": "Nom d'utilisateur trop long",
+	  "usernameAlreadyExists": "Le nom d'utilisateur existe déjà",
+	  "passwordDidNotMatch": "Le mot de passe ne correspond pas",
+	  "passwordMustContainOneNumericChar": "Le mot de passe doit contenir au moins un caractère numérique",
+	  "passwordMustContainOneUppercase": "Le mot de passe doit contenir au moins une lettre majuscule",
+	  "passwordMustContainOneLetter": "Le mot de passe doit contenir au moins une lettre minuscule",
+	  "tooShortPassword": "Le mot de passe doit contenir au moins 8 caractères",
+	  "tooCommonPassword": "Ce mot de passe est trop courant. Choisissez-en un autre",
+	  "tooCloseToUserInfosPassword": "Votre mot de passe est trop proche de votre nom d'utilisateur ou e-mail"
 	},
 	"changePasswordView": {
 	  "changePasswordTitle": "Changement de mot de passe",
 	  "currentPassword": "Mot de passe actuel",
 	  "newPassword": "Nouveau mot de passe",
-	  "confirmPassword": "Confirmer le mot de passe"
+	  "confirmPassword": "Confirmer le mot de passe",
+	  "currentPasswordIsRequired": "Le mot de passe actuel est requis",
+	  "newPasswordIsRequired": "Un nouveau mot de passe est requis",
+	  "confirmPasswordIsRequired": "Confirmation du mot de passe requise",
+	  "incorrectCurrentPassword": "Mot de passe actuel incorrect",
+	  "samePassword": "Le nouveau mot de passe est identique au mot de passe actuel",
+	  "passwordDoNotMatch": "Les mots de passe ne correspondent pas",
+	  "passwordSuccessfullyChanged": "Le mot de passe a été modifié avec succès"
 	},
 	"twoFactorAppView": {
 	  "title": "Activer la 2FA par authenticator",
@@ -253,7 +370,22 @@
 	  "twoFactorByEmail": "2FA par email",
 	  "twoFactorByAuthenticator": "2FA par authenticator",
 	  "changePasswordTitle": "Changer de mot de passe",
-	  "changePasswordInformation": "Changez régulièrement votre mot de passe pour assurer la sécurité de votre compte."
+	  "changePasswordInformation": "Changez régulièrement votre mot de passe pour assurer la sécurité de votre compte.",
+	  "usernameAlreadyExists": "Ce nom d'utilisateur existe déjà",
+	  "usernameLenError": "Le nom d'utilisateur doit comporter 12 caractères au moins",
+	  "usernameFormatError": "Le nom d'utilisateur ne doit contenir que des lettres, chiffres, _, -",
+	  "emailAlreadyExists": "Cet email est déjà associé à un compte",
+	  "invalidEmailFormat": "Ce format d'email n'est pas valide",
+	  "invalidImageFormat": "Format d'image de profil non valide, les formats valides sont : (png, jpg, jpeg, gif, svg, webp)",
+	  "usernameSuccessfullyChanged": "Le nom d'utilisateur a été modifié avec succès",
+	  "emailSuccessfullyChanged": "L'email a été modifié avec succès",
+	  "profileImageSuccessfullyChanged": "L'image du profil a été modifiée avec succès",
+	  "invalidImageFile": "Fichier image invalide",
+	  "invalidImageLink": "Lien d'image invalide",
+	  "usernameFormatWarning": "Le nom d'utilisateur ne peut pas être vide",
+	  "invalidUsernameFormat": "Nom d'utilisateur : lettres, chiffres, _ , -",
+	  "emailCannotBeEmpty": "L'adresse email ne peut pas être vide",
+	  "invalidEmail": "Adresse email invalide"
 	},
 	"profileNavBarComponent": {
 	  "personalInformation": "Informations personnelles",
@@ -291,6 +423,40 @@
 	"accountInfosComponent" : {
 	  "profile": "Profil",
 	  "logout": "Déconnexion"
+	},
+	"matchHistoryComponent" : {
+	  "matchHistory": "Historique des matchs",
+	  "ranked": "Classé",
+	  "unranked": "Non classé",
+	  "tournament": "Tournois",
+	  "unloggedSentence": "Pour accéder à l'historique des matchs, veuillez vous connecter ou vous identifier."
+	},
+	"statistics": {
+	  "gamesPlayed": "Parties jouées",
+	  "gamesWin": "Parties gagnées",
+	  "gamesLose": "Parties perdues",
+	  "winLoseRatio": "Ratio Victoire/Défaite"
+	},
+	"friendshipButton": {
+	  "add": "Demande de contact",
+	  "cancel": "Annuler la demande",
+	  "remove": "Supprimer le contact",
+	  "accept": "Accepter l'invitation",
+	  "decline": "Décliner l'invitation"
+	},
+	"gameOutro": {
+	  "win": "VICTOIRE",
+	  "lose": "DEFAITE"
+	},
+	"sendMessageButton": "Envoyer un message",
+	"logoutView": {
+	  "logoutSentence": "Êtes-vous sûr de vouloir vous déconnecter ?",
+	  "yes": "Oui",
+	  "cancel": "Annuler"
+	},
+	"oauthUsernameView": {
+	  "title": "Nom d'utilisateur déjà pris, veuillez en choisir un nouveau",
+	  "usernameFormatError": "Le nom d'utilisateur ne doit contenir que des lettres, chiffres, _, -"
 	}
   },
 

@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model
 from .send_request import send_request_without_token
+from django.contrib.auth.password_validation import CommonPasswordValidator
+from django.contrib.auth.password_validation import UserAttributeSimilarityValidator
 
 # --- UTILS --- #
 import json
@@ -28,8 +30,8 @@ class signup_view(View):
         response = self._send_request(user=user, csrf_token=request.headers.get('X-CSRFToken'))
         if not response:
             user.delete()
-            return JsonResponse({'message': 'an error occured while creating user in different service'}, status=400)
-        return JsonResponse({'message': 'User created successfully', 'redirect_url': 'login'}, status=200)
+            return JsonResponse({'message': 'errorWhileSignup'}, status=400)
+        return JsonResponse({'message': 'accountCreated', 'redirect_url': 'login'}, status=200)
 
     def _send_request(self, user, csrf_token):
         payload = {
@@ -53,26 +55,28 @@ class signup_view(View):
  
     def _check_data(self, request, data):
         if not data['username']:
-            return JsonResponse({'message': 'No username provided'}, status=401)
+            return JsonResponse({'message': 'noUsernameProvided'}, status=401)
         elif not re.match(self.regexUsernameCheck, data['username']):
-            return JsonResponse({'message': 'Invalid characters in username'}, status=401)
+            return JsonResponse({'message': 'invalidCharInUsername'}, status=401)
         elif not data['email']:
-            return JsonResponse({'message': 'No email provided'}, status=401)
+            return JsonResponse({'message': 'noEmailProvided'}, status=401)
         elif User.objects.filter(email=data['email']).exists():
-            return JsonResponse({'message': 'This email have already an account'}, status=401)
+            return JsonResponse({'message': 'accountHasAlreadyEmail'}, status=401)
         elif not re.match(self.regexEmailCheck, data['email']):
-            return JsonResponse({'message': 'Invalid email'}, status=401)
+            return JsonResponse({'message': 'invalidEmail'}, status=401)
         elif not data['password']:
-            return JsonResponse({'message': 'No password provided'}, status=401)
+            return JsonResponse({'message': 'noPasswordProvided'}, status=401)
         username = data['username']
+        if len(data['username']) > 12:
+            return JsonResponse({'message': 'tooLongUsername'}, status=401)
         if User.objects.filter(username=username).exists():
-            return JsonResponse({'message': 'Username already exists'}, status=401)
+            return JsonResponse({'message': 'usernameAlreadyExists'}, status=401)
         try:
             validate_password(data['password'])
         except ValidationError as error:
             return JsonResponse({'message': str(error.messages[0])}, status=401)
         if data['password'] != data['confirm_password']:
-            return JsonResponse({'message': 'Password did not match'}, status=401)  
+            return JsonResponse({'message': 'passwordDidNotMatch'}, status=401)
         return None
     
     
@@ -80,31 +84,65 @@ class numeric_validator:
     def validate(self, password, user=None):
         if not re.search(r'[0-9]', password):
             raise ValidationError(
-                _("This password must contain at least one numeric character."),
+                "passwordMustContainOneNumericChar",
                 code='no_numeric_char',
             )
 
     def get_help_text(self):
-        return _("Your password must contain at least one numeric character.")
+        return "Your password must contain at least one numeric character."
 
 class uppercase_validator:
     def validate(self, password, user=None):
         if not re.search(r'[A-Z]', password):
             raise ValidationError(
-                _("This password must contain at least one uppercase letter."),
+                "passwordMustContainOneUppercase",
                 code='password_no_upper',
             )
 
     def get_help_text(self):
-        return _("Your password must contain at least one uppercase letter.")
+        return "Your password must contain at least one uppercase letter."
 
 class lowercase_validator:
     def validate(self, password, user=None):
         if not re.search(r'[a-z]', password):
             raise ValidationError(
-                _("This password must contain at least one lowercase letter."),
+                "passwordMustContainOneLetter",
                 code='password_no_lower',
             )
 
     def get_help_text(self):
-        return _("Your password must contain at least one lowercase letter.")
+        return "Your password must contain at least one lowercase letter."
+
+
+class password_len_validator:
+    def validate(self, password, user=None):
+            if len(password) < 8:
+                raise ValidationError(
+                    "tooShortPassword",
+                    code='password_no_lower',
+                )
+
+    def get_help_text(self):
+        return ""
+
+
+class CustomCommonPasswordValidator(CommonPasswordValidator):
+    def validate(self, password, user=None):
+        try:
+            super().validate(password, user)
+        except ValidationError:
+            raise ValidationError(
+                "tooCommonPassword",
+                code='password_too_common'
+            )
+
+
+class CustomUserAttributeSimilarityValidator(UserAttributeSimilarityValidator):
+    def validate(self, password, user=None):
+        try:
+            super().validate(password, user)
+        except ValidationError:
+            raise ValidationError(
+                "tooCloseToUserInfosPassword",
+                code='password_too_common'
+            )

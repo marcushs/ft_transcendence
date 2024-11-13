@@ -49,8 +49,7 @@ class ping_status_user(View):
 
     async def post(self, request):
         from .websocket_utils import notify_user_info_display_change
-        
-        
+
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'status': 'fail', 'message': 'User not found'}, status=200)
         request.user.last_active = timezone.now()
@@ -178,7 +177,7 @@ class searchUsers(View):
         if users.exists(): # Create a list of users in dictionary format
             users_list = [{
                 'username': user.username,
-                'profile_image': user.profile_image.url if user.profile_image else None,
+                'profile_image': user.profile_image,
                 'profile_image_link': user.profile_image_link
                 }
                 for user in users
@@ -204,11 +203,11 @@ class getUserGameInfo(View):
     def get(self, request):
         try:
             username = request.GET.get('q', '')
-            user = User.objects.get(username=username) 
+            user = User.objects.get(username=username)
             users_data = {
-                'username': users.username,
-                'profile_image': users.profile_image.url if users.profile_image else None,
-                'profile_image_link': users.profile_image_link,
+                'username': user.username,
+                'profile_image': user.profile_image,
+                'profile_image_link': user.profile_image_link,
             }
             return JsonResponse({'status': 'success', 'message': users_data}, safe=False, status=200)   
         except ObjectDoesNotExist:
@@ -221,11 +220,11 @@ class getUserInfos(View):
     def get(self, request):
         try:
             username = request.GET.get('q', '')
-            users = User.objects.get(username=username) 
+            users = User.objects.get(username=username)
             users_data = {
                 'id': str(users.id),
                 'username': users.username,
-                'profile_image': users.profile_image.url if users.profile_image else None,
+                'profile_image': users.profile_image,
                 'profile_image_link': users.profile_image_link,
                 'status': users.status
             }
@@ -245,7 +244,7 @@ class getUserInfoById(View):
             user_data = {
                 'id': str(user.id),
                 'username': user.username,
-                'profile_image': user.profile_image.url if user.profile_image else None,
+                'profile_image': user.profile_image,
                 'profile_image_link': user.profile_image_link,
                 'status': user.status
             }
@@ -269,7 +268,7 @@ class getUsersInfo(View):
                 users_info = {
                     'id': user_data.id,
                     'username': user_data.username,
-                    'profile_image': user_data.profile_image.url if user_data.profile_image else None,
+                    'profile_image': user_data.profile_image,
                     'profile_image_link': user_data.profile_image_link,
                     'status': user_data.status
                 }
@@ -297,6 +296,7 @@ class getUsernameById(View):
             return JsonResponse({'status': 'success', 'username': user.username}, status=200)
         except User.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No user id found'}, status=200)
+        
 
 class getUserStatus(View):
     def __init__(self):

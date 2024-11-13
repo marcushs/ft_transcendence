@@ -6,7 +6,7 @@ async def notify_user_info_display_change(change_info, user=None ,request=None, 
     payload = {
         'user_id': str(user.id),
         'username': user.username,
-        'profile_image': user.profile_image.url if user.profile_image else None,
+        'profile_image': user.profile_image,
         'profile_image_link': user.profile_image_link,
         'status': user.status,
         'change_info': change_info,

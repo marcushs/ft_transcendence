@@ -1,4 +1,5 @@
 import { sendMessageCallback } from "../../utils/chatUtils/sendMessageCallback.js";
+import {getString} from "../../utils/languageManagement.js";
 
 export default class UserProfileSendMessageBtn extends HTMLElement {
 	constructor(userData) {
@@ -10,10 +11,8 @@ export default class UserProfileSendMessageBtn extends HTMLElement {
 
 	render() {
 		this.innerHTML = `
-			<p>
-				<span>Send Message</span>
-				<i class="fa-regular fa-paper-plane"></i>
-			</p>
+			<p>${getString("sendMessageButton")}</p>
+			<i class="fa-regular fa-paper-plane"></i>
 		`;
 	}
 

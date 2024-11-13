@@ -21,7 +21,6 @@ class startGameEngine(View):
 
     async def post(self, request):
         try:
-            print('!!!! startGameEngine REACHED !!!!') 
             data = json.loads(request.body.decode('utf-8'))
             if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
                 return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)
@@ -46,15 +45,15 @@ async def starting_game_instance(data):
             'player_one': {
                 'id': str(data['player1']),
                 'user_infos': {
-                    'profile_image': "http://user:8000/api/user" + player_one_infos['profile_image'] if player_one_infos['profile_image'] else player_one_infos['profile_image_link'],
+                    'profile_image': player_one_infos['profile_image'] if player_one_infos['profile_image'] else player_one_infos['profile_image_link'],
                     'username': player_one_infos['username']
                 }
             },
             'player_two': {
                 'id': str(data['player2']),
                 'user_infos': {
-                    'profile_image': "http://user:8000/api/user" + player_two_infos['profile_image'] if player_two_infos['profile_image'] else player_two_infos['profile_image_link'],
-                    'username': player_two_infos['username'] 
+                    'profile_image': player_two_infos['profile_image'] if player_two_infos['profile_image'] else player_two_infos['profile_image_link'],
+                    'username': player_two_infos['username']
                 }
             },
         }

@@ -49,7 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             'id': str(self.id),
             'username': self.username,
             'email': self.email,
-            'profile_image': self.profile_image.url if self.profile_image else None,
+            'profile_image': self.profile_image,
             'profile_image_link': self.profile_image_link,
         }
         

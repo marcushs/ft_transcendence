@@ -1,5 +1,6 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse
@@ -124,9 +125,9 @@ class getUser(View):
             username = request.GET.get('q', '')
             user = User.objects.get(username=username) 
             users_data = {
-                'username': users.username,
-                'profile_image': users.profile_image.url if users.profile_image else None,
-                'profile_image_link': users.profile_image_link,
+                'username': user.username,
+                'profile_image': user.profile_image,
+                'profile_image_link': user.profile_image_link,
             }
             return JsonResponse({'status': 'success', 'message': users_data}, safe=False, status=200)   
         except ObjectDoesNotExist:

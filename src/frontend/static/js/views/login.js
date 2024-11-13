@@ -18,15 +18,14 @@ export default () => {
 				<form>
 					<h1>${getString('loginView/loginTitle')}</h1>
 					<div class="form-fields">
-						<input class="login-input" type="text" placeholder="${getString('loginView/username')}" name="username" autofocus required>
+						<input class="login-input" type="text" placeholder="${getString('loginView/username')}" name="username" autofocus maxlength="12" required>
 					</div>
 					<div class="form-fields">
 						<input class="login-input" type="password" placeholder="${getString('loginView/password')}" name="password" required>
 						<i class="fa-solid fa-eye" id="password-eye"></i>
-						<a href="/change-password" id="forgotten-password">${getString('loginView/forgottenPassword')}</a>
 					</div>
-					<button-component id="loginBtn" label="Login" class="generic-auth-btn-disabled"></button-component>
-					<div class="o-auth-container">					
+					<button-component id="loginBtn" label="login" class="generic-auth-btn-disabled"></button-component>
+					<div class="o-auth-container">
 						<button-component id="oauth42LoginBtn" label="" class="o-auth-btn" icon="logo_42">
 						</button-component>
 						<button-component id="oauthGoogleLoginBtn" label="" class="o-auth-btn" icon="logo_google">
@@ -110,7 +109,7 @@ async function postData(event, loginBtn) {
 			throwRedirectionEvent('/');
 		}
 	} catch (error) {
-		localStorage.setItem('errorFeedback', error.message);
+		localStorage.setItem('errorFeedback', getString(`loginView/${error.message}`));
 		throwRedirectionEvent('/login');
 	}
 }

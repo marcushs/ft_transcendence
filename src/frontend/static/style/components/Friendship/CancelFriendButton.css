@@ -3,13 +3,19 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding: 5px 10px;
-    background-color: rgb(172, 26, 164);
+    width: 15rem;
+    height: 5rem;
+    background-color: var(--neon-pink);
     color: white;
     border: none;
-    border-radius: 25px;
+    border-radius: 7px;
     cursor: pointer;
     transition: background-color 0.3s;
+    padding: 5px 10px;
+}
+
+.cancel-friend-button:hover {
+    opacity: 0.8;
 }
 
 .cancel-friend-button p {
@@ -20,8 +26,8 @@
 }
 
 .cancel-friend-button img {
-	width: 2rem;
-	height: 2rem;
+	width: 1.8rem;
+	height: 1.8rem;
 }
 
 .cancel-friend-button:hover {

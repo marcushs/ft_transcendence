@@ -46,10 +46,14 @@ class oauthGoogleUpdateUsernameView(View):
          
     def check_new_username_taken(self, username):
         url = 'http://user:8000/api/user/check_username/'
-        response = requests.get(url=url, params={"username": username})
-        if response.status_code == 400:
+        try:
+            response = requests.get(url=url, params={"username": username})
+            response.raise_for_status()
             return response
-    
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
     def send_create_user_request_to_endpoints(self):
         urls = ['http://auth:8000/api/auth/add_oauth_user/', 
                 'http://twofactor:8000/api/twofactor/add_user/', 
@@ -61,8 +65,10 @@ class oauthGoogleUpdateUsernameView(View):
                 'http://chat:8000/api/chat/add_user/', 
                 'http://tournament:8000/api/tournament/add_user/',] 
         for url in urls:
-            response = send_post_request(url=url, payload=self.payload, csrf_token=self.csrf_token)
-        return response
+            try:
+                response = send_post_request(url=url, payload=self.payload, csrf_token=self.csrf_token)
+            except Exception as e:
+                print(f'Error: {str(e)}')
 
     def init_payload(self, user):
         self.payload = {
@@ -71,5 +77,6 @@ class oauthGoogleUpdateUsernameView(View):
             'email': user.email,
             'first_name': user.first_name,
             'last_name': user.last_name,
+            'logged_in_with_oauth': True,
             'profile_image_link': user.profile_image_link,
         }

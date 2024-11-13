@@ -16,6 +16,17 @@
 	justify-content: center;
 }
 
+.users-profile-page .users-profile-container {
+	position: relative;
+	height: 75rem;
+	width: 100rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 3px;
+	border-radius: 10px;
+}
+
 .users-profile-page nav-bar-component {
 	position: absolute;
 	top: 0;
@@ -25,12 +36,11 @@
 
 
 .users-profile-page .users-profile-container-background {
-	/* z-index: 0; */
 	position: absolute;
 	background: var(--neon-gradiant);
 	filter: blur(15px);
-	height: 70rem;
-	width: 90rem;
+	height: 75rem;
+	width: 100rem;
 }
 
 .users-profile-content {
@@ -40,73 +50,123 @@
 	z-index: 3;
 }
 
-.users-profile-page .users-profile-container {
-	position: relative;
-	height: 70rem;
-	width: 90rem;
+.users-profile-content .no-user-found {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 3px;
-	border-radius: 10px;
+	width: 100%;
+	height: 100%;
+}
+
+.users-profile-content .no-user-found p {
+	font-weight: bold;
+	font-size: 3rem;
 }
 
 .users-profile-page .user-info {
-	position: relative;
-	width: 100%;
-	height: 8%;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-around;
-	margin: 1.5rem 0;
-}
-
-.users-profile-page .user-info p:not(.user-info-username) {
-	font-weight: 700;
-	color: var(--text-primary-color);
-	font-size: 2rem;
-	letter-spacing: 0.2px;
-	margin-bottom: 0.2rem;
-	padding-left: 10rem;
-}
-
-.user-info .user-info-username {
-	width: 100%;
-	height: 100%;
-	font-size: 1.7rem;
-	border-radius: 5px;
-	/* border: 1px solid var(--light-grey); */
-	color: var(--text-primary-color);
-	padding-left: 12.5rem
-}
-
-.users-profile-page .user-info i {
-	position: absolute;
-	color: var(--light-grey);
-	font-size: 1.7rem;
-	right: 3%;
-	top: 52.8%;
-	cursor: pointer;
-}
-
-.users-profile-page .user-info-image {
-	display: flex;
-	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	height: 18rem;
+	height: 40%;
 	width: 100%;
 }
 
-.users-profile-page .user-info-image > img {
+.users-profile-page .user-info .username {
+	text-align: center;
+	font-size: 2.2rem;
+	font-weight: 700;
+	margin-top: 1rem;
+	color: var(--text-primary-color);
+}
+
+.users-profile-page .user-info > img {
 	width: 16rem;
 	height: 16rem;
 	border-radius: 50%;
 	border: 2px solid var(--light-grey);
 }
 
-.user-profile-content .user-profile-send-message-btn {
-	background-color: aqua;
-	width: 3rem;
-	height: 3rem;
+/*.users-profile-page .user-info i {*/
+/*	position: absolute;*/
+/*	color: var(--light-grey);*/
+/*	font-size: 1.7rem;*/
+/*	right: 3%;*/
+/*	top: 52.8%;*/
+/*	cursor: pointer;*/
+/*}*/
+
+friendship-button-component {
+	position: absolute;
+	left: 70%;
+	top: 10.75%;
+}
+
+user-profile-send-message-btn {
+	position: absolute;
+	left: 70%;
+	top: 19.25%;
+}
+
+
+.users-profile-page .rank-infos {
+	width: 40%;
+	display: flex;
+	justify-content: center;
+	margin-left: 10rem;
+	align-items: center;
+}
+
+.users-profile-page .user-stats {
+	display: flex;
+	height: 45%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.users-profile-page .game-infos {
+	width: 60%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.users-profile-page .game-infos > * {
+	width: 40%;
+}
+
+.users-profile-page .game-infos .info {
+	width: 100%;
+}
+
+.users-profile-page .info {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: center;
+	height: 14rem;
+}
+
+.users-profile-page .info > p {
+	text-align: center;
+	font-size: 2.2rem;
+	font-weight: bold;
+	color: var(--text-primary-color);
+}
+
+.users-profile-page .info .number-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 11rem;
+	height: 7rem;
+	border: 1px solid var(--text-primary-color);
+	border-radius: 7px;
+}
+
+.users-profile-page .info .number-container p {
+	font-size: 3rem;
+	font-weight: bold;
+	color: var(--text-primary-color);
 }

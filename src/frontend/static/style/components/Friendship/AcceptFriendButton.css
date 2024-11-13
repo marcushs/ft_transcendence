@@ -3,15 +3,19 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding: 5px 5px;
-    background-color: rgb(58, 160, 183);
+    width: 15rem;
+    height: 5rem;
+    background-color: var(--neon-blue);
     color: white;
     border: none;
-    border-radius: 25px;
+    border-radius: 7px;
     cursor: pointer;
-    margin-right: -1rem;
     transition: background-color 0.3s;
-    transform: scale(0.8);
+    padding: 5px 10px;
+}
+
+.accept-friend-button:hover {
+    opacity: 0.8;
 }
 
 .accept-friend-button p {

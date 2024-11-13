@@ -67,9 +67,19 @@ class oauthGoogleAccessResourceView(View):
             return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
         except User.DoesNotExist:
             if User.objects.filter(username=self.username).exists():
-                return JsonResponse({'message': "Username already taken! Try another one.", 
-                                     'status': 'Error', 
-                                     'url': '/oauth-username?oauth_provider=oauth_goolge'}, status=400)
+                user = User.objects.create_user(id=uuid.uuid4(),
+                                                username='temp_user',
+                                                email=self.email,
+                                                first_name=self.first_name,
+                                                last_name=self.last_name,
+                                                profile_image_link=self.profile_image_link)
+                self.id = str(user.id)
+                self.payload['user_id'] = self.id
+                response = JsonResponse({'message': "Username already taken! Try another one.",
+                                         'status': 'Error',
+                                         'url': '/oauth-username?oauth_provider=oauth_google'}, status=400)
+                response.set_cookie('id', str(user.id), httponly=True)
+                return response
             user = User.objects.create_user(id=uuid.uuid4(),
                                             username=self.username,
                                             email=self.email,
@@ -86,7 +96,7 @@ class oauthGoogleAccessResourceView(View):
                     response_data['url'] = '/login'
                     response = JsonResponse(response_data, status=400)
                 elif response_data['message'] == "Username already taken! Try another one.":
-                    response_data['url'] = '/oauth-username?oauth_provider=oauth_goolge'
+                    response_data['url'] = '/oauth-username?oauth_provider=oauth_google'
                     response = JsonResponse(response_data, status=400)
                     response.set_cookie('id', self.id, httponly=True)
                 response.delete_cookie('google_access_token')

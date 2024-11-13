@@ -26,7 +26,7 @@
 
 .login-page #feedbackElement {
 	position: absolute;
-	top: 82%;
+	top: 90%;
 	font-size: 1.5rem;
 	color: red;
 }
@@ -67,6 +67,7 @@
 	position: absolute;
 	right: 2rem;
 	font-size: 1.5rem;
+	cursor: pointer;
 }
 
 .login-page form input {

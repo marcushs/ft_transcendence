@@ -40,7 +40,10 @@ class ContactMenuSearchBar extends HTMLElement {
 		this.searchBarIcon.addEventListener('click', this.boundHandleClick);
 		this.searchBarCloseBtn.addEventListener('click', this.boundHandleClick);
 		this.addFriendIcon.addEventListener('click', () => {
-            app.querySelector('section').innerHTML += '<pop-up-component class="add-new-contact-pop-up"></pop-up-component>';
+			const popUp = document.createElement('pop-up-component');
+
+			popUp.classList.add('add-new-contact-pop-up');
+			document.querySelector('.home-page').appendChild(popUp);
         });
 	};
 
