@@ -11,4 +11,5 @@ urlpatterns = [
 	path('match_result/', tournamentMatchResultView.tournamentMatchResultView.as_view(), name='tournament_match_result'),
 	path('get_bracket/', getBracketView.getBracketView.as_view(), name='get_bracket'),
 	path('get_match_by_id/', getMatchByIdView.getMatchByIdView.as_view(), name='get_match_by_id'),
+	path('check_username/', check_username.as_view(), name='check_username'),
 ]

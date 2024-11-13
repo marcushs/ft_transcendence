@@ -142,6 +142,7 @@ class TournamentMatch(models.Model):
     loser_score = models.IntegerField(default=0)
     date = models.DateTimeField(default=timezone.now)
     tournament_round = models.CharField(max_length=20, choices=ROUND_CHOICES)
+    bracket_index = models.IntegerField()
 
     async def to_dict(self):
         obj_dict = {
@@ -235,7 +236,6 @@ class Bracket(models.Model):
             'tournament': self.tournament.to_dict_sync(), 
         }
 
-        # Function to convert matches to dicts asynchronously
         def matches_to_dicts(matches):
             return [match.to_dict_sync() for match in matches]
  

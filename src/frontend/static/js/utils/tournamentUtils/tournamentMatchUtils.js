@@ -3,6 +3,7 @@ import { sendRequest } from "../sendRequest.js";
 import { gameWebsocket, gameSocket } from "../../components/Game/states/inGame/gameWebsocket.js";
 import getUserId from "../getUserId.js";
 import TournamentLost from "../../components/Game/states/tournamentHome/TournamentLost.js";
+import { tournamentSocket } from "../../views/websocket/loadWebSocket.js";
 
 export function redirectToTournamentMatch(tournamentBracket) {
 	const gameComponent = document.querySelector('game-component');
@@ -25,6 +26,13 @@ export function proceedInTournament(gameId, userId) {
 
 	console.log('gameId is: ', gameId)
 	console.log('userId is: ', userId)
+
+	const payload = {
+		'type': 'proceed_tournament',
+		'user_id': userId,
+		'match_id': gameId
+	}
+	tournamentSocket.send(JSON.stringify(payload));
 }
 
 export async function redirectToTournamentLostMatch(matchId) {

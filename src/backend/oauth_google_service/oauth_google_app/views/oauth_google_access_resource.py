@@ -66,6 +66,10 @@ class oauthGoogleAccessResourceView(View):
             self.payload['user_id'] = str(user.id)
             return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
         except User.DoesNotExist:
+            if User.objects.filter(username=self.username).exists():
+                return JsonResponse({'message': "Username already taken! Try another one.", 
+                                     'status': 'Error', 
+                                     'url': '/oauth-username?oauth_provider=oauth_goolge'}, status=400)
             user = User.objects.create_user(id=uuid.uuid4(),
                                             username=self.username,
                                             email=self.email,

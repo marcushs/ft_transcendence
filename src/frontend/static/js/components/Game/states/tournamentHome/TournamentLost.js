@@ -98,7 +98,6 @@ class TournamentLostElement extends HTMLElement {
 		const secondsSpan = this.querySelector('.tournament-lost-countdown > span');
 		let count = 59;
 
-		
 		bracketBtn.addEventListener('click', () => {
 			console.log('clicked on bracket')
 			console.log('bracketObj', this.bracketObj);
@@ -106,6 +105,12 @@ class TournamentLostElement extends HTMLElement {
 		})
 		
 		leaveBtn.addEventListener('click', () => {
+			const payload = {
+				'type': 'leave_tournament_group',
+				'tournament_id': this.tournamentId,
+			};
+
+			tournamentSocket.send(JSON.stringify(payload))
 			redirectToTournamentHome()
 			clearInterval(this.intervalId);
 		})

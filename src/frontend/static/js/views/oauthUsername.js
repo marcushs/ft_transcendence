@@ -5,7 +5,7 @@ export default () => {
 	const html = `
 		<h1>Username already taken, please choose a new one (max char. : 12)</h1>
 		<form>
-			<input type="text" placeholder="username" name="newUsername" id="username" style="background-color: white;"/>
+			<input type="text" placeholder="username" name="newUsername" id="new_username" style="background-color: white;"/>
 			<span id="inputFeedback"></span>
 		</form>
 		<button type="button" id="btn">Submit</button>
@@ -21,9 +21,11 @@ export default () => {
 
 async function postNewUsername() {
 	const inputFeedback = document.getElementById("inputFeedback");
-	const newUsername = document.getElementById('username').value;
+	const newUsername = document.getElementById('new_username').value;
 	const urlParams = new URLSearchParams(window.location.search);
 	const oauthProvider = urlParams.get('oauth_provider');
+
+	if(!oauthProvider) return window.location.replace('/login');
 
 	inputFeedback.innerText = '';
 

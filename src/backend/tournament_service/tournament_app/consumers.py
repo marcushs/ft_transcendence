@@ -9,7 +9,6 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from .models import *
-import shortuuid
 import asyncio
 from django.db import transaction
 from channels.db import database_sync_to_async
@@ -116,6 +115,15 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				'type': 'launch.game',
 				'match_id': data['matchId'] 
 			})
+		elif message_type == 'leave_tournament_group':
+			await self.channel_layer.group_discard(data['tournament_id'], self.channel_name)
+		elif message_type == 'proceed_tournament': 
+			try:
+				last_match = await aget_object_or_404(TournamentMatch, match_id=data['match_id'])
+				player = await aget_object_or_404(User, id=data['user_id'])
+				await self.match_in_next_round(player, last_match)
+			except Http404:
+				await self.send_error_message(message_type, 'Error in finding last match or user')
 
 
 # -------------------------------> Channel layer event handlers <---------------------------------
@@ -307,6 +315,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			match = TournamentMatch.objects.create(tournament=tournament, tournament_round=round)
 			match.players.add(members_copy[i]['id'])
 			match.players.add(members_copy[i + 1]['id'])
+			if i == 0:
+				match.bracket_index = i
+			else:
+				match.bracket_index = i / 2
 			round_mapping[round].add(match)
 			i += 2
 
@@ -412,4 +424,24 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			print(f"An error occurred: {e}") 
 			return None
 
-	 
+	@database_sync_to_async
+	def match_in_next_round(self, user, last_match):
+		tournament = last_match.tournament
+		tournament_bracket = Bracket.objects.filter(tournament=tournament).first()
+		
+		next_rounds = {
+			'eighth_finals': 'quarter_finals',
+			'quarter_finals': 'semi_finals' ,
+			'semi_finals': 'finals'
+		}
+
+		round_mapping = {
+			'finals': tournament_bracket.finals,
+			'semi_finals': tournament_bracket.semi_finals,
+			'quarter_finals': tournament_bracket.quarter_finals,
+			'eighth_finals': tournament_bracket.eighth_finals
+		}
+		# new_match = TournamentMatch.objects.create(tournament=tournament, tournament_round=next_rounds[last_match.tournament_round])
+		# new_match.players.add(user)
+		# round_mapping[last_match.tournament_round].add(new_match)
+
