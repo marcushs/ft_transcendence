@@ -3,6 +3,7 @@ import Bracket from "./bracket/bracket.js";
 import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
 import { displayChatroomComponent } from "../../../../utils/chatUtils/sendMessageCallback.js";
 import { putMessageToChatroomConversation } from "../../../../utils/chatUtils/sendPrivateMessage.js";
+import BracketObj from "./bracket/BracketObj.js";
 
 export default class TournamentMatch {
 	constructor(tournamentBracket) {
@@ -28,19 +29,7 @@ class TournamentMatchElement extends HTMLElement {
 		this.tournamentId = this.tournamentBracket.tournament.tournament_id;
 		this.tournamentName = this.tournamentBracket.tournament.tournament_name;
 		this.tournamentSize = this.tournamentBracket.tournament.tournament_size;
-		this.bracketObj = {
-			nbOfPlayers: this.tournamentSize,
-			eighthFinal: {},
-			quarterFinal: {},
-			semiFinal: {},
-			final: [],
-		};
-		this.stageMapping = {
-			'eighth_finals': {target: this.bracketObj.eighthFinal, length: 4},
-			'quarter_finals': {target: this.bracketObj.quarterFinal, length: 2},
-			'semi_finals': {target: this.bracketObj.semiFinal, length: 1},
-			'finals': {target: this.bracketObj.final},
-		}
+		this.bracketObj = BracketObj.create(this.tournamentBracket, this.tournamentSize);
 		this.stage = this.tournamentBracket.tournament.current_stage;
 		this.matches = this.tournamentBracket[this.stage];
 		this.clientMatch = null;
@@ -103,7 +92,6 @@ class TournamentMatchElement extends HTMLElement {
 
 		bracketBtn.addEventListener('click', () => {
 			console.log('clicked on bracket')
-			this.makeBracketObject();
 			console.log('bracketObj', this.bracketObj);
 			this.redirectToBracket();
 		})
@@ -119,67 +107,6 @@ class TournamentMatchElement extends HTMLElement {
 			tournamentSocket.send(JSON.stringify(payload));
 			clearInterval(this.intervalId);
 		})
-	}
-
-	makeBracketObject() {
-		const eighthFinalsMatches = this.tournamentBracket.eighth_finals;
-		const quarterFinalsMatches = this.tournamentBracket.quarter_finals;
-		const semiFinalsMatches = this.tournamentBracket.semi_finals;
-		const finalsMatches = this.tournamentBracket.finals;
-
-		(eighthFinalsMatches.length === 0) ? this.fillNullMatches('eighth_finals') : this.fillBracketMatches('eighth_finals',eighthFinalsMatches);
-		(quarterFinalsMatches.length === 0) ? this.fillNullMatches('quarter_finals') : this.fillBracketMatches('quarter_finals', quarterFinalsMatches);
-		(semiFinalsMatches.length === 0) ? this.fillNullMatches('semi_finals') : this.fillBracketMatches('semi_finals', semiFinalsMatches);
-		(finalsMatches.length === 0) ? this.fillNullMatches('finals') : this.fillBracketMatches('finals', finalsMatches);
-	}
-
-	fillBracketMatches(stage, stageMatches) {
-		let target = this.stageMapping[stage].target;
-
-		if (stage === 'finals') {
-			target = []
-			
-			target.push([
-				{name: stageMatches.players[0].username, score: '0'},
-				{name: stageMatches.players[1].username, score: '0'}
-			])
-			return ;
-		}
-
-		target['leftMatches'] = [];
-		target['rightMatches'] = [];
-
-		stageMatches.forEach((match, idx) => {
-			if (idx % 2 === 0) {
-				target.leftMatches.push(this.makeMatch(match))
-			} else {
-				target.rightMatches.push(this.makeMatch(match))
-			}
-		});
-	}
-
-	fillNullMatches(stage) {
-		let target = this.stageMapping[stage].target;
-		const length = this.stageMapping[stage].length;
-
-		if (stage === 'finals') {
-			target.push(this.nullMatch());
-			return ;
-		}
-		target['leftMatches'] = Array.from({ length: length }, () => this.nullMatch());
-		target['rightMatches'] = Array.from({ length: length }, () => this.nullMatch());
-	}
-
-	nullMatch() {
-		return [null, null];
-	}
-
-	makeMatch(match) {
-		match = [
-			{name: match.players[0].username, score: '0'}, 
-			{name: match.players[1].username, score: '0'}
-		];
-		return match;
 	}
 
 	redirectToBracket() {

@@ -3,6 +3,9 @@ import Bracket from "./bracket/bracket.js";
 import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
 import { displayChatroomComponent } from "../../../../utils/chatUtils/sendMessageCallback.js";
 import { putMessageToChatroomConversation } from "../../../../utils/chatUtils/sendPrivateMessage.js";
+import { sendRequest } from "../../../../utils/sendRequest.js";
+import BracketObj from "./bracket/BracketObj.js";
+import { redirectToTournamentHome } from "../../../../utils/tournamentUtils/joinTournamentUtils.js";
 
 export default class TournamentLost {
 	constructor(tournamentBracket, lostMatch) {
@@ -31,25 +34,14 @@ class TournamentLostElement extends HTMLElement {
 		this.tournamentId = this.tournamentBracket.tournament.tournament_id;
 		this.tournamentName = this.tournamentBracket.tournament.tournament_name;
 		this.tournamentSize = this.tournamentBracket.tournament.tournament_size;
-		this.bracketObj = {
-			nbOfPlayers: this.tournamentSize,
-			eighthFinal: {},
-			quarterFinal: {},
-			semiFinal: {},
-			final: [],
-		};
-		this.stageMapping = {
-			'eighth_finals': {target: this.bracketObj.eighthFinal, length: 4},
-			'quarter_finals': {target: this.bracketObj.quarterFinal, length: 2},
-			'semi_finals': {target: this.bracketObj.semiFinal, length: 1},
-			'finals': {target: this.bracketObj.final},
-		}
-		this.stage = this.tournamentBracket.tournament.current_stage;
-		this.matches = this.tournamentBracket[this.stage];
+		this.bracketObj = BracketObj.create(this.tournamentBracket, this.tournamentSize);
+		this.match = null;
+		this.stage = null;
 		this.clientMatch = null;
 		this.userId = null;
+		this.intervalId = null;
 	}
-
+	
 	async connectedCallback() {
 		await this.findMatch();
 		await this.render();
@@ -86,102 +78,42 @@ class TournamentLostElement extends HTMLElement {
 	}
 
 	async findMatch() {
-		this.userId = await getUserId();
-		
-		if (!this.userId) return ;
+		try {
+			let res = await sendRequest('GET', `/api/tournament/get_match_by_id/?match_id=${this.lostMatch}`, null, false);
 
-		this.clientMatch = this.matches.find(match => 
-			match.players.some(player => player.id === this.userId)
-		);
-	}
+			console.log(res)
 
-	getOpponent() {
-		return this.clientMatch.players[0].id === this.userId ? this.clientMatch.players[1].username : this.clientMatch.players[0].username;
+			if (res.match) {
+				this.match = res.match;
+				this.stage = this.match.tournament_round
+			}
+		} catch (error) {
+			return null;
+		}
 	}
 
 	addEventListeners() {
 		const bracketBtn = this.querySelector('#bracket-icon');
-		const readyBtn = this.querySelector('.tournament-match-ready-btn');
+		const leaveBtn = this.querySelector('.tournament-lost-leave-btn');
+		const secondsSpan = this.querySelector('.tournament-lost-countdown > span');
+		let count = 59;
 
+		
 		bracketBtn.addEventListener('click', () => {
 			console.log('clicked on bracket')
-			this.makeBracketObject();
 			console.log('bracketObj', this.bracketObj);
 			this.redirectToBracket();
 		})
-
-		readyBtn.addEventListener('click', () => {
-			console.log('ready clicked');
-			console.log('userId: ', this.userId);
-			const payload = {
-				'type': 'user_ready_for_match',
-				'userId': this.userId,
-				'matchId': this.clientMatch.match_id
-			}
-			tournamentSocket.send(JSON.stringify(payload));
+		
+		leaveBtn.addEventListener('click', () => {
+			redirectToTournamentHome()
 			clearInterval(this.intervalId);
 		})
-	}
 
-	makeBracketObject() {
-		const eighthFinalsMatches = this.tournamentBracket.eighth_finals;
-		const quarterFinalsMatches = this.tournamentBracket.quarter_finals;
-		const semiFinalsMatches = this.tournamentBracket.semi_finals;
-		const finalsMatches = this.tournamentBracket.finals;
-
-		(eighthFinalsMatches.length === 0) ? this.fillNullMatches('eighth_finals') : this.fillBracketMatches('eighth_finals',eighthFinalsMatches);
-		(quarterFinalsMatches.length === 0) ? this.fillNullMatches('quarter_finals') : this.fillBracketMatches('quarter_finals', quarterFinalsMatches);
-		(semiFinalsMatches.length === 0) ? this.fillNullMatches('semi_finals') : this.fillBracketMatches('semi_finals', semiFinalsMatches);
-		(finalsMatches.length === 0) ? this.fillNullMatches('finals') : this.fillBracketMatches('finals', finalsMatches);
-	}
-
-	fillBracketMatches(stage, stageMatches) {
-		let target = this.stageMapping[stage].target;
-
-		if (stage === 'finals') {
-			target = []
-			
-			target.push([
-				{name: stageMatches.players[0].username, score: '0'},
-				{name: stageMatches.players[1].username, score: '0'}
-			])
-			return ;
-		}
-
-		target['leftMatches'] = [];
-		target['rightMatches'] = [];
-
-		stageMatches.forEach((match, idx) => {
-			if (idx % 2 === 0) {
-				target.leftMatches.push(this.makeMatch(match))
-			} else {
-				target.rightMatches.push(this.makeMatch(match))
-			}
-		});
-	}
-
-	fillNullMatches(stage) {
-		let target = this.stageMapping[stage].target;
-		const length = this.stageMapping[stage].length;
-
-		if (stage === 'finals') {
-			target.push(this.nullMatch());
-			return ;
-		}
-		target['leftMatches'] = Array.from({ length: length }, () => this.nullMatch());
-		target['rightMatches'] = Array.from({ length: length }, () => this.nullMatch());
-	}
-
-	nullMatch() {
-		return [null, null];
-	}
-
-	makeMatch(match) {
-		match = [
-			{name: match.players[0].username, score: '0'}, 
-			{name: match.players[1].username, score: '0'}
-		];
-		return match;
+		this.intervalId = setInterval(() => {
+			secondsSpan.innerText = `${count}`;
+			count--;
+		}, 1000);
 	}
 
 	redirectToBracket() {
@@ -192,14 +124,6 @@ class TournamentLostElement extends HTMLElement {
 		bracketState['state'] = bracket;
 		gameComponent.changeState(bracketState.state, bracketState.context);
 		gameComponent.currentState = "bracket";
-	}
-
-	updateCountdownSeconds(time) {
-		const secondsSpan = this.querySelector('.match-countdown span');
-
-		if (!secondsSpan) return;
-
-		secondsSpan.innerText = time;
 	}
 }
 
