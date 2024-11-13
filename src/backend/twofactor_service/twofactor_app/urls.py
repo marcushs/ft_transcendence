@@ -11,5 +11,4 @@ urlpatterns = [
     path('add_user/', user_utils.AddNewUser.as_view(), name='add_user'),
     path('update_user/', user_utils.update_user.as_view(), name='update_user'),
     path('twofactor_login/', two_factor_login.two_factor_login_check.as_view(), name='twofactor_login'),
-    path('check_username/', user_utils.check_username.as_view(), name='check_username'),
 ]

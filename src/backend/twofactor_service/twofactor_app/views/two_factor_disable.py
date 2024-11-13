@@ -34,7 +34,7 @@ class twofactor_disable_view(View):
         request.user.two_factor_method = ''
         request.user.is_verified = False
         response = send_update_request(request=request)
-        if response.status_code != 200:
+        if response is not None:
             return response
         request.user.save()
         return JsonResponse({'message': 'twoFactorDisabled'}, status=200)

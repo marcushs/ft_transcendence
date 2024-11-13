@@ -11,9 +11,7 @@ User = get_user_model()
 class two_factor_login_check(View):
     def __init__(self):
         super().__init__
-    
-    def get(self, request):
-        return JsonResponse({"message": 'get request successfully reached'}, status=200)
+
     
     def post(self, request):
         try:

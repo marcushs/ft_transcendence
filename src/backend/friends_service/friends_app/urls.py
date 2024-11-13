@@ -9,5 +9,4 @@ urlpatterns = [
     path('manage_friendship/', friends_utils.friendshipManager.as_view(), name='manage_friendship'),
     path('search_contacts/', get_friends_list.GetFriendsList.as_view(), name='search_contacts'),
     path('update_contacts/', websocket_utils.handle_friend_info_change.as_view(), name='update_contacts'),
-    path('check_username/', user_utils.check_username.as_view(), name='check_username'),
 ] 

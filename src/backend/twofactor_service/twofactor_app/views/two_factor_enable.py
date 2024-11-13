@@ -18,25 +18,30 @@ class twofactor_enable_view(View):
         
     
     def post(self, request):
-        if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'message': 'you are not connected'}, status=403)
-        if request.user.is_verified:
-            return JsonResponse({'message': 'you\'ve already activated two-factor authentication on your account'}, status=403)
-        data = json.loads(request.body.decode('utf-8'))
-        method = data.get('method')
-        twofactor_code = data.get('twofactor')
-        if twofactor_code is not None:
-            return self._verification_handler(request, twofactor_code, method)
-        match method:
-            case 'email':
-                return self._email_handler(request)
-            case 'authenticator':
-                return self._authenticator_handler(request)
-            case _:
-                return JsonResponse({'message': 'We\'ve encountered an issue with the selected authentication method.'}, status=201)
+        try:
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'message': 'notConnected'}, status=403)
+            if request.user.is_verified:
+                return JsonResponse({'message': 'twoFactorAlreadyActivated'}, status=403)
+            data = json.loads(request.body.decode('utf-8'))
+            method = data.get('method')
+            twofactor_code = data.get('twofactor')
+            if twofactor_code is not None:
+                return self._verification_handler(request, twofactor_code, method)
+            match method:
+                case 'email':
+                    return self._email_handler(request)
+                case 'authenticator':
+                    return self._authenticator_handler(request)
+                case _:
+                    return JsonResponse({'message': 'We\'ve encountered an issue with the selected authentication method.'}, status=400)
+        except Exception as e:
+            print('Unexpected Error: ', str(e))
+            return JsonResponse({'message': 'unknownError'}, status=400)
+
        
     def _email_handler(self, request):
-        language = async_to_sync(get_user_language)(request) 
+        language = async_to_sync(get_user_language)(request, request.user.username) 
         verification_code = self._generate_6_digits_code()
         match language:
             case 'en':
@@ -82,7 +87,7 @@ class twofactor_enable_view(View):
                     如果您没有要求进行此操作，请忽略此邮件
                 """
             case _:
-                return JsonResponse({'message': 'An error occured with email sending'}, status=400)
+                return JsonResponse({'message': 'An error occured with email sending: language not found'}, status=400)
         recipient_list = [request.user.email]
         error_message = self._send_mail(subject, message, recipient_list)
         if error_message is not None:
@@ -99,20 +104,19 @@ class twofactor_enable_view(View):
             totp = pyotp.TOTP(request.user.authenticator_secret)
             otpauth_url =  totp.provisioning_uri(request.user.email, issuer_name='KingPong')
         except Exception as error:
-            return JsonResponse({'message': str(error)}, status=400)
-        return JsonResponse({'message': 'QR code url generated', 'qrcode': otpauth_url, 'qrcode_token': request.user.authenticator_secret}, status=200)
+            print(f'Error: authenticator: {str(error)}')
+            return JsonResponse({'message': 'authenticatorError'}, status=400)
+        return JsonResponse({'qrcode': otpauth_url, 'qrcode_token': request.user.authenticator_secret}, status=200)
     
     def _verification_handler(self, request, twofactor_code, method):
         if method is None:
-            return JsonResponse({'message': 'We\'ve encountered an issue with the selected authentication method.'}, status=201)
+            return JsonResponse({'message': 'invalidMethod'}, status=400)
         response = twofactor_verify_view(request, twofactor_code, method)
         if response.status_code != 200:
             return response
         request.user.two_factor_method = method
         request.user.is_verified = True
-        request_response = send_update_request(request)
-        if request_response.status_code != 200:
-            return request_response
+        send_update_request(request)
         request.user.save()
         return response
 
@@ -123,7 +127,8 @@ class twofactor_enable_view(View):
             send_mail(subject, message, email_from, recipient_list)
             return None
         except Exception as error:
-            return f'An error occurred with email sending : {str(error)}'
+            print(f'An error occurred with email sending : {str(error)}')
+            return 'emailError'
         
     def _generate_6_digits_code(self):
         code = secrets.randbelow(1000000)

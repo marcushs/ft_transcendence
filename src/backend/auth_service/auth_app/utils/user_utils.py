@@ -37,14 +37,3 @@ class add_oauth_user(View):
             return JsonResponse({'message': 'Username already taken! Try another one.', "status": "Error"}, status=400)
         user = User.objects.create_oauth_user(data)
         return JsonResponse({"message": 'user added with success', "status": "Success", "user_id": user.id}, status=200)
-
-class check_username(View):
-    def __init__(self):
-        super().__init__
-
-    def get(self, request):
-        username = request.GET.get('username')
-        print(username) 
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
-        return JsonResponse({"message": "Username is free", "status": "Success"}, status=200)

@@ -24,7 +24,7 @@ export class TwoFactorVerify {
 				        <two-factor-input-component></two-factor-input-component>
 						</div>
 						<p class="feedbackInformation"></p>
-						<button-component label="Verify" class="generic-auth-btn"></button-component>
+						<button-component label="verify" class="generic-auth-btn"></button-component>
 					</form>
 				</div>
 			</section>

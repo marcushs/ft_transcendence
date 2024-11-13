@@ -38,17 +38,17 @@ JWT_ALGORITHM = env("JWT_ALGORITHM")
 
 # /-----> JWT token lifetime in seconds <-----\
 
-ACCESS_TOKEN_LIFETIME = 120 # 2 minutes
-REFRESH_TOKEN_LIFETIME = 86400 # 1 day
+ACCESS_TOKEN_LIFETIME = 120 
+REFRESH_TOKEN_LIFETIME = 86400
 
 # /-----> Email settings <-----\
     
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'kingpong.info@gmail.com'
-EMAIL_HOST_PASSWORD = 'mlxe bkoa gjue tigk'
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
 # /-----><-----\
 
@@ -56,7 +56,6 @@ EMAIL_HOST_PASSWORD = 'mlxe bkoa gjue tigk'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 

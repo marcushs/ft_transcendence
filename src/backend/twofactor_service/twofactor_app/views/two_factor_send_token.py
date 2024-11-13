@@ -56,12 +56,14 @@ class twofactor_send_token_view(View):
             recipient_list = [self.user.email, ]
             send_mail(email_subject, email_message, email_from, recipient_list)
             self.user.set_two_factor_code(self.verification_code, 5)
+            print(f'-----> EMAIL SEND for verify')
             return JsonResponse({'method': self.user.two_factor_method}, status=200)
         except Exception as error:
             return JsonResponse({'message': f'An error occurred with email sending : {str(error)}'}, status=400)
 
 
     def get_message_type_preset(self, email_type):
+        print(f'-----> EMAIL TYPE: {email_type}')
         if email_type == 'verify':
             return self.get_verify_message_by_language()
         if email_type == 'deactivation':
@@ -75,7 +77,9 @@ class twofactor_send_token_view(View):
     
     
     def get_verify_message_by_language(self):
-        language = async_to_sync(get_user_language)(self.request)  
+        language = async_to_sync(get_user_language)(self.request, self.user.username)  
+        print(f'-----> LANGUAGE: {language}')
+        
         
         match language:
             case 'en':
@@ -127,11 +131,11 @@ class twofactor_send_token_view(View):
                 raise Exception({'message': 'Unknown language'}) 
             
     def get_deactivation_message_by_language(self):
-            language = async_to_sync(get_user_language)(self.request)
+            language = async_to_sync(get_user_language)(self.request, self.user.username)
 
             match language:
                 case 'en':
-                    subject='Two Factor Auth Deactivation'
+                    subject='Two Factor Auth Deactivation' 
                     message=f"""
                         Hi {self.user.username},
 
