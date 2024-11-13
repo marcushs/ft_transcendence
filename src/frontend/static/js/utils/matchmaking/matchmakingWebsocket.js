@@ -1,5 +1,6 @@
 import { gameWebsocket } from "../../components/Game/states/inGame/gameWebsocket.js";
 import '../../components/Matchmaking/MatchmakingResearchComponent.js'
+import {sendRequest} from "../sendRequest.js";
 
 export let matchmakingSocket = null;
 
@@ -16,7 +17,6 @@ export async function matchmakingWebsocket() {
 
 	matchmakingSocket.onmessage = async (event) => {
 		const data = JSON.parse(event.data);
-
 		if (data.type === 'already_in_game') {
 			console.log('matchmaking research canceled: user is already in game');
 			const researchComponent = document.querySelector('matchmaking-research-component')
@@ -24,7 +24,7 @@ export async function matchmakingWebsocket() {
 				researchComponent.remove();
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
-			
+
 		}
 		if (data.type === 'game_found') {
 			const matchmakingPopUp = document.querySelector('matchmaking-research-component');
@@ -32,6 +32,9 @@ export async function matchmakingWebsocket() {
 				matchmakingPopUp.setFoundGameRender();
 			await gameWebsocket(data.player_id);
 			matchmakingSocket.close();
+		}
+		if (data.type === 'playerJoined') {
+
 		}
 	}
 

@@ -45,7 +45,6 @@ class RankedComponent extends HTMLElement {
 		const rankedComponentContentElement = this.querySelector('.ranked-component-content');
 		const rankedData = await sendRequest("GET", `/api/statistics/get_user_statistics/?q=${await getUserId()}`, null);
 
-		console.log(rankedData)
 		rankedComponentContentElement.innerHTML += `
 			<h4>${getString('gameComponent/ranked')}</h4>
 			${this.createRankContainer(rankedData.user_statistics.rank, rankedData.user_statistics.rank_points)}
