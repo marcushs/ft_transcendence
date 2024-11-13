@@ -32,13 +32,14 @@ class PrivateMatchInit(View):
                 raise Exception(str(notifications_response.json().get('message')))
             return JsonResponse({'status': 'success', 'message': 'Lobby created'}, status=200)
         except Exception as e: 
-            print(f'Error: {str(e)}') 
+            print(f'Error: {str(e)}')  
             return JsonResponse({'status': 'error', 'message': 'An error occurred while init private match'}, status=500)
 
     def get_invited_user(self, data):
         if 'invitedUsername' not in data:
             raise Exception('username missing in payload')
         invited_user = User.objects.get(username=str(data['invitedUsername']))
+        print(f'AAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
         return invited_user
 
 

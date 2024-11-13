@@ -17,18 +17,19 @@ class PrivateMatchComponent extends HTMLElement {
 		`;
 
 		this.attachEventsListener();
-		this.state = "waiting";
+		this.state = "initial";
 	}
 
 	attachEventsListener() {
 		const input = this.querySelector('input');
 		const button = this.querySelector('button-component');
 
-		button.addEventListener('click', () => {
+		button.addEventListener('click', async () => {
+			console.log(button.className)
 			switch (this.state) {
 				case 'initial':
 					if (button.className === "generic-btn")
-						this.handlePlayButtonClick();
+						await this.handlePlayButtonClick();
 					break ;
 				case 'waiting':
 					this.displayWaitingState();
@@ -46,21 +47,28 @@ class PrivateMatchComponent extends HTMLElement {
 		});
 
 
-
+		document.addEventListener('playerJoinedMatchEvent', () => {
+			alert('test')
+		});
 
 	}
 
 	async handlePlayButtonClick() {
+		console.log('test')
 		const input = this.querySelector('input');
 
 		if (input.value === '' && this.querySelector('.invite-player-field-error').innerText === '') {
 			this.querySelector('.invite-player-field-error').innerText = 'The player name cannot be empty';
 		} else if (input.value !== '') {
 			const matchmakingSocket = await matchmakingWebsocket();
-			await sendRequest("POST", "/api/matchmaking/private_match/", {
-				invitedUsername: input.value,
-			});
-			this.displayLobby();
+			try {
+				await sendRequest("POST", "/api/matchmaking/init_private_match/", {
+					invitedUsername: input.value,
+				});
+				this.displayLobby();
+			} catch (error) {
+				console.log(error);
+			}
 		}
 	}
 

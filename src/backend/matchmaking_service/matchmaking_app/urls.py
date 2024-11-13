@@ -14,6 +14,6 @@ urlpatterns = [
     path("matchmaking_tournament/", matchmaking.MatchmakingTournament.as_view(), name="matchmaking_tournament"),
     path('check_username/', user_utils.check_username.as_view(), name='check_username'),
     path('init_private_match/', PrivateMatch.PrivateMatchInit.as_view(), name='init_private_match'),
-    path('check_private_match/', PrivateMatch.CheckPrivateMatch.as_view(), name='check_private_match'),
+    path('start_private_match/', PrivateMatch.StartPrivateMatch.as_view(), name='start_private_match'),
     path('cancel_private_match/', PrivateMatch.CancelPrivateMatch.as_view(), name='cancel_private_match'),
 ]

@@ -33,7 +33,13 @@ export async function matchmakingWebsocket() {
 			await gameWebsocket(data.player_id);
 			matchmakingSocket.close();
 		}
-		if (data.type === 'playerJoined') {
+		if (data.type === 'player_joined_private_match') {
+			throwPlayerJoinedMatchEvent();
+		}
+		if (data.type === 'player_refused_private_match') {
+
+		}
+		if (data.type === 'private_match_started') {
 
 		}
 	}
@@ -45,4 +51,12 @@ export async function matchmakingWebsocket() {
     matchmakingSocket.onerror = function(event) {
         console.log("Websocket error: ", event);
     };
+}
+
+function throwPlayerJoinedMatchEvent() {
+	const event = new CustomEvent('playerJoinedMatchEvent', {
+		bubbles: true
+	});
+
+	document.dispatchEvent(event);
 }
