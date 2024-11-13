@@ -317,8 +317,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			match.players.add(members_copy[i + 1]['id'])
 			if i == 0:
 				match.bracket_index = i
+				match.save()
 			else:
 				match.bracket_index = i / 2
+				match.save()
 			round_mapping[round].add(match)
 			i += 2
 
@@ -439,8 +441,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'finals': tournament_bracket.finals,
 			'semi_finals': tournament_bracket.semi_finals,
 			'quarter_finals': tournament_bracket.quarter_finals,
-			'eighth_finals': tournament_bracket.eighth_finals
+			'eighth_finals': tournament_bracket.eighth_finals 
 		}
+		
+		if last_match.bracket_index < (round_mapping[last_match.tournament_round].count() / 2):
+			print('left match')
+		else:
+			print('right match')
+
 		# new_match = TournamentMatch.objects.create(tournament=tournament, tournament_round=next_rounds[last_match.tournament_round])
 		# new_match.players.add(user)
 		# round_mapping[last_match.tournament_round].add(new_match)
