@@ -7,6 +7,6 @@ urlpatterns = [
     path('redirect/',oauth_42_redirect.oauth42RedirectView.as_view(), name='oauth42Redirect'),
     path('access_resource/',oauth_42_access_resource.oauth42AccessResourceView.as_view(), name='oauth42AccessResource'),
     path('update_username/',oauth_42_update_username.oauth42UpdateUsernameView.as_view(), name='oauth42UpdateUsername'),
-    path('get_image/',get_42_image_view.get42ImageViewView.as_view(), name='get_image'),
-    path('is_logged_with_42/',is_logged_with_42.get42ImageViewView.as_view(), name='is_logged_with_42'),
+    path('get_image/',get_42_image_view.get42ImageView.as_view(), name='get_image'),
+    path('is_logged_with_42/',is_logged_with_42.is_logged_with_42.as_view(), name='is_logged_with_42'),
 ]

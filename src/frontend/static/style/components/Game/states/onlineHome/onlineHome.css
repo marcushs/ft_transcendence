@@ -34,13 +34,6 @@
 
 .online-home-container .left-section {
 	height: 100%;
-	/*display: flex;*/
-	/*flex-direction: column;*/
-	/*align-items: center;*/
-	/*align-content: space-between;*/
-	/*justify-content: space-between;*/
-	/*height: 100%;*/
-	/*padding-top: 6rem;*/
 }
 
 .online-home-container .right-section {
@@ -48,6 +41,6 @@
 	flex-direction: column;
 	align-items: center;
 	/*align-content: space-between;*/
-	justify-content: center;
+	justify-content: space-between;
 	height: 100%;
 }
