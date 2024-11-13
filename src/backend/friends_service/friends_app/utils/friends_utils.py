@@ -44,7 +44,7 @@ class friendshipManager(View):
         self.user = request.user
         self.status = data['status']
         try:
-            self.target_user = User.objects.get(username=data['target_username'])
+            self.target_user = User.objects.get(username=str(data['target_username']))
             self.friend_list = FriendList.objects.get(user=self.user)
         except User.DoesNotExist:
             return False

@@ -7,6 +7,7 @@ from asgiref.sync import async_to_sync
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse 
 from django.views import View
+from ..models import PrivateMatchLobby
 import random
 import queue
 import json
