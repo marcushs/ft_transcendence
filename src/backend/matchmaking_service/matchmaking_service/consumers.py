@@ -53,3 +53,26 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 'player_id': str(self.user.id)
             }
         ))
+        
+    async def player_joined_private_match(self, event):  
+        await self.send(text_data=json.dumps(
+            {
+                'type': event['type'],
+                'player_id': event['player_id']
+            }
+        ))
+        
+    async def player_refused_private_match(self, event):  
+        await self.send(text_data=json.dumps(
+            {
+                'type': event['type'],
+                'player_id': event['player_id']
+            }
+        ))
+        
+    async def private_match_started(self, event):  
+        await self.send(text_data=json.dumps(
+            {
+                'type': event['type'],
+            }
+        ))

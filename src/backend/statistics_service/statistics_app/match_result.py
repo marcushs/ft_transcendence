@@ -28,9 +28,6 @@ class MatchResultManager(View):
             self.is_valid_data(data)
             if not self.update_match_result_data(data):
                 return JsonResponse({'status': 'success', 'message': 'result not taken into account, game cancelled with draw'}, status=200)
-            print(f'WINNER: OLD POINTS : {self.winner_old_points} -- NEW POINTS : {self.winner.rankPoints}')
-            print(f'LOSER: OLD POINTS : {self.loser_old_points} -- NEW POINTS : {self.loser.rankPoints}')
-
             if data['type'] == 'ranked':
                 winner_rank = self.get_rank(self.winner.rankPoints)
                 loser_rank = self.get_rank(self.loser.rankPoints)
@@ -51,7 +48,7 @@ class MatchResultManager(View):
                 return JsonResponse({'status': 'success', 'results': payload}, status=200)
             return JsonResponse({'status': 'success', 'message': 'match data updated'}, status=200)
         except Exception as e:
-            print(f'-----------> ERROR: {str(e)}')
+            print(f'-> Error: {str(e)}')
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
@@ -68,11 +65,10 @@ class MatchResultManager(View):
             raise Exception('Missing match type in data')
         if 'is_draw' not in data or 'is_surrend' not in data or 'is_canceled' not in data:
             raise Exception('Missing data')
-        for field in ['unranked', 'ranked', 'tournament']:
+        for field in ['unranked', 'ranked', 'tournament', 'private_match']:
             if field == data['type']:
                 return
         raise Exception('Invalid data') 
-
 
 
     def update_match_result_data(self, data):
@@ -134,7 +130,6 @@ class MatchResultManager(View):
 
 
     def manage_ranked_result(self, data):
-        print(f"data['is_draw']: {data['is_draw']}") 
         if data['is_surrend'] is True:
             winner_points, loser_points = self.manage_surrend_points_update()
         else:

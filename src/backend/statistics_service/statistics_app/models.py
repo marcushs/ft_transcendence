@@ -8,7 +8,8 @@ import uuid
 class MatchHistory(models.Model):
     match_type_choices = [
         ('ranked', 'Ranked'),
-        ('unranked', 'Unranked')
+        ('unranked', 'Unranked'),
+        ('private_match', 'PrivateMatch')
     ]
     winner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='won_matches', on_delete=models.CASCADE)
     loser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='lost_matches', on_delete=models.CASCADE)
