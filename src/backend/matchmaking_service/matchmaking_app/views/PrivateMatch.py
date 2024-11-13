@@ -1,4 +1,5 @@
 from ..utils.websocket_utils import send_websocket_info
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
 from .process_matchmaking import send_start_game
 from .matchmaking import change_is_ingame_state
@@ -30,16 +31,17 @@ class PrivateMatchInit(View):
             notifications_response = async_to_sync(send_request)(request_type='POST', url='http://notifications:8000/api/notifications/manage_notifications/', request=request, payload=payload)
             if notifications_response.json().get('status') == 'error':
                 raise Exception(str(notifications_response.json().get('message')))
-            return JsonResponse({'status': 'success', 'message': 'Lobby created'}, status=200)
+            return JsonResponse({'message': 'lobbyCreated'}, status=200)
+        except ObjectDoesNotExist:
+            return JsonResponse({'message': f'unknownUser'}, status=400)
         except Exception as e: 
             print(f'Error: {str(e)}')  
-            return JsonResponse({'status': 'error', 'message': 'An error occurred while init private match'}, status=500)
+            return JsonResponse({'message': str(e)}, status=400)
 
     def get_invited_user(self, data):
         if 'invitedUsername' not in data:
-            raise Exception('username missing in payload')
-        invited_user = User.objects.get(username=str(data['invitedUsername']))
-        print(f'AAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+            raise Exception('usernameMissing')
+        invited_user = User.objects.get(username=str(data['invitedUsername'])) 
         return invited_user
 
 
@@ -60,7 +62,7 @@ class CancelPrivateMatch(View):
             return JsonResponse({'status': 'success', 'message': 'Lobby deleted'}, status=200)
         except Exception as e: 
             print(f'Error: {str(e)}') 
-            return JsonResponse({'status': 'error', 'message': 'An error occurred while init private match'}, status=500)
+            return JsonResponse({'status': 'error', 'message': 'An error occurred while init private match'}, status=400)
 
 
     def init(self, data, request):
@@ -98,7 +100,7 @@ class PrivateMatchManager(View):
             return self.process_choice()
         except Exception as e: 
             print(f'Error: {str(e)}') 
-            return JsonResponse({'status': 'error', 'message': 'An error occurred while joining private match'}, status=500)
+            return JsonResponse({'status': 'error', 'message': 'An error occurred while joining private match'}, status=400)
 
 
     def init(self, data, request):
@@ -112,7 +114,7 @@ class PrivateMatchManager(View):
         print(f'---> sender_user: {self.sender_user}')
         print(f'---> choice: {self.choice}')
         print(f'---> LOBBY: {self.lobby}')
-        print(f'---------------------------------------')
+        print(f'---------------------------------------') 
         
     
     def check_data(self, data):
@@ -178,12 +180,12 @@ class StartPrivateMatch(View):
             return JsonResponse({'status': 'success', 'message': 'Private match lobby started'}, status=200)
         except Exception as e: 
             print(f'Error: {str(e)}') 
-            return JsonResponse({'status': 'error', 'message': 'An error occurred while checking private match'}, status=500)
+            return JsonResponse({'status': 'error', 'message': f'An error occurred while checking private match: {str(e)}'}, status=400)
 
 
     def init(self, data, request):
         self.user = request.user
-        self.invited_user = self.get_invited_user(data)
+        self.invited_user = self.get_invited_user(data) 
         self.lobby = self.get_lobby()
         
         

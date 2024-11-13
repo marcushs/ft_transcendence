@@ -1,3 +1,5 @@
+import { sendRequest } from "./sendRequest.js";
+
 export function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -17,23 +19,29 @@ export function getCookie(name) {
 export async function generateCsrfToken() {
     if (!getCookie('csrftoken')) {
         try {
-            const config = {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include' // Needed for send cookie
-            };
-            const res = await fetch(`/api/user/csrf/`, config);
-            if (res.status == 403)
-                throw new Error('Access Denied')
-            const data = await res.json();
-            if (!res.ok) {
-                throw new Error(`${res.status} - ${data.error}`);
-            }   
-            alert(data.message)
+            const data = await sendRequest('GET', '/api/user/csrf/', null)
+            console.log(data.message);
         } catch (error) {
-            alert(`Error: ${error.message}`);
+            console.error(error.message);
         }
+        // try {
+        //     const config = {
+        //         headers: {
+        //             'Accept': 'application/json',
+        //             'Content-Type': 'application/json',
+        //         },
+        //         credentials: 'include' // Needed for send cookie
+        //     };
+        //     const res = await fetch(`/api/user/csrf/`, config);
+        //     if (res.status == 403)
+        //         throw new Error('Access Denied')
+        //     const data = await res.json();
+        //     if (!res.ok) {
+        //         throw new Error(`${res.status} - ${data.error}`);
+        //     }   
+        //     console.log(data.message);
+        // } catch (error) {
+        //     console.error(error.message);
+        // }
     }
 }

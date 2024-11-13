@@ -54,20 +54,20 @@ class PrivateMatchComponent extends HTMLElement {
 	}
 
 	async handlePlayButtonClick() {
-		console.log('test')
 		const input = this.querySelector('input');
 
 		if (input.value === '' && this.querySelector('.invite-player-field-error').innerText === '') {
 			this.querySelector('.invite-player-field-error').innerText = 'The player name cannot be empty';
 		} else if (input.value !== '') {
-			const matchmakingSocket = await matchmakingWebsocket();
 			try {
-				await sendRequest("POST", "/api/matchmaking/init_private_match/", {
+				const data = await sendRequest("POST", "/api/matchmaking/init_private_match/", {
 					invitedUsername: input.value,
 				});
+				console.log('private_match: ', data);
+				await matchmakingWebsocket();
 				this.displayLobby();
 			} catch (error) {
-				console.log(error);
+				console.log('private_match: ', error.message);
 			}
 		}
 	}
