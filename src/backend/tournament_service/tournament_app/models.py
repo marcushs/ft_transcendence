@@ -191,6 +191,11 @@ class TournamentMatch(models.Model):
         players = list(self.players.values('id', 'username', 'ready_for_match'))
         return [{'id': str(player['id']), 'username': player['username'], 'ready': player['ready_for_match']} for player in players]
 
+class TournamentMatchPlayer(models.Model):
+    match = models.ForeignKey(TournamentMatch, related_name='match', on_delete=models.CASCADE)
+    player = models.ForeignKey(User, on_delete=models.CASCADE)
+    player_number = 
+
 class Bracket(models.Model):
     tournament = models.ForeignKey(Tournament, related_name='tournament_bracket', on_delete=models.CASCADE)
     eighth_finals = models.ManyToManyField(TournamentMatch, related_name='eighth_finals_games')
