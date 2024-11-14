@@ -16,4 +16,5 @@ urlpatterns = [
     path('init_private_match/', PrivateMatch.PrivateMatchInit.as_view(), name='init_private_match'),
     path('start_private_match/', PrivateMatch.StartPrivateMatch.as_view(), name='start_private_match'),
     path('cancel_private_match/', PrivateMatch.CancelPrivateMatch.as_view(), name='cancel_private_match'),
-] 
+    path('manage_private_match/', PrivateMatch.PrivateMatchManager.as_view(), name='manage_private_match'),
+]

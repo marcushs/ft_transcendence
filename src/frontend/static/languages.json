@@ -189,7 +189,8 @@
 	},
 	"notificationsComponent": {
 	  "acceptedNotificationSuffix": "has accepted your friend request",
-	  "pendingNotificationPrefix": "You have a new friend request from"
+	  "pendingNotificationPrefix": "You have a new friend request from",
+	  "privateMatchInvitationSuffix": "has invited you to a private game"
 	},
 	"accountInfosComponent" : {
 	  "profile": "Profile",
@@ -420,7 +421,8 @@
 	},
 	"notificationsComponent": {
 	  "acceptedNotificationSuffix": "a accepté votre demande d'ami",
-	  "pendingNotificationPrefix": "Vous avez une nouvelle demande d'ami de"
+	  "pendingNotificationPrefix": "Vous avez une nouvelle demande d'ami de",
+	  "privateMatchInvitationSuffix": "vous a invité à un match privé"
 	},
 	"accountInfosComponent" : {
 	  "profile": "Profil",

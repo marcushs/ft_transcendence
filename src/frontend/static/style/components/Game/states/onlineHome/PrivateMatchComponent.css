@@ -59,6 +59,23 @@ private-match-component {
 	animation: loading-wheel 1.5s infinite;
 }
 
+.private-match-component-content .accept-icon {
+	width: 3.5rem;
+	position: absolute;
+	top: 10rem;
+	left: 29rem;
+}
+
+.private-match-component-content .btn-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.private-match-component-content .btn-container button-component {
+	margin: 0 1rem;
+}
+
 @keyframes loading-wheel {
 	0% {
 		transform: rotate(0deg);

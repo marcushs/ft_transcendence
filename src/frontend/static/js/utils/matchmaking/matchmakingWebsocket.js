@@ -1,6 +1,8 @@
 import { gameWebsocket } from "../../components/Game/states/inGame/gameWebsocket.js";
-import '../../components/Matchmaking/MatchmakingResearchComponent.js'
+import '../../components/Matchmaking/MatchmakingResearchComponent.js';
+import {startGame} from "../../components/Game/states/inGame/Game.js";
 import {sendRequest} from "../sendRequest.js";
+import getUserId from "../getUserId.js";
 
 export let matchmakingSocket = null;
 
@@ -16,6 +18,9 @@ export async function matchmakingWebsocket() {
 	}
 
 	matchmakingSocket.onmessage = async (event) => {
+
+		console.log("received socket = ", event.data);
+
 		const data = JSON.parse(event.data);
 		if (data.type === 'already_in_game') {
 			console.log('matchmaking research canceled: user is already in game');
@@ -40,7 +45,9 @@ export async function matchmakingWebsocket() {
 
 		}
 		if (data.type === 'private_match_started') {
-
+			console.log('private_match_started: data.player_id: ', data.player_id);
+			
+			await gameWebsocket(await getUserId());
 		}
 	}
 

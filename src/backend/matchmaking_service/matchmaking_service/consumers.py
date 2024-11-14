@@ -54,7 +54,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             }
         ))
         
-    async def player_joined_private_match(self, event):  
+    async def player_joined_private_match(self, event): 
         await self.send(text_data=json.dumps(
             {
                 'type': event['type'],
@@ -70,7 +70,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             }
         ))
         
-    async def private_match_started(self, event):  
+    async def private_match_started(self, event):
+        print('!!!!!!!!!!!!!!!!!!!!!!')
         await self.send(text_data=json.dumps(
             {
                 'type': event['type'],

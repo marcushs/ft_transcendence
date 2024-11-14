@@ -125,17 +125,4 @@ class NotificationMiddleware(MiddlewareMixin):
 
     async def delete_notifications(self, request, notifications_to_delete):
         for notification in notifications_to_delete:
-#             await self.send_delete_notification_to_channel(request, notification)
             await sync_to_async(notification.delete)()
-
-    # async def send_delete_notification_to_channel(self, request, notification):
-    #     channel_layer = get_channel_layer()
-    #     user_id = await get_user_id_by_username(request.user)
-        
-    #     await channel_layer.group_send(
-    #         f'notifications_user_{user_id}',
-    #         {
-    #             'type': 'delete_notification',
-    #             'notification': await sync_to_async(notification.to_dict)()
-    #         }
-    #     )

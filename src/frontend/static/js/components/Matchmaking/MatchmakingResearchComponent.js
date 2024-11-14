@@ -75,7 +75,6 @@ class MatchmakingResearchComponent extends HTMLElement {
         this.cancelResearchIcon.remove();
         this.mainDiv.classList.remove('matchmaking-research-processing');
 		this.mainDiv.classList.add('matchmaking-research-finished');
-        document.createElement('div')
     }
 
     setInitialRender() {

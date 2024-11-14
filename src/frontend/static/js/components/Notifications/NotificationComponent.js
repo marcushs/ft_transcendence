@@ -118,19 +118,24 @@ class NotificationComponent extends HTMLElement {
 
 
 	createPrivateMatchInvitationNotification(notification) {
-		const li = document.createElement('li');
+		const li = document.createElement('private-match-invitation-notification-component');
 
 		li.id = notification.uuid;
-		if (notification.is_read)
-			li.className = 'unread-notification';
-
-		li.innerHTML = `
-			<p>${notification.receiver} has invited you to a private game.</p>
-			<i class="fa-solid fa-check"></i>
-			<i class="fa-solid fa-xmark"></i>
-			<hr>
-		`;
-		this.notificationsUlElement.append(li);
+		li.setAttribute('notificationObj', JSON.stringify(notification));
+		this.notificationsUlElement.appendChild(li);
+		// const li = document.createElement('li');
+		//
+		// li.id = notification.uuid;
+		// if (notification.is_read)
+		// 	li.className = 'unread-notification';
+		//
+		// li.innerHTML = `
+		// 	<p>${notification.receiver} has invited you to a private game.</p>
+		// 	<i class="fa-solid fa-check"></i>
+		// 	<i class="fa-solid fa-xmark"></i>
+		// 	<hr>
+		// `;
+		// this.notificationsUlElement.append(li);
 	}
 
 
@@ -173,8 +178,9 @@ class NotificationComponent extends HTMLElement {
 		for (const notificationElement of oldNotificationsUlElements) {
 			const message = notificationElement.firstElementChild.innerHTML;
 
+			console.log(notificationElement)
 			if (message === duplicateMessage)
-				this.querySelector('ul').removeChild(notificationElement.parentElement);
+				notificationElement.remove();
 		}
 	}
 

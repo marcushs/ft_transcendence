@@ -14,7 +14,7 @@ import uuid
 
 #//---------------------------------------> start game instance Endpoint <--------------------------------------\\#
 
-@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch') 
 class startGameEngine(View):
     def __init__(self):
         super()

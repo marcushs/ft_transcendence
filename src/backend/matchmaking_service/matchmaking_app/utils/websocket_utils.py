@@ -33,7 +33,7 @@ async def send_websocket_info(player_id, payload):
             payload = json.loads(payload)
         channel_layer = get_channel_layer()
         await channel_layer.group_send(
-            f'matchmaking_searching_{player_id}',
+            f'matchmaking_searching_{player_id}', 
             payload
         )
     except Exception as e:

@@ -13,6 +13,7 @@ class PrivateMatchLobby(models.Model):
     
     def join_lobby(self):
         self.receiver_state = 'ready'
+        self.save()
     
     def delete_lobby(self):
         self.delete()
