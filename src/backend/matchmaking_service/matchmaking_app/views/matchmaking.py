@@ -65,7 +65,7 @@ class MatchmakingQueueManager(View):
 
 
     def post(self, request):
-        from .PrivateMatch import check_existing_private_match_lobby
+        from .PrivateMatch import is_player_in_private_lobby
         
         if isinstance(request.user, AnonymousUser):  
             return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400) 
@@ -73,14 +73,11 @@ class MatchmakingQueueManager(View):
         if not self.is_valid_matchmaking_type(data=data):
             return JsonResponse({'status': 'error', 'message': 'Invalid matchmaking type'}, status=400)
         is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
-        try:
-            check_existing_private_match_lobby()
-        except:
-            return JsonResponse({'status': 'error', 'message': 'User is already in matchmaking research'}, status=200)
-            
         if is_waiting:
             return JsonResponse({'status': 'error', 'message': 'User is already in matchmaking research'}, status=200)
-        self.start_matchmaking_by_type(data['type'], request)
+        if is_player_in_private_lobby(request.user):
+            return JsonResponse({'status': 'error', 'message': 'User is already in private match lobby'}, status=200)
+        self.start_matchmaking_by_type(data['type'], request) 
         return JsonResponse({'status': 'success', 'message': f"User successfully added to {data['type']} queue"}, status=200) 
 
 

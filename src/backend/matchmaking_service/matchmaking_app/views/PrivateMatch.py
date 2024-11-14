@@ -1,4 +1,4 @@
-from ..utils.websocket_utils import send_websocket_info
+from ..utils.websocket_utils import send_websocket_info, send_websocket_game_found
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
 from .matchmaking import change_is_ingame_state, is_already_in_waiting_list
@@ -19,10 +19,11 @@ class LobbyAlreadyExistError(Exception):
         self.message = message
 
 
-def check_existing_private_match_lobby(self, sender, receiver):
-    lobby = PrivateMatchLobby.objects.filter(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender)).first()
+def is_player_in_private_lobby(player):
+    lobby = PrivateMatchLobby.objects.filter(Q(sender=player) | Q(receiver=player)).first()
     if lobby:
-        raise LobbyAlreadyExistError('lobbyAlreadyExist')
+        return True
+    return False
 
 #//---------------------------------------> private match endpoint <--------------------------------------\\#
 
@@ -44,7 +45,8 @@ class PrivateMatchInit(View):
             }
             notifications_response = async_to_sync(send_request)(request_type='POST', url='http://notifications:8000/api/notifications/manage_notifications/', request=request, payload=payload)
             if notifications_response.json().get('status') == 'error':
-                raise Exception(str(notifications_response.json().get('message')))
+                print(f"Error: {str(notifications_response.json().get('message'))}")
+                raise Exception('notificationsRequestFailed')
             return JsonResponse({'message': 'lobbyCreated'}, status=200)
         except ObjectDoesNotExist:
             return JsonResponse({'message': f'unknownUser'}, status=400)
@@ -60,7 +62,8 @@ class PrivateMatchInit(View):
         self.user = request.user
         if self.invited_user.id == self.user.id:
             raise Exception('cantInviteYourself')
-        check_existing_private_match_lobby(sender=self.user, receiver=self.invited_user)
+        if is_player_in_private_lobby(self.user):
+            raise LobbyAlreadyExistError('lobbyAlreadyExist')
         self.is_already_playing()
 
 
@@ -69,8 +72,8 @@ class PrivateMatchInit(View):
             raise Exception('usernameMissing')
         invited_user = User.objects.get(username=str(data['invitedUsername'])) 
         return invited_user
-
-
+    
+    
     def is_already_playing(self):
         is_waiting, match_type = is_already_in_waiting_list(self.user.id)
         if is_waiting:
@@ -92,34 +95,26 @@ class CancelPrivateMatch(View):
     def post(self, request):        
         try:
             if isinstance(request.user, AnonymousUser):  
-                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400)
-            data = json.loads(request.body.decode('utf-8'))
+                return JsonResponse({'message': 'notConnected'}, status=400)
             self.init(data=data, request=request)
+            async_to_sync(send_websocket_info)(player_id=str(self.opponent.id), payload= {'type': 'private_match_canceled'})
             self.lobby.delete_lobby()
-            change_is_ingame_state(value=False, user_instance=request.user)
-            return JsonResponse({'status': 'success', 'message': 'Lobby deleted'}, status=200)
+            return JsonResponse({'status': 'success', 'message': 'deletedLobby'}, status=200)
         except Exception as e: 
             print(f'Error: {str(e)}') 
-            return JsonResponse({'status': 'error', 'message': 'An error occurred while init private match'}, status=400)
+            return JsonResponse({'message': str(e)}, status=400)
 
 
     def init(self, data, request):
         self.user = request.user
-        self.invited_user = self.get_invited_user(data)
         self.lobby = self.get_lobby()
-        
-        
-    def get_invited_user(self, data):
-        if 'invitedUsername' not in data:
-            raise Exception('username missing in payload')
-        invited_user = User.objects.get(username=str(data['invitedUsername']))
-        return invited_user
+        self.opponent = lobby.sender if lobby.receiver == self.user else lobby.receiver
     
     def get_lobby(self):
-        lobby = PrivateMatchLobby.objects.filter(sender=self.sender_user, receiver=self.user).first()
+        lobby = PrivateMatchLobby.objects.filter(Q(sender=self.user) | Q(receiver=self.user)).first()
         
         if not lobby:
-            raise Exception('No lobby found')
+            raise Exception('lobbyNotFound')
         
         return lobby
 
@@ -132,13 +127,13 @@ class PrivateMatchManager(View):
     def post(self, request): 
         try:
             if isinstance(request.user, AnonymousUser):  
-                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400)
+                return JsonResponse({'message': 'notConnected'}, status=400)
             data = json.loads(request.body.decode('utf-8'))
             self.init(data=data, request=request)
             return self.process_choice()
         except Exception as e: 
             print(f'Error: {str(e)}') 
-            return JsonResponse({'status': 'error', 'message': 'An error occurred while joining private match'}, status=400)
+            return JsonResponse({'message': str(e)}, status=400)
 
 
     def init(self, data, request):
@@ -148,20 +143,14 @@ class PrivateMatchManager(View):
         self.lobby = self.get_lobby()
         self.choice = str(data['choice'])
         
-        print(f'---------------------------------------')
-        print(f'---> sender_user: {self.sender_user}')
-        print(f'---> choice: {self.choice}')
-        print(f'---> LOBBY: {self.lobby}')
-        print(f'---------------------------------------') 
-        
     
     def check_data(self, data):
         if 'sender_username' not in data:
-            raise Exception('No sender username provided')
+            raise Exception('noUsernameProvided')
         if 'choice' not in data:
-            raise Exception('No choice provided')
+            raise Exception('noChoiceProvided')
         if data['choice'] != 'accepted' and data['choice'] != 'refused':
-            raise Exception('Invalid choice provided')
+            raise Exception('invalidChoiceProvided')
             
     
     def get_sender_username(self, data):
@@ -174,7 +163,7 @@ class PrivateMatchManager(View):
         lobby = PrivateMatchLobby.objects.filter(sender=self.sender_user, receiver=self.user).first()
         
         if not lobby:
-            raise Exception('No lobby found')
+            raise Exception('lobbyNotFound')
         
         return lobby
     
@@ -186,20 +175,16 @@ class PrivateMatchManager(View):
             return self.handle_refused_invitation()
     
     def handle_accepted_invitation(self):
-        async_to_sync(send_websocket_info)(player_id=self.user.id, payload={'type': 'player_joined_private_match', 'player_id': self.user.id})
+        async_to_sync(send_websocket_game_found)(player_id=self.user.id, payload={'type': 'player_joined_private_match', 'player_id': self.user.id})
         self.lobby.join_lobby()
-        return JsonResponse({'status': 'success', 'message': 'Private match lobby accepted'}, status=200)
+        return JsonResponse({'status': 'success', 'message': 'privateMatchInvitAccepted'}, status=200)
     
     def handle_refused_invitation(self):
-        async_to_sync(send_websocket_info)(player_id=self.user.id, payload={'type': 'player_refused_private_match', 'player_id': self.user.id})
+        async_to_sync(send_websocket_game_found)(player_id=self.user.id, payload={'type': 'player_refused_private_match', 'player_id': self.user.id})
         self.lobby.delete_lobby()
-        return JsonResponse({'status': 'success', 'message': 'Private match lobby refused'}, status=200)
+        return JsonResponse({'status': 'success', 'message': 'privateMatchInvitRefused'}, status=200)
 
 #//---------------------------------------> Start private match endpoint <--------------------------------------\\#
-
-
-
-
 
 
 class StartPrivateMatch(View):  
@@ -211,35 +196,29 @@ class StartPrivateMatch(View):
             from .process_matchmaking import send_start_game
             
             if isinstance(request.user, AnonymousUser):  
-                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400)
+                return JsonResponse({'status':'error', 'message': 'notConnected'}, status=400)
             self.init()
             change_is_ingame_state(value=True, user_instance=self.user)
-            change_is_ingame_state(value=True, user_instance=self.invited_user)
-            send_websocket_info(player_id=self.invited_user.id, payload={'type': 'private_match_started'})
-            send_start_game(game_type='private_match', player_one_id=self.user.id, player_two_id=self.invited_user.id)
-            return JsonResponse({'status': 'success', 'message': 'Private match lobby started'}, status=200)
+            change_is_ingame_state(value=True, user_instance=self.opponent)
+            async_to_sync(send_websocket_game_found)(player_id=self.opponent.id, payload={'type': 'private_match_started'})
+            send_start_game(game_type='private_match', player_one_id=self.user.id, player_two_id=self.opponent.id)
+            return JsonResponse({'status': 'success', 'message': 'privateMatchStarted'}, status=200)
         except Exception as e: 
             print(f'Error: {str(e)}') 
-            return JsonResponse({'status': 'error', 'message': f'An error occurred while checking private match: {str(e)}'}, status=400)
+            return JsonResponse({'message': str(e)}, status=400)
 
 
     def init(self, data, request):
         self.user = request.user
-        self.invited_user = self.get_invited_user(data) 
         self.lobby = self.get_lobby()
-        
-        
-    def get_invited_user(self, data):
-        if 'invitedUsername' not in data:
-            raise Exception('username missing in payload')
-        invited_user = User.objects.get(username=str(data['invitedUsername']))
-        return invited_user
-    
+        self.opponent = lobby.sender if lobby.receiver == self.user else lobby.receiver
+
+
     def get_lobby(self):
-        lobby = PrivateMatchLobby.objects.filter(sender=self.sender_user, receiver=self.user).first()
+        lobby = PrivateMatchLobby.objects.filter(Q(sender=self.user) | Q(receiver=self.user)).first()
         
         if not lobby:
-            raise Exception('No lobby found')
+            raise Exception('lobbyNotFound')
         if lobby.receiver_state != 'ready':
-            raise Exception('Invited user not ready')
+            raise Exception('invitedUserNotReady')
         return lobby

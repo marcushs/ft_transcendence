@@ -26,7 +26,7 @@ async def handle_waiting_messages(player_id):
             await send_websocket_info(player_id=player_id, payload=message)
         del waiting_messages[player_id]
 
-  
+
 async def send_websocket_info(player_id, payload):
     try:
         if isinstance(payload, str):
