@@ -17,10 +17,14 @@ class MatchHistory extends HTMLElement {
         const isConnected = await checkAuthentication();
 
 
-        if (isConnected) {
-            this.history = await sendRequest("GET", "/api/statistics/get_history/", null);
-            this.userId = await getUserId();
-            await this.fillHistoryList();
+        if (isConnected) { 
+            try {
+                this.history = await sendRequest("GET", "/api/statistics/get_history/", null);
+                this.userId = await getUserId();
+                await this.fillHistoryList();
+            } catch (error) {
+                console.error(error)
+            }
         } else {
             this.displayUnloggedUser();
         }

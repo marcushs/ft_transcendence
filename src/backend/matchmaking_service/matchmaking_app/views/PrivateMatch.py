@@ -1,15 +1,28 @@
 from ..utils.websocket_utils import send_websocket_info
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
+from .matchmaking import change_is_ingame_state, is_already_in_waiting_list
 from .process_matchmaking import send_start_game
-from .matchmaking import change_is_ingame_state
 from ..models import PrivateMatchLobby, User
 from ..utils.user_utils import send_request
 from asgiref.sync import async_to_sync
 from django.http import JsonResponse 
+from django.db.models import Q
 from django.views import View
 import json
 
+
+
+class LobbyAlreadyExistError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+        self.message = message
+
+
+def check_existing_private_match_lobby(self, sender, receiver):
+    lobby = PrivateMatchLobby.objects.filter(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender)).first()
+    if lobby:
+        raise LobbyAlreadyExistError('lobbyAlreadyExist')
 
 #//---------------------------------------> private match endpoint <--------------------------------------\\#
 
@@ -17,15 +30,16 @@ class PrivateMatchInit(View):
     def __init__(self):
         super()
 
+
     def post(self, request): 
         try:
             if isinstance(request.user, AnonymousUser):  
                 return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400)
             data = json.loads(request.body.decode('utf-8'))
-            invited_user = self.get_invited_user(data)
-            PrivateMatchLobby.objects.create(sender=request.user, receiver=invited_user)
+            self.init(request=request, data=data)
+            PrivateMatchLobby.objects.create(sender=self.user, receiver=self.invited_user)
             payload = {
-                'receiver': invited_user.username,
+                'receiver': self.invited_user.username,
                 'type': 'private-match-invitation',
             }
             notifications_response = async_to_sync(send_request)(request_type='POST', url='http://notifications:8000/api/notifications/manage_notifications/', request=request, payload=payload)
@@ -34,16 +48,40 @@ class PrivateMatchInit(View):
             return JsonResponse({'message': 'lobbyCreated'}, status=200)
         except ObjectDoesNotExist:
             return JsonResponse({'message': f'unknownUser'}, status=400)
-        except Exception as e: 
+        except LobbyAlreadyExistError:
+            return JsonResponse({'message': f'lobbyAlreadyExist'}, status=400)
+        except Exception as e:
             print(f'Error: {str(e)}')  
             return JsonResponse({'message': str(e)}, status=400)
 
-    def get_invited_user(self, data):
+
+    def init(self, request, data):
+        self.invited_user = self.get_invited_user(data)
+        self.user = request.user
+        if self.invited_user.id == self.user.id:
+            raise Exception('cantInviteYourself')
+        check_existing_private_match_lobby(sender=self.user, receiver=self.invited_user)
+        self.is_already_playing()
+
+
+    def get_invited_user(self, data): 
         if 'invitedUsername' not in data:
             raise Exception('usernameMissing')
         invited_user = User.objects.get(username=str(data['invitedUsername'])) 
         return invited_user
 
+
+    def is_already_playing(self):
+        is_waiting, match_type = is_already_in_waiting_list(self.user.id)
+        if is_waiting:
+            raise Exception('userAlreadySearchGame')
+        is_waiting, match_type = is_already_in_waiting_list(self.invited_user.id)
+        if is_waiting:
+            raise Exception('invitedUserAlreadySearchGame')
+        if self.user.is_ingame == True:
+            raise Exception('userAlreadyInGame')
+        if self.invited_user.is_ingame == True:
+            raise Exception('invitedUserAlreadyInGame')
 
 #//---------------------------------------> private match cancel endpoint <--------------------------------------\\#
 
@@ -51,7 +89,7 @@ class CancelPrivateMatch(View):
     def __init__(self):
         super()
 
-    def post(self, request): 
+    def post(self, request):        
         try:
             if isinstance(request.user, AnonymousUser):  
                 return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400)
@@ -170,6 +208,8 @@ class StartPrivateMatch(View):
 
     def post(self, request): 
         try:
+            from .process_matchmaking import send_start_game
+            
             if isinstance(request.user, AnonymousUser):  
                 return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400)
             self.init()

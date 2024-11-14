@@ -18,7 +18,7 @@ class getJoinableTournamentsView(View):
 		joinable_tournaments = Tournament.objects.annotate(
 			member_count=Count('members')
 		).filter(
-			Q(member_count__lt=F('tournament_size')) & Q(isOver=False)
+			Q(member_count__lt=F('tournament_size')) & Q(isOver=False) 
 		).values('tournament_id', 'tournament_name', 'tournament_size', 'member_count')
 
 		tournaments_list = list(joinable_tournaments)

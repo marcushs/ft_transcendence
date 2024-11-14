@@ -22,7 +22,7 @@ class MatchHistory(models.Model):
         return f'winner: {self.winner} vs loser: {self.loser} on {self.date} ({self.match_type})'
     
     class Meta:
-        ordering = ['-date']
+        ordering = ['-date'] 
     
 
 class UserManager(BaseUserManager):
@@ -57,7 +57,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def to_dict(self):
         return {
-            'username': self.username,
+            'username': self.username, 
         }
         
     def match_history(self): # Retrieve all match history for the user.
