@@ -5,7 +5,6 @@ from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import aget_object_or_404
 from django.http import Http404
-from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from .models import *
@@ -13,7 +12,7 @@ import asyncio
 from django.db import transaction
 from channels.db import database_sync_to_async
 from .utils.request import send_request
-from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
 
 User = get_user_model()
 
@@ -21,6 +20,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.countdown_tasks = {}  # Store countdown tasks for each match
+		self.channel_groups = set()
 
 	async def connect(self):
 		self.user = self.scope['user']
@@ -39,9 +39,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		else: 
 			await self.accept()
 			await self.channel_layer.group_add('tournament_updates', self.channel_name)
+			self.channel_groups.add('tournament_updates')
 
 	async def disconnect(self, close_code):
-		pass
+		await self.discard_from_all_groups()
  
 	# Receive message from WebSocket
 	async def receive(self, text_data):  
@@ -54,6 +55,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				return await self.send_error_message(message_type, result)
 			await self.send_success_message(message_type, result, tournament)
 			await self.channel_layer.group_add(str(tournament.tournament_id), self.channel_name)
+			self.channel_groups.add(str(tournament.tournament_id))
 			await self.channel_layer.group_send('tournament_updates',
 												{'type': 'new.tournament',
 												'tournament': await tournament.to_dict()}) 
@@ -63,7 +65,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				if await self.get_members_count(tournament) < tournament.tournament_size:
 					if await self.add_user_to_tournament(tournament) == 'User already in tournament':
 						return await self.send_error_message(message_type, 'User already in tournament')
-					await self.channel_layer.group_add(str(tournament.tournament_id), self.channel_name)  
+					await self.channel_layer.group_add(str(tournament.tournament_id), self.channel_name)
+					self.channel_groups.add(str(tournament.tournament_id))  
 					await self.send(text_data=json.dumps({
 						'type': 'redirect_to_waiting_room',
 						'tournament': await tournament.to_dict()
@@ -92,6 +95,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				if await self.is_user_in_this_tournament(tournament):
 					await self.remove_user_from_tournament(tournament)
 					await self.channel_layer.group_discard(str(tournament.tournament_id), self.channel_name)
+					self.channel_groups.discard(str(tournament.tournament_id))
 					await self.send(text_data=json.dumps({'type': 'redirect_to_tournament_home'}))
 					await self.channel_layer.group_send('tournament_updates', 
 														{'type': 'leave.tournament',
@@ -117,6 +121,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			})
 		elif message_type == 'leave_tournament_group':
 			await self.channel_layer.group_discard(data['tournament_id'], self.channel_name)
+			self.channel_groups.discard(data['tournament_id'])
 		elif message_type == 'proceed_tournament': 
 			try:
 				last_match = await aget_object_or_404(TournamentMatch, match_id=data['match_id'])
@@ -156,9 +161,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def add_players_to_match_group(self, event):
 		match_id = await self.find_player_match(event)
 		await self.channel_layer.group_add(match_id, self.channel_name)
+		self.channel_groups.add(match_id)
 		print(f'add {self.user.id} to channel group ${match_id}')
 		await self.start_countdown(match_id)
-
+		 
 	async def launch_game(self, event):
 		if 'player1' not in event and 'player2' not in event:
 			match = await sync_to_async(TournamentMatch.objects.get)(match_id=event['match_id'])
@@ -279,6 +285,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'player2': event['player2'] 
 		}
 		await self.channel_layer.group_discard(event['match_id'], self.channel_name)
+		self.channel_groups.discard(event['match_id'])
 		await self.send(text_data=json.dumps({ 
 			'type': 'start_game_instance', 
 			'payload': payload 
@@ -312,14 +319,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		i = 0
 		while i < nb_of_players:
-			match = TournamentMatch.objects.create(tournament=tournament, tournament_round=round)
-			match.players.add(members_copy[i]['id'])
-			match.players.add(members_copy[i + 1]['id'])
-			if i == 0:
-				match.bracket_index = i
-			else:
-				match.bracket_index = i / 2
-			match.save()
+			match = TournamentMatch.objects.create(tournament=tournament, tournament_round=round, bracket_index=i // 2)
+			match.players.add(members_copy[i]['id'], members_copy[i + 1]['id'])
+
 			round_mapping[round].add(match)
 			i += 2
 
@@ -426,10 +428,25 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			return None
 
 	@database_sync_to_async
+	def set_player_number(self, user, match):
+		with transaction.atomic():
+			player_count = match.players.count()
+			player_number = User.PlayerNumber.ONE if player_count == 0 else User.PlayerNumber.TWO
+
+			user.match_player_num = player_number
+			user.save()
+
+		return player_number
+
+	@database_sync_to_async
 	def match_in_next_round(self, user, last_match):
 		print('------------------------reached here')
 		tournament = last_match.tournament
+		if tournament.isOver == True:
+			return async_to_sync(self.send_error_message)('next_round', 'Tournament is over')
 		tournament_bracket = Bracket.objects.filter(tournament=tournament).first()
+		if tournament_bracket is None:
+			return async_to_sync(self.send_error_message)('next_round', 'Bracket not found')
 
 		round_mapping = {
 			'finals': {'target': tournament_bracket.finals, 'matches_per_side': 0},
@@ -448,13 +465,81 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		last_round_matches = round_mapping[last_round]
 		next_round = next_rounds[last_round]
 
-		if last_round_matches['matches_per_side'] > 2:
+		if last_round_matches['matches_per_side'] > 1: 
 			last_match_index = last_match.bracket_index
 			adjacent_match_index = last_match_index + 1 if last_match_index % 2 == 0 else last_match_index - 1
-			adjacent_match = last_round_matches['target'].filter(bracket_index=adjacent_match_index)
+			async_to_sync(self.join_or_create_next_match)(tournament_bracket, next_round, last_match_index, adjacent_match_index, user) 
+		elif last_round_matches['matches_per_side'] == 1:
+			print('join or make final match')
+			async_to_sync(self.join_or_create_next_match)(tournament_bracket, next_round, 0, 1, user) 
+		else: 
+			print('we have a winner')
 
 
-		# new_match = TournamentMatch.objects.create(tournament=tournament, tournament_round=next_rounds[last_match.tournament_round])
-		# new_match.players.add(user)
-		# round_mapping[last_match.tournament_round].add(new_match)
+	@database_sync_to_async
+	def join_or_create_next_match(self, tournament_bracket, next_round, last_match_index, adjacent_match_index, user):
+		round_mapping = {
+			'finals': tournament_bracket.finals,
+			'semi_finals': tournament_bracket.semi_finals,
+			'quarter_finals': tournament_bracket.quarter_finals,
+			'eighth_finals': tournament_bracket.eighth_finals
+		}
+		if next_round == 'finals':
+			with transaction.atomic():
+				final_match, created = round_mapping[next_round].get_or_create(
+					defaults={
+						'tournament': tournament_bracket.tournament,
+						'tournament_round': next_round,
+						'bracket_index': 0
+					}
+				)
+				if final_match.players.count() < 2:
+					final_match.players.add(user)
+					async_to_sync(self.channel_layer.group_add)(str(final_match.match_id), self.channel_name)
+					self.channel_groups.add(str(final_match.match_id))
+				else:
+					# Handle the case where the match is already full
+					print("Match is already full")
+			return 
 
+		next_match_index_map = {
+			1: 0,
+			5: 1,
+			9: 2,
+			13: 3
+		}
+
+		matches_index_sum = last_match_index + adjacent_match_index
+		next_match_index = next_match_index_map[matches_index_sum]
+		with transaction.atomic():
+			next_match, created = round_mapping[next_round].get_or_create(
+				bracket_index=next_match_index,
+				defaults={
+					'tournament': tournament_bracket.tournament,
+					'tournament_round': next_round
+				}
+			)
+			
+			# Check if the match is not full before adding the player
+			if next_match.players.count() < 2:
+				next_match.players.add(user)
+				async_to_sync(self.channel_layer.group_add)(str(next_match.match_id), self.channel_name)
+				self.channel_groups.add(str(next_match.match_id))
+			else:
+				# Handle the case where the match is already full
+				print(f"Match {next_match.id} is already full")
+
+
+# -------------------------------> Discard channel from all groups <---------------------------------
+
+	async def discard_from_all_groups(self):
+		discard_tasks = []
+		for group in self.channel_groups:
+			discard_tasks.append(self.channel_layer.group_discard(group, self.channel_name))
+
+		# Execute all discard tasks concurrently
+		await asyncio.gather(*discard_tasks, return_exceptions=True)
+
+		# Clear the channel_groups set
+		self.channel_groups.clear()
+	

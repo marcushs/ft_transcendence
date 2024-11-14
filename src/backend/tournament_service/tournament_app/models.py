@@ -1,13 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
-from django.contrib.postgres.fields import ArrayField
 import uuid
 from django.utils import timezone
 import datetime
 from asgiref.sync import sync_to_async
 from django.forms.models import model_to_dict
-import shortuuid
-from shortuuid.django_fields import ShortUUIDField
 from django.db.models import Prefetch
 
 def user_directory_path(instance, filename):
@@ -47,6 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=12, unique=True, default='default')
     email = models.EmailField(unique=True)
     ready_for_match = models.BooleanField(default=False)
+    last_match_index = models.IntegerField(default=100)
    
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -161,9 +159,9 @@ class TournamentMatch(models.Model):
         if self.loser is not None:
             obj_dict['loser'] = await self.loser.to_dict()
         players = await sync_to_async(list)(
-            self.players.values('id', 'username', 'ready_for_match')
+            self.players.values('id', 'username', 'ready_for_match', 'last_match_index')
         )
-        obj_dict['players'] = [{'id': str(player['id']), 'username': player['username'], 'ready': player['ready_for_match']} for player in players]
+        obj_dict['players'] = [{'id': str(player['id']), 'username': player['username'], 'ready': player['ready_for_match'], 'last_match_index': player['last_match_index']} for player in players]
 
         return obj_dict
     
@@ -184,9 +182,9 @@ class TournamentMatch(models.Model):
         if self.loser is not None:
             obj_dict['loser'] = self.loser.to_dict_sync()
         players = list(
-            self.players.values('id', 'username', 'ready_for_match')
+            self.players.values('id', 'username', 'ready_for_match', 'last_match_index')
         )
-        obj_dict['players'] = [{'id': str(player['id']), 'username': player['username'], 'ready': player['ready_for_match']} for player in players]
+        obj_dict['players'] = [{'id': str(player['id']), 'username': player['username'], 'ready': player['ready_for_match'], 'last_match_index': player['last_match_index']} for player in players]
         return obj_dict
 
     def get_players(self):
