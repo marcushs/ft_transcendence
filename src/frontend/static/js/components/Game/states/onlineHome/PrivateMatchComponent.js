@@ -53,6 +53,11 @@ class PrivateMatchComponent extends HTMLElement {
 			localStorage.setItem("isReadyToPlay", "true");
 		});
 
+		document.addEventListener('guestPrivateMatchEvent', (event) => {
+			this.state = "guestState";
+			this.displayLobbyAsGuest(event.detail.ownerName);
+		});
+
 	}
 
 
@@ -60,6 +65,7 @@ class PrivateMatchComponent extends HTMLElement {
 		const isSearchingPrivateMatch = localStorage.getItem("isSearchingPrivateMatch");
 		const isReadyToPlay  = localStorage.getItem("isReadyToPlay");
 
+		console.log(isReadyToPlay, isSearchingPrivateMatch);
 		if (isReadyToPlay) {
 			this.displayLobby();
 			this.state = "ready";
@@ -127,12 +133,14 @@ class PrivateMatchComponent extends HTMLElement {
 			const input = this.querySelector('input');
 
 			// this.querySelector('.loading-wheel').style.visibility = "hidden";
-			// this.state = "initial";
 			// localStorage.removeItem("isSearchingPrivateMatch");
 			//
 			const data = await sendRequest("POST", "/api/matchmaking/start_private_match/", { invitedUsername: input.value });
-			console.log('should launch')
 			await gameWebsocket(await getUserId());
+			this.state = "initial";
+			localStorage.removeItem("isSearchingPrivateMatch");
+			localStorage.removeItem("isReadyToPlay");
+			this.displayInitialState();
 			// if (gameSocket && gameSocket.readyState !== WebSocket.OPEN)
 			// 	await gameWebsocket();
 
@@ -150,9 +158,25 @@ class PrivateMatchComponent extends HTMLElement {
 			const data = await sendRequest("POST", "/api/matchmaking/cancel_private_match/", { invitedUsername: username });
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
+			this.state = "initial";
+			localStorage.removeItem("isSearchingPrivateMatch");
+			localStorage.removeItem("isReadyToPlay");
+			this.displayInitialState();
 		} catch (error) {
 			console.log('private_match: ', error.message);
 		}
+	}
+
+
+	displayInitialState() {
+		this.querySelector('.loading-wheel').style.visibility = "hidden";
+		this.querySelector('.accept-icon').style.visibility = "hidden";
+		this.querySelector('#genericBtn button').innerHTML = getString("buttonComponent/invite");
+		this.querySelector('#genericBtn button').style.display = "block";
+		this.querySelector('input').disabled = false;
+		this.querySelector('input').value = '';
+		this.changeButtonClassname("generic-btn-disabled");
+		this.querySelector('#leaveBtn').style.display = "none";
 	}
 
 
@@ -171,6 +195,16 @@ class PrivateMatchComponent extends HTMLElement {
 		this.querySelector('input').disabled = true;
 		this.querySelector('input').value = localStorage.getItem("isSearchingPrivateMatch");
 		this.changeButtonClassname("generic-btn");
+		this.querySelector('#leaveBtn').style.display = "block";
+	}
+
+
+	displayLobbyAsGuest(opponentName) {
+		this.querySelector('.loading-wheel').style.visibility = "hidden";
+		this.querySelector('.accept-icon').style.visibility = "hidden";
+		this.querySelector('#genericBtn button').style.display = "none";
+		this.querySelector('input').disabled = true;
+		this.querySelector('input').value = opponentName;
 		this.querySelector('#leaveBtn').style.display = "block";
 	}
 

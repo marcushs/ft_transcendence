@@ -94,12 +94,13 @@ class NotificationMiddleware(MiddlewareMixin):
 
 
     async def process_request(self, request):
-        if request.user.is_authenticated:
-            await self.remove_duplicate_notifications(request)
-            user_notifications = await sync_to_async(list)(Notification.objects.filter(receiver=request.user, is_read=True))
-            for notification in user_notifications:
-                if notification.type == 'friend-request-accepted' and notification.is_read_at and notification.is_read_at < timezone.now() - timedelta(minutes=1):  #replace by timedelta(days=????)
-                    await sync_to_async(notification.delete)()
+        if isinstance(request.user, AnonymousUser):
+            if request.user.is_authenticated:
+                await self.remove_duplicate_notifications(request)
+                user_notifications = await sync_to_async(list)(Notification.objects.filter(receiver=request.user, is_read=True))
+                for notification in user_notifications:
+                    if notification.type == 'friend-request-accepted' and notification.is_read_at and notification.is_read_at < timezone.now() - timedelta(minutes=1):  #replace by timedelta(days=????)
+                        await sync_to_async(notification.delete)()
         response = await self.get_response(request)
         return response
 

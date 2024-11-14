@@ -27,7 +27,7 @@ class GameComponent extends HTMLElement {
 
         this.innerHTML = `
             <div class="game-background"></div>
-            <div class="states-container"></div>
+            <div class="states-container" id="gameStatesContainer"></div>
             <game-top-bar></game-top-bar>
         `;
 
@@ -89,6 +89,8 @@ class GameComponent extends HTMLElement {
 
         this.addEventListener('reduce-game', () => reduceGameComponent(this));
 
+        document.addEventListener('changeGameStateEvent', (event) => this.handleChangeStateEvent(event));
+
     }
 
     handleStateRedirection(event) {
@@ -118,6 +120,15 @@ class GameComponent extends HTMLElement {
             }
         }
     }
+
+
+    async handleChangeStateEvent(event) {
+        console.log("online home !!!!!!!!!!")
+        if (event.detail.context === "onlineHome") {
+            await this.changeState(this.states[event.detail.context].state, this.states[event.detail.context].context);
+        }
+    }
+
 }
 
 customElements.define("game-component", GameComponent);

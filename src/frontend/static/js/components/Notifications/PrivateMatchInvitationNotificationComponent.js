@@ -5,6 +5,8 @@ import {getString} from "../../utils/languageManagement.js";
 import {matchmakingSocket, matchmakingWebsocket} from "../../utils/matchmaking/matchmakingWebsocket.js";
 import {gameWebsocket} from "../Game/states/inGame/gameWebsocket.js";
 import getUserId from "../../utils/getUserId.js";
+import {throwRedirectionEvent} from "../../utils/throwRedirectionEvent.js";
+import {waitForStatesContainer} from "../../utils/game/gameConnection.js";
 
 class PrivateMatchInvitationNotificationComponent extends HTMLElement {
 	constructor() {
@@ -98,11 +100,85 @@ class PrivateMatchInvitationNotificationComponent extends HTMLElement {
 				await matchmakingWebsocket()
 				this.throwDeleteNotificationEvent();
 				this.throwCloseNotificationsContainerEvent();
+				// if (location.href)
+				console.log(location.pathname)
+				if (location.pathname !== '/') {
+					throwRedirectionEvent('/');
+					// const intervalId2 = setInterval(() => {
+					// 	if (document.querySelector('.states-container')) {
+							// clearInterval(intervalId2);
+					// }
+					// }, 500);
+
+					console.log(document.querySelector('#gameStatesContainer'));
+				}
+				await this.waitForStatesContainer();
+				this.throwChangeGameStateEvent();
+				// await waitForStatesContainer();
+				// await this.throwChangeGameStateEvent();
+				// } else {
+				// 	if (document.querySelector('.states-container')) {
+					// }
+
+				setTimeout(async () => {
+					await this.waitForPrivateMatchComponent();
+					this.throwGuestPrivateMatchEvent();
+				})
+
 				// this.remove();
 			}
 		} catch (error) {
 			console.error('catch: ', error);
 		}
+	}
+
+	async waitForStatesContainer() {
+		await new Promise(resolve => {
+			const observer = new MutationObserver(() => {
+				const newContainer = document.querySelector('#gameStatesContainer');
+				if (newContainer) {
+					observer.disconnect();
+					resolve();
+				}
+			});
+			observer.observe(document.body, { childList: true, subtree: true });
+		});
+	}
+
+	async waitForPrivateMatchComponent() {
+		await new Promise(resolve => {
+			const observer = new MutationObserver(() => {
+				const newContainer = document.querySelector('private-match-component');
+				if (newContainer) {
+					observer.disconnect();
+					resolve();
+				}
+			});
+			observer.observe(document.body, { childList: true, subtree: true });
+		});
+	}
+
+	throwChangeGameStateEvent() {
+		console.log('states event')
+		const event = new CustomEvent('changeGameStateEvent', {
+			bubbles: true,
+			detail: {
+				context: "onlineHome",
+			}
+		});
+
+		document.dispatchEvent(event);
+	}
+
+	throwGuestPrivateMatchEvent() {
+		const event = new CustomEvent('guestPrivateMatchEvent', {
+			bubbles: true,
+			detail: {
+				ownerName: this.notificationObj.sender
+			}
+		});
+
+		document.dispatchEvent(event);
 	}
 
 }
