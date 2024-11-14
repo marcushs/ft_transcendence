@@ -79,7 +79,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						await self.channel_layer.group_send(str(tournament.tournament_id),
 															{'type': 'add_players_to_match_group',
 															'tournament_stage': await tournament.get_current_stage(),
-															'tournament_bracket': await tournament_bracket.to_dict()										  
+															'tournament_bracket': await tournament_bracket.to_dict()
 															})
 						await self.channel_layer.group_send(str(tournament.tournament_id), 
 															{'type': 'load_match',
@@ -193,7 +193,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 
 	async def run_countdown(self, match_id, players):
-		countdown = 60 
+		countdown = 180
 		try:
 			while countdown >= 0:
 				await self.channel_layer.group_send(
@@ -464,14 +464,20 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		last_round = last_match.tournament_round
 		last_round_matches = round_mapping[last_round]
 		next_round = next_rounds[last_round]
+		last_match_index = last_match.bracket_index
+		adjacent_match_index = last_match_index + 1 if last_match_index % 2 == 0 else last_match_index - 1
 
 		if last_round_matches['matches_per_side'] > 1: 
-			last_match_index = last_match.bracket_index
-			adjacent_match_index = last_match_index + 1 if last_match_index % 2 == 0 else last_match_index - 1
 			async_to_sync(self.join_or_create_next_match)(tournament_bracket, next_round, last_match_index, adjacent_match_index, user) 
 		elif last_round_matches['matches_per_side'] == 1:
 			print('join or make final match')
-			async_to_sync(self.join_or_create_next_match)(tournament_bracket, next_round, 0, 1, user) 
+			async_to_sync(self.join_or_create_next_match)(tournament_bracket, next_round, last_match_index, adjacent_match_index, user)
+			async_to_sync(self.send)(text_data=json.dumps({
+				'type': 'redirect_to_next_match',
+				'tournament': tournament.to_dict_sync(),
+				'tournament_bracket': tournament_bracket.to_dict_sync(),
+				'last_match_index': last_match_index
+			}))
 		else: 
 			print('we have a winner')
 
@@ -500,7 +506,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				else:
 					# Handle the case where the match is already full
 					print("Match is already full")
-			return 
+					return None
+			return final_match
 
 		next_match_index_map = {
 			1: 0,
@@ -528,7 +535,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			else:
 				# Handle the case where the match is already full
 				print(f"Match {next_match.id} is already full")
-
+				return None
+		return next_match
 
 # -------------------------------> Discard channel from all groups <---------------------------------
 

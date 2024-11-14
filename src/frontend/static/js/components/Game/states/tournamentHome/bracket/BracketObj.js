@@ -60,8 +60,8 @@ export default class BracketObj {
 		stageMatches.forEach((match, idx) => {
 			console.log('BracketObj: ', match.bracket_index);
 			(match.bracket_index < stageMatches.length / 2) ? 
-			target.leftMatches.push(this.makeMatch(match)) :
-			target.rightMatches.push(this.makeMatch(match));
+			target.leftMatches.push(this.makeMatch(match, 'left')) :
+			target.rightMatches.push(this.makeMatch(match, 'right'));
 		});
 	}
 
@@ -81,18 +81,38 @@ export default class BracketObj {
 		return [null, null];
 	}
 
-	makeMatch(match) {
-		if (!match.winner && !match.loser) {
+	makeMatch(match, side) {
+		const match_pair = new Array(2);
+
+		if (side === 'left') {
+			if (!match.winner && !match.loser) {
+				if (match.players.length < 1) return [null, null];
+
+				const player1 = match.players[0];
+				if (match.player1[0].last_match_index === 100) return [
+					match.players[0] ? {name: match.players[0].username, score: '0'} : null,
+					match.players[1] ? {name: match.players[1].username, score: '0'} : null
+				];
+				
+				if (match.players.length === 1) {
+					if (player1.last_match_index % 2 === 0) {
+						match_pair[0] = player1;
+						match_pair[1] = null;
+					} else {
+						match_pair[0] = null;
+						match_pair[1] = player1;
+					}
+					return match_pair;
+				}
+				const player2 = match.players[1];
+
+			}
 			return match = [
-				{name: match.players[0].username, score: '0'}, 
-				{name: match.players[1].username, score: '0'}
+				{name: match.players[0].username, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`}, 
+				{name: match.players[1].username, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`}
 			];
 		}
 
-		return match = [
-			{name: match.players[0].username, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`}, 
-			{name: match.players[1].username, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`}
-		];
 	}
 
 }
