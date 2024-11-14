@@ -192,9 +192,15 @@ class TournamentMatch(models.Model):
         return [{'id': str(player['id']), 'username': player['username'], 'ready': player['ready_for_match']} for player in players]
 
 class TournamentMatchPlayer(models.Model):
-    match = models.ForeignKey(TournamentMatch, related_name='match', on_delete=models.CASCADE)
+    class PlayerNumber(models.IntegerChoices):
+        ONE = 0, 'One'
+        TWO = 1, 'Two'
+    match = models.ForeignKey(TournamentMatch, on_delete=models.CASCADE)
     player = models.ForeignKey(User, on_delete=models.CASCADE)
-    player_number = 
+    player_number = models.IntegerField(choices=PlayerNumber.choices, default=PlayerNumber.choices.ONE)
+
+    class Meta:
+        unique_together = ('match', 'player')
 
 class Bracket(models.Model):
     tournament = models.ForeignKey(Tournament, related_name='tournament_bracket', on_delete=models.CASCADE)
