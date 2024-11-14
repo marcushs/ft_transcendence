@@ -6,7 +6,7 @@ import jwt
 
  #//---------------------------------------> JWT decorator <--------------------------------------\\#
 
-def jwt_required(initial_function):
+def jwt_required(initial_function): 
     @wraps(initial_function)
     async def wrapper(request, *args, **kwargs):
         try:
