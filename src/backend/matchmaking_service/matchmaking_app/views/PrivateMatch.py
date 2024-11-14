@@ -9,6 +9,7 @@ from asgiref.sync import async_to_sync
 from django.http import JsonResponse 
 from django.views import View
 import json
+from django.db.models import Q
 
 
 #//---------------------------------------> private match endpoint <--------------------------------------\\#
@@ -53,7 +54,7 @@ class CancelPrivateMatch(View):
 
     def post(self, request): 
         try:
-            if isinstance(request.user, AnonymousUser):  
+            if isinstance(request.user, AnonymousUser):
                 return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400)
             data = json.loads(request.body.decode('utf-8'))
             self.init(data=data, request=request)
@@ -78,7 +79,7 @@ class CancelPrivateMatch(View):
         return invited_user
     
     def get_lobby(self):
-        lobby = PrivateMatchLobby.objects.filter(sender=self.sender_user, receiver=self.user).first()
+        lobby = PrivateMatchLobby.objects.filter(Q(sender=self.user, receiver=self.invited_user) | Q(sender=self.invited_user, receiver=self.user)).first()
         
         if not lobby:
             raise Exception('No lobby found')

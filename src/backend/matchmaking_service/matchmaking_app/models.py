@@ -9,7 +9,7 @@ class PrivateMatchLobby(models.Model):
     lobby_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     sender = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sender")
     receiver = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="receiver")
-    receiver_state = models.CharField(max_length=12, unique=True, default='waiting')
+    receiver_state = models.CharField(max_length=12, default='waiting')
     
     def join_lobby(self):
         self.receiver_state = 'ready'

@@ -1,6 +1,6 @@
 import {getString} from "../../../../utils/languageManagement.js";
 import {sendRequest} from "../../../../utils/sendRequest.js";
-import {matchmakingWebsocket} from "../../../../utils/matchmaking/matchmakingWebsocket.js";
+import {matchmakingWebsocket, matchmakingSocket} from "../../../../utils/matchmaking/matchmakingWebsocket.js";
 
 class PrivateMatchComponent extends HTMLElement {
 	constructor() {
@@ -25,17 +25,7 @@ class PrivateMatchComponent extends HTMLElement {
 		const button = this.querySelector('button-component');
 
 		button.addEventListener('click', async () => {
-			console.log(button.className)
-			switch (this.state) {
-				case 'initial':
-					if (button.className === "generic-btn")
-						await this.handlePlayButtonClick();
-					break ;
-				case 'waiting':
-					this.displayWaitingState();
-					break ;
-
-			}
+			await this.handlePlayButtonClick(button);
 		});
 
 		input.addEventListener('input', () => {
@@ -47,28 +37,67 @@ class PrivateMatchComponent extends HTMLElement {
 		});
 
 
-		document.addEventListener('playerJoinedMatchEvent', () => {
-			alert('test')
-		});
+		// document.addEventListener('playerJoinedMatchEvent', () => {
+		// 	alert('test')
+		// });
 
 	}
 
-	async handlePlayButtonClick() {
+
+	async connectedCallback() {
+		const isSearchingPrivateMatch = localStorage.getItem("isSearchingPrivateMatch");
+
+		if (isSearchingPrivateMatch) {
+			await matchmakingWebsocket();
+			this.displayWaitingState();
+			this.querySelector('input').value = isSearchingPrivateMatch;
+			this.state = "waiting";
+		}
+	}
+
+
+	async handlePlayButtonClick(button) {
 		const input = this.querySelector('input');
 
-		if (input.value === '' && this.querySelector('.invite-player-field-error').innerText === '') {
-			this.querySelector('.invite-player-field-error').innerText = 'The player name cannot be empty';
-		} else if (input.value !== '') {
-			try {
-				const data = await sendRequest("POST", "/api/matchmaking/init_private_match/", {
-					invitedUsername: input.value,
-				});
-				console.log('private_match: ', data);
-				await matchmakingWebsocket();
-				this.displayLobby();
-			} catch (error) {
-				console.log('private_match: ', error.message);
-			}
+		if (input.value !== '' && this.state === "initial" && button.className === "generic-btn")
+			await this.handleInitialStateClick(input.value);
+		else if (input.value !== '' && this.state === "waiting")
+			await this.handleWaitingStateClick(input.value);
+	}
+
+
+	async handleInitialStateClick(username) {
+		try {
+			const data = await sendRequest("POST", "/api/matchmaking/init_private_match/", {
+				invitedUsername: username,
+			});
+			await matchmakingWebsocket();
+			this.displayWaitingState();
+			this.state = "waiting";
+			localStorage.setItem("isSearchingPrivateMatch", username);
+		} catch (error) {
+			console.log('private_match: ', error.message);
+		}
+	}
+
+
+	async handleWaitingStateClick(username) {
+		try {
+			const input = this.querySelector('input');
+
+			const data = await sendRequest("POST", "/api/matchmaking/cancel_private_match/", { invitedUsername: username });
+			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
+				matchmakingSocket.close();
+
+			input.value = "";
+			input.disabled = false;
+			this.querySelector('button-component button').innerText = getString("buttonComponent/invite");
+			this.changeButtonClassname("generic-btn-disabled");
+			this.querySelector('img').style.visibility = "hidden";
+			this.state = "initial";
+			localStorage.removeItem("isSearchingPrivateMatch");
+		} catch (error) {
+			console.log('private_match: ', error.message);
 		}
 	}
 
@@ -76,6 +105,8 @@ class PrivateMatchComponent extends HTMLElement {
 	displayWaitingState() {
 		this.querySelector('img').style.visibility = "visible";
 		this.querySelector('button-component button').innerHTML = getString("buttonComponent/cancel");
+		this.querySelector('input').disabled = true;
+		this.changeButtonClassname("generic-btn-cancel");
 		// this.querySelector('button-component').remove();
 
 
@@ -94,6 +125,12 @@ class PrivateMatchComponent extends HTMLElement {
 
 	displayLobby() {
 
+	}
+
+
+	changeButtonClassname(newClass) {
+		this.querySelector('button-component').className = newClass;
+		this.querySelector('button-component button').className = newClass;
 	}
 
 
