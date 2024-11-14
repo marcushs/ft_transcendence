@@ -75,10 +75,10 @@ class PrivateMatchInit(View):
     
     
     def is_already_playing(self):
-        is_waiting, match_type = is_already_in_waiting_list(self.user.id)
+        is_waiting, match_type = is_already_in_waiting_list(str(self.user.id))
         if is_waiting:
             raise Exception('userAlreadySearchGame')
-        is_waiting, match_type = is_already_in_waiting_list(self.invited_user.id)
+        is_waiting, match_type = is_already_in_waiting_list(str(self.invited_user.id))
         if is_waiting:
             raise Exception('invitedUserAlreadySearchGame')
         if self.user.is_ingame == True:
@@ -96,7 +96,7 @@ class CancelPrivateMatch(View):
         try:
             if isinstance(request.user, AnonymousUser):  
                 return JsonResponse({'message': 'notConnected'}, status=400)
-            self.init(data=data, request=request)
+            self.init(request=request)
             async_to_sync(send_websocket_info)(player_id=str(self.opponent.id), payload= {'type': 'private_match_canceled'})
             self.lobby.delete_lobby()
             return JsonResponse({'status': 'success', 'message': 'deletedLobby'}, status=200)
@@ -105,10 +105,10 @@ class CancelPrivateMatch(View):
             return JsonResponse({'message': str(e)}, status=400)
 
 
-    def init(self, data, request):
+    def init(self, request):
         self.user = request.user
         self.lobby = self.get_lobby()
-        self.opponent = lobby.sender if lobby.receiver == self.user else lobby.receiver
+        self.opponent = self.lobby.sender if self.lobby.receiver == self.user else self.lobby.receiver
     
     def get_lobby(self):
         lobby = PrivateMatchLobby.objects.filter(Q(sender=self.user) | Q(receiver=self.user)).first()
@@ -141,7 +141,7 @@ class PrivateMatchManager(View):
         self.user = request.user
         self.sender_user = self.get_sender_username(data)
         self.lobby = self.get_lobby()
-        self.choice = str(data['choice'])
+        self.choice = str(data['choice']) 
         
     
     def check_data(self, data):
@@ -175,12 +175,12 @@ class PrivateMatchManager(View):
             return self.handle_refused_invitation()
     
     def handle_accepted_invitation(self):
-        async_to_sync(send_websocket_game_found)(player_id=self.user.id, payload={'type': 'player_joined_private_match', 'player_id': self.user.id})
+        send_websocket_game_found(player_id=str(self.sender_user.id), payload={'type': 'player_joined_private_match', 'player_id': str(self.user.id)})
         self.lobby.join_lobby()
         return JsonResponse({'status': 'success', 'message': 'privateMatchInvitAccepted'}, status=200)
     
     def handle_refused_invitation(self):
-        async_to_sync(send_websocket_game_found)(player_id=self.user.id, payload={'type': 'player_refused_private_match', 'player_id': self.user.id})
+        send_websocket_game_found(player_id=str(self.sender_user.id), payload={'type': 'player_refused_private_match', 'player_id': str(self.user.id)})
         self.lobby.delete_lobby()
         return JsonResponse({'status': 'success', 'message': 'privateMatchInvitRefused'}, status=200)
 
@@ -197,21 +197,22 @@ class StartPrivateMatch(View):
             
             if isinstance(request.user, AnonymousUser):  
                 return JsonResponse({'status':'error', 'message': 'notConnected'}, status=400)
-            self.init()
+            self.init(request=request)
             change_is_ingame_state(value=True, user_instance=self.user)
             change_is_ingame_state(value=True, user_instance=self.opponent)
-            async_to_sync(send_websocket_game_found)(player_id=self.opponent.id, payload={'type': 'private_match_started'})
-            send_start_game(game_type='private_match', player_one_id=self.user.id, player_two_id=self.opponent.id)
+            send_websocket_game_found(player_id=str(self.opponent.id), payload={'type': 'private_match_started'})
+            self.lobby.delete_lobby()
+            send_start_game(game_type='private_match', player_one_id=str(self.user.id), player_two_id=str(self.opponent.id))
             return JsonResponse({'status': 'success', 'message': 'privateMatchStarted'}, status=200)
         except Exception as e: 
             print(f'Error: {str(e)}') 
             return JsonResponse({'message': str(e)}, status=400)
 
 
-    def init(self, data, request):
+    def init(self, request):
         self.user = request.user
         self.lobby = self.get_lobby()
-        self.opponent = lobby.sender if lobby.receiver == self.user else lobby.receiver
+        self.opponent = self.lobby.sender if self.lobby.receiver == self.user else self.lobby.receiver
 
 
     def get_lobby(self):
