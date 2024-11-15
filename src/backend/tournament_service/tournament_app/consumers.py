@@ -146,11 +146,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		}))
 
 	async def load_match(self, event):
-		await self.send(text_data=json.dumps({
-			'type': 'load_match',
-			'tournament': event['tournament'],
-			'tournament_bracket': event['tournament_bracket']
-		}))
+		match = TournamentMatch.objects.filter(tournament=event['tournament']['tournament_id'])
+		if match.exists():
+			return await self.send(text_data=json.dumps({
+				'type': 'load_match',
+				'tournament': event['tournament'],
+				'tournament_bracket': event['tournament_bracket']
+			}))
+		await self.send_error_message('load_match', 'Match not found')
 
 	async def leave_tournament(self, event):
 		await self.send(text_data=json.dumps({
@@ -320,7 +323,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		i = 0
 		while i < nb_of_players:
 			match = TournamentMatch.objects.create(tournament=tournament, tournament_round=round, bracket_index=i // 2)
-			match.players.add(members_copy[i]['id'], members_copy[i + 1]['id'])
+			TournamentMatchPlayer.objects.create(
+				match=match,
+				player=User.objects.get(id=members_copy[i]['id']),
+				player_number=TournamentMatchPlayer.PlayerNumber.ONE
+			)
+			TournamentMatchPlayer.objects.create(
+				match=match,
+				player=User.objects.get(id=members_copy[i + 1]['id']),
+				player_number=TournamentMatchPlayer.PlayerNumber.TWO
+			)
 
 			round_mapping[round].add(match)
 			i += 2
@@ -334,25 +346,29 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	def set_player_ready(self, match_id):
 		try:
 			with transaction.atomic():
-				match = TournamentMatch.objects.get(match_id=match_id)
-				
-				# Check if the current user is part of the match
-				if not match.players.filter(id=self.user.id).exists():
-					return 'Player not in this match'
+				# Get the TournamentMatchPlayer instance for the current user and match
+				tournament_match_player = TournamentMatchPlayer.objects.select_related('match').get(
+					match__match_id=match_id,
+					player=self.user
+				)
 				
 				# Set the current user as ready
-				self.user.ready_for_match = True
-				self.user.save()
+				tournament_match_player.ready_for_match = True
+				tournament_match_player.save()
 				
-				# Get all players for this match
-				players = list(match.players.all())
+				# Get all TournamentMatchPlayer instances for this match
+				match_players = TournamentMatchPlayer.objects.filter(match__match_id=match_id)
 				
 				# Check if both players are ready
-				if len(players) == 2 and all(player.ready_for_match for player in players):
+				all_players_ready = match_players.count() == 2 and all(player.ready_for_match for player in match_players)
+				
+				if all_players_ready:
 					return 'start game'
 				
 				return 'Player ready'
 
+		except TournamentMatchPlayer.DoesNotExist:
+			return 'Player not in this match'
 		except ObjectDoesNotExist:
 			return 'Match not found'
 
@@ -389,42 +405,31 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	@database_sync_to_async
 	def find_player_match(self, event):
 		try:
-			tournament_bracket = event['tournament_bracket']
 			tournament_stage = event['tournament_stage']
-			# for key, value in tournament_bracket.items(): 
-			# 	print(f"{key}: {value}")
- 
-			round_mapping = {
-				'finals': tournament_bracket['finals'],
-				'semi_finals': tournament_bracket['semi_finals'],
-				'quarter_finals': tournament_bracket['quarter_finals'],
-				'eighth_finals': tournament_bracket['eighth_finals']
-			}
 
-			if tournament_stage not in round_mapping:
-				raise ValueError(f"Invalid tournament stage: {tournament_stage}") 
+			match = (TournamentMatch.objects
+				.filter(
+					tournament_round=tournament_stage,
+					tournamentmatchplayer__player_id=self.user.id
+				)
+				.prefetch_related(
+					Prefetch(
+						'tournamentmatchplayer_set',
+						queryset=TournamentMatchPlayer.objects.select_related('player'),
+						to_attr='match_players'
+					)
+				)
+				.first()
+			)
 
-			matches = round_mapping[tournament_stage]
-			
-			# Find the match where the current user is a player
-			user_match = next((match for match in matches 
-					if any(player['id'] == str(self.user.id) for player in match['players'])),  
-					None)
-			
-			if user_match:
-				return user_match['match_id']
+			if match:
+				return str(match.match_id)
 			else:
-				print(f"No match found for user {self.user.id} in stage {tournament_stage}") 
+				print(f"No match found for user {self.user.id} in stage {tournament_stage}")
 				return None
 
-		except ObjectDoesNotExist: 
-			print(f"Tournament bracket not found for event: {event}")  
-			return None
-		except KeyError as e:
-			print(f"Missing key in event: {e}")
-			return None
 		except Exception as e:
-			print(f"An error occurred: {e}") 
+			print(f"Error in find_player_match: {str(e)}") 
 			return None
 
 	@database_sync_to_async
@@ -476,7 +481,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				'type': 'redirect_to_next_match',
 				'tournament': tournament.to_dict_sync(),
 				'tournament_bracket': tournament_bracket.to_dict_sync(),
-				'last_match_index': last_match_index
 			}))
 		else: 
 			print('we have a winner')
@@ -500,7 +504,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					}
 				)
 				if final_match.players.count() < 2:
-					final_match.players.add(user)
+					TournamentMatchPlayer.objects.create(
+						match=final_match,
+						player=user,
+						player_number=TournamentMatchPlayer.PlayerNumber.ONE if last_match_index % 2 == 0 else TournamentMatchPlayer.PlayerNumber.TWO
+					)
 					async_to_sync(self.channel_layer.group_add)(str(final_match.match_id), self.channel_name)
 					self.channel_groups.add(str(final_match.match_id))
 				else:

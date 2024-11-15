@@ -6,11 +6,11 @@ import { putMessageToChatroomConversation } from "../../../../utils/chatUtils/se
 import BracketObj from "./bracket/BracketObj.js";
 
 export default class TournamentMatch {
-	constructor(tournamentBracket) {
+	constructor(match) {
 		this.redirectState = "tournament-match";
 		this.class = "tournament-match";
-		let jsonString = JSON.stringify(tournamentBracket);
-		this.tournamentBracket = jsonString.replace(/&/g, '&amp;')
+		let jsonString = JSON.stringify(match);
+		this.match = jsonString.replace(/&/g, '&amp;')
 										.replace(/'/g, '&apos;')
 										.replace(/"/g, '&quot;')
 										.replace(/</g, '&lt;')
@@ -18,26 +18,25 @@ export default class TournamentMatch {
 	}
 
 	render() {
-		return `<tournament-match data-tournament-match="${this.tournamentBracket}"></tournament-match>`;
+		return `<tournament-match data-tournament-match="${this.match}"></tournament-match>`;
 	}
 }
 
 class TournamentMatchElement extends HTMLElement {
 	constructor() {
 		super();
-		this.tournamentBracket = JSON.parse(this.getAttribute('data-tournament-match'));
-		this.tournamentId = this.tournamentBracket.tournament.tournament_id;
-		this.tournamentName = this.tournamentBracket.tournament.tournament_name;
-		this.tournamentSize = this.tournamentBracket.tournament.tournament_size;
-		this.bracketObj = BracketObj.create(this.tournamentBracket, this.tournamentSize);
-		this.stage = this.tournamentBracket.tournament.current_stage;
-		this.matches = this.tournamentBracket[this.stage];
-		this.clientMatch = null;
+		this.match = JSON.parse(this.getAttribute('data-tournament-match'));
+		this.tournament = this.match.tournament
+		this.tournamentId = this.tournament.tournament_id;
+		this.tournamentName = this.tournament.tournament_name;
+		this.tournamentSize = this.tournament.tournament_size;
+		this.bracketObj = null;
+		this.stage = this.match.tournament_round;
 		this.userId = null;
 	}
 
 	async connectedCallback() {
-		await this.findMatch();
+		// await this.findMatch();
 		await this.render();
 		this.addEventListeners();
 		this.showMatchMessage();
@@ -72,15 +71,15 @@ class TournamentMatchElement extends HTMLElement {
 		return round[0].toUpperCase() + round.slice(1);
 	}
 
-	async findMatch() {
-		this.userId = await getUserId();
+	// async findMatch() {
+	// 	this.userId = await getUserId();
 		
-		if (!this.userId) return ;
+	// 	if (!this.userId) return ;
 
-		this.clientMatch = this.matches.find(match => 
-			match.players.some(player => player.id === this.userId)
-		);
-	}
+	// 	this.clientMatch = this.matches.find(match => 
+	// 		match.players.some(player => player.id === this.userId)
+	// 	);
+	// }
 
 	getOpponent() {
 		return this.clientMatch.players[0].id === this.userId ? this.clientMatch.players[1].username : this.clientMatch.players[0].username;
@@ -102,14 +101,14 @@ class TournamentMatchElement extends HTMLElement {
 			const payload = {
 				'type': 'user_ready_for_match',
 				'userId': this.userId,
-				'matchId': this.clientMatch.match_id
+				'matchId': this.match.match_id
 			}
 			tournamentSocket.send(JSON.stringify(payload));
 			clearInterval(this.intervalId);
 		})
 	}
 
-	redirectToBracket() {
+	async redirectToBracket() {
 		const gameComponent = document.querySelector('game-component');
 		const bracketState = gameComponent.states['bracket'];
 		const bracket = new Bracket(this.bracketObj);

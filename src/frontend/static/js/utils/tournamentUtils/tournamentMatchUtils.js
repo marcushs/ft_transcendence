@@ -37,7 +37,7 @@ export function proceedInTournament(gameId, userId) {
 
 export async function redirectToTournamentLostMatch(matchId) {
 	try {
-		const res = await sendRequest('GET', `/api/tournament/get_bracket/?match_id=${matchId}`, null, false);
+		const res = await sendRequest('GET', `/api/tournament/get_bracket/`, null, false);
 	
 		const tournamentBracket = res.bracket;
 		const gameComponent = document.querySelector('game-component');

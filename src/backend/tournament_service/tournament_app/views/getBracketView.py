@@ -15,19 +15,20 @@ class getBracketView(View):
 		super().__init__
 
 	def get(self, request):
-		match_id = request.GET.get('match_id')
+		user = request.user
 
-		try:
-			bracket =  Bracket.objects.filter(
-				Q(eighth_finals__match_id=match_id) |
-				Q(quarter_finals__match_id=match_id) |
-				Q(semi_finals__match_id=match_id) | 
-				Q(finals__match_id=match_id)  
+		if isinstance(user, AnonymousUser):
+			return JsonResponse({'error': 'User not found'}, status=401)
+
+		active_tournament = Tournament.objects.filter(
+			members=user,
+			isOver=False
+		).first()
+
+		if active_tournament:
+			bracket = Bracket.objects.filter(tournament=active_tournament).prefetch_related(
+				'eighth_finals', 'quarter_finals', 'semi_finals', 'finals'
 			).first()
-			print(bracket)
-			# for key, value in bracket.items():   
-			# 	print(f"{key}: {value}")  
-			return JsonResponse({'status': 'success', 'bracket': bracket.to_dict_sync()}, status=200)
-			# return JsonResponse({'status': 'success',}, status=200) 
-		except Bracket.DoesNotExist:
-			return JsonResponse({'status': 'error', 'message': 'No bracket found'}, status=400)   
+
+			return JsonResponse({'bracket': bracket.to_dict_sync(), 'status': 'success'}, status=200)
+		return JsonResponse({'message': 'Bracket not found', 'status': 'error'}, status=404)

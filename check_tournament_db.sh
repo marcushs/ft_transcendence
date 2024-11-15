@@ -44,9 +44,13 @@ docker exec -e PGPASSWORD=$TOURNAMENT_DB_PASSWORD tournament psql -U $TOURNAMENT
 echo -e "_________TOURNAMENT_APP_BRACKET_FINALS_________\n" >> tournament_models.txt
 docker exec -e PGPASSWORD=$TOURNAMENT_DB_PASSWORD tournament psql -U $TOURNAMENT_DB_USER -d $TOURNAMENT_DB_NAME -h $TOURNAMENT_DB_HOST -c "SELECT * FROM tournament_app_bracket_finals;" >> tournament_models.txt
 
-#tournament_app_matchready
-# echo -e "_________TOURNAMENT_APP_MATCHREADY_________\n" >> tournament_models.txt
-# docker exec -e PGPASSWORD=$TOURNAMENT_DB_PASSWORD tournament psql -U $TOURNAMENT_DB_USER -d $TOURNAMENT_DB_NAME -h $TOURNAMENT_DB_HOST -c "SELECT * FROM tournament_app_matchready;" >> tournament_models.txt
+#tournament_app_tournamentmatch_players
+echo -e "_________TOURNAMENT_APP_TOURNAMENTMATCH_PLAYERS_________\n" >> tournament_models.txt
+docker exec -e PGPASSWORD=$TOURNAMENT_DB_PASSWORD tournament psql -U $TOURNAMENT_DB_USER -d $TOURNAMENT_DB_NAME -h $TOURNAMENT_DB_HOST -c "SELECT * FROM tournament_app_tournamentmatch_players;" >> tournament_models.txt
+
+#tournament_app_tournamentmatchplayers
+echo -e "_________TOURNAMENT_APP_TOURNAMENTMATCHPLAYERS_________\n" >> tournament_models.txt
+docker exec -e PGPASSWORD=$TOURNAMENT_DB_PASSWORD tournament psql -U $TOURNAMENT_DB_USER -d $TOURNAMENT_DB_NAME -h $TOURNAMENT_DB_HOST -c "SELECT * FROM tournament_app_tournamentmatchplayer;" >> tournament_models.txt
 
 
 echo "***************************************************************************************************************************" >> tournament_models.txt

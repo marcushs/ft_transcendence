@@ -4,6 +4,7 @@ export default class BracketObj {
     #bracketObj;
 
     constructor(tournamentBracket, tournamentSize) {
+		console.log("sfsfssffssfsfsfsfsfsfs", tournamentBracket)
         this.#tournamentBracket = tournamentBracket;
         this.#bracketObj = {
             nbOfPlayers: tournamentSize,
@@ -82,37 +83,74 @@ export default class BracketObj {
 	}
 
 	makeMatch(match, side) {
-		const match_pair = new Array(2);
+		let match_pair = new Array(2);
 
 		if (side === 'left') {
 			if (!match.winner && !match.loser) {
 				if (match.players.length < 1) return [null, null];
 
-				const player1 = match.players[0];
-				if (match.player1[0].last_match_index === 100) return [
-					match.players[0] ? {name: match.players[0].username, score: '0'} : null,
-					match.players[1] ? {name: match.players[1].username, score: '0'} : null
-				];
-				
 				if (match.players.length === 1) {
-					if (player1.last_match_index % 2 === 0) {
-						match_pair[0] = player1;
+					if (match.players[0].player_number === 0) {
+						match_pair[0] = {name: match.players[0].username, score: '0'};
 						match_pair[1] = null;
 					} else {
-						match_pair[0] = null;
-						match_pair[1] = player1;
+						match_pair[0] = {name: match.players[0].username, score: '0'};
+						match_pair[1] = null;
 					}
 					return match_pair;
 				}
-				const player2 = match.players[1];
 
+				if (match.players[0].player_number === 0) {
+					match_pair[0] = {name: match.players[0].username, score: '0'};
+					match_pair[1] = {name: match.players[1].username, score: '0'};
+				} else {
+					match_pair[0] = {name: match.players[1].username, score: '0'};
+					match_pair[1] = {name: match.players[0].username, score: '0'};
+				}
+				return match_pair;
 			}
-			return match = [
-				{name: match.players[0].username, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`}, 
-				{name: match.players[1].username, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`}
-			];
+
+			if (match.players[0].player_number === 0) {
+				match_pair[0] = {name: match.players[0].username, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`};
+				match_pair[1] = {name: match.players[1].username, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`};
+			} else {
+				match_pair[0] = {name: match.players[1].username, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`};
+				match_pair[1] = {name: match.players[0].username, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`};
+			}
+			return match_pair;
 		}
 
-	}
+		if (!match.winner && !match.loser) {
+			if (match.players.length < 1) return [null, null];
 
+			if (match.players.length === 1) {
+				if (match.players[0].player_number === 0) {
+					match_pair[1] = {name: match.players[0].username, score: '0'};
+					match_pair[0] = null;
+				} else {
+					match_pair[1] = {name: match.players[0].username, score: '0'};
+					match_pair[0] = null;
+				}
+				return match_pair;
+			}
+
+			if (match.players[0].player_number === 0) {
+				match_pair[1] = {name: match.players[0].username, score: '0'};
+				match_pair[0] = {name: match.players[1].username, score: '0'};
+			} else {
+				match_pair[1] = {name: match.players[1].username, score: '0'};
+				match_pair[0] = {name: match.players[0].username, score: '0'};
+			}
+			return match_pair;
+		}
+
+		if (match.players[0].player_number === 0) {
+			match_pair[1] = {name: match.players[0].username, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`};
+			match_pair[0] = {name: match.players[1].username, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`};
+		} else {
+			match_pair[1] = {name: match.players[1].username, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`};
+			match_pair[0] = {name: match.players[0].username, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`};
+		}
+		return match_pair;
+	}
 }

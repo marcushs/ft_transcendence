@@ -158,10 +158,12 @@ class TournamentMatch(models.Model):
             obj_dict['winner'] = await self.winner.to_dict()
         if self.loser is not None:
             obj_dict['loser'] = await self.loser.to_dict()
-        players = await sync_to_async(list)(
-            self.players.values('id', 'username', 'ready_for_match', 'last_match_index')
-        )
-        obj_dict['players'] = [{'id': str(player['id']), 'username': player['username'], 'ready': player['ready_for_match'], 'last_match_index': player['last_match_index']} for player in players]
+
+        players = await sync_to_async(lambda: list(TournamentMatchPlayer.objects.filter(match=self).select_related('player')))()
+        obj_dict['players'] = [{'id': str(player.player.id), 
+                                'username': player.player.username, 
+                                'player_number': player.player_number, 
+                                'ready': player.ready_for_match} for player in players]
 
         return obj_dict
     
@@ -181,15 +183,20 @@ class TournamentMatch(models.Model):
             obj_dict['winner'] = self.winner.to_dict_sync()
         if self.loser is not None:
             obj_dict['loser'] = self.loser.to_dict_sync()
-        players = list(
-            self.players.values('id', 'username', 'ready_for_match', 'last_match_index')
-        )
-        obj_dict['players'] = [{'id': str(player['id']), 'username': player['username'], 'ready': player['ready_for_match'], 'last_match_index': player['last_match_index']} for player in players]
+        players = TournamentMatchPlayer.objects.filter(match=self).select_related('player')
+        obj_dict['players'] = [{'id': str(player.player.id), 
+                                'username': player.player.username, 
+                                'player_number': player.player_number, 
+                                'ready': player.ready_for_match} for player in players]
+
         return obj_dict
 
     def get_players(self):
-        players = list(self.players.values('id', 'username', 'ready_for_match'))
-        return [{'id': str(player['id']), 'username': player['username'], 'ready': player['ready_for_match']} for player in players]
+        players = TournamentMatchPlayer.objects.filter(match=self).select_related('player')
+        return [{'id': str(player.player.id), 
+                 'username': player.player.username, 
+                 'player_number': player.player_number, 
+                 'ready': player.ready_for_match} for player in players]
 
 class TournamentMatchPlayer(models.Model):
     class PlayerNumber(models.IntegerChoices):
@@ -197,7 +204,8 @@ class TournamentMatchPlayer(models.Model):
         TWO = 1, 'Two'
     match = models.ForeignKey(TournamentMatch, on_delete=models.CASCADE)
     player = models.ForeignKey(User, on_delete=models.CASCADE)
-    player_number = models.IntegerField(choices=PlayerNumber.choices, default=PlayerNumber.choices.ONE)
+    player_number = models.IntegerField(choices=PlayerNumber.choices, default=PlayerNumber.ONE)
+    ready_for_match = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('match', 'player')
