@@ -32,7 +32,7 @@ class PrivateMatchInit(View):
         super()
 
 
-    def post(self, request): 
+    def post(self, request):
         try:
             if isinstance(request.user, AnonymousUser):  
                 return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400)

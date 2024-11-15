@@ -76,6 +76,21 @@ private-match-component {
 	margin: 0 1rem;
 }
 
+.private-match-component-content .waiting-sentence{
+	position: absolute;
+	top: 88%;
+	font-size: 1.4rem;
+	visibility: hidden;
+	color: rgb(50, 205, 50);
+}
+
+.private-match-component-content .feedback-error {
+	position: absolute;
+	top: 88%;
+	font-size: 1.4rem;
+	color: var(--error-color);
+}
+
 @keyframes loading-wheel {
 	0% {
 		transform: rotate(0deg);

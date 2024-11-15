@@ -455,6 +455,13 @@ export default class Game {
 			return ;
 		}
 
+		console.log('game type !!!!!!!!!! ------> ', this.gameType)
+		if (this.gameType === "private_match") {
+			localStorage.removeItem("isSearchingPrivateMatch");
+			localStorage.removeItem("isReadyToPlay");
+			localStorage.removeItem("isInGuestState");
+		}
+
 		setTimeout(() => {
 			this.isOutroAnimationEnabled = false;
 			if (!this.gameState.is_ranked) {

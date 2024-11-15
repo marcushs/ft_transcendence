@@ -12,6 +12,8 @@ class PrivateMatchComponent extends HTMLElement {
 			<div class="private-match-component-content">
 				<h4>${getString('gameComponent/privateMatch')}</h4>
 				<input type="text" placeholder="${getString('gameComponent/playerName')}" maxlength="12">
+				<p class="waiting-sentence"></p>
+				<p class="feedback-error"></p>
 				<div class="btn-container">
 					<button-component id="genericBtn" label="${getString('buttonComponent/invite')}" class="generic-btn-disabled"></button-component>
 					<button-component id="leaveBtn" label="${getString('buttonComponent/leave')}" class="generic-btn-cancel" style="display: none"></button-component>
@@ -37,8 +39,10 @@ class PrivateMatchComponent extends HTMLElement {
 
 		input.addEventListener('input', () => {
 			this.resetError();
-			if (input.value !== '')
+			if (input.value !== '') {
 				genericBtn.className = "generic-btn";
+				this.querySelector('.feedback-error').style.visibility = "hidden";
+			}
 			else
 				genericBtn.className = "generic-btn-disabled";
 		});
@@ -56,11 +60,11 @@ class PrivateMatchComponent extends HTMLElement {
 		document.addEventListener('guestPrivateMatchEvent', (event) => {
 			this.state = "guestState";
 			this.displayLobbyAsGuest(event.detail.ownerName);
+			localStorage.setItem("isInGuestState", event.detail.ownerName);
 		});
 
 		document.addEventListener('privateMatchCanceled', (event) => {
-			this.state = "initial";
-			this.displayInitialState();
+			this.redirectToInitialState();
 		});
 
 	}
@@ -69,8 +73,8 @@ class PrivateMatchComponent extends HTMLElement {
 	async connectedCallback() {
 		const isSearchingPrivateMatch = localStorage.getItem("isSearchingPrivateMatch");
 		const isReadyToPlay  = localStorage.getItem("isReadyToPlay");
+		const isInGuestState = localStorage.getItem("isInGuestState");
 
-		console.log(isReadyToPlay, isSearchingPrivateMatch);
 		if (isReadyToPlay) {
 			this.displayLobby();
 			this.state = "ready";
@@ -79,6 +83,11 @@ class PrivateMatchComponent extends HTMLElement {
 			this.displayWaitingState();
 			this.querySelector('input').value = isSearchingPrivateMatch;
 			this.state = "waiting";
+		} else if (isInGuestState) {
+			this.state = "guestState";
+			await matchmakingWebsocket();
+			await gameWebsocket(await getUserId());
+			this.displayLobbyAsGuest(isInGuestState);
 		}
 	}
 
@@ -93,6 +102,8 @@ class PrivateMatchComponent extends HTMLElement {
 			await this.handleWaitingStateClick(input.value);
 		else if (input.value !== '' && this.state === "ready")
 			await this.handleReadyStateClick();
+		// else if (this.state === "guestState")
+		// 	await this.handleLeaveLobby();
 	}
 
 
@@ -106,7 +117,9 @@ class PrivateMatchComponent extends HTMLElement {
 			this.state = "waiting";
 			localStorage.setItem("isSearchingPrivateMatch", username);
 		} catch (error) {
-			console.log('private_match: ', error.message);
+			this.querySelector('.feedback-error').style.visibility = "visible";
+			this.querySelector('.feedback-error').textContent = getString(`gameComponent/${error.message}`);
+			this.querySelector('#genericBtn').className = "generic-btn-disabled";
 		}
 	}
 
@@ -129,6 +142,7 @@ class PrivateMatchComponent extends HTMLElement {
 
 		} catch (error) {
 			console.log('private_match: ', error.message);
+			this.redirectToInitialState();
 		}
 	}
 
@@ -136,40 +150,42 @@ class PrivateMatchComponent extends HTMLElement {
 	async handleReadyStateClick() {
 		try {
 			const input = this.querySelector('input');
-
-			// this.querySelector('.loading-wheel').style.visibility = "hidden";
-			// localStorage.removeItem("isSearchingPrivateMatch");
-			//
 			const data = await sendRequest("POST", "/api/matchmaking/start_private_match/", { invitedUsername: input.value });
 			await gameWebsocket(await getUserId());
 			this.state = "initial";
 			localStorage.removeItem("isSearchingPrivateMatch");
 			localStorage.removeItem("isReadyToPlay");
+			localStorage.removeItem("isInGuestState");
 			this.displayInitialState();
-			// if (gameSocket && gameSocket.readyState !== WebSocket.OPEN)
-			// 	await gameWebsocket();
-
 		} catch (error) {
 			console.log('private_match: ', error.message);
+			this.redirectToInitialState();
 		}
 	}
 
 
 	async handleLeaveLobby() {
-		const username = localStorage.getItem("isSearchingPrivateMatch");
-
-		console.log(username)
 		try {
-			const data = await sendRequest("POST", "/api/matchmaking/cancel_private_match/", { invitedUsername: username });
+			const data = await sendRequest("POST", "/api/matchmaking/cancel_private_match/", null);
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
 			this.state = "initial";
 			localStorage.removeItem("isSearchingPrivateMatch");
 			localStorage.removeItem("isReadyToPlay");
+			localStorage.removeItem("isInGuestState");
 			this.displayInitialState();
 		} catch (error) {
 			console.log('private_match: ', error.message);
+			this.redirectToInitialState();
 		}
+	}
+
+	redirectToInitialState() {
+		this.state = "initial";
+		localStorage.removeItem("isSearchingPrivateMatch");
+		localStorage.removeItem("isReadyToPlay");
+		localStorage.removeItem("isInGuestState");
+		this.displayInitialState();
 	}
 
 
@@ -182,6 +198,8 @@ class PrivateMatchComponent extends HTMLElement {
 		this.querySelector('input').value = '';
 		this.changeButtonClassname("generic-btn-disabled");
 		this.querySelector('#leaveBtn').style.display = "none";
+		this.querySelector('.waiting-sentence').style.visibility = "hidden";
+		this.querySelector('.feedback-error').style.visibility = "hidden";
 	}
 
 
@@ -190,6 +208,8 @@ class PrivateMatchComponent extends HTMLElement {
 		this.querySelector('#genericBtn button').innerHTML = getString("buttonComponent/cancel");
 		this.querySelector('input').disabled = true;
 		this.changeButtonClassname("generic-btn-cancel");
+		this.querySelector('.waiting-sentence').style.visibility = "hidden";
+		this.querySelector('.feedback-error').style.visibility = "hidden";
 	}
 
 
@@ -201,16 +221,34 @@ class PrivateMatchComponent extends HTMLElement {
 		this.querySelector('input').value = localStorage.getItem("isSearchingPrivateMatch");
 		this.changeButtonClassname("generic-btn");
 		this.querySelector('#leaveBtn').style.display = "block";
+		this.querySelector('.waiting-sentence').style.visibility = "hidden";
+		this.querySelector('.feedback-error').style.visibility = "hidden";
 	}
 
 
 	displayLobbyAsGuest(opponentName) {
+		console.log('display as guest')
 		this.querySelector('.loading-wheel').style.visibility = "hidden";
 		this.querySelector('.accept-icon').style.visibility = "hidden";
 		this.querySelector('#genericBtn button').style.display = "none";
 		this.querySelector('input').disabled = true;
 		this.querySelector('input').value = opponentName;
 		this.querySelector('#leaveBtn').style.display = "block";
+		this.querySelector('.waiting-sentence').style.visibility = "visible";
+		this.querySelector('.feedback-error').style.visibility = "hidden";
+		let i = 0;
+		const intervalId = setInterval(() => {
+			let dots = "";
+			const waitingSentenceElem = this.querySelector('.waiting-sentence');
+
+			for (let n = i % 4; n > 0; n--)
+				dots += '.';
+			i++;
+			if (!waitingSentenceElem)
+				clearInterval(intervalId);
+			else
+				waitingSentenceElem.innerHTML = `${getString("gameComponent/waitingSentence")}${dots}`;
+		}, 300);
 	}
 
 

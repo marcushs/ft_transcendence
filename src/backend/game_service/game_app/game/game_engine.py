@@ -47,6 +47,7 @@ class PongGameEngine:
         self.has_ball_hit_wall = False
         self.is_player_one_collide = False
         self.is_player_two_collide = False
+        self.is_surrend = False
         self.map = {
             'width': float(map_dimension['width']),
             'height': float(map_dimension['height']) 
@@ -310,12 +311,13 @@ class PongGameEngine:
             self.is_paused = False
             self.pause_start_time = None
             await self.send_resume_update()
-            
+
 
     async def player_surrender(self, surrend_id):
         self.loser_id = surrend_id
         self.winner_id = self.player_one_id if surrend_id == self.player_two_id else self.player_two_id
         self.game_active = False
+        self.is_surrend = True
         PongGameEngine.active_games.remove(self)
         is_draw = False if self.player_one_score != self.player_two_score else True
         await self.manage_end_update(is_surrend=True, is_draw=is_draw)
@@ -405,7 +407,7 @@ class PongGameEngine:
         winner_payload, loser_payload = await self.get_end_game_payload(results)
         print(f'------------------- {self.winner_id}, {self.loser_id} -----------------')
         print(f'------------------- {self.player_one_score}, {self.player_two_score} -----------------')
-        print(f'------------------- {self.player_one_id}, {self.player_two_id} -----------------') 
+        print(f'------------------- {self.player_one_id}, {self.player_two_id} -----------------')
         await send_websocket_info(self.winner_id, winner_payload)
         await send_websocket_info(self.loser_id, loser_payload)
 
@@ -509,8 +511,20 @@ class PongGameEngine:
 
     async def websocket_sender(self, payload):
         if self.player_one_connected:
+            # print('------------------------------------')
+            # print('--> Player one')
+            # print(f'game id = {self.game_id}')
+            # print(f'payload == {payload}')
+            # print(f'active game : ', PongGameEngine.active_games)
+            # print('\n------------------------------------')
             await send_websocket_info(player_id=self.player_one_id, payload=payload)
         if self.player_two_connected:
+            # print('------------------------------------')
+            # print('--> Player two')
+            # print(f'game id = {self.game_id}')
+            # print(f'payload == {payload}')
+            # print(f'active game : ', PongGameEngine.active_games)
+            # print('\n------------------------------------')
             await send_websocket_info(player_id=self.player_two_id, payload=payload)
 
  #//---------------------------------------> Utils method <--------------------------------------\\#

@@ -104,16 +104,10 @@ class PrivateMatchInvitationNotificationComponent extends HTMLElement {
 				console.log(location.pathname)
 				if (location.pathname !== '/') {
 					throwRedirectionEvent('/');
-					// const intervalId2 = setInterval(() => {
-					// 	if (document.querySelector('.states-container')) {
-							// clearInterval(intervalId2);
-					// }
-					// }, 500);
-
-					console.log(document.querySelector('#gameStatesContainer'));
 				}
-				await this.waitForStatesContainer();
-				this.throwChangeGameStateEvent();
+				//  await this.waitForStatesContainer();
+				// this.throwChangeGameStateEvent();
+				// throw
 				// await waitForStatesContainer();
 				// await this.throwChangeGameStateEvent();
 				// } else {

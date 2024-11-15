@@ -27,13 +27,13 @@ export async function gameWebsocket(userId) {
 				startGame(data.game_id, data.game_state, data.map_dimension);
 			},
 			'data_update': (data) => {
+				console.log(data.game_state.ball_x)
 				if (gameInstance) gameInstance.updateGameRender(data.game_state);
 			},
 			'emote_received': (data) => {
 				if (gameInstance) throwReceivedEmoteEvent(data.message);
 			},
 			'game_finished': (data) => {
-				console.log('data on websocket = ', data);
 				if (gameInstance) gameInstance.gameFinished(data.message.is_win, data);
 			},
 			'game_canceled': (data) => {
