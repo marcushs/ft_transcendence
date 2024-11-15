@@ -7,7 +7,6 @@ export default class ChatRoomTopBar extends HTMLElement {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-		console.log(newValue)
         if (name === 'data-user')
             this.userData = JSON.parse(newValue);
         if (name === 'data-status')

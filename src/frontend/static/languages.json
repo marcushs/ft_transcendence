@@ -230,6 +230,11 @@
 	"oauthUsernameView": {
 	  "title": "Username already taken, please choose a new one",
 	  "usernameFormatError": "Username must container only letters, numbers, _ , -"
+	},
+	"chatComponent": {
+	  "contacted": "Contacted",
+	  "noRecentMessage": "No recent message",
+	  "tournamentBot": "Tournament Bot"
 	}
   },
 
@@ -463,6 +468,11 @@
 	"oauthUsernameView": {
 	  "title": "Nom d'utilisateur déjà pris, veuillez en choisir un nouveau",
 	  "usernameFormatError": "Le nom d'utilisateur ne doit contenir que des lettres, chiffres, _, -"
+	},
+	"chatComponent": {
+	  "contacted": "Contacté",
+	  "noRecentMessage": "Aucun message récent",
+	  "tournamentBot": "Bot du tournoi"
 	}
   },
 

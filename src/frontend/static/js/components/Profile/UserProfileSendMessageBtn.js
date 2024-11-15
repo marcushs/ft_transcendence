@@ -25,7 +25,7 @@ export default class UserProfileSendMessageBtn extends HTMLElement {
 		})
 		this.addEventListener('mousedown', () => {
 			this.style.transform = 'scale(0.98)';
-			sendMessageCallback(this.userData)
+			sendMessageCallback(JSON.stringify(this.userData));
 		})
 		this.addEventListener('mouseup', () => {
 			this.style.transform = 'scale(1)';

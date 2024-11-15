@@ -14,7 +14,7 @@ class ChatComponent extends HTMLElement {
 	async init() {
 		if (await checkAuthentication()) {
 			this.render()
-			this.addEventListeners();
+			this.attachEventListeners();
 		}
 	}
 
@@ -48,8 +48,21 @@ class ChatComponent extends HTMLElement {
 		this.chatRoom = this.querySelector('.chatroom');
 	}
 
-	addEventListeners() {
+	attachEventListeners() {
+		const contactMenu = document.querySelector('.contact-menu');
+
+		this.addEventListener('click', (event) => {
+			event.stopPropagation();
+		});
+
+		document.addEventListener('click', () => {
+			this.chatMainMenu.style.display = 'none';
+		});
+
 		this.chatIcon.addEventListener('click', () => {
+			if (contactMenu.style.display !== 'none')
+				contactMenu.style.display = 'none';
+
 			this.chatMainMenu.style.display = this.chatMainMenu.style.display === 'none' ? 'block' : 'none';
 			if (this.chatMainMenu.style.display === 'none') this.removeChatroomDOM();
 			if (this.chatRoom.classList.contains('active')) this.chatRoom.classList.remove('active');

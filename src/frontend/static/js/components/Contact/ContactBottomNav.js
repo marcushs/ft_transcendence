@@ -8,7 +8,7 @@ class ContactBottomNav extends HTMLElement {
                 <p id="bottom-nav-contact-icon">Contacts</p>
                 <img id="bottom-nav-contact-icon" src='../../assets/contact.svg' alt='contact-icon'>
             </div>
-		`
+		`;
     }
 
 }
