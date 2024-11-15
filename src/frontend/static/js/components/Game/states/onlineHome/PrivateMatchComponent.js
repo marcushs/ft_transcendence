@@ -58,6 +58,11 @@ class PrivateMatchComponent extends HTMLElement {
 			this.displayLobbyAsGuest(event.detail.ownerName);
 		});
 
+		document.addEventListener('privateMatchCanceled', (event) => {
+			this.state = "initial";
+			this.displayInitialState();
+		});
+
 	}
 
 

@@ -201,7 +201,8 @@
 	  "ranked": "Ranked",
 	  "unranked": "Unranked",
 	  "tournament": "Tournament",
-	  "unloggedSentence": "To access to match history, please login or sign in."
+	  "unloggedSentence": "To access to match history, please login or sign in.",
+	  "private_match": "Private"
 	},
 	"statistics": {
 	  "gamesPlayed": "Games played",
@@ -433,7 +434,8 @@
 	  "ranked": "Classé",
 	  "unranked": "Non classé",
 	  "tournament": "Tournois",
-	  "unloggedSentence": "Pour accéder à l'historique des matchs, veuillez vous connecter ou vous identifier."
+	  "unloggedSentence": "Pour accéder à l'historique des matchs, veuillez vous connecter ou vous identifier.",
+	  "private_match": "Privée"
 	},
 	"statistics": {
 	  "gamesPlayed": "Parties jouées",

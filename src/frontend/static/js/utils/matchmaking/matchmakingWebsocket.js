@@ -50,6 +50,9 @@ export async function matchmakingWebsocket() {
 		}
 		if (data.type === 'private_match_canceled') {
 			console.log('private_match_canceled reached');
+			localStorage.removeItem("isReadyToPlay");
+			localStorage.removeItem("isSearchingPrivateMatch");
+			throwPrivateMatchCanceled();
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
 		}
@@ -70,9 +73,17 @@ export async function matchmakingWebsocket() {
     };
 }
 
+function throwPrivateMatchCanceled() {
+	const event = new CustomEvent('privateMatchCanceled', {
+		bubbles: true,
+	});
+
+	document.dispatchEvent(event);
+}
+
 function throwPlayerJoinedMatchEvent() {
 	const event = new CustomEvent('playerJoinedMatchEvent', {
-		bubbles: true
+		bubbles: true,
 	});
 
 	document.dispatchEvent(event);
