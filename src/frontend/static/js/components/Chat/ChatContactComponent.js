@@ -26,7 +26,7 @@ export default class ChatContactComponent extends HTMLElement {
 
 		this.innerHTML = `
 		<div class="chat-contact-profile-picture">
-			<img src=${profileImage} alt='contact picture'></img>
+			<img src=${profileImage} alt='contact picture'>
 			<div class="chat-status-circle ${await this.getUserStatus()}"></div> 
 		</div>
 		<div class="chat-contact-info">

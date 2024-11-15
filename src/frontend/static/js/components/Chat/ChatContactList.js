@@ -2,6 +2,7 @@ import "./ChatContactComponent.js"
 import { sendRequest } from "../../utils/sendRequest.js";
 import { getUserId, fetchChatroomsList } from "../../utils/chatUtils/joinRoomUtils.js";
 import ChatContactComponent from "./ChatContactComponent.js";
+import {getString} from "../../utils/languageManagement.js";
 
 class ChatContactList extends HTMLElement {	
 	constructor() {
@@ -20,11 +21,11 @@ class ChatContactList extends HTMLElement {
 						<div class="horizontal-line"></div>
 						<div class="vertical-line"></div>
 					</div>
-					<p class="title">Contacted</p>
+					<p class="title">${getString("chatComponent/contacted")}</p>
 					<p id="chat-contact-count" class="count">(0)</p>
 					</div>
 				<ul>
-					<li><p class="no-contact-text">No recent message</p></li>
+					<li><p class="no-contact-text">${getString("chatComponent/noRecentMessage")}</p></li>
 				</ul>
 			</div>
 		`;
@@ -91,7 +92,7 @@ class ChatContactList extends HTMLElement {
 		chatContactCountEl.innerText = `(${this.count})`;
 		if (this.count === 0) {
 			const contactedListUl = document.querySelector('.contacted-list > ul');
-			contactedListUl.innerHTML = '<li><p class="no-contact-text">No recent message</p></li>';
+			contactedListUl.innerHTML = `<li><p class="no-contact-text">${getString("chatComponent/noRecentMessage")}</p></li>`;
 		}
 	}
 }

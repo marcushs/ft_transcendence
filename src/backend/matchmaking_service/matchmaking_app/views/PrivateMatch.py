@@ -175,12 +175,12 @@ class PrivateMatchManager(View):
             return self.handle_refused_invitation()
     
     def handle_accepted_invitation(self):
-        async_to_sync(send_websocket_game_found)(player_id=self.user.id, payload={'type': 'player_joined_private_match', 'player_id': self.user.id})
+        send_websocket_game_found(player_id=self.user.id, payload={'type': 'player_joined_private_match', 'player_id': self.user.id})
         self.lobby.join_lobby()
         return JsonResponse({'status': 'success', 'message': 'privateMatchInvitAccepted'}, status=200)
     
     def handle_refused_invitation(self):
-        async_to_sync(send_websocket_game_found)(player_id=self.user.id, payload={'type': 'player_refused_private_match', 'player_id': self.user.id})
+        send_websocket_game_found(player_id=self.user.id, payload={'type': 'player_refused_private_match', 'player_id': self.user.id})
         self.lobby.delete_lobby()
         return JsonResponse({'status': 'success', 'message': 'privateMatchInvitRefused'}, status=200)
 
@@ -200,7 +200,7 @@ class StartPrivateMatch(View):
             self.init()
             change_is_ingame_state(value=True, user_instance=self.user)
             change_is_ingame_state(value=True, user_instance=self.opponent)
-            async_to_sync(send_websocket_game_found)(player_id=self.opponent.id, payload={'type': 'private_match_started'})
+            send_websocket_game_found(player_id=self.opponent.id, payload={'type': 'private_match_started'})
             send_start_game(game_type='private_match', player_one_id=self.user.id, player_two_id=self.opponent.id)
             return JsonResponse({'status': 'success', 'message': 'privateMatchStarted'}, status=200)
         except Exception as e: 

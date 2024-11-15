@@ -1,6 +1,7 @@
 import { sendRequest } from "../../utils/sendRequest.js";
 import ChatMessageComponent from "./ChatMessageComponent.js";
 import { isSentOrReceivedMessage } from "../../utils/chatUtils/sendPrivateMessage.js";
+import {getString} from "../../utils/languageManagement.js";
 
 export default class ChatRoomConversation extends HTMLElement {
 	static get observedAttributes() {
@@ -19,7 +20,7 @@ export default class ChatRoomConversation extends HTMLElement {
 		switch (name) {
             case 'data-user':
                 const userData = JSON.parse(newValue);
-				if (userData.username === 'Tournament Bot') break;
+				if (userData.username === getString("chatComponent/tournamentBot")) break;
                 this.findMatchingChatroom(userData.id);
                 break;
             case 'data-chatroom':
@@ -29,10 +30,6 @@ export default class ChatRoomConversation extends HTMLElement {
                 }
                 break;
         }
-	}
-
-	connectedCallback() {
-		console.log('Component connected to DOM');
 	}
 
 	render() {
@@ -49,7 +46,6 @@ export default class ChatRoomConversation extends HTMLElement {
 		if (!res.chatroom_id) return;
 		
 		this.chatroom = res.chatroom_id
-		console.log('chatroom conversation chatroom id: ', this.chatroom)
 		this.setAttribute('data-chatroom', this.chatroom);
 	}
 

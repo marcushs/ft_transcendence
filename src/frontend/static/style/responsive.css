@@ -1,10 +1,37 @@
-@media (max-width: 1500px) {
+@media (max-width: 900px) {
+	game-component {
+		width: 100vw;
+		height: calc((100vw * 63) / 100);
+	}
+	match-history-component {
+		height: 44vw;
+		width: 44vw;
+	}
+}
+
+@media (max-width: 1310px) {
+	:root {
+		font-size: 40%;
+	}
+	.home-main-section {
+		flex-direction: column;
+	}
+	game-component {
+		margin-top: 20rem;
+		margin-bottom: 20rem;
+	}
+	match-history-component {
+		margin-bottom: 10rem;
+	}
+}
+
+@media (min-width: 1311px) and (max-width: 1639px) {
 	:root {
 		font-size: 40%;
 	}
 }
 
-@media (min-width: 1500px) and (max-width: 1920px) {
+@media (min-width: 1640px) and (max-width: 1920px) {
 	:root {
 		font-size: 50%;
 	}

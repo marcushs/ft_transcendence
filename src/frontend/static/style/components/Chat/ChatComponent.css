@@ -8,9 +8,9 @@
 @import './ChatMessageComponent.css';
 
 chat-component {
-	position: absolute;
-	bottom: 7px;
-	right: 10px;
+	position: fixed;
+	bottom: 1rem;
+	right: 2rem;
 	z-index: 3;
 	width: fit-content;
 }
