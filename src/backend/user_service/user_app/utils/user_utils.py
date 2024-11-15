@@ -19,7 +19,7 @@ User = get_user_model()
 
 
 def get_user_id_by_username(username):
-    user = User.objects.get(username=username)
+    user = User.objects.get(username=username) 
     
     return user.id
 
