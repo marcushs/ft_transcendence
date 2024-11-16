@@ -1,7 +1,7 @@
+from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views import View
-from django.contrib.auth.models import AnonymousUser
 
 import requests
 import json

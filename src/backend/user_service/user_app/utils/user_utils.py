@@ -1,18 +1,16 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import AnonymousUser
 from asgiref.sync import async_to_sync, sync_to_async
+from django.contrib.auth.models import AnonymousUser
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.utils import timezone
 from django.db.models import Q
 from django.views import View
 from ..models import User
-from django.contrib.auth import get_user_model
 import httpx
 import json
-import jwt
-from django.conf import settings
 
 
 User = get_user_model()
@@ -101,7 +99,6 @@ class update_user(View):
         old_status = None
         for field in ['username', 'email', 'is_verified', 'two_factor_method', 'status', 'last_active']:
             if field in data:
-                print('-----------> field:')
                 if field == 'last_active':
                     setattr(request.user, field, timezone.now())
                 elif field == 'status':
@@ -120,7 +117,6 @@ class check_username(View):
 
     def get(self, request):
         username = request.GET.get('username')
-        print(username) 
         if User.objects.filter(username=username).exists():
             return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
         return JsonResponse({"message": "Username is free", "status": "Success"}, status=200)

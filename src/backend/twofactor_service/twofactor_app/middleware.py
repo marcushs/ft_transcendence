@@ -1,6 +1,6 @@
-from .utils.jwt_utils import get_user_from_jwt
 from django.utils.deprecation import MiddlewareMixin # assure the retro-compability for recent django middleware
 from django.contrib.auth.models import AnonymousUser
+from .utils.jwt_utils import get_user_from_jwt
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.conf import settings
@@ -37,7 +37,6 @@ class JWTAuthMiddleware(MiddlewareMixin):
     def send_new_token_request(self, request, jwt_user):
         try:
             request_response = send_request(request_type='GET',request=request, url='http://auth:8000/api/auth/update-tokens/')
-            print(f'-> request_response: {request_response} <-')
             if request_response and request_response.cookies:
                 request.new_token = request_response.cookies.get('jwt')
                 request.new_token_refresh =  request_response.cookies.get('jwt_refresh')

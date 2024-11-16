@@ -13,7 +13,7 @@ import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'statistics_service.settings')
 
 import django
-django.setup() # Need to setup django first fpr JWTAuthMiddleware
+django.setup()
 
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter

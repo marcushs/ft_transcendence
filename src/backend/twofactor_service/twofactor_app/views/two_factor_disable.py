@@ -1,8 +1,8 @@
-from django.views import View
-from django.http import JsonResponse
-from django.utils import timezone
 from django.contrib.auth.models import AnonymousUser
 from .two_factor_utils import send_update_request
+from django.http import JsonResponse
+from django.utils import timezone
+from django.views import View
 
 import pyotp
 import json

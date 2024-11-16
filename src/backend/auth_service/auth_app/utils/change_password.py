@@ -1,10 +1,10 @@
-from django.views import View
-from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
-from django.contrib.auth.models import AnonymousUser
-from django.contrib.auth.hashers import check_password
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
 from django.http import JsonResponse
+from django.views import View
 
 
 class ChangePassword(View):

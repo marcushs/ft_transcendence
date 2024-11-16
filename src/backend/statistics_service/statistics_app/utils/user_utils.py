@@ -1,5 +1,5 @@
-from asgiref.sync import sync_to_async
 from django.contrib.auth.models import AnonymousUser
+from asgiref.sync import sync_to_async
 from django.http import JsonResponse
 from django.views import View
 from ..models import User

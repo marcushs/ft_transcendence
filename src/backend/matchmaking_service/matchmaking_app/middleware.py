@@ -2,17 +2,11 @@ from django.utils.deprecation import MiddlewareMixin # assure the retro-compabil
 from django.contrib.auth.models import AnonymousUser
 from .utils.jwt_utils import get_user_from_jwt
 from django.contrib.auth import get_user_model
-from django.utils import timezone
-from datetime import timedelta
 from django.http import JsonResponse
 from django.conf import settings
 
 # Middleware for jwt authentication
 from .utils.user_utils import send_request
-from datetime import timedelta, datetime
-from asgiref.sync import sync_to_async
-from channels.layers import get_channel_layer
-from .utils.user_utils import get_user_id_by_username
 
 
 User = get_user_model()

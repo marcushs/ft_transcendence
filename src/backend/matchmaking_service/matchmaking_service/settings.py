@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 # from . import async_middlewares
-import environ
 import os
 
 SECRET_KEY = os.environ.get("USER_SECRET_KEY")

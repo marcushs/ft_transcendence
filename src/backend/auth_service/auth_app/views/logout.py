@@ -1,6 +1,6 @@
+from .send_request import send_request_with_token
 from django.http import JsonResponse
 from django.views import View
-from .send_request import send_request_with_token
 
 class logout_view(View):
     def __init__(self):

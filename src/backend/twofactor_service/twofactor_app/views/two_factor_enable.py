@@ -1,9 +1,9 @@
-from django.views import View
-from django.http import JsonResponse
+from .two_factor_utils import twofactor_verify_view, send_update_request
 from django.contrib.auth.models import AnonymousUser
 from django.core.mail import send_mail
+from django.http import JsonResponse
 from django.conf import settings
-from .two_factor_utils import twofactor_verify_view, send_update_request
+from django.views import View
 
 import secrets
 import pyotp
@@ -34,7 +34,6 @@ class twofactor_enable_view(View):
                 return JsonResponse({'message': 'We\'ve encountered an issue with the selected authentication method.'}, status=201)
         
     def _email_handler(self, request):
-        # verification_code = secrets.token_hex(6)
         verification_code = self._generate_6_digits_code()
         subject='Two Factor Activation'
         message=f"""

@@ -1,7 +1,7 @@
 from ..utils.websocket_utils import send_websocket_info, send_websocket_game_found
+from .matchmaking import change_is_ingame_state, is_already_in_waiting_list
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
-from .matchmaking import change_is_ingame_state, is_already_in_waiting_list
 from .process_matchmaking import send_start_game
 from ..models import PrivateMatchLobby, User
 from ..utils.user_utils import send_request
@@ -192,9 +192,7 @@ class StartPrivateMatch(View):
         super()
 
     def post(self, request): 
-        try:
-            from .process_matchmaking import send_start_game
-            
+        try:            
             if isinstance(request.user, AnonymousUser):  
                 return JsonResponse({'status':'error', 'message': 'notConnected'}, status=400)
             self.init(request=request)

@@ -14,7 +14,7 @@ async def send_request(request_type, url, request=None, payload=None):
                 response = await client.put(url, headers=headers, cookies=cookies, content=json.dumps(payload))
             else:
                 response = await client.post(url, headers=headers, cookies=cookies, content=json.dumps(payload))
-            response.raise_for_status()  # Raise an exception for HTTP errors
+            response.raise_for_status()
             return response
     except httpx.HTTPStatusError as e:
         raise Exception(f"HTTP error occurred: {e}")

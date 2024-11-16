@@ -1,11 +1,7 @@
-import jwt
-from urllib.parse import parse_qs
-from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
-from asgiref.sync import sync_to_async
-from django.http import parse_cookie
 from .utils.jwt_utils import get_user_from_jwt
+from django.http import parse_cookie
 
 User = get_user_model()
 

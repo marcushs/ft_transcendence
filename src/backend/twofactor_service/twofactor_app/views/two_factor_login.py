@@ -1,10 +1,10 @@
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views import View
-import json
 import pyotp
+import json
 
 User = get_user_model()
 

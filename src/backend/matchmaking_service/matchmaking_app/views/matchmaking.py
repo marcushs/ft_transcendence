@@ -1,17 +1,14 @@
+from ..utils.user_utils import get_user_by_id, send_request
 from django.contrib.auth.models import AnonymousUser
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
-from ..utils.user_utils import get_user_by_id, send_request
-from asgiref.sync import async_to_sync
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse 
 from django.views import View
-from ..models import PrivateMatchLobby
-import random
 import queue
-import json
 import redis
+import json
 
 redis_instance = redis.Redis(host='redis', port=6379, db=0)
 
@@ -133,7 +130,6 @@ class RemoveUserFromWaitingQueue(View):
         if isinstance(request.user, AnonymousUser):  
             return JsonResponse({'message': 'No connected user'}, status=401) 
         is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
-        print(f'-> is waitin: return : bool : {is_waiting} -- match_type: {match_type}')
         if not is_waiting:
             return JsonResponse({'message': 'cant remove user from matchmaking research cause he is not already present in it'}, status=401)
         if match_type == 'unranked':

@@ -5,7 +5,6 @@ import jwt
 
 User = get_user_model()
 
-# ---> returns the user object of the match in the database with an active token <---
 
 def get_user_from_jwt(token):
     try:
@@ -13,19 +12,6 @@ def get_user_from_jwt(token):
         user = User.objects.get(id=payload['user_id'])
         return user
     except jwt.ExpiredSignatureError:
-        # call auth jwt endpoint for refresh attempt here
-        return None
+        return 'expired'
     except Exception:
         return None
-
-# ---> endpoint to call the jwt middleware that automates token management <---
-
-# class UpdateJwtToken(View):
-#     def __init__(self):
-#         super().__init__
-
-
-#     def get(self, request):
-#         if isinstance(request.user, AnonymousUser):
-#             return JsonResponse({'message': 'No token provided'}, status=401)
-#         return JsonResponse({'message': 'tokens updated'}, status=200)

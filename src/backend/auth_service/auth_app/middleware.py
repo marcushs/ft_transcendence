@@ -10,16 +10,12 @@ User = get_user_model()
 # Middleware for jwt authentication
 class JWTAuthMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        print('---------------> JWT TEST START <----------------')
         token = request.COOKIES.get('jwt')
-        print(f'-> token: {token}')
         if token:
             jwt_user = get_user_from_jwt(token)
-            print(f'-> jwt_user: {jwt_user}')
             if jwt_user == 'expired':
                 request = self.refresh_jwt_token_process(request)
             elif jwt_user is None:
-                print('in process_request: JWT Failed !') 
                 request.jwt_failed = True
                 request.user = AnonymousUser()
             request.user = jwt_user
@@ -29,21 +25,16 @@ class JWTAuthMiddleware(MiddlewareMixin):
         return response
 
     def refresh_jwt_token_process(self, request):
-        print('refresh token process reached')
         refresh_token = request.COOKIES.get('jwt_refresh')
-        print(f'refresh token: {refresh_token}')
         if refresh_token: 
             jwt_user = get_user_from_jwt(refresh_token)
             if jwt_user:
-                print('refreshing token...')
                 token = Refresh_jwt_token(refresh_token, 'access')
                 request.new_jwt = token
                 token_refresh = Refresh_jwt_token(refresh_token, 'refresh')
                 request.new_jwt_refresh = token_refresh
                 request.user = jwt_user
-            else:
-                print('in refresh_jwt_token_process: JWT Failed !')
-                
+            else:                
                 request.jwt_failed = True
                 request.user = AnonymousUser()
         else:

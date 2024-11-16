@@ -1,15 +1,15 @@
 from .websocket_utils import notify_user_info_display_change
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import ValidationError
+from .user_utils import get_user_id_by_username
 from django.contrib.auth import get_user_model
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse
 from .user_utils import send_request
 from django.views import View
-from .user_utils import get_user_id_by_username
 import requests
-import magic
 import base64
+import magic
 import re
 
 
@@ -113,34 +113,15 @@ class ChangeUserInfosView(View):
             old_username = request.user.username
             request.user.username = request.POST.get('username')
             payload = {'username': request.user.username}
-            print('test')
             await send_request(request_type='POST', request=request, url='http://auth:8000/api/auth/update_user/', payload=payload) 
-            print('test2')
-
             await send_request(request_type='POST', request=request, url='http://chat:8000/api/chat/update_user/', payload=payload)
-            print('test3')
-
             await send_request(request_type='POST', request=request, url='http://friends:8000/api/friends/update_user/', payload=payload)
-            print('test4')
-
             await send_request(request_type='POST', request=request, url='http://matchmaking:8000/api/matchmaking/update_user/', payload=payload)
-            print('test5') 
-
             await send_request(request_type='POST', request=request, url='http://notifications:8000/api/notifications/update_user/', payload=payload)
-            print('test6')
-
             await send_request(request_type='POST', request=request, url='http://statistics:8000/api/statistics/update_user/', payload=payload)
-            print('test7')
-
             await send_request(request_type='POST', request=request, url='http://tournament:8000/api/tournament/update_user/', payload=payload)
-            print('test8')
-
             await send_request(request_type='POST', request=request, url='http://twofactor:8000/api/twofactor/update_user/', payload=payload)
-            print('test9')
-
             await send_request(request_type='POST', request=request, url='http://notifications:8000/api/notifications/update_user/', payload=payload)
-            print('test10')
-
             await sync_to_async(request.user.save)()
             await notify_user_info_display_change(request=request, change_info='username', old_value=old_username)
 

@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
 from django.views import View
@@ -40,24 +39,3 @@ class update_user(View):
                 setattr(request.user, field, data[field])
         request.user.save()
         return JsonResponse({'message': 'User updated successfully'}, status=200)
-
-    
-class delete_user(View):
-    def __init__(self):
-        super().__init__
-
-    def delete(self, request):
-        id = request.DELET.get('id')
-        if User.objects.filter(id=id).exists():
-            user = User.objects.get(id=id)
-        else:
-            return JsonResponse({'message': 'User not found, no action taken', 'status': 'Success'}, status=204)
-        username = user.username
-        user.delete()
-        return JsonResponse({'message': f'User {username} deleted successfully', 'status': "Success"}, status=200)
-    
-    def get(self, request):
-        return JsonResponse({'message': 'Method not allowed', 'status': 'Error'}, status=405)
-
-    def post(self, request):
-        return JsonResponse({'message': 'Method not allowed', 'status': 'Error'}, status=405)

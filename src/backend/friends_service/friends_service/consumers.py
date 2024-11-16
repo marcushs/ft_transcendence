@@ -3,14 +3,11 @@ import json
 
 class ContactsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        print('------------------------- TEST --------------------------')
         self.user = self.scope["user"]
         try:
             if self.user.is_anonymous:
-                print('------------------------- IF --------------------------')
                 await self.close()
             else:
-                print('------------------------- ELSE --------------------------')
                 self.group_name = f'contacts_user_{self.user.id}'
                 await self.channel_layer.group_add(self.group_name, self.channel_name)
                 await self.accept()

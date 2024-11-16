@@ -1,6 +1,6 @@
-from django.urls import path
-from .game.game_manager import startGameEngine, SurrendGame
 from .game.game_utils import CheckGameStillActive, GetGameList, GetUserGameData
+from .game.game_manager import startGameEngine, SurrendGame
+from django.urls import path
 
 urlpatterns = [
     path('start_game/', startGameEngine.as_view(), name='start_game'),

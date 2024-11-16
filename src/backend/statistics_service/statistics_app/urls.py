@@ -1,9 +1,9 @@
-from django.urls import path
-from .match_result import MatchResultManager
-from .utils import user_utils
-from .view.MatchHistoryView import MatchHistoryView
 from .view.RankedFinder import GetMatchableRankedPlayers
 from .view.GetUserStatistics import GetUserStatistics
+from .view.MatchHistoryView import MatchHistoryView
+from .match_result import MatchResultManager
+from .utils import user_utils
+from django.urls import path
 
 urlpatterns = [
     path('update_user/', user_utils.update_user.as_view(), name='update_user'),

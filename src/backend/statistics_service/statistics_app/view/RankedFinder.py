@@ -28,7 +28,7 @@ class GetMatchableRankedPlayers(View):
                 return JsonResponse({'status': 'success', 'players': matchable_players}, status=200)
             return JsonResponse({'status': 'error'}, status=200)
         except Exception as e: 
-            print(f'-----------> ERROR: {str(e)}')
+            print(f'Error : {str(e)}')
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 

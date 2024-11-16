@@ -1,8 +1,8 @@
 from .views.process_matchmaking import proccess_matchmaking
 from .views.matchmaking import unranked_queue, ranked_queue
+from .utils.websocket_utils import send_websocket_info
 from channels.layers import get_channel_layer
 from .utils.user_utils import send_request
-from .utils.websocket_utils import send_websocket_info
 from asgiref.sync import async_to_sync
 from .models import User
 from time import sleep
@@ -75,6 +75,5 @@ def background_task_ranked_matchmaking():
 
 def launch_proccess(user, game_type):
     redis_instance.rpush(f'{game_type}_waiting_users', str(user.id))
-    print(f'-> thread: user : {user} user_id: {str(user.id)} added to redis waiting_list, waiting_list len : {redis_instance.llen(f'{game_type}_waiting_users')}!')
     if redis_instance.llen(f'{game_type}_waiting_users') > 1:
         proccess_matchmaking(game_type) 

@@ -1,10 +1,9 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse
-from django.core.exceptions import ObjectDoesNotExist
 from django.views import View
 from ..models import User
 import httpx
@@ -22,11 +21,10 @@ def get_user_by_id(user_id):
     return user
 
 async def async_get_user_by_id(user_id):  
-    print(f'get_user reached: user_id: {user_id} !!!!')
     try:
         user = await sync_to_async(User.objects.get)(id=user_id)
     except Exception as e:
-        print(f'!!!!! --> {str(e)}')
+        print(f'--> Error: {str(e)}')
     print(f'user: {user}')
     
     return user

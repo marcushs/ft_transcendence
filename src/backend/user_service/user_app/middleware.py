@@ -7,32 +7,6 @@ from django.http import JsonResponse
 from django.conf import settings
  
 User = get_user_model()
-# Middleware for jwt authentication
-    
-# async def process_request(self, request):
-#         token = request.COOKIES.get('jwt')
-#         if token:
-#             jwt_user = await get_user_from_jwt(token)
-#             if jwt_user == 'expired':
-#                 await self.send_new_token_request(request=request, jwt_user=jwt_user)
-#             elif jwt_user == None: 
-#                 request.jwt_failed = True
-#                 request.user = AnonymousUser()
-#             else:
-#                 request.user = jwt_user
-#         else:
-#             refresh_token = request.COOKIES.get('jwt_refresh')
-#             if refresh_token:
-#                 jwt_user = await get_user_from_jwt(refresh_token)
-#                 if jwt_user == 'expired' or jwt_user == None:
-#                     request.jwt_failed = True
-#                     request.user = AnonymousUser()
-#                 else:
-#                     await self.send_new_token_request(request=request, jwt_user=jwt_user)
-#             else:
-#                     request.user = AnonymousUser() 
-#         response = await self.get_response(request) 
-#         return response 
 
 class JWTAuthMiddleware(MiddlewareMixin):
     
