@@ -467,6 +467,7 @@ export default class Game {
 			if (!this.gameState.is_ranked) {
 				this.gameInProgress = false;
 				disconnectGameWebSocket(this.userId, false);
+				console.log("CHHHHHHEVVVRE")
 				throwRedirectionEvent('/');
 			} else {
 				this.isRankOutroAnimationEnabled = true;

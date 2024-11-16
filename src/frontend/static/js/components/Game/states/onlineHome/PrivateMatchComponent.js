@@ -203,10 +203,14 @@ class PrivateMatchComponent extends HTMLElement {
 
 
 	displayInitialState() {
+		const genericBtn = this.querySelector('#genericBtn button');
+
 		this.querySelector('.loading-wheel').style.visibility = "hidden";
 		this.querySelector('.accept-icon').style.visibility = "hidden";
-		this.querySelector('#genericBtn button').innerHTML = getString("buttonComponent/invite");
-		this.querySelector('#genericBtn button').style.display = "block";
+		if (genericBtn) {
+			genericBtn.innerHTML = getString("buttonComponent/invite");
+			genericBtn.style.display = "block";
+		}
 		this.querySelector('input').disabled = false;
 		this.querySelector('input').value = '';
 		this.changeButtonClassname("generic-btn-disabled");

@@ -28,6 +28,8 @@ class matchmakingChoice {
 	}
 
 	getPElementClass(isSearchingGame, matchmakingType) {
+		if ((localStorage.getItem("isSearchingPrivateMatch") || localStorage.getItem("isReadyToPlay") || localStorage.getItem("isInGuestState")) && matchmakingType !== "online")
+			return 'unavailable-matchmaking-choice';
 		if (this.isConnected === false && matchmakingType !== "local")
 			return 'unavailable-matchmaking-choice';
 		if (isSearchingGame === null)

@@ -108,7 +108,6 @@ class PrivateMatchInvitationNotificationComponent extends HTMLElement {
 					this.throwChangeGameStateEvent();
 				}
 
-				// console.log(data)
 				localStorage.setItem("isInGuestState", this.notificationObj.sender);
 				setTimeout(() => {
 					this.throwGuestPrivateMatchEvent();
