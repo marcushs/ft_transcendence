@@ -26,19 +26,17 @@ class TournamentMatchElement extends HTMLElement {
 	constructor() {
 		super();
 		this.match = JSON.parse(this.getAttribute('data-tournament-match'));
-		this.tournament = this.match.tournament
-		this.tournamentId = this.tournament.tournament_id;
-		this.tournamentName = this.tournament.tournament_name;
-		this.tournamentSize = this.tournament.tournament_size;
+		this.tournamentId = this.match.tournament_id;
+		this.tournamentName = this.match.tournament_name;
 		this.bracketObj = null;
 		this.stage = this.match.tournament_round;
 		this.userId = null;
 	}
 
 	async connectedCallback() {
-		// await this.findMatch();
 		await this.render();
 		this.addEventListeners();
+		this.setOpponentSpanActive();
 		this.showMatchMessage();
 	}
 
@@ -53,7 +51,7 @@ class TournamentMatchElement extends HTMLElement {
 						</div>
 						<h4 class="tournament-name">${this.tournamentName}</h4>
 						<p>Stage: <span>${this.formatCurrentStage(this.stage)}</span></p>
-						<p>Opponent: <span>${this.getOpponent()}</span></p>
+						<p>Opponent: <span id='opponent-span'>${await this.getOpponent()}</span></p>
 						<div class="countdown-container">
 							<button type="button" class="tournament-match-ready-btn">Ready</button>
 							<p class="match-countdown">Match starts in <span></span>s</p>
@@ -81,8 +79,14 @@ class TournamentMatchElement extends HTMLElement {
 	// 	);
 	// }
 
-	getOpponent() {
-		return this.clientMatch.players[0].id === this.userId ? this.clientMatch.players[1].username : this.clientMatch.players[0].username;
+	async getOpponent() {
+		this.userId = await getUserId();
+		
+		if (!this.userId) return console.log('Cannot find userId');
+
+		if (this.match.players.length === 2)
+			return this.match.players[0].id === this.userId ? this.match.players[1].username : this.match.players[0].username;
+		return 'To Be Determined...';
 	}
 
 	addEventListeners() {
@@ -126,7 +130,7 @@ class TournamentMatchElement extends HTMLElement {
 		secondsSpan.innerText = time;
 	}
 
-	showMatchMessage() {
+	async showMatchMessage() {
 		const botData = {
 			id: 'tournament_bot',
 			username: 'Tournament Bot',
@@ -136,13 +140,21 @@ class TournamentMatchElement extends HTMLElement {
 		const matchMessage = {
 			chatroom: 'tournament_match',
 			author: botData,
-			message: `${this.formatCurrentStage(this.stage)} match against ${this.getOpponent()} will start soon!
+			message: `${this.formatCurrentStage(this.stage)} match against ${await this.getOpponent()} will start soon!
 			Click the "Ready" button when ready! GLHF!`,
 			created: new Date(),
 		}
 
 		displayChatroomComponent(botData);
 		putMessageToChatroomConversation(matchMessage);
+	}
+
+	setOpponentSpanActive() {
+		const opponentSpan = this.querySelector("#opponent-span");
+
+		if (opponentSpan.innerText === 'To Be Determined...') {
+			opponentSpan.classList.add('active'); 
+		}
 	}
 }
 

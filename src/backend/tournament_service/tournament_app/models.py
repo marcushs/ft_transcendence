@@ -145,7 +145,6 @@ class TournamentMatch(models.Model):
     async def to_dict(self):
         obj_dict = {
             'match_id': str(self.match_id),
-            'tournament_id': str(self.tournament.tournament_id),
             'winner': self.winner,
             'loser': self.loser,
             'winner_score': self.winner_score,
@@ -158,7 +157,9 @@ class TournamentMatch(models.Model):
             obj_dict['winner'] = await self.winner.to_dict()
         if self.loser is not None:
             obj_dict['loser'] = await self.loser.to_dict()
-
+        tournament =  await sync_to_async(lambda: self.tournament)()
+        obj_dict['tournament_id'] = str(tournament.tournament_id)
+        obj_dict['tournament_name'] = tournament.tournament_name
         players = await sync_to_async(lambda: list(TournamentMatchPlayer.objects.filter(match=self).select_related('player')))()
         obj_dict['players'] = [{'id': str(player.player.id), 
                                 'username': player.player.username, 
@@ -183,6 +184,7 @@ class TournamentMatch(models.Model):
             obj_dict['winner'] = self.winner.to_dict_sync()
         if self.loser is not None:
             obj_dict['loser'] = self.loser.to_dict_sync()
+        obj_dict['tournament_name'] = self.tournament.tournament_name
         players = TournamentMatchPlayer.objects.filter(match=self).select_related('player')
         obj_dict['players'] = [{'id': str(player.player.id), 
                                 'username': player.player.username, 
