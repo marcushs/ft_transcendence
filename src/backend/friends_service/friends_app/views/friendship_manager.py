@@ -1,6 +1,6 @@
-from .websocket_utils import notify_friend_display_change
+from ..utils.websocket_utils import notify_friend_display_change
 from django.contrib.auth.models import AnonymousUser
-from .user_utils import send_sync_request
+from ..utils.user_utils import send_sync_request
 from ..models import FriendList, User
 from django.http import JsonResponse
 from ..models import FriendRequest

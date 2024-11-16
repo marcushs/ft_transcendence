@@ -218,15 +218,13 @@ class FriendsMenuComponent extends HTMLElement {
             const popUp = document.createElement('pop-up-component');
 
             popUp.classList.add('add-new-contact-pop-up');
-            document.querySelector('.home-page').appendChild(popUp);
+            app.appendChild(popUp);
         })
         this.searchContactInput.addEventListener('input', () => this.updateContactList());
         this.attachTestEventListener();
     }
 
-    async updateContactList() {
-        console.log('test');
-        
+    async updateContactList() {        
         const contacts = await this.getDataRequest('search_contacts');
         const contactsData = await this.getDataRequest('users_data', contacts.friends);
         const searchValue = this.searchContactInput.value.toLowerCase();

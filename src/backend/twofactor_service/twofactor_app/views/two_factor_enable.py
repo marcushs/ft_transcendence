@@ -1,11 +1,11 @@
 from .two_factor_utils import twofactor_verify_view, send_update_request
-from .two_factor_utils import twofactor_verify_view, send_update_request
 from ..utils.get_user_language import get_user_language
 from django.contrib.auth.models import AnonymousUser
 from django.core.mail import send_mail
 from asgiref.sync import async_to_sync
 from django.http import JsonResponse
 from django.conf import settings
+from django.views import View
 import secrets
 import pyotp
 import json
