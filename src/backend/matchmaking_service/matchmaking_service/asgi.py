@@ -17,7 +17,6 @@ import django
 django.setup() # Need to setup django first fpr JWTAuthMiddleware
 
 from django.core.asgi import get_asgi_application
-from channels.sessions import SessionMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from matchmaking_app.asgi_jwt_middleware import JWTAuthMiddleware
 from .routing import websocket_urlpatterns

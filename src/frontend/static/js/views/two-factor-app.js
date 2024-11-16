@@ -5,6 +5,7 @@ import '../components/TwoFactorInputComponent.js';
 import { setTwoFactorLocalStorage } from "../utils/setTwoFactorLocalStorage.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import {getString} from "../utils/languageManagement.js";
+import { sendRequest } from "../utils/sendRequest.js";
 
 export default async () => {
 	await enableTwoFactorRequest();
@@ -57,58 +58,27 @@ function displayQRCode() {
 }
 
 async function enableTwoFactorRequest() {
-	const config = {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken')
-		},
-		credentials: 'include',
-		body: JSON.stringify({ method: 'authenticator' })
-	};
-
-	const res = await fetch(`/api/twofactor/enable/`, config);
-
-	if (res.status === 403)
-		return res.status;
-
-	const data = await res.json();
-
-	if (res.status === 200) {
-		if (data.qrcode) {
-			sessionStorage.setItem('qrcodeuri', data.qrcode);
-			sessionStorage.setItem('qrcode_token', data.qrcode_token);
-			return res.status;
-		}
-	} else {
-		throw new Error(data.message);
+	try {
+		const data = await sendRequest('POST', '/api/twofactor/enable/', { method: 'authenticator' })
+		sessionStorage.setItem('qrcodeuri', data.qrcode);
+		sessionStorage.setItem('qrcode_token', data.qrcode_token);
+	} catch (error) {
+		console.error('Error with qrcode render display: ', error);
+		throwRedirectionEvent('/');
 	}
 }
 
 async function VerifyTwoFactorRequest(verificationCode) {
-	const config = {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
-		},
-		credentials: 'include', // Needed for send cookie
-		body: JSON.stringify({
-			twofactor: verificationCode,
+	try {
+		const payload = {
 			method: 'authenticator',
-		})
-	}
-	const res = await fetch(`/api/twofactor/enable/`, config);
-	if (res.status === 403)
-		throw new Error('Access Denied')
-	const data = await res.json();
-	if (res.status === 200) {
-		localStorage.setItem('twoFactorFeedback', data.message);
+			twofactor: verificationCode
+		}
+		const data = await sendRequest('POST', '/api/twofactor/enable/', payload)
+		localStorage.setItem('twoFactorFeedback', getString(`twoFactorAppView/${data.message}`));
 		await setTwoFactorLocalStorage();
-		// localStorage.setItem('state', 'security');
 		throwRedirectionEvent('/profile');
-	} else
-		document.querySelector('.feedbackInformation').innerHTML = data.message;
+	} catch (error) {
+		document.querySelector('.feedbackInformation').innerHTML = getString(`twoFactorError/${error.message}`);
+	}
 }

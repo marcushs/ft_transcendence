@@ -34,7 +34,7 @@ class GetUserStatistics(View):
             }
             return JsonResponse({'status': 'success', 'user_statistics': payload}, status=200)
         except Exception as e:
-            print(f'error: {str(e)}')
+            print(f'Error : {str(e)}')
             return JsonResponse({'message': str(e)}, status=400)
 
 

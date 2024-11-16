@@ -1,12 +1,12 @@
 # --- SRC --- #
-from django.views import View
-from django.http import JsonResponse
-from django.core.exceptions import ValidationError
-from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth import get_user_model
-from .send_request import send_request_without_token
-from django.contrib.auth.password_validation import CommonPasswordValidator
 from django.contrib.auth.password_validation import UserAttributeSimilarityValidator
+from django.contrib.auth.password_validation import CommonPasswordValidator
+from django.contrib.auth.password_validation import validate_password
+from .send_request import send_request_without_token
+from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+from django.views import View
 
 # --- UTILS --- #
 import json

@@ -147,7 +147,7 @@ class FriendsMenuComponent extends HTMLElement {
             const popUp = document.createElement('pop-up-component');
 
             popUp.classList.add('add-new-contact-pop-up');
-            document.querySelector('.home-page').appendChild(popUp);
+            app.appendChild(popUp);
         })
         this.searchContactInput.addEventListener('input', () => this.updateContactList());
 
@@ -156,7 +156,7 @@ class FriendsMenuComponent extends HTMLElement {
         });
     }
 
-    async updateContactList() {
+    async updateContactList() {        
         const contacts = await this.getDataRequest('search_contacts');
         const contactsData = await this.getDataRequest('users_data', contacts.friends);
         const searchValue = this.searchContactInput.value.toLowerCase();

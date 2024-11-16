@@ -1,59 +1,111 @@
-# from django.http import JsonResponse
-# from django.core.exceptions import ObjectDoesNotExist
-# from django.contrib.auth.models import AnonymousUser
-# from django.db.models import Q
-# from django.views import View
-# from ..models import User
-# import json
-# import requests
+from ..utils.websocket_utils import notify_friend_display_change
+from django.contrib.auth.models import AnonymousUser
+from ..utils.user_utils import send_sync_request
+from ..models import FriendList, User
+from django.http import JsonResponse
+from ..models import FriendRequest
+from django.views import View
+import json
 
-# class add_new_user(View):
-#     def __init__(self):
-#         super().__init__
-    
-#     def get(self, request):
-#         return JsonResponse({"message": 'get request successfully reached'}, status=200)
-    
 
-#     def post(self, request):
-#         data = json.loads(request.body.decode('utf-8'))
-#         if not all(key in data for key in ('username', 'user_id')):
-#             return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
-#         User.objects.create_user(username=data['username'], user_id=data['user_id'])
-#         return JsonResponse({"message": 'user added with success'}, status=200)
-    
-# class update_user(View):
-#     def __init__(self):
-#         super().__init__
-        
-#     def get(self, request):
-#         return JsonResponse({"message": 'get request successfully reached'}, status=200)
-    
-#     def post(self, request):
-#         if isinstance(request.user, AnonymousUser):
-#             return JsonResponse({'message': 'User not found'}, status=400)
-#         data = json.loads(request.body.decode('utf-8'))
-#         if 'username' in data:
-#             setattr(request.user, 'username', data['username'])
-#         request.user.save()
-#         return JsonResponse({'message': 'User updated successfully'}, status=200)
+class friendshipManager(View):
+    def __init__(self):
+        super()
 
-# def send_request(request, url, payload):
-#         headers = {
-#                 'Accept': 'application/json',
-#                 'Content-Type': 'application/json',
-#                 'X-CSRFToken': request.COOKIES.get('csrftoken')
-#             }
-#         cookies = {
-#             'csrftoken': request.COOKIES.get('csrftoken'),
-#             'jwt': request.COOKIES.get('jwt'),
-#             'jwt_refresh': request.COOKIES.get('jwt_refresh'),
-#             }
-#         response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
-#         if response.status_code == 200:
-#             return JsonResponse({'message': 'success'}, status=200)
-#         else:
-#             response_data = json.loads(response.text)
+    def post(self, request):
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'message': 'You are not logged in'}, status=401)
+        if self.init(request) is False:
+            return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
+        match self.status:
+            case "accept":
+                return self.accept_friendship(request)
+            case "add":
+                return self.send_friendship()
+            case "cancel":
+                return self.cancel_friendship(request)
+            case "decline":
+                return self.decline_friendship(request)
+            case "remove":
+                return self.remove_friendship()
+            case _:
+                return JsonResponse({'message': 'Unknown friendship status request'}, status=400)
+  
+    def init(self, request):
+        data = json.loads(request.body.decode('utf-8'))
+        if not all(key in data for key in ('status', 'target_username')):
+            return False
+        self.user = request.user
+        self.status = data['status']
+        try:
+            self.target_user = User.objects.get(username=str(data['target_username']))
+            self.friend_list = FriendList.objects.get(user=self.user)
+        except User.DoesNotExist:
+            return False
+        except FriendList.DoesNotExist: 
+            return False 
+        return True
+ 
+    def accept_friendship(self, request):
+        friend_request = FriendRequest.objects.filter(sender=self.target_user, receiver=self.user).first()
+        if not friend_request:
+            return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
+        friend_request.accept()
+        payload = {
+            'type': 'canceled_friend_request_notification',
+            'sender': str(self.target_user),
+            'receiver': str(self.user)
+        }
+        send_sync_request(request_type='DELETE', request=request, url='http://notifications:8000/api/notifications/manage_notifications/', payload=payload)
+        payload = {
+            'type': 'friend-request-accepted',
+            'sender': str(self.user),
+            'receiver': str(self.target_user)
+        }
+        send_sync_request(request_type='POST', request=request, url='http://notifications:8000/api/notifications/manage_notifications/', payload=payload)
+        notify_friend_display_change(created=False, action='accepted', is_contact=False , receiver=self.target_user, sender=self.user)
+        return JsonResponse({'status': 'success', 'friendship_status': 'mutual_friend', 'message': 'friends invitation successfully accepted'}, status=200)
 
-#             message = response_data.get('message')
-#             return JsonResponse({'message': message}, status=400)
+    def send_friendship(self):
+        from_friend_request = FriendRequest.objects.filter(sender=self.target_user, receiver=self.user).first()
+        to_friend_request = FriendRequest.objects.filter(sender=self.user, receiver=self.target_user).first()
+        if from_friend_request or to_friend_request:
+            return JsonResponse({'status': 'error', 'message': 'Friend request already sent'}, status=200)
+        FriendRequest.objects.create(sender=self.user, receiver=self.target_user)
+        notify_friend_display_change(created=True, action='accepted', is_contact=False , receiver=self.target_user, sender=self.user)
+        return JsonResponse({'status': 'success', 'friendship_status': 'pending_sent', 'message': 'friends invitation successfully send'}, status=200)
+
+    def cancel_friendship(self, request):
+        friend_request = FriendRequest.objects.filter(sender=self.user, receiver=self.target_user).first()
+        if not friend_request:
+            return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
+        friend_request.cancel()
+        payload = {
+            'type': 'canceled_friend_request_notification',
+            'sender': str(self.user),
+            'receiver': str(self.target_user)
+        }
+        send_sync_request(request_type='DELETE', request=request, url='http://notifications:8000/api/notifications/manage_notifications/', payload=payload)  
+        notify_friend_display_change(created=False, action='refused', is_contact=False , receiver=self.target_user, sender=self.user)
+        return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully canceled'}, status=200)
+
+    def decline_friendship(self, request):
+        friend_request = FriendRequest.objects.filter(sender=self.target_user, receiver=self.user).first()
+        if not friend_request:
+            return JsonResponse({'status': 'error', 'message': 'No active friend request found'}, status=200)
+        friend_request.cancel()
+        payload = {
+            'type': 'canceled_friend_request_notification',
+            'sender': str(self.target_user),
+            'receiver': str(self.user)
+        }
+        send_sync_request(request_type='DELETE', request=request, url='http://notifications:8000/api/notifications/manage_notifications/', payload=payload)
+        notify_friend_display_change(created=False, action='refused', is_contact=False , receiver=self.target_user, sender=self.user)
+        return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully declined'}, status=200)
+
+    def remove_friendship(self):
+        if self.friend_list.is_mutual_friend(friend=self.target_user) is False:
+            return JsonResponse({'status': 'error', 'message': 'Cant remove this contact from friendlist, you\'re already not friend'}, status=200)
+        self.friend_list.unfriend(self.target_user)
+        notify_friend_display_change(created=False, action='refused', is_contact=True , receiver=self.target_user, sender=self.user)
+        return JsonResponse({'status': 'success', 'friendship_status': 'not_friend', 'message': 'friends invitation successfully removed'}, status=200)

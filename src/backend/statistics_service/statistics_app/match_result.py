@@ -1,7 +1,7 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
 from .models import MatchHistory, User
+from django.http import JsonResponse
 from django.views import View
 import json
 
@@ -21,6 +21,9 @@ class MatchResultManager(View):
             'diamond': (6000, 9999),
             'master': (10000, float('inf'))
         } 
+
+    def get(self, request):
+        return JsonResponse({'status': 'GET  match_resultview reached'}, status=200)
 
     def post(self, request):
         try:
@@ -169,14 +172,12 @@ class MatchResultManager(View):
                 points = base_point - rank_percentage + score_difference
             else:
                 points = base_point + rank_percentage + score_difference
-            print(points)
             return round(max(50, min(150, points))) 
         elif score_difference < 0:
             if rank_difference > 0:
                 points = base_point + rank_percentage + abs(score_difference)
             else:
                 points = base_point - rank_percentage + abs(score_difference) 
-            print(points * -1)
             return round(min(-50, max(-150, points * -1))) 
         else:
             return 0 

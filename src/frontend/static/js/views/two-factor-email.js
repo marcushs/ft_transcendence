@@ -68,11 +68,11 @@ async function VerifyTwoFactorRequest(verificationCode) {
 	try {
 		const data = await sendRequest('POST', url, { twofactor: verificationCode, method: 'email' });
 
-		localStorage.setItem('twoFactorFeedback', data.message);
+		localStorage.setItem('twoFactorFeedback', getString(`twoFactorEmailView/${data.message}`));
 		await setTwoFactorLocalStorage();
 		// localStorage.setItem('state', 'security');
 		throwRedirectionEvent('/profile');
 	} catch (error) {
-		document.querySelector('.feedbackInformation').innerHTML = error.message;
+		document.querySelector('.feedbackInformation').innerHTML = getString(`twoFactorError/${error.message}`);
 	}
 }

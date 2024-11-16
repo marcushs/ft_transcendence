@@ -12,17 +12,14 @@ def send_websocket_game_found(player_id, payload):
         if player_id in connections:
             async_to_sync(send_websocket_info)(player_id=player_id, payload=payload)
         else:
-            print(f'save message for : {player_id}') 
             if player_id not in waiting_messages:
                 waiting_messages[player_id] = []
             waiting_messages[player_id].append(payload)
 
 
 async def handle_waiting_messages(player_id): 
-    print(f'handle waiting message reached for : {player_id}')
     if player_id in waiting_messages:
         for message in waiting_messages[player_id]:
-            print(f'-> message: {message}')
             await send_websocket_info(player_id=player_id, payload=message)
         del waiting_messages[player_id]
 

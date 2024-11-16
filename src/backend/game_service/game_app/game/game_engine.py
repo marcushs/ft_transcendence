@@ -1,10 +1,10 @@
 from .game_utils import send_websocket_info, get_map_dimension
+from datetime import datetime, timedelta
 from ..request import send_request
 import asyncio
 import json
 import time
 import math
-from datetime import datetime, timedelta
 
 class PongGameEngine:
 
@@ -43,7 +43,7 @@ class PongGameEngine:
         self.speed_limit = 45
         self.ball_direction_x = self.ball_speed
         self.ball_direction_y = 0
-        self.max_score = 10
+        self.max_score = 1
         self.has_ball_hit_wall = False
         self.is_player_one_collide = False
         self.is_player_two_collide = False
@@ -250,13 +250,10 @@ class PongGameEngine:
 
     async def end_game(self, is_canceled):
         is_draw = False
-        print(f'------------- END GAME REACHED --------------------')
         if not await self.set_winner_and_loser():
-            print('------------- TESWT 3')
             is_draw = True
             self.winner_id = self.player_one_id
             self.loser_id = self.player_two_id
-        print(f'self.winner_id: {self.winner_id} -- self.loser_id: {self.loser_id}')
         self.game_active = False
         PongGameEngine.active_games.remove(self)
         await self.manage_end_update(is_surrend=False, is_draw=is_draw, is_canceled=is_canceled)
@@ -265,12 +262,10 @@ class PongGameEngine:
     async def set_winner_and_loser(self):
         
         if self.player_one_score > self.player_two_score:
-            print('------------- TESWT 1')
             self.winner_id = self.player_one_id
             self.loser_id = self.player_two_id
             return True
         elif self.player_one_score < self.player_two_score:
-            print('------------- TESWT 2')
             self.winner_id = self.player_two_id
             self.loser_id = self.player_one_id
             return True 
@@ -376,10 +371,8 @@ class PongGameEngine:
         }
         # !!!!!!!!!! mettre un truc special pour tournois
         if self.game_type == 'tournament':
-            print('end of a tournament match')
             result_response = await send_request(request_type='POST', url='http://tournament:8000/api/tournament/match_result/', payload=payload)
         result_response = await send_request(request_type='POST', url='http://statistics:8000/api/statistics/match_result/', payload=payload)
-        print(f' !!!!!!!!!!!!!!  result_response: ', result_response.json())
         return result_response.json() 
 
     async def get_winner_and_loser_dict(self):  
@@ -405,9 +398,6 @@ class PongGameEngine:
 
     async def send_end_update(self, results):
         winner_payload, loser_payload = await self.get_end_game_payload(results)
-        print(f'------------------- {self.winner_id}, {self.loser_id} -----------------')
-        print(f'------------------- {self.player_one_score}, {self.player_two_score} -----------------')
-        print(f'------------------- {self.player_one_id}, {self.player_two_id} -----------------')
         await send_websocket_info(self.winner_id, winner_payload)
         await send_websocket_info(self.loser_id, loser_payload)
 
@@ -432,8 +422,6 @@ class PongGameEngine:
                 }
             }
         else:
-            print(f" ----- AND THE WINNER IS -----> old rank points = {results['results']['winner']['old_rank_points']} ||||| new rank points = {results['results']['winner']['new_rank_points']}")
-            print(f" ----- AND THE WINNER IS -----> old rank points = {type(results['results']['winner']['old_rank_points'])} ||||| new rank points = {type(results['results']['winner']['new_rank_points'])}")
             winner_payload = {
                 'type': 'game_update_info',
                 'event': 'game_finished',
@@ -447,7 +435,6 @@ class PongGameEngine:
                     'new_rank': results['results']['winner']['new_rank']
                 }
             }
-            print(f" ----- BOOO LOSER -----> old rank points = {results['results']['loser']['old_rank_points']} ||||| new rank points = {results['results']['loser']['new_rank_points']}")
             loser_payload = {
                 'type': 'game_update_info',
                 'event': 'game_finished',

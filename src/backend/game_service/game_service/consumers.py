@@ -1,9 +1,9 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from game_app.game.game_engine import PongGameEngine
-from urllib.parse import parse_qs
-import json
-import asyncio
 from channels.layers import get_channel_layer
+from urllib.parse import parse_qs
+import asyncio
+import json
 
 
 connections = {}
@@ -42,7 +42,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):   
 		try:
 			data = json.loads(text_data)  
-			print(f'data received: {data}')
 			self.check_received_id(data)
 			match str(data['type']):
 				case 'player_action':
@@ -72,7 +71,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 			raise Exception('no game ID provided')
 		self.player_id = str(data['player_id'])
 		self.game_id = str(data['game_id'])
-		print(f'self.player_id: {self.player_id} -- self.game_id')
 		self.game_instance = PongGameEngine.get_active_game(str(data['game_id']))
 		if not self.game_instance:
 			raise Exception('game ID does not match any current game')

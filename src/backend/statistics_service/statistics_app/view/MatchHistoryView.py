@@ -2,8 +2,6 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse 
 from django.views import View
-import json
-import datetime
 
 User = get_user_model()
 

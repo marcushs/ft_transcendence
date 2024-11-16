@@ -2,8 +2,6 @@ from django.views import View
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from ..models import *
-from ..utils.jwt_utils import get_user_from_jwt_sync
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
 
 User = get_user_model()

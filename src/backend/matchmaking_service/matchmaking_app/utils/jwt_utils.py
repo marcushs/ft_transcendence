@@ -1,12 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from asgiref.sync import sync_to_async
 from django.conf import settings
 import jwt
-from asgiref.sync import sync_to_async
 
 User = get_user_model()
-
-# ---> returns the user object of the match in the database with an active token <---
 
 async def get_user_from_jwt(token):
     try:
@@ -17,15 +15,3 @@ async def get_user_from_jwt(token):
         return 'expired'
     except Exception:
         return None
-
-# ---> endpoint to call the jwt middleware that automates token management <---
-
-# class UpdateJwtToken(View):
-#     def __init__(self):
-#         super().__init__
-
-
-#     def get(self, request):
-#         if isinstance(request.user, AnonymousUser):
-#             return JsonResponse({'message': 'No token provided'}, status=401)
-#         return JsonResponse({'message': 'tokens updated'}, status=200)

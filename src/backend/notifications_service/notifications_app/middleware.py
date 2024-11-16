@@ -31,7 +31,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
             jwt_user = await get_user_from_jwt(token)
             if jwt_user == 'expired':
                 await self.send_new_token_request(request=request, jwt_user=jwt_user)
-            elif jwt_user == None: 
+            elif jwt_user == None:
                 request.jwt_failed = True
                 request.user = AnonymousUser()
             else:
@@ -46,16 +46,17 @@ class JWTAuthMiddleware(MiddlewareMixin):
                 else:
                     await self.send_new_token_request(request=request, jwt_user=jwt_user)
             else:
-                    request.user = AnonymousUser() 
+                    request.user = AnonymousUser()
         response = await self.get_response(request) 
         return response 
-    
+
     async def send_new_token_request(self, request, jwt_user):
         try:
             request_response = await send_request(request_type='GET',request=request, url='http://auth:8000/api/auth/update-tokens/')
             if request_response and request_response.cookies:
                 request.new_token = request_response.cookies.get('jwt')
                 request.new_token_refresh =  request_response.cookies.get('jwt_refresh')
+                jwt_user = await get_user_from_jwt(request.new_token)
                 request.user = jwt_user
             else:
                 request.user = AnonymousUser()
@@ -113,17 +114,4 @@ class NotificationMiddleware(MiddlewareMixin):
 
     async def delete_notifications(self, request, notifications_to_delete):
         for notification in notifications_to_delete:
-#             await self.send_delete_notification_to_channel(request, notification)
             await sync_to_async(notification.delete)()
-
-    # async def send_delete_notification_to_channel(self, request, notification):
-    #     channel_layer = get_channel_layer()
-    #     user_id = await get_user_id_by_username(request.user)
-        
-    #     await channel_layer.group_send(
-    #         f'notifications_user_{user_id}',
-    #         {
-    #             'type': 'delete_notification',
-    #             'notification': await sync_to_async(notification.to_dict)()
-    #         }
-    #     )

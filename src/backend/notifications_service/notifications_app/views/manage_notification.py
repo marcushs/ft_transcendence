@@ -88,7 +88,7 @@ class manage_notification_view(View):
         try:
             notification = await sync_to_async(Notification.objects.get)(uuid=data['uuid'])
             await sync_to_async(notification.delete)()
-        except Exception:
+        except Exception as e:
             pass
         return JsonResponse({"status": "success"}, status=200)
 
