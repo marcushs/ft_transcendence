@@ -294,8 +294,11 @@ class PrivateMatchComponent extends HTMLElement {
 
 
 	changeButtonClassname(newClass) {
+		const genericBtn = this.querySelector('#genericBtn button');
+
 		this.querySelector('#genericBtn').className = newClass;
-		this.querySelector('#genericBtn button').className = newClass;
+		if (genericBtn)
+			this.querySelector('#genericBtn button').className = newClass;
 	}
 
 

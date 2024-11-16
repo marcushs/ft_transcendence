@@ -63,12 +63,9 @@ class ChatContactList extends HTMLElement {
 		chatroomsList.forEach(chatroom => {
 			let user_data = userId === chatroom.members[0].id ? chatroom.members[1] : chatroom.members[0];
 
-			console.log("user_data = ", user_data)
 			const listElem = document.createElement('li');
-			console.log(chatroom.id)
 			const contactComp = new ChatContactComponent(user_data, chatroom.id, "contacted");
 
-			console.log(contactComp);
 			contactComp.setAttribute('data-chatroom', chatroom.id);
 			contactComp.setAttribute('data-user', JSON.stringify(user_data));
 			listElem.appendChild(contactComp);

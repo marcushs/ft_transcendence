@@ -53,11 +53,37 @@ class ChatComponent extends HTMLElement {
 		const contactMenu = document.querySelector('.contact-menu');
 
 		this.addEventListener('click', (event) => {
+			const searchBarIcon = this.querySelector('#search-bar-icon');
+			const searchContactInput = document.getElementById('chat-search-contact-input');
+
+			if (event.target.id !== "chat-search-contact-input" && searchBarIcon && searchBarIcon.style.display === 'none') {
+				searchBarIcon.style.display = 'flex';
+				document.querySelector('.contact-text').classList.toggle('inactive');
+				document.querySelector('.chat-search-box').classList.toggle('active');
+				searchContactInput.classList.toggle('active');
+				searchBarIcon.classList.toggle('active');
+				document.getElementById('search-bar-close-btn').classList.toggle('active');
+				searchContactInput.value = '';
+				document.querySelector('#contactedList > .contacted-list').className = "contacted-list";
+				document.querySelector('#contactList > .contacted-list').className = "contacted-list";
+				this.setContactDisplayFlex();
+			}
 			event.stopPropagation();
 		});
 
 		document.addEventListener('click', () => {
-			this.chatMainMenu.style.display = 'none';
+			const event = new Event('input', {
+				bubbles: true,
+				cancelable: true
+			});
+
+			const chatSearchContactInput = document.querySelector('#chat-search-contact-input');
+
+			if (chatSearchContactInput) {
+				chatSearchContactInput.value = '';
+				chatSearchContactInput.dispatchEvent(event);
+				this.chatMainMenu.style.display = 'none';
+			}
 		});
 
 		this.chatIcon.addEventListener('click', () => {
@@ -80,6 +106,19 @@ class ChatComponent extends HTMLElement {
 		if (document.querySelector('chatroom-top-bar')) document.querySelector('chatroom-top-bar').remove();
 		if (document.querySelector('chatroom-conversation')) document.querySelector('chatroom-conversation').remove();
 		if (document.querySelector('chatroom-bottom-bar')) document.querySelector('chatroom-bottom-bar').remove();
+	}
+
+	setContactDisplayFlex() {
+		const contactedList = document.querySelectorAll('#contactedList > ul > li');
+		const contactList = document.querySelectorAll('#contactList > ul > li');
+
+		contactedList.forEach(contact => {
+			contact.style.display = "flex";
+		});
+
+		contactList.forEach(contact => {
+			contact.style.display = "flex";
+		});
 	}
 }
 

@@ -53,6 +53,10 @@ export async function matchmakingWebsocket() {
 			console.log('player_refused_private_match reached');
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
+			localStorage.removeItem("isSearchingPrivateMatch");
+			localStorage.removeItem("isReadyToPlay");
+			localStorage.removeItem("isInGuestState");
+			throwChangeGameStateEvent();
 		}
 		if (data.type === 'private_match_canceled') {
 			console.log('private_match_canceled reached');

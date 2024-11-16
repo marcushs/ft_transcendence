@@ -174,29 +174,7 @@ class ContactComponent extends HTMLElement {
                     case 'contact-action-invite-play':
                         if (action.classList[1] === "contact-action-disabled")
                             return;
-                        try {
-                            if (localStorage.getItem("isSearchingGame"))
-                                return;
-                            const data = await sendRequest("POST", "/api/matchmaking/init_private_match/", {
-                                invitedUsername: this.userData.username,
-                            });
-
-                            if (location.pathname !== '/') {
-                                throwRedirectionEvent('/');
-                                document.addEventListener('gameComponentLoaded', () => {
-                                    this.throwChangeGameStateEvent();
-                                });
-                            } else {
-                                this.throwChangeGameStateEvent();
-                            }
-                            setTimeout(() => {
-                                this.throwWaitingStateEvent(this.userData.username)
-                            }, 50);
-                            contactActionContainer.style.display = 'none';
-                        } catch (error) {
-                            contactActionContainer.style.display = 'none';
-                            console.log(error)
-                        }
+                        this.handleInvitePlayer(contactActionContainer);
                         break;
                     case 'contact-action-remove-contact':
                         this.handleRequestIconClick('remove');
@@ -211,6 +189,32 @@ class ContactComponent extends HTMLElement {
                 }
             })
         })
+    }
+
+    async handleInvitePlayer(contactActionContainer) {
+        try {
+            if (localStorage.getItem("isSearchingGame"))
+                return;
+            const data = await sendRequest("POST", "/api/matchmaking/init_private_match/", {
+                invitedUsername: this.userData.username,
+            });
+
+            if (location.pathname !== '/') {
+                throwRedirectionEvent('/');
+                document.addEventListener('gameComponentLoaded', () => {
+                    this.throwChangeGameStateEvent();
+                });
+            } else {
+                this.throwChangeGameStateEvent();
+            }
+            setTimeout(() => {
+                this.throwWaitingStateEvent(this.userData.username)
+            }, 50);
+            contactActionContainer.style.display = 'none';
+        } catch (error) {
+            contactActionContainer.style.display = 'none';
+            console.log(error)
+        }
     }
  
     async handleRequestIconClick(action) {

@@ -99,6 +99,10 @@ class PrivateMatchInvitationNotificationComponent extends HTMLElement {
 				await sendRequest('DELETE', '/api/notifications/manage_notifications/', { uuid: this.notificationObj.uuid.replace('notif-', '') });
 				await matchmakingWebsocket()
 
+				if (action === "refused") {
+					this.remove();
+					return;
+				}
 				if (location.pathname !== '/') {
 					throwRedirectionEvent('/');
 					document.addEventListener('gameComponentLoaded', () => {

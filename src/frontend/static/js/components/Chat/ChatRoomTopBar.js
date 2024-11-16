@@ -1,5 +1,7 @@
 import getProfileImage from "../../utils/getProfileImage.js";
 import { sendRequest } from "../../utils/sendRequest.js";
+import {getString} from "../../utils/languageManagement.js";
+import {throwRedirectionEvent} from "../../utils/throwRedirectionEvent.js";
 
 export default class ChatRoomTopBar extends HTMLElement {
 	static get observedAttributes() {
@@ -28,8 +30,8 @@ export default class ChatRoomTopBar extends HTMLElement {
 		let profileImage = await getProfileImage(this.userData);
 		let status = await this.getUserStatus();
 		let isUserBlocked = await this.isTargetUserBlocked();
-
-		console.log('isUserBlocked is: ', isUserBlocked)
+		const isSearchingGame = localStorage.getItem("isSearchingPrivateMatch") || localStorage.getItem("isReadyToPlay")
+			|| localStorage.getItem("isInGuestState") || localStorage.getItem("isSearchingGame");
 
 		this.innerHTML = `
 			<i id="chatroom-back-btn" class="fa-solid fa-arrow-left"></i>
@@ -41,6 +43,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 				<p class="${status}">${status}</p>
 			</div>
 			${this.userData.username !== "Tournament Bot" ? `
+			<button class="${(isSearchingGame === null) ? 'play-invitation-button' : 'play-invitation-button-disabled'}">${getString("chatComponent/playInvite")}</button>
 			<div id="chat-block-user" class="chat-block-user ${isUserBlocked ? 'blocked' : ''}">
 				<p>
 					<i class="fa-solid fa-ban"></i>
@@ -65,6 +68,8 @@ export default class ChatRoomTopBar extends HTMLElement {
 
 	addEventListeners() {
 		const chatBlockUser = this.querySelector('#chat-block-user');
+		const inviteInGameBtn = this.querySelector('button');
+
 		if (!chatBlockUser) return; 
 		const chatBlockUserSpan = chatBlockUser.querySelector('span');
 
@@ -78,7 +83,38 @@ export default class ChatRoomTopBar extends HTMLElement {
 				chatBlockUserSpan.innerText = `Unblock ${this.userData.username}`;
 				this.blockUser();
 			}
-		})
+		});
+
+		inviteInGameBtn.addEventListener('click', async () => {
+			if (inviteInGameBtn.className !== "play-invitation-button")
+				return ;
+			this.handleInvitePlayer();
+		});
+	}
+
+	async handleInvitePlayer() {
+		try {
+			if (localStorage.getItem("isSearchingGame"))
+				return;
+			const data = await sendRequest("POST", "/api/matchmaking/init_private_match/", {
+				invitedUsername: this.userData.username,
+			});
+
+			this.querySelector('button').className = "play-invitation-button-disabled";
+			if (location.pathname !== '/') {
+				throwRedirectionEvent('/');
+				document.addEventListener('gameComponentLoaded', () => {
+					this.throwChangeGameStateEvent();
+				});
+			} else {
+				this.throwChangeGameStateEvent();
+			}
+			setTimeout(() => {
+				this.throwWaitingStateEvent(this.userData.username)
+			}, 50);
+		} catch (error) {
+			console.log(error)
+		}
 	}
 
 	async isTargetUserBlocked() {
@@ -86,7 +122,6 @@ export default class ChatRoomTopBar extends HTMLElement {
 			if (this.userData.id === 'tournament_bot') return;
 			let res = await sendRequest('GET', `/api/chat/is_user_blocked/?targetUserId=${this.userData.id}`, null, false);
 
-			console.log('is targetuser blocked: ', res)
 			if (res.message === "True") return true;
 			return false;
 		} catch (error) {
@@ -112,7 +147,28 @@ export default class ChatRoomTopBar extends HTMLElement {
 		} catch (error) {
 			
 		}
-	} 
+	}
+
+	throwChangeGameStateEvent() {
+		const event = new CustomEvent('changeGameStateEvent', {
+			bubbles: true,
+			detail: {
+				context: "onlineHome",
+			}
+		});
+
+		document.dispatchEvent(event);
+	}
+
+	throwWaitingStateEvent(username) {
+		const event = new CustomEvent('waitingStateEvent', {
+			bubbles: true,
+			detail:{
+				username: username
+			}
+		});
+		document.dispatchEvent(event);
+	}
 }
 
 customElements.define('chatroom-top-bar', ChatRoomTopBar);
