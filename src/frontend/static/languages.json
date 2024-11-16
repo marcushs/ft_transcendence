@@ -238,8 +238,10 @@
 	},
 	"chatComponent": {
 	  "contacted": "Contacted",
+	  "contact": "Contacts",
 	  "noRecentMessage": "No recent message",
-	  "tournamentBot": "Tournament Bot"
+	  "tournamentBot": "Tournament Bot",
+	  "noContacts": "You have no contacts"
 	}
   },
 
@@ -479,9 +481,11 @@
 	  "usernameFormatError": "Le nom d'utilisateur ne doit contenir que des lettres, chiffres, _, -"
 	},
 	"chatComponent": {
-	  "contacted": "Contacté",
+	  "contacted": "Contactés",
+	  "contact": "Contacts",
 	  "noRecentMessage": "Aucun message récent",
-	  "tournamentBot": "Bot du tournoi"
+	  "tournamentBot": "Bot du tournoi",
+	  "noContacts": "Vous n'avez pas de contacts"
 	}
   },
 

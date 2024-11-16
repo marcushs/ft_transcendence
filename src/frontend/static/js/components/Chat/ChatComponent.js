@@ -29,7 +29,8 @@ class ChatComponent extends HTMLElement {
 				<div class="chat-lobby ">
 					<div id="chat-search-bar-div"></div>
 					<div class="chat-contact-container">
-						<chat-contact-list></chat-contact-list>
+						<chat-contact-list id="contactedList" type="contacted"></chat-contact-list>
+						<chat-contact-list id="contactList" type="contact"></chat-contact-list>
 					</div>
 				</div>
 				<div class="chatroom"></div>

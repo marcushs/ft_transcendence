@@ -232,11 +232,14 @@ class PrivateMatchComponent extends HTMLElement {
 
 
 	displayWaitingState(opponentUsername) {
+		const genericBtn = this.querySelector('#genericBtn button');
+
 		disableButtonsInGameResearch();
 		if (opponentUsername)
 			this.querySelector('input').value = opponentUsername;
 		this.querySelector('.loading-wheel').style.visibility = "visible";
-		this.querySelector('#genericBtn button').innerHTML = getString("buttonComponent/cancel");
+		if (genericBtn)
+			genericBtn.innerHTML = getString("buttonComponent/cancel");
 		this.querySelector('input').disabled = true;
 		this.changeButtonClassname("generic-btn-cancel");
 		this.querySelector('.waiting-sentence').style.visibility = "hidden";
@@ -245,10 +248,13 @@ class PrivateMatchComponent extends HTMLElement {
 
 
 	displayLobby() {
+		const genericBtn = this.querySelector('#genericBtn button');
+
 		disableButtonsInGameResearch();
 		this.querySelector('.loading-wheel').style.visibility = "hidden";
 		this.querySelector('.accept-icon').style.visibility = "visible";
-		this.querySelector('#genericBtn button').innerHTML = getString("buttonComponent/play");
+		if (genericBtn)
+			this.querySelector('#genericBtn button').innerHTML = getString("buttonComponent/play");
 		this.querySelector('input').disabled = true;
 		this.querySelector('input').value = localStorage.getItem("isSearchingPrivateMatch");
 		this.changeButtonClassname("generic-btn");
@@ -259,10 +265,13 @@ class PrivateMatchComponent extends HTMLElement {
 
 
 	displayLobbyAsGuest(opponentName) {
+		const genericBtn = this.querySelector('#genericBtn button');
+
 		disableButtonsInGameResearch();
 		this.querySelector('.loading-wheel').style.visibility = "hidden";
 		this.querySelector('.accept-icon').style.visibility = "hidden";
-		this.querySelector('#genericBtn button').style.display = "none";
+		if (genericBtn)
+			this.querySelector('#genericBtn button').style.display = "none";
 		this.querySelector('input').disabled = true;
 		this.querySelector('input').value = opponentName;
 		this.querySelector('#leaveBtn').style.display = "block";

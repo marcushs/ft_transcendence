@@ -8,7 +8,7 @@ from .send_request import send_request_with_token, send_request_without_token
 from django.contrib.auth import get_user_model
 import json
  
-User = get_user_model()
+User = get_user_model() 
 class login_view(View):
     def __init__(self):
         super().__init__

@@ -63,7 +63,7 @@ class ChatSearchBar extends HTMLElement {
 	}
 
 	handleInput(e) {
-		const contactedList = document.querySelector('.contacted-list > ul');
+		const contactedList = document.querySelector('#contactedList > ul');
 
 		for (let i = this.searchContactsRemoved.length - 1; i >= 0; i--) {
 			contactedList.appendChild(this.searchContactsRemoved[i]);
@@ -73,6 +73,9 @@ class ChatSearchBar extends HTMLElement {
 		const contacts = document.querySelectorAll('chat-contact-component')
 
 		contacts.forEach(contact => {
+			console.log('contact = ', contact.parentElement.parentElement.parentElement.id)
+			if (contact.parentElement.parentElement.parentElement.id === "contactList")
+				return;
 			const userData = JSON.parse(contact.getAttribute('data-user'));
 
 			if (!userData.username.includes(searchInput)) {

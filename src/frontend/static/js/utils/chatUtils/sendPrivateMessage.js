@@ -163,7 +163,8 @@ export function checkAllRecentMessagesRead() {
 	chatContacts.forEach(contact => {
 		const unreadCircle = contact.querySelector('.unread-circle');
 
-		if (unreadCircle.classList.contains('active')) return false;
+		if (unreadCircle && unreadCircle.classList.contains('active'))
+			return false;
 	})
 
 	return true;
