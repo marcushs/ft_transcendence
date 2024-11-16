@@ -73,6 +73,13 @@ class PrivateMatchComponent extends HTMLElement {
 			this.redirectToInitialState();
 		});
 
+		document.addEventListener('waitingStateEvent', async (event) => {
+			await matchmakingWebsocket();
+			this.state = "waiting";
+			localStorage.setItem("isSearchingPrivateMatch", event.detail.username);
+			this.displayWaitingState(event.detail.username);
+		});
+
 	}
 
 
@@ -137,6 +144,7 @@ class PrivateMatchComponent extends HTMLElement {
 		try {
 			const input = this.querySelector('input');
 
+			this.resetContactsInviteElements();
 			this.cancelPrivateMatchLobby();
 			input.value = "";
 			input.disabled = false;
@@ -159,6 +167,7 @@ class PrivateMatchComponent extends HTMLElement {
 
 	async handleReadyStateClick() {
 		try {
+			this.resetContactsInviteElements();
 			const input = this.querySelector('input');
 			const data = await sendRequest("POST", "/api/matchmaking/start_private_match/", { invitedUsername: input.value });
 			await gameWebsocket(await getUserId());
@@ -177,6 +186,7 @@ class PrivateMatchComponent extends HTMLElement {
 
 	async handleLeaveLobby() {
 		try {
+			this.resetContactsInviteElements();
 			const data = await sendRequest("POST", "/api/matchmaking/cancel_private_match/", null);
 			this.cancelPrivateMatchLobby();
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
@@ -205,6 +215,7 @@ class PrivateMatchComponent extends HTMLElement {
 	displayInitialState() {
 		const genericBtn = this.querySelector('#genericBtn button');
 
+		this.resetContactsInviteElements();
 		this.querySelector('.loading-wheel').style.visibility = "hidden";
 		this.querySelector('.accept-icon').style.visibility = "hidden";
 		if (genericBtn) {
@@ -220,8 +231,10 @@ class PrivateMatchComponent extends HTMLElement {
 	}
 
 
-	displayWaitingState() {
+	displayWaitingState(opponentUsername) {
 		disableButtonsInGameResearch();
+		if (opponentUsername)
+			this.querySelector('input').value = opponentUsername;
 		this.querySelector('.loading-wheel').style.visibility = "visible";
 		this.querySelector('#genericBtn button').innerHTML = getString("buttonComponent/cancel");
 		this.querySelector('input').disabled = true;
@@ -286,6 +299,13 @@ class PrivateMatchComponent extends HTMLElement {
 		document.querySelector('#unrankedGenericBtn').className = "generic-btn";
 	}
 
+	resetContactsInviteElements() {
+		const invitePlayerElement = document.querySelectorAll('.contact-action-invite-play');
+
+		invitePlayerElement.forEach(player => {
+			player.classList.remove('contact-action-disabled');
+		})
+	}
 }
 
 customElements.define('private-match-component', PrivateMatchComponent);

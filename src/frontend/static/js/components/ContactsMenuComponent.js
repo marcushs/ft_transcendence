@@ -131,9 +131,7 @@ class FriendsMenuComponent extends HTMLElement {
 
         this.addEventListener('click', (event) => {
             event.stopPropagation();
-            // if (chatMainMenu.style.display !== 'none')
-            //     chatMainMenu.style.display = 'none';
-            // Empeche d'envoyer un message via le bouton send message, a fix
+            this.throwCloseContactActionList();
         });
 
         this.contactBottomNavDiv.addEventListener('click', () => {
@@ -215,6 +213,13 @@ class FriendsMenuComponent extends HTMLElement {
             if (!username.includes(searchValue))
                 contactComponent.remove();
         })
+    }
+
+    throwCloseContactActionList() {
+        const event = new CustomEvent('closeContactActionList', {
+            bubbles: true,
+        });
+        document.dispatchEvent(event);
     }
 }
 customElements.define("contact-menu-component", FriendsMenuComponent);

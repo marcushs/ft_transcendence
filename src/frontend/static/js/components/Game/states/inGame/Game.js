@@ -494,7 +494,6 @@ export default class Game {
 	
 	canceledGame(message) {
 		this.gameInProgress = false;
-		alert(`Game canceled: ${message}`);
 		disconnectGameWebSocket(this.userId, false);
 		throwRedirectionEvent('/');
 	}

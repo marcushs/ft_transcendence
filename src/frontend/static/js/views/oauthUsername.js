@@ -88,9 +88,7 @@ async function postNewUsername() {
 		// if (res.status == 403)
 		// 	throw new Error('Access Denied')
 		const data = await res.json();
-		if (data.status === "Error")
-			alert(data.message)
-		else
+		if (data.status !== "Error")
 			window.location.replace(data.url);
 	} catch (error) {
 		// console.log('Catch error :', error);
