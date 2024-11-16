@@ -43,7 +43,7 @@ class PongGameEngine:
         self.speed_limit = 45
         self.ball_direction_x = self.ball_speed
         self.ball_direction_y = 0
-        self.max_score = 1
+        self.max_score = 10
         self.has_ball_hit_wall = False
         self.is_player_one_collide = False
         self.is_player_two_collide = False
@@ -287,9 +287,9 @@ class PongGameEngine:
             return
         player = self.state[player_key]
         if action == 'move_up':
-            player['position']['y'] = max(player['position']['y'] - (self.map['width'] * 0.0075), self.player_size['height'] * 0.5)
+            player['position']['y'] = max(player['position']['y'] - (self.map['width'] * 0.0075), self.player_size['height'] * 0.53)
         elif action == 'move_down':
-            player['position']['y'] = min(player['position']['y'] + (self.map['width'] * 0.0075), self.map['height'] - self.player_size['height'] * 0.5)
+            player['position']['y'] = min(player['position']['y'] + (self.map['width'] * 0.0075), self.map['height'] - self.player_size['height'] * 0.53)
             
  #//---------------------------------------> Connection management method <--------------------------------------\\#
 
