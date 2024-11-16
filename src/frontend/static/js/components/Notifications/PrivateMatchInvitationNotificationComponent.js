@@ -98,62 +98,51 @@ class PrivateMatchInvitationNotificationComponent extends HTMLElement {
 			if (data.status === 'success') {
 				await sendRequest('DELETE', '/api/notifications/manage_notifications/', { uuid: this.notificationObj.uuid.replace('notif-', '') });
 				await matchmakingWebsocket()
-				this.throwDeleteNotificationEvent();
-				this.throwCloseNotificationsContainerEvent();
-				// if (location.href)
-				console.log(location.pathname)
+
 				if (location.pathname !== '/') {
 					throwRedirectionEvent('/');
+					document.addEventListener('gameComponentLoaded', () => {
+						this.throwChangeGameStateEvent();
+					});
+				} else {
+					this.throwChangeGameStateEvent();
 				}
-				//  await this.waitForStatesContainer();
-				// this.throwChangeGameStateEvent();
-				// throw
-				// await waitForStatesContainer();
-				// await this.throwChangeGameStateEvent();
-				// } else {
-				// 	if (document.querySelector('.states-container')) {
-					// }
 
-				setTimeout(async () => {
-					await this.waitForPrivateMatchComponent();
+				// console.log(data)
+				localStorage.setItem("isInGuestState", this.notificationObj.sender);
+				setTimeout(() => {
 					this.throwGuestPrivateMatchEvent();
-				})
-
-				// this.remove();
+					this.remove();
+				}, 50);
 			}
 		} catch (error) {
-			console.error('catch: ', error);
+			await sendRequest('DELETE', '/api/notifications/manage_notifications/', { uuid: this.notificationObj.uuid.replace('notif-', '') });
+			const errorStr = error.toString();
+
+			if (errorStr.slice(7, errorStr.length) === "lobbyNotFound" && action === "accepted") {
+				this.displayErrorMessage();
+			} else {
+				this.remove();
+			}
 		}
 	}
 
-	async waitForStatesContainer() {
-		await new Promise(resolve => {
-			const observer = new MutationObserver(() => {
-				const newContainer = document.querySelector('#gameStatesContainer');
-				if (newContainer) {
-					observer.disconnect();
-					resolve();
-				}
-			});
-			observer.observe(document.body, { childList: true, subtree: true });
-		});
-	}
+	displayErrorMessage() {
+		const p = this.querySelector('p');
 
-	async waitForPrivateMatchComponent() {
-		await new Promise(resolve => {
-			const observer = new MutationObserver(() => {
-				const newContainer = document.querySelector('private-match-component');
-				if (newContainer) {
-					observer.disconnect();
-					resolve();
-				}
-			});
-			observer.observe(document.body, { childList: true, subtree: true });
-		});
+		p.innerHTML = getString("notificationsComponent/lobbyNotFound");
+		p.classList.add("error-sentence");
+		this.querySelector('.fa-check').remove();
+		this.querySelector('.fa-xmark').remove();
+		setTimeout(() => {
+			p.classList.remove("error-sentence");
+			this.throwDeleteNotificationEvent();
+			this.throwCloseNotificationsContainerEvent();
+			this.remove();
+		}, 5000);
 	}
 
 	throwChangeGameStateEvent() {
-		console.log('states event')
 		const event = new CustomEvent('changeGameStateEvent', {
 			bubbles: true,
 			detail: {

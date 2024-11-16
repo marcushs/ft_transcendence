@@ -511,20 +511,8 @@ class PongGameEngine:
 
     async def websocket_sender(self, payload):
         if self.player_one_connected:
-            # print('------------------------------------')
-            # print('--> Player one')
-            # print(f'game id = {self.game_id}')
-            # print(f'payload == {payload}')
-            # print(f'active game : ', PongGameEngine.active_games)
-            # print('\n------------------------------------')
             await send_websocket_info(player_id=self.player_one_id, payload=payload)
         if self.player_two_connected:
-            # print('------------------------------------')
-            # print('--> Player two')
-            # print(f'game id = {self.game_id}')
-            # print(f'payload == {payload}')
-            # print(f'active game : ', PongGameEngine.active_games)
-            # print('\n------------------------------------')
             await send_websocket_info(player_id=self.player_two_id, payload=payload)
 
  #//---------------------------------------> Utils method <--------------------------------------\\#

@@ -3,6 +3,7 @@ import {sendRequest} from "../../../../utils/sendRequest.js";
 import {matchmakingWebsocket, matchmakingSocket} from "../../../../utils/matchmaking/matchmakingWebsocket.js";
 import {gameSocket, gameWebsocket} from "../inGame/gameWebsocket.js";
 import getUserId from "../../../../utils/getUserId.js";
+import disableButtonsInGameResearch from "../../../../utils/disableButtonsInGameResearch.js";
 
 class PrivateMatchComponent extends HTMLElement {
 	constructor() {
@@ -33,13 +34,18 @@ class PrivateMatchComponent extends HTMLElement {
 		const genericBtn = this.querySelector('#genericBtn');
 		const leaveBtn = this.querySelector('#leaveBtn');
 
+		document.addEventListener('matchmakingResearchCanceledEvent', () => {
+			if (input.value !== '')
+				genericBtn.className = "generic-btn"
+		});
+
 		genericBtn.addEventListener('click', async () => {
 			await this.handlePlayButtonClick(genericBtn);
 		});
 
 		input.addEventListener('input', () => {
 			this.resetError();
-			if (input.value !== '') {
+			if (input.value !== '' && !localStorage.getItem("isSearchingGame")) {
 				genericBtn.className = "generic-btn";
 				this.querySelector('.feedback-error').style.visibility = "hidden";
 			}
@@ -58,9 +64,9 @@ class PrivateMatchComponent extends HTMLElement {
 		});
 
 		document.addEventListener('guestPrivateMatchEvent', (event) => {
+			localStorage.setItem("isInGuestState", event.detail.ownerName);
 			this.state = "guestState";
 			this.displayLobbyAsGuest(event.detail.ownerName);
-			localStorage.setItem("isInGuestState", event.detail.ownerName);
 		});
 
 		document.addEventListener('privateMatchCanceled', (event) => {
@@ -75,7 +81,10 @@ class PrivateMatchComponent extends HTMLElement {
 		const isReadyToPlay  = localStorage.getItem("isReadyToPlay");
 		const isInGuestState = localStorage.getItem("isInGuestState");
 
+		console.log("isSearchingPrivateMatch = ", isSearchingPrivateMatch, "isReadyToPlay = ", isReadyToPlay, "isInGuestState = ", isInGuestState);
+
 		if (isReadyToPlay) {
+			await matchmakingWebsocket();
 			this.displayLobby();
 			this.state = "ready";
 		} else if (isSearchingPrivateMatch) {
@@ -95,20 +104,19 @@ class PrivateMatchComponent extends HTMLElement {
 	async handlePlayButtonClick(button) {
 		const input = this.querySelector('input');
 
-		console.log(this.state)
 		if (input.value !== '' && this.state === "initial" && button.className === "generic-btn")
 			await this.handleInitialStateClick(input.value);
 		else if (input.value !== '' && this.state === "waiting")
 			await this.handleWaitingStateClick(input.value);
 		else if (input.value !== '' && this.state === "ready")
 			await this.handleReadyStateClick();
-		// else if (this.state === "guestState")
-		// 	await this.handleLeaveLobby();
 	}
 
 
 	async handleInitialStateClick(username) {
 		try {
+			if (localStorage.getItem("isSearchingGame"))
+				return;
 			const data = await sendRequest("POST", "/api/matchmaking/init_private_match/", {
 				invitedUsername: username,
 			});
@@ -117,6 +125,7 @@ class PrivateMatchComponent extends HTMLElement {
 			this.state = "waiting";
 			localStorage.setItem("isSearchingPrivateMatch", username);
 		} catch (error) {
+			console.log(error)
 			this.querySelector('.feedback-error').style.visibility = "visible";
 			this.querySelector('.feedback-error').textContent = getString(`gameComponent/${error.message}`);
 			this.querySelector('#genericBtn').className = "generic-btn-disabled";
@@ -128,6 +137,7 @@ class PrivateMatchComponent extends HTMLElement {
 		try {
 			const input = this.querySelector('input');
 
+			this.cancelPrivateMatchLobby();
 			input.value = "";
 			input.disabled = false;
 			this.querySelector('#genericBtn button').innerText = getString("buttonComponent/invite");
@@ -152,6 +162,7 @@ class PrivateMatchComponent extends HTMLElement {
 			const input = this.querySelector('input');
 			const data = await sendRequest("POST", "/api/matchmaking/start_private_match/", { invitedUsername: input.value });
 			await gameWebsocket(await getUserId());
+			this.cancelPrivateMatchLobby();
 			this.state = "initial";
 			localStorage.removeItem("isSearchingPrivateMatch");
 			localStorage.removeItem("isReadyToPlay");
@@ -167,6 +178,7 @@ class PrivateMatchComponent extends HTMLElement {
 	async handleLeaveLobby() {
 		try {
 			const data = await sendRequest("POST", "/api/matchmaking/cancel_private_match/", null);
+			this.cancelPrivateMatchLobby();
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
 			this.state = "initial";
@@ -186,6 +198,7 @@ class PrivateMatchComponent extends HTMLElement {
 		localStorage.removeItem("isReadyToPlay");
 		localStorage.removeItem("isInGuestState");
 		this.displayInitialState();
+		this.cancelPrivateMatchLobby();
 	}
 
 
@@ -204,6 +217,7 @@ class PrivateMatchComponent extends HTMLElement {
 
 
 	displayWaitingState() {
+		disableButtonsInGameResearch();
 		this.querySelector('.loading-wheel').style.visibility = "visible";
 		this.querySelector('#genericBtn button').innerHTML = getString("buttonComponent/cancel");
 		this.querySelector('input').disabled = true;
@@ -214,6 +228,7 @@ class PrivateMatchComponent extends HTMLElement {
 
 
 	displayLobby() {
+		disableButtonsInGameResearch();
 		this.querySelector('.loading-wheel').style.visibility = "hidden";
 		this.querySelector('.accept-icon').style.visibility = "visible";
 		this.querySelector('#genericBtn button').innerHTML = getString("buttonComponent/play");
@@ -227,7 +242,7 @@ class PrivateMatchComponent extends HTMLElement {
 
 
 	displayLobbyAsGuest(opponentName) {
-		console.log('display as guest')
+		disableButtonsInGameResearch();
 		this.querySelector('.loading-wheel').style.visibility = "hidden";
 		this.querySelector('.accept-icon').style.visibility = "hidden";
 		this.querySelector('#genericBtn button').style.display = "none";
@@ -260,6 +275,11 @@ class PrivateMatchComponent extends HTMLElement {
 
 	resetError() {
 		this.querySelector('.invite-player-field-error').innerHTML = '';
+	}
+
+	cancelPrivateMatchLobby() {
+		document.querySelector('#rankedGenericBtn').className = "generic-btn";
+		document.querySelector('#unrankedGenericBtn').className = "generic-btn";
 	}
 
 }

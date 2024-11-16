@@ -24,6 +24,9 @@ export default class Intro {
 			}
 		}
 
+		localStorage.removeItem("isSearchingPrivateMatch");
+		localStorage.removeItem("isReadyToPlay");
+		localStorage.removeItem("isInGuestState");
 
 		this.initializeImages();
 		this.initializeCoordinates();

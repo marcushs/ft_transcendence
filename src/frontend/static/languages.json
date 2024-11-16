@@ -113,6 +113,7 @@
 	  "privateMatch": "Private match",
 	  "cantInviteYourself": "You can't invite yourself",
 	  "unknownUser": "Unknown player",
+	  "lobbyAlreadyExist": "",
 	  "waitingSentence": "Waiting for the game to launch",
 	  "playerName": "Player name",
 	  "ranked": "Ranked",
@@ -193,7 +194,8 @@
 	"notificationsComponent": {
 	  "acceptedNotificationSuffix": "has accepted your friend request",
 	  "pendingNotificationPrefix": "You have a new friend request from",
-	  "privateMatchInvitationSuffix": "has invited you to a private game"
+	  "privateMatchInvitationSuffix": "has invited you to a private game",
+	  "lobbyNotFound": "The invitation to the game has failed. The lobby is no longer available."
 	},
 	"accountInfosComponent" : {
 	  "profile": "Profile",
@@ -434,7 +436,8 @@
 	"notificationsComponent": {
 	  "acceptedNotificationSuffix": "a accepté votre demande d'ami",
 	  "pendingNotificationPrefix": "Vous avez une nouvelle demande d'ami de",
-	  "privateMatchInvitationSuffix": "vous a invité à un match privé"
+	  "privateMatchInvitationSuffix": "vous a invité à un match privé",
+	  "lobbyNotFound": "L'invitation à la partie a échoué. Le lobby n'est plus disponible."
 	},
 	"accountInfosComponent" : {
 	  "profile": "Profil",

@@ -29,7 +29,7 @@ class MatchmakingTournament(View):
     async def post(self, request): 
         try:
             if isinstance(request.user, AnonymousUser):  
-                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400) 
+                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400)
             data = json.loads(request.body.decode('utf-8'))
             if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
                 return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)

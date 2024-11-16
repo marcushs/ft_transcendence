@@ -11,8 +11,6 @@ export async function gameWebsocket(userId) {
 		console.log('already connected to game Websocket');
 		return;
 	}
-	// if (gameSocket)
-	// 	disconnectGameWebSocket();
 
 	gameSocket = new WebSocket(`wss://localhost:3000/ws/game/?user_id=${userId}`);
 
@@ -27,7 +25,6 @@ export async function gameWebsocket(userId) {
 				startGame(data.game_id, data.game_state, data.map_dimension);
 			},
 			'data_update': (data) => {
-				console.log(data.game_state.ball_x)
 				if (gameInstance) gameInstance.updateGameRender(data.game_state);
 			},
 			'emote_received': (data) => {
@@ -40,7 +37,7 @@ export async function gameWebsocket(userId) {
 				if (gameInstance) gameInstance.canceledGame(data.message);
 			},
 			'game_surrended': (data) => {
-				if (gameInstance) gameInstance.gameSurrended(data.message);
+				// if (gameInstance) gameInstance.gameSurrended(data.message);
 			},
 			'player_disconnected': (data) => {
 				if (gameInstance) gameInstance.updateMessage(data.message);

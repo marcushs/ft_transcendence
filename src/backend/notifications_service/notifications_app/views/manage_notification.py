@@ -87,9 +87,8 @@ class manage_notification_view(View):
             return JsonResponse({'status': 'error', 'message': check_response}, status=200)
         try:
             notification = await sync_to_async(Notification.objects.get)(uuid=data['uuid'])
-            # self.send_delete_notification_to_channel(notification)
             await sync_to_async(notification.delete)()
-        except User.DoesNotExist:
+        except Exception:
             pass
         return JsonResponse({"status": "success"}, status=200)
 

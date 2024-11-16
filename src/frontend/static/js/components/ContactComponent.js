@@ -1,11 +1,9 @@
 import { sendRequest } from "../utils/sendRequest.js";
 import getProfileImage from "../utils/getProfileImage.js";
 import './Friendship/FriendshipButtonComponent.js';
-import userProfile from "../views/user-profile.js";
 import { getString } from "../utils/languageManagement.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import { sendMessageCallback } from "../utils/chatUtils/sendMessageCallback.js";
-import { removeChatroom } from "../utils/chatUtils/joinRoomUtils.js";
 
 class ContactComponent extends HTMLElement {
     
@@ -161,13 +159,21 @@ class ContactComponent extends HTMLElement {
         const contactActions = this.querySelectorAll('.contact-action-list li');
 
         contactActions.forEach(action => {
-            action.addEventListener('click', () => {
+            action.addEventListener('click', async () => {
                 switch (action.classList[0]) {
                     case 'contact-action-send-message':
                         sendMessageCallback(this.userData);
                         break;
                     case 'contact-action-invite-play':
-                        console.log(`TEST: Invite contact \'${this.userData.username}\' to play successfully reached`);
+                        try {
+                            if (localStorage.getItem("isSearchingGame"))
+                                return;
+                            const data = await sendRequest("POST", "/api/matchmaking/init_private_match/", {
+                                invitedUsername: this.userData.username,
+                            });
+                        } catch (error) {
+                            console.log(error)
+                        }
                         break;
                     case 'contact-action-remove-contact':
                         this.handleRequestIconClick('remove');
@@ -179,9 +185,9 @@ class ContactComponent extends HTMLElement {
                     default:
                         console.error(`Unknown contact action`);
                         break;
-                }         
+                }
             })
-        })  
+        })
     }
  
     async handleRequestIconClick(action) {

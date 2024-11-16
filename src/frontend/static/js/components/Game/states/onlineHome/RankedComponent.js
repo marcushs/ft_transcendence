@@ -32,7 +32,7 @@ class RankedComponent extends HTMLElement {
 
 		const isSearchingGame = JSON.parse(localStorage.getItem('isSearchingGame'));
 
-		if (isSearchingGame && isSearchingGame.type !== "ranked")
+		if ((isSearchingGame && isSearchingGame.type !== "ranked") || localStorage.getItem("isSearchingPrivateMatch") || localStorage.getItem('isInGuestState') )
 			this.playButton.className = "generic-btn-disabled";
 		else if (isSearchingGame)
 			this.replacePlayBtnByCancel();
@@ -48,7 +48,7 @@ class RankedComponent extends HTMLElement {
 		rankedComponentContentElement.innerHTML += `
 			<h4>${getString('gameComponent/ranked')}</h4>
 			${this.createRankContainer(rankedData.user_statistics.rank, rankedData.user_statistics.rank_points)}
-			<button-component label="${getString('buttonComponent/play')}" class="generic-btn"></button-component>
+			<button-component id="rankedGenericBtn" label="${getString('buttonComponent/play')}" class="generic-btn"></button-component>
 			<button-component label="${getString('buttonComponent/cancel')}" class="generic-btn-cancel" style="display: none"></button-component>
 		`
 	}
@@ -106,6 +106,8 @@ class RankedComponent extends HTMLElement {
 		this.replacePlayBtnByCancel();
 		if (await sendMatchSearchRequest('ranked'))
 			disableButtonsInGameResearch();
+		const genericBtn = document.querySelector('#genericBtn');
+		genericBtn.className = "generic-btn-disabled";
 	}
 
 	async handleCancelButtonClick() {

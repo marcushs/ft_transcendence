@@ -3,6 +3,7 @@ import '../../components/Matchmaking/MatchmakingResearchComponent.js';
 import {startGame} from "../../components/Game/states/inGame/Game.js";
 import {sendRequest} from "../sendRequest.js";
 import getUserId from "../getUserId.js";
+import {throwRedirectionEvent} from "../throwRedirectionEvent.js";
 
 export let matchmakingSocket = null;
 
@@ -23,7 +24,6 @@ export async function matchmakingWebsocket() {
 
 		const data = JSON.parse(event.data);
 		if (data.type === 'already_in_game') {
-			console.log('matchmaking research canceled: user is already in game');
 			const researchComponent = document.querySelector('matchmaking-research-component')
 			if (researchComponent)
 				researchComponent.remove();
@@ -39,8 +39,14 @@ export async function matchmakingWebsocket() {
 			matchmakingSocket.close();
 		}
 		if (data.type === 'player_joined_private_match') {
-			console.log('player_joined_private_match reached');
-			
+			if (location.pathname !== '/') {
+				throwRedirectionEvent('/');
+				document.addEventListener('gameComponentLoaded', () => {
+					throwChangeGameStateEvent();
+				});
+			} else {
+				throwChangeGameStateEvent();
+			}
 			throwPlayerJoinedMatchEvent();
 		}
 		if (data.type === 'player_refused_private_match') {
@@ -71,6 +77,17 @@ export async function matchmakingWebsocket() {
     matchmakingSocket.onerror = function(event) {
         console.log("Websocket error: ", event);
     };
+}
+
+function throwChangeGameStateEvent() {
+	const event = new CustomEvent('changeGameStateEvent', {
+		bubbles: true,
+		detail: {
+			context: "onlineHome",
+		}
+	});
+
+	document.dispatchEvent(event);
 }
 
 function throwPrivateMatchCanceled() {

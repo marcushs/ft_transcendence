@@ -44,6 +44,17 @@ class GameComponent extends HTMLElement {
         await this.pushNewState(this.states[this.currentState].state);
         rotatingGradient('game-component', '#FF16C6', '#00D0FF');
         rotatingGradient('.game-background', '#FF16C6', '#00D0FF');
+        this.throwGameComponentLoaded();
+        if (localStorage.getItem("isSearchingPrivateMatch") || localStorage.getItem("isReadyToPlay") || localStorage.getItem("isInGuestState"))
+            await this.changeState(this.states["onlineHome"].state, this.states["onlineHome"].context);
+    }
+
+    throwGameComponentLoaded() {
+        const event = new CustomEvent('gameComponentLoaded', {
+            bubbles: true,
+        });
+
+        document.dispatchEvent(event);
     }
 
     async pushNewState(state) {
@@ -123,7 +134,6 @@ class GameComponent extends HTMLElement {
 
 
     async handleChangeStateEvent(event) {
-        console.log("online home !!!!!!!!!!")
         if (event.detail.context === "onlineHome") {
             await this.changeState(this.states[event.detail.context].state, this.states[event.detail.context].context);
         }

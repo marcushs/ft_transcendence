@@ -11,7 +11,7 @@ class UnrankedComponent extends HTMLElement {
 		this.innerHTML = `
 			<div class="unranked-component-content">
 				<h4>${getString('gameComponent/unranked')}</h4>
-				<button-component label="${getString('buttonComponent/play')}" class="generic-btn"></button-component>
+				<button-component id="unrankedGenericBtn" label="${getString('buttonComponent/play')}" class="generic-btn"></button-component>
 				<button-component label="${getString('buttonComponent/cancel')}" class="generic-btn-cancel" style="display: none"></button-component>
 			</div>
 		`;
@@ -51,6 +51,8 @@ class UnrankedComponent extends HTMLElement {
 		this.replacePlayBtnByCancel();
 		if (await sendMatchSearchRequest('unranked'))
 			disableButtonsInGameResearch();
+		const genericBtn = document.querySelector('#genericBtn');
+		genericBtn.className = "generic-btn-disabled";
 	}
 
 	async handleCancelButtonClick() {
