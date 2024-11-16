@@ -4,8 +4,7 @@ import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms, ad
 import { updateCurrentChatroomId, messageReceptionDOMUpdate } from '../../utils/chatUtils/sendPrivateMessage.js';
 import { UpdateChatContactWebsocket } from './updateChatContactWebsocket.js';
 import { UpdateChatroomTopBarWebsocket } from './updateChatroomTopBarWebsocket.js';
-import { putNewTournamentToDOM, redirectToTournamentWaitingRoom, updateTournamentInfo, redirectToTournamentHome } from '../../utils/tournamentUtils/joinTournamentUtils.js';
-import { redirectToTournamentMatch, startTournamentMatchInstance } from '../../utils/tournamentUtils/tournamentMatchUtils.js';
+import * as tournamentHandlers from '../../utils/tournamentUtils/tournamentWebsocketHandlers.js';
 
 
 export let contactSocket = null;
@@ -169,34 +168,24 @@ function loadTournamentWebSocket() {
 		const data = JSON.parse(e.data)
 		console.log(data)
 
-		if (data.type === 'create_tournament' && data.status === 'success') {
-			redirectToTournamentWaitingRoom(data.tournament);
-		} else if (data.type === 'create_tournament' && data.status === 'error') {
-			// implement error message in frontend
-			console.log(data.message)
-		} else if (data.type === 'new_tournament') {
-			putNewTournamentToDOM(data.tournament);
-		} else if (data.type === 'join_tournament' && data.status === 'error') {
-			// implement error message in frontend
-			console.log(data.message)
-		} else if (data.type === 'redirect_to_waiting_room') {
-			redirectToTournamentWaitingRoom(data.tournament);
-		} else if (data.type === 'join_tournament') {
-			updateTournamentInfo(data.tournament);
-		} else if (data.type === 'load_match') {
-			console.log('loading tournament match...');
-			redirectToTournamentMatch(data.match);
-		} else if (data.type === 'redirect_to_tournament_home') {
-			redirectToTournamentHome()
-		} else if (data.type === 'leave_tournament') {
-			updateTournamentInfo(data.tournament);
-		} else if (data.type === 'countdown_update') {
-			const tournamentMatch = document.querySelector('tournament-match');
+		const messageHandlers = {
+			'create_tournament': tournamentHandlers.handleCreateTournament,
+			"new_tournament": tournamentHandlers.handleNewTournament,
+			"join_tournament": tournamentHandlers.handleJoinTournament,
+			"redirect_to_waiting_room": tournamentHandlers.handleRedirectToWaitingRoom,
+			"load_match": tournamentHandlers.handleLoadMatch,
+			"redirect_to_tournament_home": tournamentHandlers.handleRedirectToTournamentHome,
+			"leave_tournament": tournamentHandlers.handleLeaveTournament,
+			"countdown_update": tournamentHandlers.handleCountdownUpdate,
+			"start_game_instance": tournamentHandlers.handleStartGameInstance,
+			"redirect_to_winner_page": tournamentHandlers.handleRedirectToWinnerPage,
+		};
 
-			if (!tournamentMatch) return;
-			tournamentMatch.updateCountdownSeconds(data.time);
-		} else if (data.type === 'start_game_instance') {
-			await startTournamentMatchInstance(data.payload);
+		const handler = messageHandlers[data.type];
+		if (handler) {
+			await handler(data);
+		} else {
+			console.log('Unhandled message type:', data.type);
 		}
 	};
 

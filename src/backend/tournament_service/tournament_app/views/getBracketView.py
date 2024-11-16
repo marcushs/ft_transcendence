@@ -28,7 +28,8 @@ class getBracketView(View):
 		if active_tournament:
 			bracket = Bracket.objects.filter(tournament=active_tournament).prefetch_related(
 				'eighth_finals', 'quarter_finals', 'semi_finals', 'finals'
-			).first()
+			).first().to_dict_sync()
+			bracket['tournament_size'] = active_tournament.tournament_size
 
-			return JsonResponse({'bracket': bracket.to_dict_sync(), 'status': 'success'}, status=200)
+			return JsonResponse({'bracket': bracket, 'status': 'success'}, status=200)
 		return JsonResponse({'message': 'Bracket not found', 'status': 'error'}, status=404)

@@ -157,7 +157,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_add(match_id, self.channel_name)
 		self.channel_groups.add(match_id)
 		# print(f'add {self.user.id} to channel group ${match_id}')
-		await self.start_countdown(match_id=match_id)
+		await self.start_countdown(match_id=match_id, start=False)
 		match = await sync_to_async(TournamentMatch.objects.get)(match_id=match_id)
 		await self.channel_layer.group_send(match_id,
 									{'type': 'load_match',
@@ -180,14 +180,17 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 # -------------------------------> Countdown function <---------------------------------
 
-	async def start_countdown(self, match_id):
-		print('called start_countdown')
+	async def start_countdown(self, match_id, start):
 		match = await sync_to_async(TournamentMatch.objects.get)(match_id=match_id) 
 		players = await sync_to_async(match.get_players)()
+		if start:
+			if match_id in self.countdown_tasks:
+				self.countdown_tasks[match_id].cancel()
+			self.countdown_tasks[match_id] = asyncio.create_task(self.run_countdown(match_id, players))
+			return
 		if str(self.user.id) == players[0]['id']:
 			if match_id in self.countdown_tasks:
 				self.countdown_tasks[match_id].cancel()
-            # Create a new task for the countdown
 			self.countdown_tasks[match_id] = asyncio.create_task(self.run_countdown(match_id, players))
 
 
@@ -451,11 +454,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		last_round = last_match.tournament_round
 		if last_round == 'finals':
-			tournament.isOver = True
-			tournament.save()
+			# tournament.isOver = True
+			# tournament.save()
+			tournament_bracket_dict = tournament_bracket.to_dict_sync()
+			tournament_bracket_dict['username'] = self.user.username
 			return async_to_sync(self.send)(text_data=json.dumps({
 				'type': 'redirect_to_winner_page',
-				'tournament': tournament.to_dict_sync()
+				'tournament_bracket': tournament_bracket_dict,
 			}))
 
 		round_mapping = {
@@ -512,7 +517,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 							'match': final_match.to_dict_sync()
 						})
 					if TournamentMatchPlayer.objects.filter(match=final_match).count() == 2:
-						async_to_sync(self.start_countdown)(match_id=str(final_match.match_id))
+						async_to_sync(self.start_countdown)(match_id=str(final_match.match_id), start=True)
 						return final_match
 				else:
 					# Handle the case where the match is already full
@@ -553,7 +558,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						'match': next_match.to_dict_sync()
 					})
 				if TournamentMatchPlayer.objects.filter(match=next_match).count() == 2:
-					async_to_sync(self.start_countdown)(match_id=str(next_match.match_id))
+					async_to_sync(self.start_countdown)(match_id=str(next_match.match_id), start=True)
 					return next_match
 			else:
 				# Handle the case where the match is already full

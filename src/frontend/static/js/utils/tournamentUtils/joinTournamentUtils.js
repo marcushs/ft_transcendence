@@ -1,5 +1,6 @@
 import { TournamentComponent } from "../../components/Game/states/tournamentHome/TournamentComponent.js";
 import TournamentWaitingRoom from "../../components/Game/states/tournamentHome/TournamentWaitingRoom.js";
+import TournamentWon from "../../components/Game/states/tournamentHome/TournamentWon.js";
 
 export function putNewTournamentToDOM(tournament) {
 	const tournamentsList = document.querySelector('.tournaments-list');
@@ -19,6 +20,16 @@ export function redirectToTournamentWaitingRoom(tournamentData) {
 	tournamentWaitingRoomState['state'] = tournamentWaitingRoom;
 	gameComponent.changeState(tournamentWaitingRoomState.state, tournamentWaitingRoomState.context);
 	gameComponent.currentState = "tournamentWaitingRoom";
+}
+
+export function redirectToWinnerPage(tournamentData) {
+	const gameComponent = document.querySelector('game-component');
+	const tournamentWonState = gameComponent.states['tournamentWon'];
+	const tournamentWon = new TournamentWon(tournamentData);
+
+	tournamentWonState['state'] = tournamentWon;
+	gameComponent.changeState(tournamentWonState.state, tournamentWonState.context);
+	gameComponent.currentState = "tournamentWon";
 }
 
 export function redirectToTournamentHome() {

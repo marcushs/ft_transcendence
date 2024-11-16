@@ -41,6 +41,17 @@
 	cursor: pointer;
 }
 
+.tournament-match-ready-btn.clicked {
+	background-color: gray;
+	color: white;
+	border: 1px solid gray;
+	cursor: not-allowed;
+}
+
+.tournament-match-ready-btn:not(:disabled):active {
+	scale: 0.98;
+}
+
 .tournament-match-content p, .tournament-match-content span {
 	font-size: 2.5rem;
 	margin-left: 1rem;

@@ -23,6 +23,7 @@ class GameComponent extends HTMLElement {
             "tournamentWaitingRoom": {context: "/tournamentHome/tournamentWaitingRoom"},
             "tournamentMatch": {context: "/tournamentHome/tournamentMatch"},
             "tournamentLost": {context: "/tournamentHome/tournamentLost"},
+            "tournamentWon": {context: "/tournamentWon"},
         }
 
         this.innerHTML = `
@@ -35,7 +36,6 @@ class GameComponent extends HTMLElement {
         this.backButton = this.querySelector('.back-button');
         this.currentContext = this.states["matchmakingChoice"].context;
         this.currentState = "matchmakingChoice";
-
 
         this.attachEventListener();
     }

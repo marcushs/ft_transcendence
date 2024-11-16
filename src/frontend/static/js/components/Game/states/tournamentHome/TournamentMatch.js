@@ -4,6 +4,7 @@ import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
 import { displayChatroomComponent } from "../../../../utils/chatUtils/sendMessageCallback.js";
 import { putMessageToChatroomConversation } from "../../../../utils/chatUtils/sendPrivateMessage.js";
 import BracketObj from "./bracket/BracketObj.js";
+import { sendRequest } from "../../../../utils/sendRequest.js";
 
 export default class TournamentMatch {
 	constructor(match) {
@@ -54,7 +55,7 @@ class TournamentMatchElement extends HTMLElement {
 						<p>Opponent: <span id='opponent-span'>${await this.getOpponent()}</span></p>
 						<div class="countdown-container">
 							<button type="button" class="tournament-match-ready-btn">Ready</button>
-							<p class="match-countdown">Match starts in <span></span>s</p>
+							<p class="match-countdown">Match starts in <span>60</span>s</p>
 						</div>
 					</div>
 				</div>
@@ -68,16 +69,6 @@ class TournamentMatchElement extends HTMLElement {
 		round = round.replace('_', '-');
 		return round[0].toUpperCase() + round.slice(1);
 	}
-
-	// async findMatch() {
-	// 	this.userId = await getUserId();
-		
-	// 	if (!this.userId) return ;
-
-	// 	this.clientMatch = this.matches.find(match => 
-	// 		match.players.some(player => player.id === this.userId)
-	// 	);
-	// }
 
 	async getOpponent() {
 		this.userId = await getUserId();
@@ -93,22 +84,29 @@ class TournamentMatchElement extends HTMLElement {
 		const bracketBtn = this.querySelector('#bracket-icon');
 		const readyBtn = this.querySelector('.tournament-match-ready-btn');
 
-		bracketBtn.addEventListener('click', () => {
+		bracketBtn.addEventListener('click', async () => {
 			console.log('clicked on bracket')
-			console.log('bracketObj', this.bracketObj);
-			this.redirectToBracket();
+			try {
+				let res = await sendRequest('GET', '/api/tournament/get_bracket/', null, false);
+				this.bracketObj = BracketObj.create(res.bracket, res.bracket.tournament_size);
+				console.log('bracketObj', this.bracketObj);
+				this.redirectToBracket();
+			} catch (error) {
+				console.log('Error retrieving bracket')
+			}
 		})
 
 		readyBtn.addEventListener('click', () => {
 			console.log('ready clicked');
 			console.log('userId: ', this.userId);
+			readyBtn.disabled = true;
+			readyBtn.classList.add('clicked')
 			const payload = {
 				'type': 'user_ready_for_match',
 				'userId': this.userId,
 				'matchId': this.match.match_id
 			}
 			tournamentSocket.send(JSON.stringify(payload));
-			clearInterval(this.intervalId);
 		})
 	}
 
@@ -131,6 +129,14 @@ class TournamentMatchElement extends HTMLElement {
 	}
 
 	async showMatchMessage() {
+		const opponentSpan = this.querySelector("#opponent-span");
+		const matchCountdown = this.querySelector('.match-countdown');
+
+		if (opponentSpan.innerText === 'To Be Determined...') {
+			matchCountdown.remove();
+			return;
+		}
+
 		const botData = {
 			id: 'tournament_bot',
 			username: 'Tournament Bot',
@@ -144,6 +150,7 @@ class TournamentMatchElement extends HTMLElement {
 			Click the "Ready" button when ready! GLHF!`,
 			created: new Date(),
 		}
+
 
 		displayChatroomComponent(botData);
 		putMessageToChatroomConversation(matchMessage);
