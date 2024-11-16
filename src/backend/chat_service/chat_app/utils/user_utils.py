@@ -1,11 +1,11 @@
-from django.http import JsonResponse
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
+from django.http import JsonResponse
 from django.views import View
 from ..models import User
+import httpx
 import json
 
-class add_new_user(View):
+class AddNewUser(View):
     def __init__(self):
         super().__init__
     
@@ -39,7 +39,6 @@ class update_user(View):
             return JsonResponse({'message': 'User not found'}, status=400)
         data = json.loads(request.body.decode('utf-8'))
         for field in ['username', 'email', 'is_verified', 'two_factor_method']:
-            print(f'----------- field = {field} ------------') 
             if field in data:
                 setattr(request.user, field, data[field])
         request.user.save()

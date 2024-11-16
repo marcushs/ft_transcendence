@@ -3,7 +3,7 @@ from .views import friendship_status, get_friends_list, friendship_manager
 from .utils import user_utils, websocket_utils
 
 urlpatterns = [
-    path('add_user/', user_utils.add_new_user.as_view(), name='add_user'),
+    path('add_user/', user_utils.AddNewUser.as_view(), name='add_user'),
     path('update_user/', user_utils.update_user.as_view(), name='update_user'),
     path('friendship_status/', friendship_status.GetFriendShipStatus.as_view(), name='friendship_status'),
     path('manage_friendship/', friendship_manager.friendshipManager.as_view(), name='manage_friendship'),

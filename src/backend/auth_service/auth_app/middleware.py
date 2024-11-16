@@ -1,5 +1,5 @@
-from .utils.jwt_utils import get_user_from_jwt, Refresh_jwt_token
 from django.utils.deprecation import MiddlewareMixin # assure the retro-compability for recent django middleware
+from .utils.jwt_utils import get_user_from_jwt, Refresh_jwt_token
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
@@ -33,8 +33,8 @@ class JWTAuthMiddleware(MiddlewareMixin):
                 request.new_jwt = token
                 token_refresh = Refresh_jwt_token(refresh_token, 'refresh')
                 request.new_jwt_refresh = token_refresh
-                request.user = jwt_user
-            else:                
+                request.user = jwt_user          
+            else:
                 request.jwt_failed = True
                 request.user = AnonymousUser()
         else:

@@ -35,7 +35,7 @@ def send_request_without_token(request_type, url, payload, csrf_token):
         'Content-Type': 'application/json',
         'X-CSRFToken': csrf_token
     }
-    cookies = {'csrftoken': csrf_token}
+    cookies = {'csrftoken': csrf_token} 
     try:
         if request_type == 'GET':
             response = requests.get(url=url, headers=headers, cookies=cookies)
@@ -45,5 +45,15 @@ def send_request_without_token(request_type, url, payload, csrf_token):
             return response
         else:
             response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        error_message = e.response.json().get('message', 'unknown error')
+        raise ExpectedException(str(error_message)) 
     except Exception as e:
-        raise Exception(f"An error occurred: {e}")
+        raise Exception(f"An error occurred: {e}") 
+
+class ExpectedException(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+    def __str__(self):
+        return super().__str__()

@@ -58,7 +58,6 @@ export default class ChatRoomTopBar extends HTMLElement {
 		try {
 			let res = await sendRequest('GET', `/api/user/get_user_status/?userId=${this.userData.id}`, null, false);
 			
-			console.log('chatroom top bar: ', res.user_status)
 			return res.user_status;
 		} catch (error) {
 		}

@@ -6,7 +6,7 @@ import requests
 import httpx
 import json
 
-class add_new_user(View):
+class AddNewUser(View):
     def __init__(self):
         super().__init__
     

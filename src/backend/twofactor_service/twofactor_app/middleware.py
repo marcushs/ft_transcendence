@@ -6,7 +6,8 @@ from django.http import JsonResponse
 from django.conf import settings
 
 User = get_user_model()
-# Middleware for jwt authentication
+
+
 from .views.two_factor_utils import send_request
 class JWTAuthMiddleware(MiddlewareMixin):
     def process_request(self, request):

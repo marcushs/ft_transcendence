@@ -60,10 +60,12 @@
 	"twoFactorAppView": {
 	  "title": "Enable 2fa by authenticator",
 	  "paragraph": "To enable 2fa, please use your smartphone to scan the QR code below, or enter the key in your authentication application. For example, use Google Authenticator or Authy.",
+	  "twoFactorSuccess": "Two factor authentication by app successfully enabled",
 	  "key": "Key"
 	},
 	"twoFactorEmailView": {
 	  "title": "Enable 2fa by email",
+	  "twoFactorSuccess": "Two factor authentication by email successfully enabled",
 	  "paragraph": "To enable 2fa, please enter the code you received at the following email"
 	},
 	"twoFactorDeactivationView": {
@@ -74,13 +76,27 @@
 	  "disableDisclaimerSuffix": "you have to disable 2fa by",
 	  "disableExplication": "To disable 2fa, please enter the code you received",
 	  "disableEmail": "at the following email:",
-	  "disableAuthenticator": "on your authenticator application."
+	  "disableAuthenticator": "on your authenticator application.",
+	  "twoFactorDisabled": "Two factor authentication successfully disabled"
 	},
 	"twoFactorVerifyView": {
 	  "emailTitle": "Verify 2FA by email",
 	  "emailParagraph": "To verify 2FA, please enter the code you received at the following email:",
 	  "authenticatorTitle": "Verify 2FA by authenticator",
 	  "authenticatorParagraph": "To verify 2FA, please enter the code you received on your authenticator application."
+	},
+	"twoFactorError": {
+	  "emailError": "An error occured with TwoFactor email, please retry",
+	  "authenticatorError": "An error occured with TwoFactor authenticator, please retry",
+	  "notConnected": "You are not connected, please login",
+	  "twoFactorAlreadyActivated": "Two factor authentification is already set on your account",
+	  "twoFactorNotActivated": "Two factor authentification not set on your account",
+	  "unknownUser": "User not found in database",
+	  "unknownError": "An unexpected error occured, please try again",
+	  "invalidCode": "Invalid Twofactor code",
+	  "expiredCode": "Expired Twofactor code",
+	  "emptyCode": "Please enter the 2fa code",
+	  "invalidMethod": "The TwoFactor method choosen is not allowed"
 	},
 	"buttonComponent": {
 	  "login": "Login",
@@ -293,11 +309,14 @@
 	"twoFactorAppView": {
 	  "title": "Activer la 2FA par authenticator",
 	  "paragraph": "Pour activer 2FA, veuillez utiliser votre smartphone pour scanner le code QR ci-dessous, ou saisissez la clé dans votre application d'authentification. Par exemple, utilisez Google Authenticator ou Authy.",
-	  "key": "Clé"
+	  "invalidCode": "Le code 2FA est invalide",
+	  "key": "Clé",
+	  "twoFactorSuccess": "Authentification à deux facteurs par application activée avec succès"
 	},
 	"twoFactorEmailView": {
 	  "title": "Activer la 2FA par email",
-	  "paragraph": "Pour activer 2fa, veuillez saisir le code que vous avez reçu à l'email suivante"
+	  "paragraph": "Pour activer 2fa, veuillez saisir le code que vous avez reçu à l'email suivante",
+	  "twoFactorSuccess": "Authentification à deux facteurs par email activée avec succès"
 	},
 	"twoFactorDeactivationView": {
 	  "title": "Désactiver la 2FA par",
@@ -307,13 +326,27 @@
 	  "disableDisclaimerSuffix": "vous devez désactiver la 2FA par",
 	  "disableExplication": "Pour désactiver la 2FA, veuillez saisir le code que vous avez reçu",
 	  "disableEmail": "à l'email suivante:",
-	  "disableAuthenticator": "sur votre application d'authentification."
+	  "disableAuthenticator": "sur votre application d'authentification.",
+	  "twoFactorDisabled": "L'authentification à deux facteurs a été désactivée avec succès"
 	},
 	"twoFactorVerifyView": {
 	  "emailTitle": "Vérifier la 2FA par email",
 	  "emailParagraph": "Pour vérifier la 2FA, veuillez saisir le code que vous avez reçu à l'adresse email suivante :",
 	  "authenticatorTitle": "Vérifier la 2FA par authenticator",
 	  "authenticatorParagraph": "Pour vérifier la 2FA, veuillez saisir le code que vous avez reçu sur votre application authenticator."
+	},
+	"twoFactorError": {
+	  "emailError": "Une erreur s'est produite avec L'authentification à deux facteurs par email, veuillez réessayer.",
+	  "authenticatorError": "Une erreur s'est produite avec L'authentification à deux facteurs par application, veuillez réessayer.",
+	  "notConnected": "Vous n'êtes pas connecté, veuillez vous connecter",
+	  "twoFactorAlreadyActivated": "L'authentification à deux facteurs est déjà activée sur votre compte",
+	  "twoFactorNotActivated": "L'authentification à deux facteurs n'est pas activée sur votre compte",
+	  "unknownUser": "Utilisateur non trouvé",
+	  "unknownError": "Une erreur inattendue s'est produite, veuillez réessayer",
+	  "invalidCode": "Le code à deux facteurs est non valide",
+	  "expiredCode": "Le code à deux facteurs est expiré",
+	  "emptyCode": "Veuillez saisir le code 2fa",
+	  "invalidMethod": "La méthode à deux facteurs choisie n'est pas autorisée"
 	},
 	"buttonComponent": {
 	  "login": "Connexion",
@@ -464,69 +497,102 @@
 	}
   },
 
-
-
-
-
-
-
-
-
-
-
   "zh": {
 	"loginView": {
 	  "loginTitle": "登录",
 	  "username": "用户名",
 	  "password": "密码",
 	  "forgottenPassword": "忘记密码？",
-	  "noAccountSentence": "还没有账号？",
+	  "noAccountSentence": "没有账户？",
 	  "signup": "注册"
 	},
 	"signupView": {
 	  "signupTitle": "注册",
 	  "username": "用户名",
-	  "email": "电子邮箱",
+	  "email": "电子邮件",
 	  "password": "密码",
 	  "confirmPassword": "确认密码",
-	  "existingAccountSentence": "已有账号？",
+	  "existingAccountSentence": "已有账户？",
 	  "login": "登录"
 	},
 	"changePasswordView": {
-	  "changePasswordTitle": "修改密码",
+	  "changePasswordTitle": "更改密码",
 	  "currentPassword": "当前密码",
 	  "newPassword": "新密码",
 	  "confirmPassword": "确认密码"
+	},
+	"twoFactorAppView": {
+	  "title": "启用应用双重验证",
+	  "paragraph": "要启用双重验证，请使用您的智能手机扫描下面的二维码，或在您的身份验证应用程序中输入密钥。例如，使用 Google Authenticator 或 Authy。",
+	  "twoFactorSuccess": "应用双重验证已成功启用",
+	  "key": "密钥"
+	},
+	"twoFactorEmailView": {
+	  "title": "启用邮件双重验证",
+	  "twoFactorSuccess": "邮件双重验证已成功启用",
+	  "paragraph": "要启用双重验证，请输入您收到的验证码到以下邮箱"
+	},
+	"twoFactorDeactivationView": {
+	  "title": "禁用双重验证通过",
+	  "email": "电子邮件",
+	  "authenticator": "身份验证器",
+	  "disableDisclaimerPrefix": "要启用双重验证通过",
+	  "disableDisclaimerSuffix": "您必须先禁用双重验证通过",
+	  "disableExplication": "要禁用双重验证，请输入您收到的验证码",
+	  "disableEmail": "到以下邮箱：",
+	  "disableAuthenticator": "在您的身份验证应用程序上。",
+	  "twoFactorDisabled": "双重验证已成功禁用"
+	},
+	"twoFactorVerifyView": {
+	  "emailTitle": "验证邮件双重验证",
+	  "emailParagraph": "要验证双重验证，请输入您收到的验证码到以下邮箱：",
+	  "authenticatorTitle": "验证应用双重验证",
+	  "authenticatorParagraph": "要验证双重验证，请输入您在身份验证应用程序上收到的验证码。"
+	},
+	"twoFactorError": {
+	  "emailError": "邮件双重验证出错，请重试",
+	  "authenticatorError": "应用双重验证出错，请重试",
+	  "notConnected": "您尚未连接，请登录",
+	  "twoFactorAlreadyActivated": "您的账户已启用双重验证",
+	  "twoFactorNotActivated": "您的账户未启用双重验证",
+	  "unknownUser": "数据库中未找到用户",
+	  "unknownError": "发生意外错误，请重试",
+	  "invalidCode": "无效的双重验证代码",
+	  "expiredCode": "双重验证代码已过期",
+	  "emptyCode": "请输入双重验证代码",
+	  "invalidMethod": "所选的双重验证方式不允许"
 	},
 	"buttonComponent": {
 	  "login": "登录",
 	  "signup": "注册",
 	  "create": "创建",
 	  "join": "加入",
-	  "play": "开始游戏",
-	  "change": "修改",
-	  "save": "保存"
+	  "play": "游戏",
+	  "change": "更改",
+	  "save": "保存",
+	  "verify": "验证",
+	  "cancel": "取消"
 	},
 	"navBarComponent": {
-	  "home": "首页"
+	  "home": "主页"
 	},
 	"searchBarComponent": {
 	  "search": "搜索",
 	  "users": "用户",
-	  "tournaments": "比赛"
+	  "tournaments": "锦标赛"
 	},
 	"gameComponent": {
-	  "tournaments": "比赛",
+	  "tournaments": "锦标赛",
 	  "online": "在线",
 	  "local": "本地",
 	  "create": "创建",
-	  "tournamentName": "比赛名称",
+	  "tournamentName": "锦标赛名称",
 	  "numberOfPlayers": "玩家数量",
-	  "privateMatch": "私人对局",
+	  "privateMatch": "私人比赛",
 	  "playerName": "玩家名称",
-	  "ranked": "排位赛",
-	  "unranked": "非排位赛",
-	  "scoreToWin": "获胜分数",
+	  "ranked": "排名",
+	  "unranked": "非排名",
+	  "scoreToWin": "胜利分数",
 	  "paddleSpeed": "球拍速度",
 	  "ballSpeed": "球速"
 	},
@@ -539,21 +605,21 @@
 	  "gold": "黄金",
 	  "silver": "白银",
 	  "bronze": "青铜",
-	  "maxRank": "最高段位",
-	  "nextRank": "下一段位"
+	  "maxRank": "最高排名",
+	  "nextRank": "下一级排名"
 	},
 	"profileComponent": {
 	  "imageLink": "使用图片链接",
 	  "importImage": "导入图片",
 	  "image42": "42图片",
 	  "username": "用户名",
-	  "email": "电子邮箱",
-	  "twoFactorTitle": "双重认证",
-	  "twoFactorInformation": "通过要求密码之外的第二种认证方法来帮助保护您的账户免受未经授权的访问。",
-	  "twoFactorByEmail": "邮箱双重认证",
-	  "twoFactorByAuthenticator": "认证器双重认证",
-	  "changePasswordTitle": "修改密码",
-	  "changePasswordInformation": "定期更改密码以保持账户安全。"
+	  "email": "电子邮件",
+	  "twoFactorTitle": "双重验证",
+	  "twoFactorInformation": "帮助保护您的账户免受未经授权的访问，除了密码之外还需要第二种验证方式。",
+	  "twoFactorByEmail": "邮件双重验证",
+	  "twoFactorByAuthenticator": "应用双重验证",
+	  "changePasswordTitle": "更改密码",
+	  "changePasswordInformation": "定期更改您的密码以确保账户安全。"
 	},
 	"profileNavBarComponent": {
 	  "personalInformation": "个人信息",
@@ -561,21 +627,21 @@
 	  "statistics": "统计"
 	},
 	"contactMenuComponent": {
-		"searchContactPlaceHolder": "查找联系人",
-		"contactsTitle": "联系方式",
-		"pendingContactsTitle": "联系要求",
+		"searchContactPlaceHolder": "搜索联系人",
+		"contactsTitle": "联系人",
+		"pendingContactsTitle": "联系人请求",
 		"noContacts": "未找到联系人...",
-		"noContactsRequest": "没有联系请求..."
+		"noContactsRequest": "没有联系人请求..."
 	},
 	"contactComponent": {
 		"onlineStatus": "在线",
-		"awayStatus": "缺席",
-		"offlineStatus": "网下",
-		"inGameStatus": "危亡",
-		"sendMessageAction": "发送信息",
+		"awayStatus": "离开",
+		"offlineStatus": "离线",
+		"inGameStatus": "游戏中",
+		"sendMessageAction": "发送消息",
 		"inviteToPlayAction": "邀请游戏",
-		"removeContactsAction": "删除联系人",
-		"seeProfileAction": "查看简介"
+		"removeContactsAction": "移除联系人",
+		"seeProfileAction": "查看资料"
 	},
 	"popUpComponent": {
 		"pasteImageLink": "粘贴图片链接",
@@ -583,7 +649,14 @@
 		"searchContactPlaceHolder": "搜索联系人",
 		"noContacts": "未找到联系人...",
 		"add": "添加"
+	},
+	"notificationsComponent": {
+	  "acceptedNotificationSuffix": "已接受您的好友请求",
+	  "pendingNotificationPrefix": "您有来自的好友请求"
+	},
+	"accountInfosComponent": {
+	  "profile": "资料",
+	  "logout": "退出登录"
 	}
   }
-
 }

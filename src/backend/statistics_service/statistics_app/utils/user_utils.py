@@ -10,7 +10,7 @@ def get_user_by_id(user_id):
     
     return user
 
-class update_user(View):
+class UpdateUser(View):
     def __init__(self):
         super().__init__()
         
@@ -27,7 +27,7 @@ class update_user(View):
         return JsonResponse({'message': 'User updated successfully'}, status=200)
     
     
-class add_new_user(View):
+class AddNewUser(View):
     def __init__(self):
         super().__init__()
     

@@ -61,7 +61,7 @@ class ping_status_user(View):
         return JsonResponse({'status': 'success', "message": 'pong'}, status=200) 
 
 
-class add_new_user(View):
+class AddNewUser(View):
     def __init__(self):
         super().__init__
     
@@ -181,6 +181,17 @@ class searchUsers(View):
             return JsonResponse({'status': 'success', 'message': users_list}, safe=False, status=200)
         else:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+        
+
+class getClientUsername(View):
+    def __init__(self):
+        super().__init__
+    
+    def get(self, request):
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'message': 'User not found'}, status=400)
+        return JsonResponse({'status': 'success', 'username': request.user.username}, status=200)
+
 
 class getUserId(View):
     def __init__(self):

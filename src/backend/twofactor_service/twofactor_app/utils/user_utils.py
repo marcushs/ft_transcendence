@@ -2,9 +2,10 @@ from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
 from django.views import View
 from ..models import User
+from .send_request import send_request 
 import json
 
-class add_new_user(View):
+class AddNewUser(View):
     def __init__(self):
         super().__init__
     
