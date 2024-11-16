@@ -41,15 +41,29 @@
 	cursor: pointer;
 }
 
+.tournament-match-ready-btn.clicked {
+	background-color: gray;
+	color: white;
+	border: 1px solid gray;
+	cursor: not-allowed;
+}
+
+.tournament-match-ready-btn:not(:disabled):active {
+	scale: 0.98;
+}
+
 .tournament-match-content p, .tournament-match-content span {
 	font-size: 2.5rem;
 	margin-left: 1rem;
 }
 
+span#opponent-span.active {
+	animation: fadeInOut 2s ease-in-out infinite;
+}
+
 .tournament-match-content span {
 	font-weight: bold;
 }
-
 
 .countdown-container {
 	display: flex;
@@ -68,4 +82,9 @@
 .countdown-container span {
 	font-size: 1.7rem;
 	margin: 0;
+}
+
+@keyframes fadeInOut {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0; }
 }

@@ -135,7 +135,7 @@ function createRankInfos(rank, rankPoints) {
     }
 
     if (rank === 'master')
-        return `<p class="max-rank">${getString('ranks/maxRank')}</p>`;
+        return `<p class="max-rank">${getString('ranksuser-profile-send-mes/maxRank')}</p>`;
 
     const innerBarPercentage = (rankPoints - rankPointsTarget[rank][0]) * 100 / (rankPointsTarget[rank][1] - rankPointsTarget[rank][0]);
     return `

@@ -4,13 +4,14 @@ import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
 import { displayChatroomComponent } from "../../../../utils/chatUtils/sendMessageCallback.js";
 import { putMessageToChatroomConversation } from "../../../../utils/chatUtils/sendPrivateMessage.js";
 import BracketObj from "./bracket/BracketObj.js";
+import { sendRequest } from "../../../../utils/sendRequest.js";
 
 export default class TournamentMatch {
-	constructor(tournamentBracket) {
+	constructor(match) {
 		this.redirectState = "tournament-match";
 		this.class = "tournament-match";
-		let jsonString = JSON.stringify(tournamentBracket);
-		this.tournamentBracket = jsonString.replace(/&/g, '&amp;')
+		let jsonString = JSON.stringify(match);
+		this.match = jsonString.replace(/&/g, '&amp;')
 										.replace(/'/g, '&apos;')
 										.replace(/"/g, '&quot;')
 										.replace(/</g, '&lt;')
@@ -18,28 +19,25 @@ export default class TournamentMatch {
 	}
 
 	render() {
-		return `<tournament-match data-tournament-match="${this.tournamentBracket}"></tournament-match>`;
+		return `<tournament-match data-tournament-match="${this.match}"></tournament-match>`;
 	}
 }
 
 class TournamentMatchElement extends HTMLElement {
 	constructor() {
 		super();
-		this.tournamentBracket = JSON.parse(this.getAttribute('data-tournament-match'));
-		this.tournamentId = this.tournamentBracket.tournament.tournament_id;
-		this.tournamentName = this.tournamentBracket.tournament.tournament_name;
-		this.tournamentSize = this.tournamentBracket.tournament.tournament_size;
-		this.bracketObj = BracketObj.create(this.tournamentBracket, this.tournamentSize);
-		this.stage = this.tournamentBracket.tournament.current_stage;
-		this.matches = this.tournamentBracket[this.stage];
-		this.clientMatch = null;
+		this.match = JSON.parse(this.getAttribute('data-tournament-match'));
+		this.tournamentId = this.match.tournament_id;
+		this.tournamentName = this.match.tournament_name;
+		this.bracketObj = null;
+		this.stage = this.match.tournament_round;
 		this.userId = null;
 	}
 
 	async connectedCallback() {
-		await this.findMatch();
 		await this.render();
 		this.addEventListeners();
+		this.setOpponentSpanActive();
 		this.showMatchMessage();
 	}
 
@@ -54,10 +52,10 @@ class TournamentMatchElement extends HTMLElement {
 						</div>
 						<h4 class="tournament-name">${this.tournamentName}</h4>
 						<p>Stage: <span>${this.formatCurrentStage(this.stage)}</span></p>
-						<p>Opponent: <span>${this.getOpponent()}</span></p>
+						<p>Opponent: <span id='opponent-span'>${await this.getOpponent()}</span></p>
 						<div class="countdown-container">
 							<button type="button" class="tournament-match-ready-btn">Ready</button>
-							<p class="match-countdown">Match starts in <span></span>s</p>
+							<p class="match-countdown">Match starts in <span>60</span>s</p>
 						</div>
 					</div>
 				</div>
@@ -72,44 +70,47 @@ class TournamentMatchElement extends HTMLElement {
 		return round[0].toUpperCase() + round.slice(1);
 	}
 
-	async findMatch() {
+	async getOpponent() {
 		this.userId = await getUserId();
 		
-		if (!this.userId) return ;
+		if (!this.userId) return console.log('Cannot find userId');
 
-		this.clientMatch = this.matches.find(match => 
-			match.players.some(player => player.id === this.userId)
-		);
-	}
-
-	getOpponent() {
-		return this.clientMatch.players[0].id === this.userId ? this.clientMatch.players[1].username : this.clientMatch.players[0].username;
+		if (this.match.players.length === 2)
+			return this.match.players[0].id === this.userId ? this.match.players[1].username : this.match.players[0].username;
+		return 'To Be Determined...';
 	}
 
 	addEventListeners() {
 		const bracketBtn = this.querySelector('#bracket-icon');
 		const readyBtn = this.querySelector('.tournament-match-ready-btn');
 
-		bracketBtn.addEventListener('click', () => {
+		bracketBtn.addEventListener('click', async () => {
 			console.log('clicked on bracket')
-			console.log('bracketObj', this.bracketObj);
-			this.redirectToBracket();
+			try {
+				let res = await sendRequest('GET', '/api/tournament/get_bracket/', null, false);
+				this.bracketObj = BracketObj.create(res.bracket, res.bracket.tournament_size);
+				console.log('bracketObj', this.bracketObj);
+				this.redirectToBracket();
+			} catch (error) {
+				console.log('Error retrieving bracket')
+			}
 		})
 
 		readyBtn.addEventListener('click', () => {
 			console.log('ready clicked');
 			console.log('userId: ', this.userId);
+			readyBtn.disabled = true;
+			readyBtn.classList.add('clicked')
 			const payload = {
 				'type': 'user_ready_for_match',
 				'userId': this.userId,
-				'matchId': this.clientMatch.match_id
+				'matchId': this.match.match_id
 			}
 			tournamentSocket.send(JSON.stringify(payload));
-			clearInterval(this.intervalId);
 		})
 	}
 
-	redirectToBracket() {
+	async redirectToBracket() {
 		const gameComponent = document.querySelector('game-component');
 		const bracketState = gameComponent.states['bracket'];
 		const bracket = new Bracket(this.bracketObj);
@@ -127,7 +128,15 @@ class TournamentMatchElement extends HTMLElement {
 		secondsSpan.innerText = time;
 	}
 
-	showMatchMessage() {
+	async showMatchMessage() {
+		const opponentSpan = this.querySelector("#opponent-span");
+		const matchCountdown = this.querySelector('.match-countdown');
+
+		if (opponentSpan.innerText === 'To Be Determined...') {
+			matchCountdown.remove();
+			return;
+		}
+
 		const botData = {
 			id: 'tournament_bot',
 			username: 'Tournament Bot',
@@ -137,13 +146,22 @@ class TournamentMatchElement extends HTMLElement {
 		const matchMessage = {
 			chatroom: 'tournament_match',
 			author: botData,
-			message: `${this.formatCurrentStage(this.stage)} match against ${this.getOpponent()} will start soon!
+			message: `${this.formatCurrentStage(this.stage)} match against ${await this.getOpponent()} will start soon!
 			Click the "Ready" button when ready! GLHF!`,
 			created: new Date(),
 		}
 
+
 		displayChatroomComponent(botData);
 		putMessageToChatroomConversation(matchMessage);
+	}
+
+	setOpponentSpanActive() {
+		const opponentSpan = this.querySelector("#opponent-span");
+
+		if (opponentSpan.innerText === 'To Be Determined...') {
+			opponentSpan.classList.add('active'); 
+		}
 	}
 }
 

@@ -70,6 +70,8 @@ async function postNewUsername() {
 	console.log(urlParams)
 	const oauthProvider = urlParams.get('oauth_provider');
 
+	if(!oauthProvider) return window.location.replace('/login');
+
 	feedbackElement.innerText = '';
 
 	const config = {

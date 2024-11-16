@@ -38,6 +38,7 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 	const inGameComponent = document.createElement('in-game-component');
 	inGameComponent.gameId = gameId;
 	inGameComponent.gameState = initialGameState;
+	console.log('inGameComponent.gameState', inGameComponent.gameState)
 	inGameComponent.map_dimension = map_dimension;
 	inGameComponent.userId = userId;
 	statesContainerDiv.appendChild(inGameComponent);
@@ -45,6 +46,7 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 
 export default class Game {
 	constructor(canvas, gameId, gameState, userId) {
+		console.log("gameType is: ", gameState.game_type)
 		this.gameInProgress = true;
 		this.gameType = gameState.game_type;
 		this.userId = userId;

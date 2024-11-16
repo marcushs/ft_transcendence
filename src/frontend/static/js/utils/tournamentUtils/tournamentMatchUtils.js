@@ -37,12 +37,13 @@ export function proceedInTournament(gameId, userId) {
 
 export async function redirectToTournamentLostMatch(matchId) {
 	try {
-		const res = await sendRequest('GET', `/api/tournament/get_bracket/?match_id=${matchId}`, null, false);
+		const res = await sendRequest('GET', `/api/tournament/get_match_by_id/?match_id=${matchId}`, null, false);
 	
-		const tournamentBracket = res.bracket;
+		const match = res.match;
+		console.log('qolkwierhtg: ', res.match)
 		const gameComponent = document.querySelector('game-component');
 		const tournamentLostState = gameComponent.states['tournamentLost'];
-		const tournamentLost = new TournamentLost(tournamentBracket, matchId);
+		const tournamentLost = new TournamentLost(match);
 	
 		tournamentLostState['state'] = tournamentLost;
 		gameComponent.changeState(tournamentLostState.state, tournamentLostState.context);

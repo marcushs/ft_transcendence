@@ -17,7 +17,7 @@ import uuid
 @method_decorator(csrf_exempt, name='dispatch') 
 class startGameEngine(View):
     def __init__(self):
-        super()
+        super() 
 
     async def post(self, request):
         try:
@@ -26,7 +26,7 @@ class startGameEngine(View):
                 return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)
             asyncio.create_task(starting_game_instance(data))
             return JsonResponse({'status': 'success', 'message': 'Game instance started'}, status=200)
-        except Exception as e:
+        except Exception as e: 
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 

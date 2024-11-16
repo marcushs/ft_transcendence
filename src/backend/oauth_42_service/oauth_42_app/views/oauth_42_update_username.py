@@ -42,7 +42,7 @@ class oauth42UpdateUsernameView(View):
                 return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
             except User.DoesNotExist:
                 return JsonResponse({"message": "User not found", "url":"/login", "status": "Error"}, status=404)
-        return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error", 'url': '/oauth-username?oauth_provider=oauth_42'}, status=400)
+        return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
          
     def check_new_username_taken(self, username):
         url = 'http://user:8000/api/user/check_username/'

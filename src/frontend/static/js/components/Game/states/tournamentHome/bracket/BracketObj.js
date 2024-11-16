@@ -4,6 +4,7 @@ export default class BracketObj {
     #bracketObj;
 
     constructor(tournamentBracket, tournamentSize) {
+		console.log("sfsfssffssfsfsfsfsfsfs", tournamentBracket)
         this.#tournamentBracket = tournamentBracket;
         this.#bracketObj = {
             nbOfPlayers: tournamentSize,
@@ -18,7 +19,9 @@ export default class BracketObj {
             'semi_finals': {target: this.#bracketObj.semiFinal, length: 1},
             'finals': {target: this.#bracketObj.final},
         };
+		console.log('asdopfiuahsodf', this.#bracketObj);
         this.#makeBracketObject();
+		console.log('after ', this.#bracketObj);
     }
 
     // Static factory method
@@ -46,11 +49,13 @@ export default class BracketObj {
 
 	fillBracketMatches(stage, stageMatches) {
 		let target = this.#stageMapping[stage].target;
-
+	
 		if (stage === 'finals') {
-			target = []
-			
-			target.push(this.makeMatch(stageMatches[0]));
+			console.log(stageMatches[0])
+			console.log('target is', target)
+			let finalMatch = this.makeMatch(stageMatches[0], 'left');
+			target.push(finalMatch)
+			// target.push(this.makeMatch(stageMatches[0]));
 			return ;
 		}
 
@@ -58,9 +63,10 @@ export default class BracketObj {
 		target['rightMatches'] = [];
 
 		stageMatches.forEach((match, idx) => {
-			(idx < stageMatches.length / 2) ? 
-			target.leftMatches.push(this.makeMatch(match)) :
-			target.rightMatches.push(this.makeMatch(match));
+			console.log('BracketObj: ', match.bracket_index);
+			(match.bracket_index < stageMatches.length / 2) ? 
+			target.leftMatches.push(this.makeMatch(match, 'left')) :
+			target.rightMatches.push(this.makeMatch(match, 'right'));
 		});
 	}
 
@@ -80,18 +86,77 @@ export default class BracketObj {
 		return [null, null];
 	}
 
-	makeMatch(match) {
-		if (!match.winner && !match.loser) {
-			return match = [
-				{name: match.players[0].username, score: '0'}, 
-				{name: match.players[1].username, score: '0'}
-			];
+	makeMatch(match, side) {
+		console.log('called make match')
+		let match_pair = new Array(2);
+
+		if (side === 'left') {
+			console.log('match is ', match)
+			if (!match.winner && !match.loser) {
+				if (match.players.length < 1) return [null, null];
+
+				if (match.players.length === 1) {
+					if (match.players[0].player_number === 0) {
+						match_pair[0] = {name: match.players[0].username, score: '0'};
+						match_pair[1] = null;
+					} else {
+						match_pair[0] = {name: match.players[0].username, score: '0'};
+						match_pair[1] = null;
+					}
+					return match_pair;
+				}
+
+				if (match.players[0].player_number === 0) {
+					match_pair[0] = {name: match.players[0].username, score: '0'};
+					match_pair[1] = {name: match.players[1].username, score: '0'};
+				} else {
+					match_pair[0] = {name: match.players[1].username, score: '0'};
+					match_pair[1] = {name: match.players[0].username, score: '0'};
+				}
+				return match_pair;
+			}
+
+			if (match.players[0].player_number === 0) {
+				match_pair[0] = {name: match.players[0].username, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`};
+				match_pair[1] = {name: match.players[1].username, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`};
+			} else {
+				match_pair[0] = {name: match.players[1].username, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`};
+				match_pair[1] = {name: match.players[0].username, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`};
+			}
+			return match_pair;
 		}
 
-		return match = [
-			{name: match.players[0].username, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`}, 
-			{name: match.players[1].username, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`}
-		];
-	}
+		if (!match.winner && !match.loser) {
+			if (match.players.length < 1) return [null, null];
 
+			if (match.players.length === 1) {
+				if (match.players[0].player_number === 0) {
+					match_pair[1] = {name: match.players[0].username, score: '0'};
+					match_pair[0] = null;
+				} else {
+					match_pair[1] = {name: match.players[0].username, score: '0'};
+					match_pair[0] = null;
+				}
+				return match_pair;
+			}
+
+			if (match.players[0].player_number === 0) {
+				match_pair[1] = {name: match.players[0].username, score: '0'};
+				match_pair[0] = {name: match.players[1].username, score: '0'};
+			} else {
+				match_pair[1] = {name: match.players[1].username, score: '0'};
+				match_pair[0] = {name: match.players[0].username, score: '0'};
+			}
+			return match_pair;
+		}
+
+		if (match.players[0].player_number === 0) {
+			match_pair[1] = {name: match.players[0].username, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`};
+			match_pair[0] = {name: match.players[1].username, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`};
+		} else {
+			match_pair[1] = {name: match.players[1].username, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`};
+			match_pair[0] = {name: match.players[0].username, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`};
+		}
+		return match_pair;
+	}
 }

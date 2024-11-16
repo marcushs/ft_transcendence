@@ -5,6 +5,7 @@
 @import "./TournamentComponent.css";
 @import "./TournamentMatch.css";
 @import "./TournamentLost.css";
+@import "./TournamentWon.css";
 
 .tournament-home-container {
 	height: 100%;
