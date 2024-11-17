@@ -56,7 +56,7 @@ class FriendsMenuComponent extends HTMLElement {
     // -------------------------- //
 
 
-    attachTestEventListener() {
+    attachMovingDivEventListener() {
         const contactsMenu = this.querySelector('.contact-menu');
 
         contactsMenu.addEventListener('mousedown', (event) => {
@@ -221,7 +221,7 @@ class FriendsMenuComponent extends HTMLElement {
             app.appendChild(popUp);
         })
         this.searchContactInput.addEventListener('input', () => this.updateContactList());
-        this.attachTestEventListener();
+        this.attachMovingDivEventListener();
     }
 
     async updateContactList() {        

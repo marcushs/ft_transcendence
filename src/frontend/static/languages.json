@@ -17,7 +17,13 @@
 	  "errorWhileLogin": "An error occured while logging in",
 	  "userNotFound": "User not found",
 	  "loginSuccessfully": "Login successfully",
-	  "accountCreated": "Account successfully created"
+	  "accountCreated": "Account successfully created",
+	  "invalidEmail": "Please enter a valid email address.",
+	  "validEmail": "Email is valid ✓",
+	  "invalidPreviewPassword": "The password must contain at least 8 characters, 1 number, 1 uppercase letter and 1 special symbol.",
+	  "validPreviewPassword": "Password is valid ✓",
+	  "passwordMatch": "Password match!",
+	  "passwordNotMatch": "Password does not match"
 	},
 	"signupView": {
 	  "signupTitle": "Signup",
@@ -266,7 +272,14 @@
 	  "errorWhileLogin": "Une erreur s'est produite lors de la connexion",
 	  "userNotFound": "Utilisateur non trouvé",
 	  "loginSuccessfully": "Connexion réussie",
-	  "accountCreated": "Le compte a été créé avec succès"
+	  "accountCreated": "Le compte a été créé avec succès",
+	  "invalidEmail": "Veuillez saisir une adresse email valide",
+	  "validEmail": "L'email est valide ✓",
+	  "invalidPreviewPassword": "Le mot de passe doit contenir au moins 8 caractères, 1 chiffre, 1 lettre majuscule et 1 symbole spécial",
+	  "validPreviewPassword": "Le mot de passe est valide ✓",
+	  "passwordMatch": "Le mot de passe correpond",
+	  "passwordNotMatch": "Le mot de passe ne correspond pas"
+
 	},
 	"signupView": {
 	  "signupTitle": "Inscription",

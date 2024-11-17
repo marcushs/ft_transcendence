@@ -60,6 +60,10 @@ class PrivateMatchInit(View):
     def init(self, request, data):
         self.invited_user = self.get_invited_user(data)
         self.user = request.user
+        if is_player_in_private_lobby(self.user):
+            raise Exception('alreadyInLobby')
+        if is_player_in_private_lobby(self.invited_user):
+            raise Exception('contactAlreadyInLobby')
         if self.invited_user.id == self.user.id:
             raise Exception('cantInviteYourself')
         if is_player_in_private_lobby(self.user):

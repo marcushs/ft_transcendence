@@ -33,7 +33,7 @@ export default () => {
 						<button-component id="oauthGithubLoginBtn" label="" class="o-auth-btn" icon="logo_github">
 						</button-component>
 					</div>
-					<p>${getString('loginView/noAccountSentence')} <a href="/signup">${getString('loginView/signup')}</a></p>
+					<p>${getString('loginView/noAccountSentence')} <a id="signup-redirect-button">${getString('loginView/signup')}</a></p>
 					<span id="feedbackElement" class="input-feedback"></span>
 				</form>
 			</div>
@@ -44,6 +44,7 @@ export default () => {
 		const oauth42LoginBtn = document.getElementById('oauth42LoginBtn');
 		const oauthGoogleLoginBtn = document.getElementById('oauthGoogleLoginBtn');
 		const oauthGithubLoginBtn = document.getElementById('oauthGithubLoginBtn');
+		const redirectSignupBtn = document.querySelector('#signup-redirect-button');
 
 		loginBtn.addEventListener('click', event => {
 			event.preventDefault();
@@ -52,6 +53,7 @@ export default () => {
 		});
 
 		oauth42LoginBtn.addEventListener('click', () => redirectToOauth("oauth_42"));
+		redirectSignupBtn.addEventListener('click', () => throwRedirectionEvent('/signup'));
 		oauthGoogleLoginBtn.addEventListener('click', () => redirectToOauth("oauth_google"));
 		oauthGithubLoginBtn.addEventListener('click', () => redirectToOauth("oauth_github"));
 
