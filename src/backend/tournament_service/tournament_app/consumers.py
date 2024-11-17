@@ -330,7 +330,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 							cookies=self.cookies, 
 							payload=payload)
 
-
+ 
 
 # -------------------------------> Bracket Utils <---------------------------------
 
