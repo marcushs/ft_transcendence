@@ -3,38 +3,26 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,Permiss
 import uuid
 from django.utils import timezone
 
-def user_directory_path(instance, filename):
-    return f'profile_images/{instance.id}/{filename}'
-
 class UserManager(BaseUserManager):
-    def create_user(self, email, username, user_id):
-        if not email:
-            raise ValueError('The Email field must be set')
+    def create_user(self, username, user_id):
         if not username:
             raise ValueError('The username field must be set')
-        email = self.normalize_email(email)
-        user = self.model(email=email, username=username, id=user_id)
+        user = self.model(username=username, id=user_id)
         user.set_unusable_password()
         user.save(using=self._db)
         return user
     
     def create_oauth_user(self, data):
-        email = data['email']
         username = data['username']
         user_id = data['user_id']
-        profile_image_link = data['profile_image_link']
-        user = self.model(id=user_id, email=email, username=username,  profile_image_link=profile_image_link)
+        user = self.model(id=user_id, username=username)
         user.save(using=self._db)
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=12, unique=True, default='default')
-    email = models.EmailField(unique=True)
-    profile_image = models.ImageField(upload_to=user_directory_path, null=True)
-    profile_image_link = models.CharField(blank=True, null=True, default='https://cdn.intra.42.fr/users/8df16944f4ad575aa6c4ef62f5171bca/acarlott.jpg')
     status = models.CharField(max_length=10, choices=[('online', 'Online'), ('away', 'Away'), ('ingame', 'In Game'), ('offline', 'Offline')], default='offline')
-    last_active = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -45,20 +33,12 @@ class User(AbstractBaseUser, PermissionsMixin):
       return self.username
 
     def to_dict(self):
+        
         return {
             'id': str(self.id),
             'username': self.username,
-            'email': self.email,
-            'profile_image': self.profile_image,
-            'profile_image_link': self.profile_image_link,
         }
         
-    def get_status(self):
-        return {
-            'status': self.status,
-            'last_active': self.last_active,
-        }
-    
     def block_user(self, user_to_block):
         Block.objects.get_or_create(blocker=self, blocked=user_to_block)
 

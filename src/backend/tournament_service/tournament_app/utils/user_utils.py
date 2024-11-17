@@ -41,39 +41,3 @@ class update_user(View):
                 setattr(request.user, field, data[field])
         request.user.save()
         return JsonResponse({'message': 'User updated successfully'}, status=200)
-
-class check_username(View):
-    def __init__(self):
-        super().__init__
-
-    def get(self, request):
-        username = request.GET.get('username')
-        print(username) 
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
-        return JsonResponse({"message": "Username is free", "status": "Success"}, status=200)
-    
-async def send_async_request(request_type, request, url, payload=None):
-        headers = {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-CSRFToken': request.COOKIES.get('csrftoken')
-            } 
-        cookies = {
-                'csrftoken': request.COOKIES.get('csrftoken'),
-                'jwt': request.COOKIES.get('jwt'),
-                'jwt_refresh': request.COOKIES.get('jwt_refresh'),
-            }
-        try:
-            async with httpx.AsyncClient() as client:
-                if request_type == 'GET':
-                    response = await client.get(url, headers=headers, cookies=cookies)
-                else:
-                    response = await client.post(url, headers=headers, cookies=cookies, content=json.dumps(payload))
-
-                response.raise_for_status()  # Raise an exception for HTTP errors
-                return response
-        except httpx.HTTPStatusError as e:
-            raise Exception(f"HTTP error occurred: {e}") 
-        except httpx.RequestError as e:
-            raise Exception(f"An error occurred while requesting: {e}")

@@ -1,5 +1,4 @@
 import "./ChatContactComponent.js"
-import { sendRequest } from "../../utils/sendRequest.js";
 import { getUserId, fetchChatroomsList } from "../../utils/chatUtils/joinRoomUtils.js";
 import ChatContactComponent from "./ChatContactComponent.js";
 

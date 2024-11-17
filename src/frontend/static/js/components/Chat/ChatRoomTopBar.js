@@ -61,6 +61,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 			console.log('chatroom top bar: ', res.user_status)
 			return res.user_status;
 		} catch (error) {
+			return null;
 		}
 	}
 
@@ -91,7 +92,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 			if (res.message === "True") return true;
 			return false;
 		} catch (error) {
-			
+			console.log("Error occured when sending request: ", error.message);
 		}
 	}
 
@@ -101,7 +102,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 
 			console.log("blocked user", res);
 		} catch (error) {
-			
+			console.log("Error occured when blocking user", error.message);
 		}
 	} 
 
@@ -111,7 +112,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 
 			console.log("unblocked user", res);
 		} catch (error) {
-			
+			console.log("Error occured when unblocking user: ", error.message);
 		}
 	} 
 }

@@ -1,5 +1,4 @@
 import {getString} from "../../../../utils/languageManagement.js";
-import { sendRequest } from "../../../../utils/sendRequest.js";
 import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
 
 class CreateComponent extends HTMLElement {

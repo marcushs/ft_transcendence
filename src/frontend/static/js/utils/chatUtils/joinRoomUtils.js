@@ -27,9 +27,14 @@ export function sendJoinRoomMsg(chatroom, chatSocket, newRoom) {
 }
 
 export async function fetchChatroomsList() {
-	let res = await sendRequest('GET', '/api/chat/get_chatrooms/', null, false);
+	try {
+		let res = await sendRequest('GET', '/api/chat/get_chatrooms/', null, false);
+		
+		return res.chatrooms;
+	} catch (error) {
+		return null;
+	}
 	
-	return res.chatrooms;
 }
 
 export async function getUserId() {
