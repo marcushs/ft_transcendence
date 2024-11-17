@@ -178,7 +178,6 @@ class NotificationComponent extends HTMLElement {
 		for (const notificationElement of oldNotificationsUlElements) {
 			const message = notificationElement.firstElementChild.innerHTML;
 
-			console.log(notificationElement)
 			if (message === duplicateMessage)
 				notificationElement.remove();
 		}
@@ -346,8 +345,6 @@ class NotificationComponent extends HTMLElement {
 			arrWithoutDuplicates.push([notification.sender, notification.type]);
 		});
 
-		console.log(arrWithoutDuplicates);
-		
 		return arrWithoutDuplicates.length;
 	}
 
@@ -381,8 +378,6 @@ class NotificationComponent extends HTMLElement {
 		const numberOfNotificationsElement = this.querySelector('.number-of-notifications');
 		const numberOfNotificationsElementColor = getComputedStyle(numberOfNotificationsElement).backgroundColor;
 
-		console.log('nb = ', numberOfNotifications);
-		
 		if (numberOfNotifications > 9) {
 			numberOfNotificationsElement.textContent = '9+';
 			numberOfNotificationsElement.style.letterSpacing = '-3px';

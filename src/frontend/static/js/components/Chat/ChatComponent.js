@@ -71,19 +71,15 @@ class ChatComponent extends HTMLElement {
 			event.stopPropagation();
 		});
 
-		document.addEventListener('click', () => {
-			const event = new Event('input', {
-				bubbles: true,
-				cancelable: true
-			});
+		document.addEventListener('closeChatComponent', () => {
+			this.chatMainMenu.style.display = 'none';
+			this.removeChatroomDOM();
+		});
 
-			const chatSearchContactInput = document.querySelector('#chat-search-contact-input');
+		document.addEventListener('click', (event) => {
+			event.stopPropagation();
 
-			if (chatSearchContactInput) {
-				chatSearchContactInput.value = '';
-				chatSearchContactInput.dispatchEvent(event);
-				this.chatMainMenu.style.display = 'none';
-			}
+			this.closeChat();
 		});
 
 		this.chatIcon.addEventListener('click', () => {
@@ -96,6 +92,7 @@ class ChatComponent extends HTMLElement {
 			this.chatLobby.classList.add('active');
 			this.chatSearchBarDiv.innerHTML = this.chatMainMenu.style.display === 'block' ? "<chat-search-bar></chat-search-bar>" : '';
 		});
+
 		this.chatCloseBtn.addEventListener('click', () => {
 			this.chatMainMenu.style.display = 'none';
 			this.removeChatroomDOM();
@@ -119,6 +116,21 @@ class ChatComponent extends HTMLElement {
 		contactList.forEach(contact => {
 			contact.style.display = "flex";
 		});
+	}
+
+	closeChat() {
+		const newEvent = new Event('input', {
+			bubbles: true,
+			cancelable: true
+		});
+
+		const chatSearchContactInput = document.querySelector('#chat-search-contact-input');
+
+		if (chatSearchContactInput) {
+			chatSearchContactInput.value = '';
+			chatSearchContactInput.dispatchEvent(newEvent);
+			this.chatMainMenu.style.display = 'none';
+		}
 	}
 }
 

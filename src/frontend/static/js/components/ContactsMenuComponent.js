@@ -130,6 +130,10 @@ class FriendsMenuComponent extends HTMLElement {
         const chatMainMenu = document.querySelector('.chat-main-menu');
 
         this.addEventListener('click', (event) => {
+            const chatComponent = document.querySelector('.chat-main-menu');
+
+            if (chatComponent && chatComponent.style.display !== 'none')
+                this.throwCloseChatComponent();
             event.stopPropagation();
             this.throwCloseContactActionList();
         });
@@ -217,6 +221,13 @@ class FriendsMenuComponent extends HTMLElement {
 
     throwCloseContactActionList() {
         const event = new CustomEvent('closeContactActionList', {
+            bubbles: true,
+        });
+        document.dispatchEvent(event);
+    }
+
+    throwCloseChatComponent() {
+        const event = new CustomEvent('closeChatComponent', {
             bubbles: true,
         });
         document.dispatchEvent(event);

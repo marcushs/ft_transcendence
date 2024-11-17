@@ -88,8 +88,6 @@ class PrivateMatchComponent extends HTMLElement {
 		const isReadyToPlay  = localStorage.getItem("isReadyToPlay");
 		const isInGuestState = localStorage.getItem("isInGuestState");
 
-		console.log("isSearchingPrivateMatch = ", isSearchingPrivateMatch, "isReadyToPlay = ", isReadyToPlay, "isInGuestState = ", isInGuestState);
-
 		if (isReadyToPlay) {
 			await matchmakingWebsocket();
 			this.displayLobby();
@@ -132,7 +130,6 @@ class PrivateMatchComponent extends HTMLElement {
 			this.state = "waiting";
 			localStorage.setItem("isSearchingPrivateMatch", username);
 		} catch (error) {
-			console.log(error)
 			this.querySelector('.feedback-error').style.visibility = "visible";
 			this.querySelector('.feedback-error').textContent = getString(`gameComponent/${error.message}`);
 			this.querySelector('#genericBtn').className = "generic-btn-disabled";
@@ -159,7 +156,6 @@ class PrivateMatchComponent extends HTMLElement {
 				matchmakingSocket.close();
 
 		} catch (error) {
-			console.log('private_match: ', error.message);
 			this.redirectToInitialState();
 		}
 	}
@@ -178,7 +174,6 @@ class PrivateMatchComponent extends HTMLElement {
 			localStorage.removeItem("isInGuestState");
 			this.displayInitialState();
 		} catch (error) {
-			console.log('private_match: ', error.message);
 			this.redirectToInitialState();
 		}
 	}
@@ -197,7 +192,6 @@ class PrivateMatchComponent extends HTMLElement {
 			localStorage.removeItem("isInGuestState");
 			this.displayInitialState();
 		} catch (error) {
-			console.log('private_match: ', error.message);
 			this.redirectToInitialState();
 		}
 	}

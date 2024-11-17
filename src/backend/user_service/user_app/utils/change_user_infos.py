@@ -127,7 +127,6 @@ class ChangeUserInfosView(View):
 
             return {'username_message': 'usernameSuccessfullyChanged'}
         except Exception as e:
-            print(f'Error: an error occured while updating username: {str(e)}')
             return {'username_message': 'usernameFailedToChange'}
             
 
@@ -146,28 +145,36 @@ class ChangeUserInfosView(View):
 
 
     async def change_profile_image(self, request):
-        image = request.FILES.get('profile_image')
-        image.seek(0)
-        
-        bytes_image = image.read()
-        mime_type = image.content_type
+        try:
+            image = request.FILES.get('profile_image')
+            image.seek(0)
 
-        b64_image = f"data:{mime_type};base64,{base64.b64encode(bytes_image).decode('utf-8')}"
+            bytes_image = image.read()
+            mime_type = image.content_type
 
-        request.user.profile_image = b64_image
-        request.user.profile_image_link = None
-        await sync_to_async(request.user.save)()
-        await notify_user_info_display_change(request=request, change_info='picture')
+            b64_image = f"data:{mime_type};base64,{base64.b64encode(bytes_image).decode('utf-8')}"
 
-        return {'profile-image_message': 'profileImageSuccessfullyChanged'}
+            request.user.profile_image = b64_image
+            request.user.profile_image_link = None
+            await send_request(request_type='POST', request=request, url='http://chat:8000/api/chat/update_user/', payload={'profile_image': b64_image, 'profile_image_link': None})
+            await sync_to_async(request.user.save)()
+            await notify_user_info_display_change(request=request, change_info='picture')
+
+            return {'profile-image_message': 'profileImageSuccessfullyChanged'}
+        except Exception:
+            return {'profile-image_message': 'profileImageFailToChanged'}
 
 
     async def change_profile_image_link(self, request):
-        new_image_link = request.POST.get('profile_image_link')
+        try:
+            new_image_link = request.POST.get('profile_image_link')
 
-        request.user.profile_image = None
-        request.user.profile_image_link = new_image_link
-        await sync_to_async(request.user.save)()
-        await notify_user_info_display_change(request=request, change_info='picture')
+            request.user.profile_image = None
+            request.user.profile_image_link = new_image_link
+            await send_request(request_type='POST', request=request, url='http://chat:8000/api/chat/update_user/', payload={'profile_image': None, 'profile_image_link': new_image_link})
+            await sync_to_async(request.user.save)()
+            await notify_user_info_display_change(request=request, change_info='picture')
 
-        return {'profile-image_message': 'profileImageSuccessfullyChanged'}
+            return {'profile-image_message': 'profileImageSuccessfullyChanged'}
+        except Exception:
+            return {'profile-image_message': 'profileImageFailToChanged'}

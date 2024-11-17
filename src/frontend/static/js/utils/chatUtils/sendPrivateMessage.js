@@ -113,13 +113,11 @@ function updateChatContactComponents(messageData) {
 	const contactedList = document.querySelector('.contacted-list ul');
 	const listItems = document.querySelectorAll('chat-contact-component');
 	const messagedContacts = Array.from(listItems);
-	
-	console.log('messagedContacts', messagedContacts);
+
 	messagedContacts.forEach(async (contact) => {
 		if (isTargetChatroom(contact.getAttribute('data-chatroom'), messageData.chatroom)) {
 			contact.updateLastMessage(messageData.message);
 			if (await isSentOrReceivedMessage(messageData.author) === 'received' && !document.querySelector('.chatroom.active')) {
-				console.log('here');
 				contact.querySelector('.unread-circle').classList.add('active');
 			}
 		}

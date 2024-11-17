@@ -112,7 +112,10 @@ class ContactComponent extends HTMLElement {
         this.handleContactActionsEvent();
 
         document.addEventListener('closeContactActionList', (event) => {
-            this.querySelector('.contact-action-list').style.display = 'none';
+            const contactActionList = this.querySelector('.contact-action-list');
+
+            if (contactActionList)
+                contactActionList.style.display = 'none';
         })
     }
 

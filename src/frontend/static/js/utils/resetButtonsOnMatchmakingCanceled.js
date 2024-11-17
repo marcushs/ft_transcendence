@@ -3,6 +3,7 @@ import {getString} from "./languageManagement.js";
 export default function resetButtonsOnMatchmakingCanceled() {
 	const buttons = document.querySelectorAll('button-component');
 	const invitePlayerElement = document.querySelectorAll('.contact-action-invite-play');
+	const playInvitationButtonDisabled = document.querySelectorAll('.play-invitation-button-disabled');
 
 	let playButtons = [];
 
@@ -17,5 +18,9 @@ export default function resetButtonsOnMatchmakingCanceled() {
 
 	invitePlayerElement.forEach(player => {
 		player.classList.remove('contact-action-disabled');
+	});
+
+	playInvitationButtonDisabled.forEach(button => {
+		button.className = "play-invitation-button";
 	});
 }

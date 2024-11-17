@@ -19,7 +19,7 @@ export default class ChatContactComponent extends HTMLElement {
 	async connectedCallback() {
 		if (this.type === "contact")
 			await this.renderContact();
-		else if (this.type === "contacted")
+		else
 			await this.renderContacted();
 		this.addEventListeners();
 	}
@@ -101,8 +101,10 @@ export default class ChatContactComponent extends HTMLElement {
 
 	updateLastMessage(message) {
 		message = this.formatLastMessage(message);
+		const lastMessage = this.querySelector('.last-message');
 
-		this.querySelector('.last-message').innerText = message;
+		if (lastMessage)
+			lastMessage.innerText = message;
 	}
 
 	whenRendered() {

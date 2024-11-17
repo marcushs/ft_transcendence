@@ -45,6 +45,10 @@ class ChatContactList extends HTMLElement {
 		this.listHeader.addEventListener('click', () => {
 			this.contactedList.classList.toggle('active');
 		});
+
+		document.addEventListener('contactsInfosChangedEvent', () => {
+			this.putFriendsList();
+		});
 	}
 
 	async putContactListToDom() {

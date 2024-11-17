@@ -4,6 +4,7 @@ import {startGame} from "../../components/Game/states/inGame/Game.js";
 import {sendRequest} from "../sendRequest.js";
 import getUserId from "../getUserId.js";
 import {throwRedirectionEvent} from "../throwRedirectionEvent.js";
+import resetButtonsOnMatchmakingCanceled from "../resetButtonsOnMatchmakingCanceled.js";
 
 export let matchmakingSocket = null;
 
@@ -56,21 +57,23 @@ export async function matchmakingWebsocket() {
 			localStorage.removeItem("isSearchingPrivateMatch");
 			localStorage.removeItem("isReadyToPlay");
 			localStorage.removeItem("isInGuestState");
+			resetButtonsOnMatchmakingCanceled();
 			throwChangeGameStateEvent();
 		}
 		if (data.type === 'private_match_canceled') {
-			console.log('private_match_canceled reached');
 			localStorage.removeItem("isReadyToPlay");
 			localStorage.removeItem("isSearchingPrivateMatch");
 			throwPrivateMatchCanceled();
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
+			resetButtonsOnMatchmakingCanceled();
 		}
 		if (data.type === 'private_match_started') {
 			console.log('private_match_started: data.player_id: ', data.player_id);
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
 			await gameWebsocket(await getUserId());
+			resetButtonsOnMatchmakingCanceled();
 		}
 	}
 

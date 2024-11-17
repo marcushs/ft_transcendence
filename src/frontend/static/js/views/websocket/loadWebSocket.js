@@ -43,12 +43,15 @@ async function loadContactsWebSocket() {
         if (!contactMenuComponent)
             return;
         if (data.type === 'deleted contact' || data.type === 'deleted contact request') {
+			throwContactsInfosChangedEvent();
             removeContactFromList(data.contact, data.type);
         } else if (data.type === 'contact_update') {
+			throwContactsInfosChangedEvent();
 			UpdateContactInList(data.contact, data.change_info, data.old_value);
 			UpdateChatContactWebsocket(data.contact, data.change_info, data.old_value);
 			UpdateChatroomTopBarWebsocket(data.contact, data.change_info, data.old_value);
 		} else {
+			throwContactsInfosChangedEvent();
             addNewContactToList(data.contact, data.type, data.is_sender);
         }
     };
@@ -121,6 +124,14 @@ function throwDeleteNotificationElementEvent(notification) {
 		detail: {
 			notification: notification
 		}
+	});
+
+	document.dispatchEvent(event);
+}
+
+function throwContactsInfosChangedEvent(notification) {
+	const event = new CustomEvent('contactsInfosChangedEvent', {
+		bubbles: true,
 	});
 
 	document.dispatchEvent(event);
