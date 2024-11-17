@@ -1,7 +1,6 @@
 import ChatRoomTopBar from '../../components/Chat/ChatRoomTopBar.js';
 import ChatRoomBottomBar from '../../components/Chat/ChatRoomBottomBar.js';
 import ChatRoomConversation from '../../components/Chat/ChatRoomConversation.js';
-import { sendRequest } from "../sendRequest.js";
 import { sendPrivateMessage } from './sendPrivateMessage.js';
 
 export async function sendMessageCallback(targetUserData) {
@@ -31,7 +30,6 @@ function toggleContactMenuToChatMainMenu(chatMainMenu, contactMenu, chatRoom, ch
 
 function displayChatroomLayout(userData) {
     const chatRoom = document.querySelector('.chatroom');
-    
     // Clear existing content
     chatRoom.innerHTML = '';
 

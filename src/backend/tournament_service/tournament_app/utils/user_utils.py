@@ -4,7 +4,6 @@ from django.contrib.auth.models import AnonymousUser
 from django.views import View
 from ..models import User
 import json
-import httpx
 
 class add_new_user(View):
     def __init__(self):

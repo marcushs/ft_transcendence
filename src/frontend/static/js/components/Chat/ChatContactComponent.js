@@ -129,7 +129,6 @@ export default class ChatContactComponent extends HTMLElement {
 
 			if (checkAllRecentMessagesRead())
 				unreadMessageNotifOff();
-
 		})
 	}
 

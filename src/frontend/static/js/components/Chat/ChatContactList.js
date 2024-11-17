@@ -2,6 +2,7 @@ import "./ChatContactComponent.js"
 import { getUserId, fetchChatroomsList } from "../../utils/chatUtils/joinRoomUtils.js";
 import ChatContactComponent from "./ChatContactComponent.js";
 import {getString} from "../../utils/languageManagement.js";
+import { sendRequest } from "../../utils/sendRequest.js";
 
 class ChatContactList extends HTMLElement {	
 	constructor() {

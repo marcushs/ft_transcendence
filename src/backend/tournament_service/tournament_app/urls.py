@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .utils.user_utils import add_new_user
+from .utils.user_utils import add_new_user, update_user
 from .views import createTournamentView, getJoinableTournamentsView, tournamentMatchResultView, getBracketView, getMatchByIdView
 
 urlpatterns = [

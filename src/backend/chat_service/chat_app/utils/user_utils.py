@@ -2,11 +2,9 @@ from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
 from django.views import View
 from ..models import User
-import httpx
 import json
-import httpx
 
-class AddNewUser(View):
+class add_new_user(View):
     def __init__(self):
         super().__init__
     
@@ -25,7 +23,6 @@ class AddNewUser(View):
             User.objects.create_user(username=data['username'], user_id=data['user_id'])
         return JsonResponse({"message": 'user added with success', "status": "Success"}, status=200)
     
-
 class update_user(View):
     def __init__(self):
         super().__init__
