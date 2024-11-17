@@ -34,16 +34,19 @@ export async function oauthRedirectCallback() {
 				return ;
 			}
 			status_text.textContent = 'Successfully logged in';
+			console.log(status_text.textContent);
+			const event = new CustomEvent('userLoggedIn');
+			document.dispatchEvent(event);
 			throwRedirectionEvent('/');
 		} else {
-			// if handleOauthCallback error
+			// handleOauthCallback error
 			status_text.textContent = `Error: ${data.message}`;
-			// setTimeout(() => window.location.href = '/login', 2000);
+			throwRedirectionEvent('/login');
 		}
 	} else {
 		// No query params, not from 42 oauth
 		status_text.textContent = 'Error: Invalid request';
-		// setTimeout(() => window.location.href = '/login', 2000);
+			throwRedirectionEvent('/login');
 	}
 }
 
@@ -63,7 +66,6 @@ async function handleOauthCallback(oauthProvider, code, state) {
 	try {
 		const res = await fetch(`/api/${oauthProvider}/redirect/?code=${code}&state=${state}`, config);
 		const data = await res.json();
-		console.log(data)
 		return data;
 	} catch (error) {
 		console.log(error);
