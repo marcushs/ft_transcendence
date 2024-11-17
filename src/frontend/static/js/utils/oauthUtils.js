@@ -31,8 +31,6 @@ export async function oauthRedirectCallback() {
 				setTimeout(() => window.location.href = '/login', 2000);
 				return ;
 			}
-			console.log('oauth redirect page:')
-			console.log(login_res);
 			status_text.textContent = 'Successfully logged in';
 			window.location.href = '/home'
 		} else {

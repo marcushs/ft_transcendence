@@ -1,16 +1,14 @@
+from ..utils.user_utils import get_user_by_id, send_request
 from django.contrib.auth.models import AnonymousUser
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
-from ..utils.user_utils import get_user_by_id, send_request
-from asgiref.sync import async_to_sync
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse 
 from django.views import View
-import random
 import queue
-import json
 import redis
+import json
 
 redis_instance = redis.Redis(host='redis', port=6379, db=0)
 
@@ -28,7 +26,7 @@ class MatchmakingTournament(View):
     async def post(self, request): 
         try:
             if isinstance(request.user, AnonymousUser):  
-                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400) 
+                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400)
             data = json.loads(request.body.decode('utf-8'))
             if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
                 return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)
@@ -64,6 +62,8 @@ class MatchmakingQueueManager(View):
 
 
     def post(self, request):
+        from .PrivateMatch import is_player_in_private_lobby
+        
         if isinstance(request.user, AnonymousUser):  
             return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400) 
         data = json.loads(request.body.decode('utf-8'))
@@ -72,7 +72,9 @@ class MatchmakingQueueManager(View):
         is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
         if is_waiting:
             return JsonResponse({'status': 'error', 'message': 'User is already in matchmaking research'}, status=200)
-        self.start_matchmaking_by_type(data['type'], request)
+        if is_player_in_private_lobby(request.user):
+            return JsonResponse({'status': 'error', 'message': 'User is already in private match lobby'}, status=200)
+        self.start_matchmaking_by_type(data['type'], request) 
         return JsonResponse({'status': 'success', 'message': f"User successfully added to {data['type']} queue"}, status=200) 
 
 
@@ -128,7 +130,6 @@ class RemoveUserFromWaitingQueue(View):
         if isinstance(request.user, AnonymousUser):  
             return JsonResponse({'message': 'No connected user'}, status=401) 
         is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
-        print(f'-> is waitin: return : bool : {is_waiting} -- match_type: {match_type}')
         if not is_waiting:
             return JsonResponse({'message': 'cant remove user from matchmaking research cause he is not already present in it'}, status=401)
         if match_type == 'unranked':

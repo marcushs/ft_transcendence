@@ -2,10 +2,8 @@ from ..utils.websocket_utils import send_websocket_game_found
 from ..utils.user_utils import get_user_by_id, send_request
 from .matchmaking import change_is_ingame_state
 from asgiref.sync import async_to_sync
-from time import sleep
 import random
 import redis
-import json
 
 redis_instance = redis.Redis(host='redis', port=6379, db=0)
 

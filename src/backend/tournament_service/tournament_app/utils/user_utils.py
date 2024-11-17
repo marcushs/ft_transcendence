@@ -4,6 +4,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.views import View
 from ..models import User
 import json
+import httpx
 
 class add_new_user(View):
     def __init__(self):
@@ -26,11 +27,11 @@ class add_new_user(View):
     
 class update_user(View):
     def __init__(self):
-        super().__init__
-    
+        super().__init__()
+        
     def get(self, request):
         return JsonResponse({"message": 'get request successfully reached'}, status=200)
-
+    
     def post(self, request):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'User not found'}, status=400)

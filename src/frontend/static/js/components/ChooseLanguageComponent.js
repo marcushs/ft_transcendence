@@ -1,5 +1,6 @@
 import {loadLanguagesJson, getUserLanguage, setUserLanguageInDb} from "../utils/languageManagement.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
+import checkAuthentication from "../utils/checkAuthentication.js";
 
 class ChooseLanguageComponent extends HTMLElement {
 	constructor() {
@@ -31,6 +32,7 @@ class ChooseLanguageComponent extends HTMLElement {
 
 
 	async connectedCallback() {
+		this.isAuthenticated = await checkAuthentication();
 		await this.setCurrentLanguage();
 		this.generateCurrentLanguageElement();
 		this.generateOtherLanguagesElements();
@@ -134,7 +136,8 @@ class ChooseLanguageComponent extends HTMLElement {
 	async handleClickOnNewLanguage(event) {
 		if (event.target.classList.contains('flag')) {
 			localStorage.setItem('userLanguage', event.target.id);
-			await setUserLanguageInDb(event.target.id);
+			if (this.isAuthenticated)
+				await setUserLanguageInDb(event.target.id);
 			await loadLanguagesJson();
 			throwRedirectionEvent(`${localStorage.getItem('lastAuthorizedPage')}`);
 		}

@@ -9,20 +9,21 @@ class MatchHistory(models.Model):
     match_type_choices = [
         ('ranked', 'Ranked'),
         ('unranked', 'Unranked'),
-        ('tournament', 'Tournament')
+        ('tournament', 'Tournament'),
+        ('private_match', 'PrivateMatch')
     ]
     winner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='won_matches', on_delete=models.CASCADE)
     loser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='lost_matches', on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
     winner_score = models.IntegerField()
     loser_score = models.IntegerField()
-    match_type = models.CharField(max_length=10, choices=match_type_choices)
+    match_type = models.CharField(max_length=13, choices=match_type_choices)
     
     def __str__(self): 
         return f'winner: {self.winner} vs loser: {self.loser} on {self.date} ({self.match_type})'
     
     class Meta:
-        ordering = ['-date']
+        ordering = ['-date'] 
     
 
 class UserManager(BaseUserManager):
@@ -57,7 +58,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def to_dict(self):
         return {
-            'username': self.username,
+            'username': self.username, 
         }
         
     def match_history(self): # Retrieve all match history for the user.

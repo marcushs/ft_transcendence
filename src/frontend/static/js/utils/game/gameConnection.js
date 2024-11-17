@@ -50,7 +50,6 @@ export async function surrenderHandler() {
         };
         const response = await sendRequest('POST', '/api/game/surrend_game/', payload);
 		localStorage.removeItem('inGameComponentState');
-        console.log(response);
     } catch (error) {
         console.log(error);
     }

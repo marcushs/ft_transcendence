@@ -17,10 +17,14 @@ class MatchHistory extends HTMLElement {
         const isConnected = await checkAuthentication();
 
 
-        if (isConnected) {
-            this.history = await sendRequest("GET", "/api/statistics/get_history/", null);
-            this.userId = await getUserId();
-            await this.fillHistoryList();
+        if (isConnected) { 
+            try {
+                this.history = await sendRequest("GET", "/api/statistics/get_history/", null);
+                this.userId = await getUserId();
+                await this.fillHistoryList();
+            } catch (error) {
+                console.error(error)
+            }
         } else {
             this.displayUnloggedUser();
         }
@@ -81,6 +85,9 @@ class MatchHistory extends HTMLElement {
                 case "tournament":
                     historyListElement += this.generateTournamentItem(item);
                     break;
+                case "private_match":
+                    historyListElement += await this.generatePrivateMatchItem(item);
+                    break;
                 default:
                     break;
             }
@@ -136,6 +143,28 @@ class MatchHistory extends HTMLElement {
 
     generateTournamentItem(matchInfos) {
 
+    }
+
+
+    async generatePrivateMatchItem(matchInfos) {
+        const isWin = matchInfos.winner_id === this.userId;
+        const opponent_id = (isWin) ? matchInfos.loser_id : matchInfos.winner_id;
+        const opponent_name = await getUsernameById(opponent_id);
+        const score = (isWin) ? `${matchInfos.winner_score} - ${matchInfos.loser_score}` : `${matchInfos.loser_score} - ${matchInfos.winner_score}`
+
+        return `
+            <li class="${(isWin) ? "win" : "lose"}">
+                <div class="type">
+                    <p>${getString("matchHistoryComponent/private_match")}</p>
+                    <div class="line"></div>
+                </div>
+                <div class="content">
+                    <p class="vs">VS</p>
+                    <p class="name">${opponent_name}</p>
+                    <p class="score">${score}</p>
+                </div>
+            </li>
+        `;
     }
 }
 

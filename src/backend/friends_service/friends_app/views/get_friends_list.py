@@ -10,7 +10,6 @@ def get_friends_and_pending_id_list(user):
     friends_list = list(user_friends_list.friends.all()) 
     received_requests = list(FriendRequest.objects.filter(receiver=user)) 
     sent_requests = list(FriendRequest.objects.filter(sender=user))
-    print(f'friends_list: {friends_list} -- received_requests: {received_requests} -- sent_requests: {sent_requests}')
     friends_id = [friend.id for friend in friends_list]
     send_request_id = [request.receiver.id for request in sent_requests]
     receive_request_id = [request.sender.id for request in received_requests]

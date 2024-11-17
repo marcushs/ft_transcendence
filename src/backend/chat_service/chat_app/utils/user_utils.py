@@ -1,12 +1,12 @@
-from django.http import JsonResponse
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
+from django.http import JsonResponse
 from django.views import View
 from ..models import User
+import httpx
 import json
 import httpx
 
-class add_new_user(View):
+class AddNewUser(View):
     def __init__(self):
         super().__init__
     

@@ -2,6 +2,7 @@ import {getString} from "./languageManagement.js";
 
 export default function disableButtonsInGameResearch() {
 	const buttons = document.querySelectorAll('button-component');
+	const invitePlayerElement = document.querySelectorAll('.contact-action-invite-play');
 	let playButtons = [];
 
 	buttons.forEach((button) => {
@@ -12,4 +13,8 @@ export default function disableButtonsInGameResearch() {
 	playButtons.forEach((button) => {
 		button.className = "generic-btn-disabled";
 	});
+
+	invitePlayerElement.forEach(player => {
+		player.classList.add('contact-action-disabled');
+	})
 }

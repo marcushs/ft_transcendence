@@ -30,7 +30,7 @@ async function loadContactsWebSocket() {
         contactSocket.close();
     }
 	
-    contactSocket = new WebSocket(`wss://localhost:3000/ws/contacts/`);
+    contactSocket = new WebSocket(`/ws/contacts/`);
 
     contactSocket.onopen = function(event) {
 		console.log('Contact websocket started');
@@ -43,12 +43,15 @@ async function loadContactsWebSocket() {
         if (!contactMenuComponent)
             return;
         if (data.type === 'deleted contact' || data.type === 'deleted contact request') {
+			throwContactsInfosChangedEvent();
             removeContactFromList(data.contact, data.type);
         } else if (data.type === 'contact_update') {
+			throwContactsInfosChangedEvent();
 			UpdateContactInList(data.contact, data.change_info, data.old_value);
 			UpdateChatContactWebsocket(data.contact, data.change_info, data.old_value);
 			UpdateChatroomTopBarWebsocket(data.contact, data.change_info, data.old_value);
 		} else {
+			throwContactsInfosChangedEvent();
             addNewContactToList(data.contact, data.type, data.is_sender);
         }
     };
@@ -65,7 +68,7 @@ async function loadContactsWebSocket() {
 //--------------> NOTIFICATION WEBSOCKET <--------------\\
 
 function loadNotificationsWebSocket() {
-	notificationSocket = new WebSocket(`wss://localhost:3000/ws/notifications/`);
+	notificationSocket = new WebSocket(`/ws/notifications/`);
 
 		notificationSocket.onopen = function(event) {
 		    console.log('Notifications websocket started');
@@ -126,10 +129,18 @@ function throwDeleteNotificationElementEvent(notification) {
 	document.dispatchEvent(event);
 }
 
+function throwContactsInfosChangedEvent(notification) {
+	const event = new CustomEvent('contactsInfosChangedEvent', {
+		bubbles: true,
+	});
+
+	document.dispatchEvent(event);
+}
+
 //--------------> CHAT WEBSOCKET <--------------\\
 
 function loadChatWebSocket() {
-	chatSocket = new WebSocket('wss://localhost:3000/ws/chat/');
+	chatSocket = new WebSocket('/ws/chat/');
 
 	chatSocket.onopen = async function (e) {
 		console.log("Chat websocket started");
@@ -158,7 +169,7 @@ function loadChatWebSocket() {
 }
 
 function loadTournamentWebSocket() {
-	tournamentSocket = new WebSocket('wss://localhost:3000/ws/tournament/');
+	tournamentSocket = new WebSocket('/ws/tournament/');
 
 	tournamentSocket.onopen = function (e) {
 		console.log("The tournament websocket connection was setup successfully !");

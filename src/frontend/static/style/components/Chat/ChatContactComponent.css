@@ -4,6 +4,7 @@ chat-contact-component {
   	height: 100%;
   	display: flex;
   	align-items: center;
+	cursor: pointer;
 }
 
 .chat-contact-profile-picture {
@@ -36,7 +37,7 @@ chat-contact-component {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	align-items: "flex-start";
+	align-items: flex-start;
 	height: 100%;
 	width: 65%;
 }

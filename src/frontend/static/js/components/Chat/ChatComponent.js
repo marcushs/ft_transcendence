@@ -14,7 +14,7 @@ class ChatComponent extends HTMLElement {
 	async init() {
 		if (await checkAuthentication()) {
 			this.render()
-			this.addEventListeners();
+			this.attachEventListeners();
 		}
 	}
 
@@ -29,7 +29,8 @@ class ChatComponent extends HTMLElement {
 				<div class="chat-lobby ">
 					<div id="chat-search-bar-div"></div>
 					<div class="chat-contact-container">
-						<chat-contact-list></chat-contact-list>
+						<chat-contact-list id="contactedList" type="contacted"></chat-contact-list>
+						<chat-contact-list id="contactList" type="contact"></chat-contact-list>
 					</div>
 				</div>
 				<div class="chatroom"></div>
@@ -48,14 +49,50 @@ class ChatComponent extends HTMLElement {
 		this.chatRoom = this.querySelector('.chatroom');
 	}
 
-	addEventListeners() {
+	attachEventListeners() {
+		const contactMenu = document.querySelector('.contact-menu');
+
+		this.addEventListener('click', (event) => {
+			const searchBarIcon = this.querySelector('#search-bar-icon');
+			const searchContactInput = document.getElementById('chat-search-contact-input');
+
+			if (event.target.id !== "chat-search-contact-input" && searchBarIcon && searchBarIcon.style.display === 'none') {
+				searchBarIcon.style.display = 'flex';
+				document.querySelector('.contact-text').classList.toggle('inactive');
+				document.querySelector('.chat-search-box').classList.toggle('active');
+				searchContactInput.classList.toggle('active');
+				searchBarIcon.classList.toggle('active');
+				document.getElementById('search-bar-close-btn').classList.toggle('active');
+				searchContactInput.value = '';
+				document.querySelector('#contactedList > .contacted-list').className = "contacted-list";
+				document.querySelector('#contactList > .contacted-list').className = "contacted-list";
+				this.setContactDisplayFlex();
+			}
+			event.stopPropagation();
+		});
+
+		document.addEventListener('closeChatComponent', () => {
+			this.chatMainMenu.style.display = 'none';
+			this.removeChatroomDOM();
+		});
+
+		document.addEventListener('click', (event) => {
+			event.stopPropagation();
+
+			this.closeChat();
+		});
+
 		this.chatIcon.addEventListener('click', () => {
+			if (contactMenu.style.display !== 'none')
+				contactMenu.style.display = 'none';
+
 			this.chatMainMenu.style.display = this.chatMainMenu.style.display === 'none' ? 'block' : 'none';
 			if (this.chatMainMenu.style.display === 'none') this.removeChatroomDOM();
 			if (this.chatRoom.classList.contains('active')) this.chatRoom.classList.remove('active');
 			this.chatLobby.classList.add('active');
 			this.chatSearchBarDiv.innerHTML = this.chatMainMenu.style.display === 'block' ? "<chat-search-bar></chat-search-bar>" : '';
 		});
+
 		this.chatCloseBtn.addEventListener('click', () => {
 			this.chatMainMenu.style.display = 'none';
 			this.removeChatroomDOM();
@@ -66,6 +103,34 @@ class ChatComponent extends HTMLElement {
 		if (document.querySelector('chatroom-top-bar')) document.querySelector('chatroom-top-bar').remove();
 		if (document.querySelector('chatroom-conversation')) document.querySelector('chatroom-conversation').remove();
 		if (document.querySelector('chatroom-bottom-bar')) document.querySelector('chatroom-bottom-bar').remove();
+	}
+
+	setContactDisplayFlex() {
+		const contactedList = document.querySelectorAll('#contactedList > ul > li');
+		const contactList = document.querySelectorAll('#contactList > ul > li');
+
+		contactedList.forEach(contact => {
+			contact.style.display = "flex";
+		});
+
+		contactList.forEach(contact => {
+			contact.style.display = "flex";
+		});
+	}
+
+	closeChat() {
+		const newEvent = new Event('input', {
+			bubbles: true,
+			cancelable: true
+		});
+
+		const chatSearchContactInput = document.querySelector('#chat-search-contact-input');
+
+		if (chatSearchContactInput) {
+			chatSearchContactInput.value = '';
+			chatSearchContactInput.dispatchEvent(newEvent);
+			this.chatMainMenu.style.display = 'none';
+		}
 	}
 }
 

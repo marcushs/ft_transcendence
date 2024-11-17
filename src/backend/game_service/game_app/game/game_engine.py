@@ -1,10 +1,10 @@
 from .game_utils import send_websocket_info, get_map_dimension
+from datetime import datetime, timedelta
 from ..request import send_request
 import asyncio
 import json
 import time
 import math
-from datetime import datetime, timedelta
 
 class PongGameEngine:
 
@@ -47,6 +47,7 @@ class PongGameEngine:
         self.has_ball_hit_wall = False
         self.is_player_one_collide = False
         self.is_player_two_collide = False
+        self.is_surrend = False
         self.map = {
             'width': float(map_dimension['width']),
             'height': float(map_dimension['height']) 
@@ -249,13 +250,10 @@ class PongGameEngine:
 
     async def end_game(self, is_canceled):
         is_draw = False
-        print(f'------------- END GAME REACHED --------------------')
         if not await self.set_winner_and_loser():
-            print('------------- TESWT 3')
             is_draw = True
             self.winner_id = self.player_one_id
             self.loser_id = self.player_two_id
-        print(f'self.winner_id: {self.winner_id} -- self.loser_id: {self.loser_id}')
         self.game_active = False
         PongGameEngine.active_games.remove(self)
         await self.manage_end_update(is_surrend=False, is_draw=is_draw, is_canceled=is_canceled)
@@ -264,12 +262,10 @@ class PongGameEngine:
     async def set_winner_and_loser(self):
         
         if self.player_one_score > self.player_two_score:
-            print('------------- TESWT 1')
             self.winner_id = self.player_one_id
             self.loser_id = self.player_two_id
             return True
         elif self.player_one_score < self.player_two_score:
-            print('------------- TESWT 2')
             self.winner_id = self.player_two_id
             self.loser_id = self.player_one_id
             return True 
@@ -286,9 +282,9 @@ class PongGameEngine:
             return
         player = self.state[player_key]
         if action == 'move_up':
-            player['position']['y'] = max(player['position']['y'] - (self.map['width'] * 0.0075), self.player_size['height'] * 0.5)
+            player['position']['y'] = max(player['position']['y'] - (self.map['width'] * 0.0075), self.player_size['height'] * 0.53)
         elif action == 'move_down':
-            player['position']['y'] = min(player['position']['y'] + (self.map['width'] * 0.0075), self.map['height'] - self.player_size['height'] * 0.5)
+            player['position']['y'] = min(player['position']['y'] + (self.map['width'] * 0.0075), self.map['height'] - self.player_size['height'] * 0.53)
             
  #//---------------------------------------> Connection management method <--------------------------------------\\#
 
@@ -310,12 +306,13 @@ class PongGameEngine:
             self.is_paused = False
             self.pause_start_time = None
             await self.send_resume_update()
-            
+
 
     async def player_surrender(self, surrend_id):
         self.loser_id = surrend_id
         self.winner_id = self.player_one_id if surrend_id == self.player_two_id else self.player_two_id
         self.game_active = False
+        self.is_surrend = True
         PongGameEngine.active_games.remove(self)
         is_draw = False if self.player_one_score != self.player_two_score else True
         await self.manage_end_update(is_surrend=True, is_draw=is_draw)
@@ -374,10 +371,8 @@ class PongGameEngine:
         }
         # !!!!!!!!!! mettre un truc special pour tournois
         if self.game_type == 'tournament':
-            print('end of a tournament match')
             result_response = await send_request(request_type='POST', url='http://tournament:8000/api/tournament/match_result/', payload=payload)
         result_response = await send_request(request_type='POST', url='http://statistics:8000/api/statistics/match_result/', payload=payload)
-        print(f' !!!!!!!!!!!!!!  result_response: ', result_response.json())
         return result_response.json() 
 
     async def get_winner_and_loser_dict(self):  
@@ -403,9 +398,6 @@ class PongGameEngine:
 
     async def send_end_update(self, results):
         winner_payload, loser_payload = await self.get_end_game_payload(results)
-        print(f'------------------- {self.winner_id}, {self.loser_id} -----------------')
-        print(f'------------------- {self.player_one_score}, {self.player_two_score} -----------------')
-        print(f'------------------- {self.player_one_id}, {self.player_two_id} -----------------') 
         await send_websocket_info(self.winner_id, winner_payload)
         await send_websocket_info(self.loser_id, loser_payload)
 
@@ -430,8 +422,6 @@ class PongGameEngine:
                 }
             }
         else:
-            print(f" ----- AND THE WINNER IS -----> old rank points = {results['results']['winner']['old_rank_points']} ||||| new rank points = {results['results']['winner']['new_rank_points']}")
-            print(f" ----- AND THE WINNER IS -----> old rank points = {type(results['results']['winner']['old_rank_points'])} ||||| new rank points = {type(results['results']['winner']['new_rank_points'])}")
             winner_payload = {
                 'type': 'game_update_info',
                 'event': 'game_finished',
@@ -445,7 +435,6 @@ class PongGameEngine:
                     'new_rank': results['results']['winner']['new_rank']
                 }
             }
-            print(f" ----- BOOO LOSER -----> old rank points = {results['results']['loser']['old_rank_points']} ||||| new rank points = {results['results']['loser']['new_rank_points']}")
             loser_payload = {
                 'type': 'game_update_info',
                 'event': 'game_finished',

@@ -120,11 +120,12 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'https://localhost:3000',
+    'https://localhost:3000'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
 	'https://localhost:3000',
+    'https://10.11.3.2:3000',
 ]
 
 # Database

@@ -113,6 +113,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CSRF_TRUSTED_ORIGINS = [
 	'https://localhost:3000',
+    'https://10.11.3.2:3000',
 ]
 
 # Database

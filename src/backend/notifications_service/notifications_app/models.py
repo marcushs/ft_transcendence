@@ -27,6 +27,9 @@ class Notification(models.Model):
             'uuid': 'notif-' + str(self.uuid),
             'created_at': self.created_at.isoformat()
         }
+
+    class Meta:
+        ordering = ['created_at']
         
 
 class UserManager(BaseUserManager):

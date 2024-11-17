@@ -118,6 +118,11 @@ notification-component .notifications-container ul li .fa-xmark {
 	font-style: italic;
 }
 
+.error-sentence {
+	font-size: 3rem;
+	color: var(--error-color);
+}
+
 @keyframes increaseNotificationsContainerBackgroundHeight {
 	from {
 		max-height: 0;

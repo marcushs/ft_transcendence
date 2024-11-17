@@ -95,10 +95,14 @@ async function removeTwoFactorLocalStorage() {
 }
 
 async function sendTwoFactorCode() {
-	const url = `/api/twofactor/get_2fa_code/`;
-
+	
 	try {
-		await sendRequest('GET', url, null);
+		const response = await sendRequest('GET', 'api/user/get_username/', null)
+		const payload = {
+			'username': response.username,
+			'email_type': 'deactivation'
+		}
+		await sendRequest('POST', `/api/twofactor/get_2fa_code/`, payload);
 	} catch (error) {
 		console.error(error);
 	}
@@ -116,12 +120,12 @@ async function DeactivateTwoFactorRequest(verificationCode) {
 			else
 				throwRedirectionEvent('/two-factor-email');
 		} else {
-			localStorage.setItem('twoFactorFeedback', data.message);
+			localStorage.setItem('twoFactorFeedback', getString(`twoFactorDeactivationView/${data.message}`));
 			localStorage.setItem('state', 'security');
 			throwRedirectionEvent('/profile');
 		}
 		removeTwoFactorLocalStorage();
 	} catch (error) {
-		document.querySelector('.feedbackInformation').innerHTML = error.message;
+		document.querySelector('.feedbackInformation').innerHTML = getString(`twoFactorError/${error.message}`);
 	}
 }

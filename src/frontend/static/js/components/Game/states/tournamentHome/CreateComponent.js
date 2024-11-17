@@ -71,11 +71,14 @@ class CreateComponent extends HTMLElement {
 				'tournament_size': this.numberOfPlayers,
 			};
 
-			tournamentSocket.send(JSON.stringify(payload))
-			localStorage.setItem('isSearchingGame', JSON.stringify({
-				type: 'tournament',
-				status: 'searching'
-			}));
+			tournamentSocket.send(JSON.stringify(payload));
+			// localStorage.setItem('isSearchingGame', JSON.stringify({
+			// 	type: 'tournament',
+			// 	status: 'searching'
+			// }));
+
+
+
 			// try {
 			// 	let res = await sendRequest('POST', '/api/tournament/create_tournament/', payload, false);
 

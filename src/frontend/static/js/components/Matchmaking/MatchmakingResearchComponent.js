@@ -56,7 +56,6 @@ class MatchmakingResearchComponent extends HTMLElement {
                 matchmakingSocket.close();
             this.style.animation = "ease-in 0.25s animate-opacity forwards";
             localStorage.removeItem('isSearchingGame');
-            console.log('remove response: ', response);
             setTimeout(() => {
                 this.throwMatchmakingResearchCanceledEvent();
                 this.remove();
@@ -75,7 +74,6 @@ class MatchmakingResearchComponent extends HTMLElement {
         this.cancelResearchIcon.remove();
         this.mainDiv.classList.remove('matchmaking-research-processing');
 		this.mainDiv.classList.add('matchmaking-research-finished');
-        document.createElement('div')
     }
 
     setInitialRender() {

@@ -38,7 +38,6 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 	const inGameComponent = document.createElement('in-game-component');
 	inGameComponent.gameId = gameId;
 	inGameComponent.gameState = initialGameState;
-	console.log('inGameComponent.gameState', inGameComponent.gameState)
 	inGameComponent.map_dimension = map_dimension;
 	inGameComponent.userId = userId;
 	statesContainerDiv.appendChild(inGameComponent);
@@ -46,7 +45,6 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 
 export default class Game {
 	constructor(canvas, gameId, gameState, userId) {
-		console.log("gameType is: ", gameState.game_type)
 		this.gameInProgress = true;
 		this.gameType = gameState.game_type;
 		this.userId = userId;
@@ -457,6 +455,12 @@ export default class Game {
 			return ;
 		}
 
+		if (this.gameType === "private_match") {
+			localStorage.removeItem("isSearchingPrivateMatch");
+			localStorage.removeItem("isReadyToPlay");
+			localStorage.removeItem("isInGuestState");
+		}
+
 		setTimeout(() => {
 			this.isOutroAnimationEnabled = false;
 			if (!this.gameState.is_ranked) {
@@ -488,7 +492,6 @@ export default class Game {
 	
 	canceledGame(message) {
 		this.gameInProgress = false;
-		alert(`Game canceled: ${message}`);
 		disconnectGameWebSocket(this.userId, false);
 		throwRedirectionEvent('/');
 	}

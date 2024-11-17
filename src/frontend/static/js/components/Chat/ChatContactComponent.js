@@ -8,25 +8,46 @@ export default class ChatContactComponent extends HTMLElement {
         return ["data-user", "data-chatroom"];
     };
 
-	constructor(userData, chatroomId) {
+	constructor(userData, chatroomId, type) {
 		super();
 		this.userData = userData;
 		this.chatroom = chatroomId;
 		this._renderComplete = false;
+		this.type = type;
 	};
 	
-	connectedCallback() {
-		this.render();
+	async connectedCallback() {
+		if (this.type === "contact")
+			await this.renderContact();
+		else
+			await this.renderContacted();
 		this.addEventListeners();
 	}
 
-	async render() {
+	async renderContact() {
+		let profileImage = await getProfileImage(this.userData);
+
+		this.innerHTML = `
+		<div class="chat-contact-profile-picture">
+			<img src=${profileImage} alt='contact picture'>
+			<div class="chat-status-circle ${await this.getUserStatus()}"></div> 
+		</div>
+		<div class="chat-contact-info">
+			<p class="chat-contact-username">${this.userData.username}</p>
+			<p class="last-message"></p>
+		</div>
+		`;
+		this._renderComplete = true;
+		this.dispatchEvent(new CustomEvent('renderComplete'));
+	}
+
+	async renderContacted() {
 		let profileImage = await getProfileImage(this.userData);
 		const lastMessage = await this.getChatroomLastMessage();
 
 		this.innerHTML = `
 		<div class="chat-contact-profile-picture">
-			<img src=${profileImage} alt='contact picture'></img>
+			<img src=${profileImage} alt='contact picture'>
 			<div class="chat-status-circle ${await this.getUserStatus()}"></div> 
 		</div>
 		<div class="chat-contact-info">
@@ -82,8 +103,10 @@ export default class ChatContactComponent extends HTMLElement {
 
 	updateLastMessage(message) {
 		message = this.formatLastMessage(message);
+		const lastMessage = this.querySelector('.last-message');
 
-		this.querySelector('.last-message').innerText = message;
+		if (lastMessage)
+			lastMessage.innerText = message;
 	}
 
 	whenRendered() {
@@ -101,9 +124,11 @@ export default class ChatContactComponent extends HTMLElement {
 			const unreadCircle = this.querySelector('.unread-circle');
 			displayChatroomComponent(this.userData, true);
 
-			if (unreadCircle.classList.contains('active')) unreadCircle.classList.remove('active');
+			if (unreadCircle && unreadCircle.classList.contains('active'))
+				unreadCircle.classList.remove('active');
 
-			if (checkAllRecentMessagesRead()) unreadMessageNotifOff();
+			if (checkAllRecentMessagesRead())
+				unreadMessageNotifOff();
 
 		})
 	}

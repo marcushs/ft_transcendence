@@ -1,7 +1,7 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
 from .models import MatchHistory, User
+from django.http import JsonResponse
 from django.views import View
 import json
 
@@ -22,15 +22,15 @@ class MatchResultManager(View):
             'master': (10000, float('inf'))
         } 
 
+    def get(self, request):
+        return JsonResponse({'status': 'GET  match_resultview reached'}, status=200)
+
     def post(self, request):
         try:
             data = json.loads(request.body.decode('utf-8'))
             self.is_valid_data(data)
             if not self.update_match_result_data(data):
                 return JsonResponse({'status': 'success', 'message': 'result not taken into account, game cancelled with draw'}, status=200)
-            print(f'WINNER: OLD POINTS : {self.winner_old_points} -- NEW POINTS : {self.winner.rankPoints}')
-            print(f'LOSER: OLD POINTS : {self.loser_old_points} -- NEW POINTS : {self.loser.rankPoints}')
-
             if data['type'] == 'ranked':
                 winner_rank = self.get_rank(self.winner.rankPoints)
                 loser_rank = self.get_rank(self.loser.rankPoints)
@@ -51,7 +51,7 @@ class MatchResultManager(View):
                 return JsonResponse({'status': 'success', 'results': payload}, status=200)
             return JsonResponse({'status': 'success', 'message': 'match data updated'}, status=200)
         except Exception as e:
-            print(f'-----------> ERROR: {str(e)}')
+            print(f'-> Error: {str(e)}')
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
@@ -68,11 +68,10 @@ class MatchResultManager(View):
             raise Exception('Missing match type in data')
         if 'is_draw' not in data or 'is_surrend' not in data or 'is_canceled' not in data:
             raise Exception('Missing data')
-        for field in ['unranked', 'ranked', 'tournament']:
+        for field in ['unranked', 'ranked', 'tournament', 'private_match']:
             if field == data['type']:
                 return
         raise Exception('Invalid data') 
-
 
 
     def update_match_result_data(self, data):
@@ -134,7 +133,6 @@ class MatchResultManager(View):
 
 
     def manage_ranked_result(self, data):
-        print(f"data['is_draw']: {data['is_draw']}") 
         if data['is_surrend'] is True:
             winner_points, loser_points = self.manage_surrend_points_update()
         else:
@@ -174,14 +172,12 @@ class MatchResultManager(View):
                 points = base_point - rank_percentage + score_difference
             else:
                 points = base_point + rank_percentage + score_difference
-            print(points)
             return round(max(50, min(150, points))) 
         elif score_difference < 0:
             if rank_difference > 0:
                 points = base_point + rank_percentage + abs(score_difference)
             else:
                 points = base_point - rank_percentage + abs(score_difference) 
-            print(points * -1)
             return round(min(-50, max(-150, points * -1))) 
         else:
             return 0 

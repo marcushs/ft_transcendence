@@ -1,11 +1,9 @@
 import { sendRequest } from "../utils/sendRequest.js";
 import getProfileImage from "../utils/getProfileImage.js";
 import './Friendship/FriendshipButtonComponent.js';
-import userProfile from "../views/user-profile.js";
 import { getString } from "../utils/languageManagement.js";
 import {throwRedirectionEvent} from "../utils/throwRedirectionEvent.js";
 import { sendMessageCallback } from "../utils/chatUtils/sendMessageCallback.js";
-import { removeChatroom } from "../utils/chatUtils/joinRoomUtils.js";
 
 class ContactComponent extends HTMLElement {
     
@@ -74,6 +72,8 @@ class ContactComponent extends HTMLElement {
                 </div>
             `
         } else {
+            const isOnResearch = localStorage.getItem("isSearchingPrivateMatch") || localStorage.getItem("isReadyToPlay") || localStorage.getItem("isInGuestState") || localStorage.getItem("isSearchingGame");
+
             this.innerHTML += `
                 <div class='contact-action-menu'>
                     <i class="fa-solid fa-caret-up"></i>
@@ -81,7 +81,7 @@ class ContactComponent extends HTMLElement {
                         <ul>
                             <li class='contact-action-send-message'>${getString('contactComponent/sendMessageAction')}</li>
                             <hr>
-                            <li class='contact-action-invite-play'>${getString('contactComponent/inviteToPlayAction')}</li>
+                            <li class='contact-action-invite-play ${(isOnResearch) ? "contact-action-disabled" : ""}'>${getString('contactComponent/inviteToPlayAction')}</li>
                             <hr>
                             <li class='contact-action-remove-contact'>${getString('contactComponent/removeContactsAction')}</li>
                             <hr>
@@ -110,6 +110,13 @@ class ContactComponent extends HTMLElement {
         this.handleCloseActionMenuEvent();
         this.handlePendingRequestEvent();
         this.handleContactActionsEvent();
+
+        document.addEventListener('closeContactActionList', (event) => {
+            const contactActionList = this.querySelector('.contact-action-list');
+
+            if (contactActionList)
+                contactActionList.style.display = 'none';
+        })
     }
 
     handleShowActionMenuEvent() {
@@ -159,15 +166,18 @@ class ContactComponent extends HTMLElement {
 
     handleContactActionsEvent() {
         const contactActions = this.querySelectorAll('.contact-action-list li');
+        const contactActionContainer = this.querySelector('.contact-action-list');
 
         contactActions.forEach(action => {
-            action.addEventListener('click', () => {
+            action.addEventListener('click', async () => {
                 switch (action.classList[0]) {
                     case 'contact-action-send-message':
                         sendMessageCallback(this.userData);
                         break;
                     case 'contact-action-invite-play':
-                        console.log(`TEST: Invite contact \'${this.userData.username}\' to play successfully reached`);
+                        if (action.classList[1] === "contact-action-disabled")
+                            return;
+                        this.handleInvitePlayer(contactActionContainer);
                         break;
                     case 'contact-action-remove-contact':
                         this.handleRequestIconClick('remove');
@@ -179,9 +189,35 @@ class ContactComponent extends HTMLElement {
                     default:
                         console.error(`Unknown contact action`);
                         break;
-                }         
+                }
             })
-        })  
+        })
+    }
+
+    async handleInvitePlayer(contactActionContainer) {
+        try {
+            if (localStorage.getItem("isSearchingGame"))
+                return;
+            const data = await sendRequest("POST", "/api/matchmaking/init_private_match/", {
+                invitedUsername: this.userData.username,
+            });
+
+            if (location.pathname !== '/') {
+                throwRedirectionEvent('/');
+                document.addEventListener('gameComponentLoaded', () => {
+                    this.throwChangeGameStateEvent();
+                });
+            } else {
+                this.throwChangeGameStateEvent();
+            }
+            setTimeout(() => {
+                this.throwWaitingStateEvent(this.userData.username)
+            }, 50);
+            contactActionContainer.style.display = 'none';
+        } catch (error) {
+            contactActionContainer.style.display = 'none';
+            console.log(error)
+        }
     }
  
     async handleRequestIconClick(action) {
@@ -206,6 +242,28 @@ class ContactComponent extends HTMLElement {
     
         document.dispatchEvent(event);
     }
+
+    throwChangeGameStateEvent() {
+        const event = new CustomEvent('changeGameStateEvent', {
+            bubbles: true,
+            detail: {
+                context: "onlineHome",
+            }
+        });
+
+        document.dispatchEvent(event);
+    }
+
+    throwWaitingStateEvent(username) {
+        const event = new CustomEvent('waitingStateEvent', {
+            bubbles: true,
+            detail:{
+                username: username
+            }
+        });
+        document.dispatchEvent(event);
+    }
+
 }
 
 customElements.define("contact-component", ContactComponent);

@@ -13,7 +13,6 @@ class FriendsMenuComponent extends HTMLElement {
     async initComponent() {
         this.innerHTML = `
             <div class='bottom-nav-contacts'>
-                <p>${getString('contactMenuComponent/contactsTitle')}</p>
                 <img src='../../assets/contact.svg' alt='contact-icon'>
             </div>
             <div class='contact-menu partial-border'>
@@ -49,83 +48,6 @@ class FriendsMenuComponent extends HTMLElement {
         this.contactBottomNavDiv.style.display = 'none';
         this.isMouseDown = false;
     }
-
-
-
-
-    // -------------------------- //
-
-
-    attachTestEventListener() {
-        const contactsMenu = this.querySelector('.contact-menu');
-
-        contactsMenu.addEventListener('mousedown', (event) => {
-            this.isMouseDown = true;
-            this.cursorXposition = event.clientX - contactsMenu.getBoundingClientRect().left;
-            this.cursorYposition = event.clientY - contactsMenu.getBoundingClientRect().top;
-        });
-
-        document.addEventListener('pointermove', event => this.handlePointerMovements(event, contactsMenu));
-
-        contactsMenu.addEventListener('mouseup', () => this.isMouseDown = false);
-    }
-
-
-    handlePointerMovements(event, contactsMenu) {
-        if (this.isMouseDown) {
-            this.manageContactMenuXMovements(event.clientX, contactsMenu);
-            this.manageContactMenuYMovements(event.clientX, event.clientY, contactsMenu);
-        }
-    }
-
-    manageContactMenuXMovements(pointerX, contactsMenu) {
-        const contactsMenuWidth = contactsMenu.getBoundingClientRect().width;
-        const contactsMenuLeftPosition = pointerX - this.cursorXposition;
-        const contactsMenuRightPosition = pointerX + contactsMenuWidth - this.cursorXposition;
-
-        if (!(contactsMenuRightPosition >= window.innerWidth - 15) && contactsMenu.classList.contains('partial-border')) {
-            contactsMenu.classList.remove('partial-border');
-            contactsMenu.classList.add('full-border');
-        }
-
-        if (contactsMenuRightPosition >= window.innerWidth - 15) {
-            contactsMenu.style.left = `calc(100% - ${contactsMenuWidth}px)`;
-            contactsMenu.classList.remove('full-border');
-            contactsMenu.classList.add('partial-border');
-        } else if (contactsMenuRightPosition <= window.innerWidth && contactsMenuLeftPosition >= 0) {
-            contactsMenu.style.left = this.convertPixelsToPercentage(contactsMenuLeftPosition, window.innerWidth) + '%';
-        } else if (contactsMenuRightPosition > window.innerWidth) {
-            contactsMenu.style.left = this.convertPixelsToPercentage(window.innerWidth - contactsMenuWidth, window.innerWidth) + '%';
-        } else if (pointerX - this.cursorXposition < 0) {
-            contactsMenu.style.left = '0px';
-        }
-    }
-
-    manageContactMenuYMovements(pointerX, pointerY, contactsMenu) {
-        const contactsBtn = getComputedStyle(this.querySelector('.bottom-nav-contacts'));
-        const contactsMenuHeight = contactsMenu.getBoundingClientRect().height;
-        const contactsMenuTopPosition = pointerY - this.cursorYposition;
-        const contactsMenuBottomPosition = pointerY + contactsMenuHeight - this.cursorYposition;
-        const contactsMenuRightPosition = pointerX + contactsMenu.getBoundingClientRect().width - this.cursorXposition;
-
-        if (contactsMenuBottomPosition >= window.innerHeight - parseInt(contactsBtn.height) - 30 &&
-            contactsMenuRightPosition >= window.innerWidth - parseInt(contactsBtn.width) - parseInt(contactsBtn.marginRight)) {  // To auto align contact menu component to the bottom
-            contactsMenu.style.top = `calc(100% - ${contactsMenuHeight + parseInt(contactsBtn.height) + 15}px`;
-        } else if (contactsMenuBottomPosition <= window.innerHeight && contactsMenuTopPosition >= 0) {
-            contactsMenu.style.top = this.convertPixelsToPercentage(contactsMenuTopPosition, window.innerHeight) + '%';
-        } else if (contactsMenuBottomPosition > window.innerHeight) {
-            contactsMenu.style.top = this.convertPixelsToPercentage(window.innerHeight - contactsMenuHeight, window.innerHeight) + '%';
-        } else if (contactsMenuTopPosition < 0) {
-            contactsMenu.style.top = '0px';
-        }
-    }
-
-    convertPixelsToPercentage(sizeInPixel, valueToDeterminePercentage) {
-        return sizeInPixel / valueToDeterminePercentage * 100;
-    }
-
-
-    // -------------------------- //
 
     async connectedCallback() {
         await this.displayContactList();
@@ -205,8 +127,19 @@ class FriendsMenuComponent extends HTMLElement {
     }
 
     attachEventListener() {
+        const chatMainMenu = document.querySelector('.chat-main-menu');
+
+        this.addEventListener('click', (event) => {
+            const chatComponent = document.querySelector('.chat-main-menu');
+
+            if (chatComponent && chatComponent.style.display !== 'none')
+                this.throwCloseChatComponent();
+            event.stopPropagation();
+            this.throwCloseContactActionList();
+        });
+
         this.contactBottomNavDiv.addEventListener('click', () => {
-            this.contactMenuDiv.style.display = this.contactMenuDiv.style.display === 'none' ? 'block' : 'none';
+            this.contactMenuDiv.style.display = (this.contactMenuDiv.style.display === 'none') ? 'block' : 'none';
         });
         this.pendingContactSummary.addEventListener('click', () => {
             this.pendingContactList.style.display = this.pendingContactList.style.display === 'none' ? 'block' : 'none';
@@ -218,13 +151,16 @@ class FriendsMenuComponent extends HTMLElement {
             const popUp = document.createElement('pop-up-component');
 
             popUp.classList.add('add-new-contact-pop-up');
-            document.querySelector('.home-page').appendChild(popUp);
+            app.appendChild(popUp);
         })
         this.searchContactInput.addEventListener('input', () => this.updateContactList());
-        this.attachTestEventListener();
+
+        document.addEventListener('click', (event) => {
+            this.contactMenuDiv.style.display = 'none';
+        });
     }
 
-    async updateContactList() {
+    async updateContactList() {        
         const contacts = await this.getDataRequest('search_contacts');
         const contactsData = await this.getDataRequest('users_data', contacts.friends);
         const searchValue = this.searchContactInput.value.toLowerCase();
@@ -281,6 +217,20 @@ class FriendsMenuComponent extends HTMLElement {
             if (!username.includes(searchValue))
                 contactComponent.remove();
         })
+    }
+
+    throwCloseContactActionList() {
+        const event = new CustomEvent('closeContactActionList', {
+            bubbles: true,
+        });
+        document.dispatchEvent(event);
+    }
+
+    throwCloseChatComponent() {
+        const event = new CustomEvent('closeChatComponent', {
+            bubbles: true,
+        });
+        document.dispatchEvent(event);
     }
 }
 customElements.define("contact-menu-component", FriendsMenuComponent);

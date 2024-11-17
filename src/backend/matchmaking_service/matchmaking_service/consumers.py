@@ -8,7 +8,6 @@ connections = {}
 connections_lock = threading.Lock()
 
 def get_connections():
-    print(f'---------> consumers:  {connections}') 
     return connections
 
 class MatchmakingConsumer(AsyncWebsocketConsumer):
@@ -21,7 +20,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 self.group_name = f'matchmaking_searching_{str(self.user.id)}'
                 await self.channel_layer.group_add(self.group_name, self.channel_name) 
                 await self.accept()
-                print(f'---------> consumers: add user : {self.user} to connections list')
                 with connections_lock:
                     connections[str(self.user.id)] = self
                 await handle_waiting_messages(str(self.user.id))
@@ -51,5 +49,35 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             {
                 'type': event['type'],
                 'player_id': str(self.user.id)
+            }
+        ))
+        
+    async def player_joined_private_match(self, event): 
+        await self.send(text_data=json.dumps(
+            {
+                'type': event['type'],
+                'player_id': event['player_id']
+            }
+        ))
+        
+    async def player_refused_private_match(self, event):  
+        await self.send(text_data=json.dumps(
+            {
+                'type': event['type'],
+                'player_id': event['player_id']
+            }
+        ))
+        
+    async def private_match_started(self, event):
+        await self.send(text_data=json.dumps(
+            {
+                'type': event['type'],
+            }
+        ))
+        
+    async def private_match_canceled(self, event):  
+        await self.send(text_data=json.dumps(
+            {
+                'type': event['type'],
             }
         ))

@@ -6,8 +6,11 @@ let languages = null;
 
 export async function getUserLanguage() {
 	let userLanguage;
+	const isAuthenticated = await checkAuthentication();
 
-	if (await checkAuthentication()) {
+	console.log(isAuthenticated);
+	if (isAuthenticated) {
+		
 		userLanguage = await getUserLanguageFromDb();
 
 		if (userLanguage) {
@@ -21,7 +24,9 @@ export async function getUserLanguage() {
 		return userLanguage;
 
 	userLanguage = navigator.language.split('-')[0];
-	await setUserLanguageInDb(userLanguage);
+	
+	if (isAuthenticated)
+		await setUserLanguageInDb(userLanguage);
 	localStorage.setItem('userLanguage', userLanguage);
 
 	return userLanguage;

@@ -1,7 +1,7 @@
-from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
 from django.utils import timezone
 from datetime import timedelta
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
+from django.db import models
 import uuid
 
 class UserManager(BaseUserManager):

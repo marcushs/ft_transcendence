@@ -6,11 +6,10 @@
 @import './ContactMenuSearchBar.css';
 
 contact-menu-component {
-    position: absolute;
+    position: fixed;
+    z-index: 4;
     bottom: 0;
     right: 0;
-    height: 100%;
-    width: 100%;
 }
 
 /* .full-border {
@@ -27,7 +26,6 @@ contact-menu-component {
 } */
 
 .contact-menu {
-    z-index: 4;
     position: absolute;
     height: 48rem;
     width: 30rem;
