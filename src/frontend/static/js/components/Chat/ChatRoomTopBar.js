@@ -31,7 +31,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 		let status = await this.getUserStatus();
 		let isUserBlocked = await this.isTargetUserBlocked();
 		const isSearchingGame = localStorage.getItem("isSearchingPrivateMatch") || localStorage.getItem("isReadyToPlay")
-			|| localStorage.getItem("isInGuestState") || localStorage.getItem("isSearchingGame");
+			|| localStorage.getItem("isInGuestState") || localStorage.getItem("isSearchingGame") || localStorage.getItem("tournamentData");
 
 		this.innerHTML = `
 			<i id="chatroom-back-btn" class="fa-solid fa-arrow-left"></i>

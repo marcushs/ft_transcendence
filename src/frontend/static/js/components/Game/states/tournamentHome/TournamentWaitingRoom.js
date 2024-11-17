@@ -47,14 +47,14 @@ class TournamentWaitingRoomElement extends HTMLElement {
 					</div>
 				</div>
 			</div>
-		`;	
+		`;
 	}
 
 	addEventListeners() {
 		const leaveBtn = this.querySelector('.leave-tournament-button');
 
 		leaveBtn.addEventListener('click', () => {
-			console.log('clicked');
+			localStorage.removeItem("tournamentData");
 			const payload = {
 				'type': 'leave_tournament',
 				'tournament_id': this.tournamentId,

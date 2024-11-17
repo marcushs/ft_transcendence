@@ -86,7 +86,6 @@ export async function addNewContactToList(contact, requestType, is_sender) {
         } else
             manageUpdateOfContactList(user);
     } catch (error) {
-        console.log('Error: ', error);
         return null;
     }
 }

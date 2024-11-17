@@ -23,6 +23,7 @@ export async function loadWebSocket() {
 	await loadTournamentWebSocket();
 }
 
+
 //--------------> CONTACT WEBSOCKET <--------------\\
 
 async function loadContactsWebSocket() {

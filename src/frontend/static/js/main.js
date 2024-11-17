@@ -20,9 +20,13 @@ import { loadWebSocket } from "./views/websocket/loadWebSocket.js";
 import oauthRedirect from './views/oauthRedirect.js';
 import oauthUsername from "./views/oauthUsername.js";
 import { checkMatchmakingSearch } from "./utils/matchmaking/matchResearch.js";
+import disableButtonsInGameResearch from "./utils/disableButtonsInGameResearch.js";
+import {throwRedirectionEvent} from "./utils/throwRedirectionEvent.js";
+import TournamentMatch from "./components/Game/states/tournamentHome/TournamentMatch.js";
 
 let languageJson;
 
+// localStorage.clear();
 localStorage.setItem('lastAuthorizedPage', '/');
 
 const routes = {
@@ -38,6 +42,48 @@ const routes = {
     "/oauth-redirect": { title: "OauthRedirect", render: oauthRedirect },
     "/oauth-username": { title: "OauthUsername", render: oauthUsername},
 };
+
+function manageGameStates() {
+    // if (localStorage.getItem("isSearchingPrivateMatch") || localStorage.getItem("isReadyToPlay") || localStorage.getItem("isInGuestState"))
+    if (localStorage.getItem("tournamentData")) {
+        disableButtonsInGameResearch();
+        if (location.pathname !== '/') {
+            throwRedirectionEvent('/');
+            document.addEventListener('gameComponentLoaded', () => {
+                throwChangeGameStateEvent();
+            });
+        } else {
+            throwChangeGameStateEvent();
+        }
+    }
+    // else
+    // } else if (fetch) {
+        // fetch pour voir si c'est encore le cas, si oui, return
+    // }
+}
+
+function throwChangeGameStateEvent() {
+    const event = new CustomEvent('changeGameStateEvent', {
+        bubbles: true,
+        detail: {
+            context: "tournamentHome",
+        }
+    });
+
+    document.dispatchEvent(event);
+}
+
+
+function redirect(tournamentBracket) {
+    const gameComponent = document.querySelector('game-component');
+    const tournamentMatchState = gameComponent.states['tournamentMatch'];
+    const tournamentMatch = new TournamentMatch(tournamentBracket);
+
+    tournamentMatchState['state'] = tournamentMatch;
+    gameComponent.changeState(tournamentMatchState.state, tournamentMatchState.context);
+    gameComponent.currentState = "tournamentMatch";
+}
+
 
 async function setUserRender() {
     await generateCsrfToken();
@@ -90,6 +136,7 @@ async function router() {
     app.innerHTML = await view.render();
     await checkInactiveGame();
     await checkMatchmakingSearch();
+    manageGameStates();
 }
 
 function handleDynamicURL() {

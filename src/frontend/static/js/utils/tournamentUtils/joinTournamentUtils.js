@@ -1,6 +1,7 @@
 import { TournamentComponent } from "../../components/Game/states/tournamentHome/TournamentComponent.js";
 import TournamentWaitingRoom from "../../components/Game/states/tournamentHome/TournamentWaitingRoom.js";
 import TournamentWon from "../../components/Game/states/tournamentHome/TournamentWon.js";
+import resetButtonsOnMatchmakingCanceled from "../resetButtonsOnMatchmakingCanceled.js";
 
 export function putNewTournamentToDOM(tournament) {
 	const tournamentsList = document.querySelector('.tournaments-list');
@@ -33,11 +34,25 @@ export function redirectToWinnerPage(tournamentData) {
 }
 
 export function redirectToTournamentHome() {
-	const gameComponent = document.querySelector('game-component');
-	const tournamentHomeState = gameComponent.states['tournamentHome'];
+	// const gameComponent = document.querySelector('game-component');
+	// const tournamentHomeState = gameComponent.states['tournamentHome'];
+	//
+	// gameComponent.changeState(tournamentHomeState.state, tournamentHomeState.context);
+	// gameComponent.currentState = "tournamentHome";
+	document.querySelector('game-top-bar').className = "";
+	resetButtonsOnMatchmakingCanceled();
+	throwChangeGameStateEvent();
+}
 
-	gameComponent.changeState(tournamentHomeState.state, tournamentHomeState.context);
-	gameComponent.currentState = "tournamentHome";
+function throwChangeGameStateEvent() {
+	const event = new CustomEvent('changeGameStateEvent', {
+		bubbles: true,
+		detail: {
+			context: "tournamentHome",
+		}
+	});
+
+	document.dispatchEvent(event);
 }
 
 export function updateTournamentInfo(tournamentData) {
@@ -71,6 +86,6 @@ function updateTournamentComponentPlayerCount(tournamentData, joinComponent, joi
 			
 			if (tournamentData.member_count === tournamentData.tournament_size) tournament.remove();
 		}
-	})
+	});
 }
 

@@ -16,13 +16,13 @@ class GameComponent extends HTMLElement {
 
         this.states = {
             "matchmakingChoice": { context: "/", state: new matchmakingChoice() },
-            "tournamentHome": { context: "/tournamentHome", state: new tournamentHome() },
             "onlineHome": { context: "/onlineHome", state: new onlineHome() },
             "localHome": { context: "/localHome", state: new localHome() },
-            "bracket": {context: "/tournamentHome/tournamentMatch/bracket"},
-            "tournamentWaitingRoom": {context: "/tournamentHome/tournamentWaitingRoom"},
-            "tournamentMatch": {context: "/tournamentHome/tournamentMatch"},
-            "tournamentLost": {context: "/tournamentHome/tournamentLost"},
+            "tournamentHome": { context: "/tournamentHome", state: new tournamentHome() },
+            "bracket": {context: "/tournamentHome/bracket"},
+            "tournamentWaitingRoom": {context: "/tournamentWaitingRoom"},
+            "tournamentMatch": {context: "/tournamentMatch"},
+            "tournamentLost": {context: "/tournamentLost"},
             "tournamentWon": {context: "/tournamentWon"},
         }
 
@@ -47,14 +47,6 @@ class GameComponent extends HTMLElement {
         this.throwGameComponentLoaded();
         if (localStorage.getItem("isSearchingPrivateMatch") || localStorage.getItem("isReadyToPlay") || localStorage.getItem("isInGuestState"))
             await this.changeState(this.states["onlineHome"].state, this.states["onlineHome"].context);
-    }
-
-    throwGameComponentLoaded() {
-        const event = new CustomEvent('gameComponentLoaded', {
-            bubbles: true,
-        });
-
-        document.dispatchEvent(event);
     }
 
     async pushNewState(state) {
@@ -136,9 +128,19 @@ class GameComponent extends HTMLElement {
     async handleChangeStateEvent(event) {
         if (event.detail.context === "onlineHome") {
             await this.changeState(this.states[event.detail.context].state, this.states[event.detail.context].context);
+        } else if (event.detail.context === "tournamentHome") {
+            await this.changeState(this.states[event.detail.context].state, this.states[event.detail.context].context);
         }
     }
 
+
+    throwGameComponentLoaded() {
+        const event = new CustomEvent('gameComponentLoaded', {
+            bubbles: true,
+        });
+
+        document.dispatchEvent(event);
+    }
 }
 
 customElements.define("game-component", GameComponent);

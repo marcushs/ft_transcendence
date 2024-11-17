@@ -23,4 +23,5 @@ export default function resetButtonsOnMatchmakingCanceled() {
 	playInvitationButtonDisabled.forEach(button => {
 		button.className = "play-invitation-button";
 	});
+
 }

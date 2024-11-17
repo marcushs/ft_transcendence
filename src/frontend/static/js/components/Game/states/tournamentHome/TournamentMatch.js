@@ -8,6 +8,7 @@ import { sendRequest } from "../../../../utils/sendRequest.js";
 
 export default class TournamentMatch {
 	constructor(match) {
+		console.log('THIS MATCH = ', match);
 		this.redirectState = "tournament-match";
 		this.class = "tournament-match";
 		let jsonString = JSON.stringify(match);

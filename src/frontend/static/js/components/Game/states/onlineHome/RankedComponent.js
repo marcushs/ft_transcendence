@@ -32,8 +32,10 @@ class RankedComponent extends HTMLElement {
 
 		const isSearchingGame = JSON.parse(localStorage.getItem('isSearchingGame'));
 
-		if ((isSearchingGame && isSearchingGame.type !== "ranked") || localStorage.getItem("isSearchingPrivateMatch") || localStorage.getItem('isInGuestState') )
+		if ((isSearchingGame && isSearchingGame.type !== "ranked") || localStorage.getItem("isSearchingPrivateMatch") || localStorage.getItem('isInGuestState') ) {
+			alert('rajouter la aussi logique si en tournois')
 			this.playButton.className = "generic-btn-disabled";
+		}
 		else if (isSearchingGame)
 			this.replacePlayBtnByCancel();
 
