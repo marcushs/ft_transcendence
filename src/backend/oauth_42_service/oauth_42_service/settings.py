@@ -28,8 +28,8 @@ SECRET_KEY = env("OAUTH_42_SECRET_KEY")
 # /-----> JWT keys && algorithm <-----\
 
 JWT_SIGNING_KEY = env("PRIVATE_JWT_KEY")
-JWT_VERIFYING_KEY = os.environ.get("PUBLIC_JWT_KEY")
-JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")
+JWT_VERIFYING_KEY = env("PUBLIC_JWT_KEY")
+JWT_ALGORITHM = env("JWT_ALGORITHM")
 
 # /-----> JWT token lifetime in seconds <-----\
 

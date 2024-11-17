@@ -58,6 +58,7 @@ class TournamentWaitingRoomElement extends HTMLElement {
 			const payload = {
 				'type': 'leave_tournament',
 				'tournament_id': this.tournamentId,
+				'from_match': false
 			};
 
 			tournamentSocket.send(JSON.stringify(payload))

@@ -65,14 +65,18 @@ class CreateComponent extends HTMLElement {
 			errorElement.className = 'create-tournament-error';
 			errorElement.innerText = 'The tournament name cannot be empty';
 			this.querySelector('.tournament-name-container').appendChild(errorElement);
-		} else if (this.tournamentName.length > 0 && this.tournamentName.length <= 30) {
+		} else if (this.tournamentName.length > 0 && this.tournamentName.length <=30) {
 			const payload = {
 				'type': 'create_tournament',
 				'tournament_name': this.tournamentName,
 				'tournament_size': this.numberOfPlayers,
 			};
 
-			tournamentSocket.send(JSON.stringify(payload));
+			tournamentSocket.send(JSON.stringify(payload))
+			localStorage.setItem('isSearchingGame', JSON.stringify({
+				type: 'tournament',
+				status: 'searching'
+			}));
 			// try {
 			// 	let res = await sendRequest('POST', '/api/tournament/create_tournament/', payload, false);
 

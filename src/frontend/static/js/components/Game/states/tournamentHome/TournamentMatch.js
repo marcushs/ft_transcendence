@@ -43,9 +43,9 @@ class TournamentMatchElement extends HTMLElement {
 
 	async render() {
 		this.innerHTML = `
-			<div class="waiting-room" data-tournament="${this.tournamentId}">
-				<h3 class="waiting-room-title">Waiting Room</h3>
-				<div class="waiting-room-background">
+			<div class="tournament-match" data-tournament="${this.tournamentId}">
+				<h3 class="tournament-match-title">Waiting Room</h3>
+				<div class="tournament-match-background">
 					<div class="tournament-match-content">
 						<div class="bracket-btn">
 							<img id="bracket-icon" src="../../../../assets/bracket_icon.svg" alt="bracket_icon">

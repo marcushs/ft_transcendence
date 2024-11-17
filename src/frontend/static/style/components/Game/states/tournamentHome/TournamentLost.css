@@ -1,3 +1,34 @@
+.tournament-lost {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.tournament-lost-title {
+	font-size: 3rem;
+	position: absolute;
+	left: 50%;
+	top: 17%;
+	font-weight: 400;
+	transform: translateX(-50%);
+	animation: component-apparition 0.75s forwards;
+	opacity: 0;
+}
+
+.tournament-lost-background {
+	position: absolute;
+	top: 55%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 60%;
+	height: 60%;
+	border-radius: 5px;
+	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
+	padding: 1px;
+	animation: component-apparition 0.75s forwards;
+	opacity: 0;
+}
+
 .tournament-match-content .countdown-container p.tournament-lost-countdown {
 	font-size: 1.7rem;
 	color: red;

@@ -1,3 +1,40 @@
+.tournament-match {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.tournament-match-title {
+	font-size: 3rem;
+	position: absolute;
+	left: 50%;
+	top: 17%;
+	font-weight: 400;
+	transform: translateX(-50%);
+	animation: component-apparition 0.75s forwards;
+	opacity: 0;
+}
+
+.tournament-match-background {
+	position: absolute;
+	top: 55%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 60%;
+	height: 60%;
+	border-radius: 5px;
+	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
+	padding: 1px;
+	animation: component-apparition 0.75s forwards;
+	opacity: 0;
+}
+
+.tournament-name {
+	font-size: 3rem;
+	font-weight: 400;
+	margin-bottom: 3rem;
+}
+
 .tournament-match-content {
 	display: flex;
 	flex-direction: column;

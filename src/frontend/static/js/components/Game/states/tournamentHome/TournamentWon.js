@@ -35,6 +35,7 @@ class TournamentWonElement extends HTMLElement {
 	async connectedCallback() {
 		await this.render();
 		this.addEventListeners();
+		this.sendStartCountdown();
 	}
 
 	async render() {
@@ -72,8 +73,9 @@ class TournamentWonElement extends HTMLElement {
 		
 		leaveBtn.addEventListener('click', () => {
 			const payload = {
-				'type': 'leave_tournament_group',
+				'type': 'leave_tournament',
 				'tournament_id': this.tournamentId,
+				'from_match': true
 			};
 
 			tournamentSocket.send(JSON.stringify(payload))
@@ -89,6 +91,23 @@ class TournamentWonElement extends HTMLElement {
 		bracketState['state'] = bracket;
 		gameComponent.changeState(bracketState.state, "/tournamentWon/bracket");
 		gameComponent.currentState = "bracket";
+	}
+
+	sendStartCountdown() {
+		const payload = {
+			'type': 'start_leave_countdown',
+			'tournament_id': this.tournamentId
+		};
+
+		tournamentSocket.send(JSON.stringify(payload))
+	}
+
+	updateCountdownSeconds(time) {
+		const secondsSpan = this.querySelector('.tournament-lost-countdown span');
+
+		if (!secondsSpan) return;
+
+		secondsSpan.innerText = time;
 	}
 }
 
