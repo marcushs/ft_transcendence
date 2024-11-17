@@ -89,7 +89,7 @@ class oauthGoogleAccessResourceView(View):
             self.id = str(user.id)
             self.payload['user_id'] = self.id
             response = self.send_create_user_request_to_endpoints()
-            if response.status_code == 400:
+            if response is not None and response.status_code == 400:
                 response_data = json.loads(response.content)
                 if response_data['message'] == "Email address already registered! Try logging in.":
                     user.delete()
@@ -113,9 +113,10 @@ class oauthGoogleAccessResourceView(View):
                 'http://statistics:8000/api/statistics/add_user/',
                 'http://chat:8000/api/chat/add_user/', 
                 'http://tournament:8000/api/tournament/add_user/',] 
-        for url in urls:
+        for url in urls: 
             response = send_post_request(url=url, payload=self.payload, csrf_token=self.csrf_token)
-            return response
+            if response.status_code == 400:
+                return response
 
     def init_payload(self):
         self.payload = {
