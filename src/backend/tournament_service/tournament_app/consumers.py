@@ -493,7 +493,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			# tournament.isOver = True
 			# tournament.save()
 			tournament_bracket_dict = tournament_bracket.to_dict_sync()
-			tournament_bracket_dict['username'] = self.user.username
+			tournament_bracket_dict['alias'] = self.user.alias
 			return async_to_sync(self.send)(text_data=json.dumps({
 				'type': 'redirect_to_winner_page',
 				'tournament_bracket': tournament_bracket_dict,

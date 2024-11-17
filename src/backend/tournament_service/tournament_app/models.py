@@ -43,6 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=12, unique=True, default='default')
     email = models.EmailField(unique=True)
+    alias = models.CharField(max_length=12, unique=True, default='default')
    
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -55,14 +56,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     async def to_dict(self):
         obj_dict = {
             'id': str(self.id),
-            'username': self.username
+            'username': self.username,
+            'alias': self.alias
         }
         return obj_dict
 
     def to_dict_sync(self):
         obj_dict = {
             'id': str(self.id),
-            'username': self.username
+            'username': self.username,
+            'alias': self.alias
         }
         return obj_dict
 
@@ -90,9 +93,9 @@ class Tournament(models.Model):
 
         # Convert members (ManyToMany field) to list of dicts with 'id' and 'username'
         members = await sync_to_async(list)(
-            self.members.values('id', 'username')
+            self.members.values('id', 'username', 'alias')
         )
-        obj_dict['members'] = [{'id': str(member['id']), 'username': member['username']} for member in members]
+        obj_dict['members'] = [{'id': str(member['id']), 'username': member['username'], 'alias': member['alias']} for member in members]
         obj_dict['member_count'] = len(members)
         obj_dict['creation_time'] = format_datetime(self.creation_time)
         obj_dict['current_stage'] = self.current_stage
@@ -110,9 +113,9 @@ class Tournament(models.Model):
 
         # Convert members (ManyToMany field) to list of dicts with 'id' and 'username'
         members = list(
-            self.members.values('id', 'username')
+            self.members.values('id', 'username', 'alias')
         )
-        obj_dict['members'] = [{'id': str(member['id']), 'username': member['username']} for member in members]
+        obj_dict['members'] = [{'id': str(member['id']), 'username': member['username'], 'alias': member['alias']} for member in members]
         obj_dict['member_count'] = len(members)
         obj_dict['creation_time'] = format_datetime(self.creation_time)
         obj_dict['current_stage'] = self.current_stage
@@ -123,8 +126,8 @@ class Tournament(models.Model):
         return self.current_stage
     
     def get_members(self):
-        members = list(self.members.values('id', 'username'))
-        return [{'id': str(member['id']), 'username': member['username']} for member in members]
+        members = list(self.members.values('id', 'username', 'alias'))
+        return [{'id': str(member['id']), 'username': member['username'], 'alias': member['alias']} for member in members]
     
     def is_not_full(self):
         return self.members.count() < self.tournament_size
@@ -162,6 +165,7 @@ class TournamentMatch(models.Model):
         players = await sync_to_async(lambda: list(TournamentMatchPlayer.objects.filter(match=self).select_related('player')))()
         obj_dict['players'] = [{'id': str(player.player.id), 
                                 'username': player.player.username, 
+                                'alias': player.player.alias, 
                                 'player_number': player.player_number, 
                                 'ready': player.ready_for_match} for player in players]
 
@@ -187,6 +191,7 @@ class TournamentMatch(models.Model):
         players = TournamentMatchPlayer.objects.filter(match=self).select_related('player')
         obj_dict['players'] = [{'id': str(player.player.id), 
                                 'username': player.player.username, 
+                                'alias': player.player.alias, 
                                 'player_number': player.player_number, 
                                 'ready': player.ready_for_match} for player in players]
 
@@ -196,6 +201,7 @@ class TournamentMatch(models.Model):
         players = TournamentMatchPlayer.objects.filter(match=self).select_related('player')
         return [{'id': str(player.player.id), 
                  'username': player.player.username, 
+                 'alias': player.player.alias, 
                  'player_number': player.player_number, 
                  'ready': player.ready_for_match} for player in players]
 

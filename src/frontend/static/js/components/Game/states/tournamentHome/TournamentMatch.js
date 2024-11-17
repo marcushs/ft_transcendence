@@ -76,7 +76,7 @@ class TournamentMatchElement extends HTMLElement {
 		if (!this.userId) return console.log('Cannot find userId');
 
 		if (this.match.players.length === 2)
-			return this.match.players[0].id === this.userId ? this.match.players[1].username : this.match.players[0].username;
+			return this.match.players[0].id === this.userId ? this.match.players[1].alias : this.match.players[0].alias;
 		return 'To Be Determined...';
 	}
 

@@ -29,7 +29,7 @@ class TournamentWonElement extends HTMLElement {
 		this.tournamentName = this.tournamentBracket.tournament.tournament_name;
 		this.tournamentSize = this.tournamentBracket.tournament.tournament_size;
 		this.bracketObj = BracketObj.create(this.tournamentBracket, this.tournamentSize);
-		this.username = this.tournamentBracket.username;
+		this.alias = this.tournamentBracket.alias;
 	}
 	
 	async connectedCallback() {
@@ -48,7 +48,7 @@ class TournamentWonElement extends HTMLElement {
 							<img id="bracket-icon" src="../../../../assets/bracket_icon.svg" alt="bracket_icon">
 						</div>
 						<h4 class="tournament-name">${this.tournamentName}</h4>
-						<p>Congratulations <span>${this.username}</span>!</p>
+						<p>Congratulations <span>${this.alias}</span>!</p>
 						<p>You won the tournament <span>${this.tournamentName}</span>!</p>
 						<img id="trophy" src="../../../../assets/trophy.svg" alt="trophy"">
 						<div class="countdown-container">
