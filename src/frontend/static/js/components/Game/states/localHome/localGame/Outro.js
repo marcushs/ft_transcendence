@@ -99,7 +99,6 @@ export default class Outro {
 	}
 
 	generateSparks(x, y) {
-		console.log('sparks')
 		const numberOfSparks = 350;
 		const angleRange = [0, 2 * Math.PI];
 

@@ -8,7 +8,6 @@ export default () => {
 	`;
 
 	setTimeout(() => {
-		console.log(oauthProvider);
 		oauthRedirectCallback(oauthProvider);
 	}, 0);
 

@@ -31,22 +31,10 @@ export class PingStatus {
         }
     }
 
-    // async setOfflineStatus() {
-    //     const url = '/api/user/set_offline/';
-    //     console.log('ping sent to back');
-    //     try {
-    //         const data = await sendRequest('POST', url, null);
-    //         console.log('success put offline');
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
-
     attachEventListener() {
         window.addEventListener('mousemove', this.setPingTimeout.bind(this));
         window.addEventListener('keydown', this.setPingTimeout.bind(this));
         window.addEventListener('scroll', this.setPingTimeout.bind(this));
         window.addEventListener('click', this.setPingTimeout.bind(this));
-        // window.addEventListener('beforeunload', this.setOfflineStatus.bind(this));
     }
 }

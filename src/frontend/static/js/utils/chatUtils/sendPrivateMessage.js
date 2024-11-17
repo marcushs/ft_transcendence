@@ -19,7 +19,6 @@ export function sendPrivateMessage() {
 		'message': message,
 		'target_user': targetUserData.id,
 	}
-	console.log(data);
 	chatSocket.send(JSON.stringify(data));
 	chatroomMessageInput.value = '';
 }
@@ -44,7 +43,6 @@ export async function updateCurrentChatroomId(userId) {
 }
 
 export async function putMessageToChatroomConversation(messageData) {
-	console.log('putMessageToChatroom called???????')
 	const chatroomConversation = document.querySelector('chatroom-conversation');
 	if (!chatroomConversation) {
 		unreadMessageNotifOn();
@@ -58,9 +56,7 @@ export async function putMessageToChatroomConversation(messageData) {
 		const liElem = document.createElement('li');
 		const messageComponent = new ChatMessageComponent(messageData);
 	
-		console.log('putMessageToChatroom: ', messageData);
 		const isSent = await isSentOrReceivedMessage(messageData.author);
-		console.log(isSent)
 		messageComponent.classList.add(isSent);
 		liElem.appendChild(messageComponent);
 		chatroomConversationUl.appendChild(liElem);
@@ -114,12 +110,10 @@ function updateChatContactComponents(messageData) {
 	const listItems = document.querySelectorAll('chat-contact-component');
 	const messagedContacts = Array.from(listItems);
 	
-	console.log('messagedContacts', messagedContacts);
 	messagedContacts.forEach(async (contact) => {
 		if (isTargetChatroom(contact.getAttribute('data-chatroom'), messageData.chatroom)) {
 			contact.updateLastMessage(messageData.message);
 			if (await isSentOrReceivedMessage(messageData.author) === 'received' && !document.querySelector('.chatroom.active')) {
-				console.log('here');
 				contact.querySelector('.unread-circle').classList.add('active');
 			}
 		}

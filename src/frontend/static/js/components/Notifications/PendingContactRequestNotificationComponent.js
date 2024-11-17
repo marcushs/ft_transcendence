@@ -92,8 +92,6 @@ class PendingContactRequestNotificationComponent extends HTMLElement {
             if (data.status === 'success') {
                 if (action === 'accept')
                     sendNotification(this.notificationObj.sender, 'friend-request-accepted');
-
-				console.log(this.notificationObj.uuid.replace('notif-', ''));
 				
 				await sendRequest('DELETE', '/api/notifications/manage_notifications/', { uuid: this.notificationObj.uuid.replace('notif-', '') });
 				this.throwDeleteNotificationEvent();

@@ -49,7 +49,6 @@ export default class ChatContactComponent extends HTMLElement {
 
 		if (res.status === 'Error') return 'Problem getting last message of chatroom';
 
-		console.log(res);
 		return res.lastMessage[0].fields;
 	}
 

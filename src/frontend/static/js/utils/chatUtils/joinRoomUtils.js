@@ -63,7 +63,6 @@ export async function addNewContactToContactedList(chatroomId) {
 		const listElem = document.createElement('li');
 		const contactComp = new ChatContactComponent(user_data, chatroomId);
 
-		console.log(contactComp);
 		contactComp.setAttribute('data-chatroom', chatroom.id);
 		contactComp.setAttribute('data-user', JSON.stringify(user_data));
 		listElem.appendChild(contactComp);

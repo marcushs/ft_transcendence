@@ -19,7 +19,6 @@ class PrivateMatchInvitationNotificationComponent extends HTMLElement {
 	initializeComponent() {
 		this.notificationCreateAt = new Date(this.notificationObj.created_at);
 
-		console.log(this.notificationObj)
 		this.innerHTML = `
 			<li>			
 				<p><span>${this.notificationObj.sender}</span> ${getString('notificationsComponent/privateMatchInvitationSuffix')}</p>
@@ -101,7 +100,6 @@ class PrivateMatchInvitationNotificationComponent extends HTMLElement {
 				this.throwDeleteNotificationEvent();
 				this.throwCloseNotificationsContainerEvent();
 				// if (location.href)
-				console.log(location.pathname)
 				if (location.pathname !== '/') {
 					throwRedirectionEvent('/');
 					// const intervalId2 = setInterval(() => {
@@ -110,7 +108,6 @@ class PrivateMatchInvitationNotificationComponent extends HTMLElement {
 					// }
 					// }, 500);
 
-					console.log(document.querySelector('#gameStatesContainer'));
 				}
 				await this.waitForStatesContainer();
 				this.throwChangeGameStateEvent();
@@ -159,7 +156,6 @@ class PrivateMatchInvitationNotificationComponent extends HTMLElement {
 	}
 
 	throwChangeGameStateEvent() {
-		console.log('states event')
 		const event = new CustomEvent('changeGameStateEvent', {
 			bubbles: true,
 			detail: {

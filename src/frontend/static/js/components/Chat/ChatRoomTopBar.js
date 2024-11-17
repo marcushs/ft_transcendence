@@ -7,7 +7,6 @@ export default class ChatRoomTopBar extends HTMLElement {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-		console.log(newValue)
         if (name === 'data-user')
             this.userData = JSON.parse(newValue);
         if (name === 'data-status')
@@ -29,8 +28,6 @@ export default class ChatRoomTopBar extends HTMLElement {
 		let profileImage = await getProfileImage(this.userData);
 		let status = await this.getUserStatus();
 		let isUserBlocked = await this.isTargetUserBlocked();
-
-		console.log('isUserBlocked is: ', isUserBlocked)
 
 		this.innerHTML = `
 			<i id="chatroom-back-btn" class="fa-solid fa-arrow-left"></i>
@@ -86,7 +83,6 @@ export default class ChatRoomTopBar extends HTMLElement {
 			if (this.userData.id === 'tournament_bot') return;
 			let res = await sendRequest('GET', `/api/chat/is_user_blocked/?targetUserId=${this.userData.id}`, null, false);
 
-			console.log('is targetuser blocked: ', res)
 			if (res.message === "True") return true;
 			return false;
 		} catch (error) {

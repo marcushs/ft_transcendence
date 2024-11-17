@@ -65,7 +65,6 @@ class PrivateMatchComponent extends HTMLElement {
 		const isSearchingPrivateMatch = localStorage.getItem("isSearchingPrivateMatch");
 		const isReadyToPlay  = localStorage.getItem("isReadyToPlay");
 
-		console.log(isReadyToPlay, isSearchingPrivateMatch);
 		if (isReadyToPlay) {
 			this.displayLobby();
 			this.state = "ready";
@@ -81,7 +80,6 @@ class PrivateMatchComponent extends HTMLElement {
 	async handlePlayButtonClick(button) {
 		const input = this.querySelector('input');
 
-		console.log(this.state)
 		if (input.value !== '' && this.state === "initial" && button.className === "generic-btn")
 			await this.handleInitialStateClick(input.value);
 		else if (input.value !== '' && this.state === "waiting")
@@ -153,7 +151,6 @@ class PrivateMatchComponent extends HTMLElement {
 	async handleLeaveLobby() {
 		const username = localStorage.getItem("isSearchingPrivateMatch");
 
-		console.log(username)
 		try {
 			const data = await sendRequest("POST", "/api/matchmaking/cancel_private_match/", { invitedUsername: username });
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)

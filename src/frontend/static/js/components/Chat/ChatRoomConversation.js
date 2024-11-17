@@ -31,10 +31,6 @@ export default class ChatRoomConversation extends HTMLElement {
         }
 	}
 
-	connectedCallback() {
-		console.log('Component connected to DOM');
-	}
-
 	render() {
 		this.innerHTML = `
 		<div class="chatroom-conversation-message-container">
@@ -49,7 +45,6 @@ export default class ChatRoomConversation extends HTMLElement {
 		if (!res.chatroom_id) return;
 		
 		this.chatroom = res.chatroom_id
-		console.log('chatroom conversation chatroom id: ', this.chatroom)
 		this.setAttribute('data-chatroom', this.chatroom);
 	}
 
@@ -57,8 +52,6 @@ export default class ChatRoomConversation extends HTMLElement {
 		if (!this.chatroom || this.chatroom === '') return ;
 
 		const res = await sendRequest('GET', `/api/chat/get_last_20_messages/?chatroomId=${this.chatroom}`, null, false);
-
-		console.log('in displayLast20Messages', res);
 
 		const last20Messages = res.last20Messages;
 

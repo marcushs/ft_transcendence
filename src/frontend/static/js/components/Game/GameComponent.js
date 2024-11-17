@@ -123,7 +123,6 @@ class GameComponent extends HTMLElement {
 
 
     async handleChangeStateEvent(event) {
-        console.log("online home !!!!!!!!!!")
         if (event.detail.context === "onlineHome") {
             await this.changeState(this.states[event.detail.context].state, this.states[event.detail.context].context);
         }

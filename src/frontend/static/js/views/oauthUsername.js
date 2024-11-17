@@ -67,7 +67,6 @@ async function postNewUsername() {
 	const feedbackElement = document.getElementById("feedbackElement");
 	const newUsername = document.getElementById('username').value;
 	const urlParams = new URLSearchParams(window.location.search);
-	console.log(urlParams)
 	const oauthProvider = urlParams.get('oauth_provider');
 
 	feedbackElement.innerText = '';

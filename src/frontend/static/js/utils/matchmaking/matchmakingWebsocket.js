@@ -18,9 +18,6 @@ export async function matchmakingWebsocket() {
 	}
 
 	matchmakingSocket.onmessage = async (event) => {
-
-		console.log("received socket = ", event.data);
-
 		const data = JSON.parse(event.data);
 		if (data.type === 'already_in_game') {
 			console.log('matchmaking research canceled: user is already in game');
@@ -29,7 +26,6 @@ export async function matchmakingWebsocket() {
 				researchComponent.remove();
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
-
 		}
 		if (data.type === 'game_found') {
 			const matchmakingPopUp = document.querySelector('matchmaking-research-component');
@@ -39,22 +35,17 @@ export async function matchmakingWebsocket() {
 			matchmakingSocket.close();
 		}
 		if (data.type === 'player_joined_private_match') {
-			console.log('player_joined_private_match reached');
-			
 			throwPlayerJoinedMatchEvent();
 		}
 		if (data.type === 'player_refused_private_match') {
-			console.log('player_refused_private_match reached');
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
 		}
 		if (data.type === 'private_match_canceled') {
-			console.log('private_match_canceled reached');
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
 		}
 		if (data.type === 'private_match_started') {
-			console.log('private_match_started: data.player_id: ', data.player_id);
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
 			await gameWebsocket(await getUserId());

@@ -116,7 +116,6 @@ async function postNewPassword(formData) {
 			localStorage.setItem('passwordFeedback', getString("changePasswordView/passwordSuccessfullyChanged"));
 			throwRedirectionEvent('/profile');
 		} else {
-			console.log(data);
 			localStorage.setItem('userUpdateResponse', JSON.stringify(data));
 			throwRedirectionEvent('/change-password');
 		}

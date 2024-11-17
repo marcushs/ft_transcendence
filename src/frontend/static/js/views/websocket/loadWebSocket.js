@@ -154,7 +154,7 @@ function loadChatWebSocket() {
 	};
 
 	chatSocket.onclose = function(e) {
-		console.log('chatSocket', e);
+		console.log('Chat socket closed');
 	};
 }
 
@@ -162,12 +162,11 @@ function loadTournamentWebSocket() {
 	tournamentSocket = new WebSocket('wss://localhost:3000/ws/tournament/');
 
 	tournamentSocket.onopen = function (e) {
-		console.log("The tournament websocket connection was setup successfully !");
+		console.log("Tournament websocket started");
 	};
 
 	tournamentSocket.onmessage = async function(e) {
 		const data = JSON.parse(e.data)
-		console.log(data)
 
 		if (data.type === 'create_tournament' && data.status === 'success') {
 			redirectToTournamentWaitingRoom(data.tournament);

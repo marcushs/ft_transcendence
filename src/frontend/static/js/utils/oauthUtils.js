@@ -1,4 +1,5 @@
 import { getCookie } from "./cookie.js";
+import { throwRedirectionEvent } from "./throwRedirectionEvent.js";
 
 const config = {
 		headers: {
@@ -26,15 +27,14 @@ export async function oauthRedirectCallback() {
 			const login_res = await accessResource(oauthProvider);
 			if (!login_res || login_res.status === 'Error') {
 				status_text.textContent = `Error: ${login_res ? login_res.message : 'Fetch failed'}`
+				
 				if (login_res && login_res.url)
 					return setTimeout(() => window.location.href = login_res.url, 2000);
-				setTimeout(() => window.location.href = '/login', 2000);
+				setTimeout(() => throwRedirectionEvent('/login'), 2000);
 				return ;
 			}
-			console.log('oauth redirect page:')
-			console.log(login_res);
 			status_text.textContent = 'Successfully logged in';
-			window.location.href = '/home'
+			throwRedirectionEvent('/');
 		} else {
 			// if handleOauthCallback error
 			status_text.textContent = `Error: ${data.message}`;

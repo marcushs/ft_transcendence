@@ -22,11 +22,6 @@ export async function startTournamentMatchInstance() {
 }
 
 export function proceedInTournament(gameId, userId) {
-	console.log('proceed to next stage');
-
-	console.log('gameId is: ', gameId)
-	console.log('userId is: ', userId)
-
 	const payload = {
 		'type': 'proceed_tournament',
 		'user_id': userId,
