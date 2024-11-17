@@ -18,31 +18,26 @@ ROUND_CHOICES = [
 ]
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, username, user_id):
-        if not email:
-            raise ValueError('The Email field must be set')
+    def create_user(self, username, user_id, alias):
         if not username:
             raise ValueError('The username field must be set')
         if not user_id:
             raise ValueError('The user id field must be set')
-        email = self.normalize_email(email)
-        user = self.model(email=email, username=username, id=user_id)
+        user = self.model(username=username, id=user_id, alias=alias)
         user.set_unusable_password()
         user.save(using=self._db)
         return user
     
     def create_oauth_user(self, data):
-        email = data['email']
         username = data['username']
         user_id = data['user_id']
-        user = self.model(id=user_id, email=email, username=username)
+        user = self.model(id=user_id, username=username, alias=username)
         user.save(using=self._db)
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=12, unique=True, default='default')
-    email = models.EmailField(unique=True)
     alias = models.CharField(max_length=12, unique=True, default='default')
    
     USERNAME_FIELD = 'username'

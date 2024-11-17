@@ -30,7 +30,7 @@ class oauthGithubAccessResourceView(View):
         resource_url = 'https://api.github.com/user'
 
         headers = {
-            'Authorization': f'Bearer {token}'  
+            'Authorization': f'Bearer {token}'
         }
 
         response = requests.get(resource_url, headers=headers)
