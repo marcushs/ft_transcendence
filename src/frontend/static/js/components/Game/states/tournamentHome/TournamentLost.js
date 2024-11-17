@@ -34,13 +34,14 @@ class TournamentLostElement extends HTMLElement {
 	async connectedCallback() {
 		await this.render();
 		this.addEventListeners();
+		this.sendStartCountdown();
 	}
 
 	async render() {
 		this.innerHTML = `
-			<div class="waiting-room" data-tournament="${this.tournamentId}">
-				<h3 class="waiting-room-title">Lost</h3>
-				<div class="waiting-room-background">
+			<div class="tournament-lost" data-tournament="${this.tournamentId}">
+				<h3 class="tournament-lost-title">Lost</h3>
+				<div class="tournament-lost-background">
 					<div class="tournament-match-content">
 						<div class="bracket-btn">
 							<img id="bracket-icon" src="../../../../assets/bracket_icon.svg" alt="bracket_icon">
@@ -83,8 +84,9 @@ class TournamentLostElement extends HTMLElement {
 		
 		leaveBtn.addEventListener('click', () => {
 			const payload = {
-				'type': 'leave_tournament_group',
+				'type': 'leave_tournament',
 				'tournament_id': this.tournamentId,
+				'from_match': true,
 			};
 
 			tournamentSocket.send(JSON.stringify(payload))
@@ -100,6 +102,23 @@ class TournamentLostElement extends HTMLElement {
 		bracketState['state'] = bracket;
 		gameComponent.changeState(bracketState.state, "/tournamentLost/bracket");
 		gameComponent.currentState = "bracket";
+	}
+
+	sendStartCountdown() {
+		const payload = {
+			'type': 'start_leave_countdown',
+			'tournament_id': this.tournamentId
+		};
+
+		tournamentSocket.send(JSON.stringify(payload))
+	}
+
+	updateCountdownSeconds(time) {
+		const secondsSpan = this.querySelector('.tournament-lost-countdown span');
+
+		if (!secondsSpan) return;
+
+		secondsSpan.innerText = time;
 	}
 }
 

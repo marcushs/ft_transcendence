@@ -43,8 +43,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=12, unique=True, default='default')
     email = models.EmailField(unique=True)
-    ready_for_match = models.BooleanField(default=False)
-    last_match_index = models.IntegerField(default=100)
    
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -77,7 +75,8 @@ class Tournament(models.Model):
     creation_time = models.DateTimeField(default=timezone.now)
     current_stage = models.CharField(max_length=20, choices=ROUND_CHOICES)
     isOver = models.BooleanField(default=False)
-    
+    isJoinable = models.BooleanField(default=True)
+
     async def to_dict(self):
         # Convert the main object to a dict
         obj_dict = await sync_to_async(model_to_dict)(self)

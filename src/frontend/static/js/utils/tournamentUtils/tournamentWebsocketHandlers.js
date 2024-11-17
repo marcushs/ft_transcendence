@@ -40,9 +40,13 @@ export function handleLeaveTournament(data) {
 
 export function handleCountdownUpdate(data) {
     const tournamentMatch = document.querySelector('tournament-match');
-    if (tournamentMatch) {
-        tournamentMatch.updateCountdownSeconds(data.time);
-    }
+    if (tournamentMatch) return tournamentMatch.updateCountdownSeconds(data.time);
+
+    const tournamentWon = document.querySelector('tournament-won');
+    if (tournamentWon) return tournamentWon.updateCountdownSeconds(data.time);
+
+    const tournamentLost = document.querySelector('tournament-lost');
+    if (tournamentLost) return tournamentLost.updateCountdownSeconds(data.time);
 }
 
 export async function handleStartGameInstance(data) {
