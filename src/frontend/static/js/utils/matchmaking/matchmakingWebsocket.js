@@ -13,7 +13,7 @@ export async function matchmakingWebsocket() {
 		console.log('already connected to matchmaking Websocket');
 		return;
 	}
-	matchmakingSocket = new WebSocket(`wss://localhost:3000/ws/matchmaking/`);
+	matchmakingSocket = new WebSocket(`/ws/matchmaking/`);
 
 	matchmakingSocket.onopen = () => {
 		console.log('matchmaking websocket connected');

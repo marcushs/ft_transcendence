@@ -12,7 +12,7 @@ export async function gameWebsocket(userId) {
 		return;
 	}
 
-	gameSocket = new WebSocket(`wss://localhost:3000/ws/game/?user_id=${userId}`);
+	gameSocket = new WebSocket(`/ws/game/?user_id=${userId}`);
 
 	gameSocket.onopen = () => {
 		console.log('Connected to game websocket');

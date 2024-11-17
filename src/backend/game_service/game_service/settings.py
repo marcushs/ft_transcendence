@@ -36,7 +36,8 @@ REFRESH_TOKEN_LIFETIME = 86400 # 1 day
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'game'] 
+# ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'game'] 
+ALLOWED_HOSTS = ['*']
 
 
 INSTALLED_APPS = [
@@ -128,6 +129,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CSRF_TRUSTED_ORIGINS = [
 	'https://localhost:3000',
+    'https://10.11.3.2:3000',
 ]
 
 LANGUAGE_CODE = 'en-us'
