@@ -1,6 +1,7 @@
 import '../../components/ContactComponent.js'
 import { sendRequest } from '../../utils/sendRequest.js';
 import getProfileImage from '../../utils/getProfileImage.js';
+import { getString } from '../../utils/languageManagement.js';
 
 export function UpdateContactInList(contactJSON, change_info, old_value) {
     const contactList = document.querySelectorAll('contact-component');
@@ -40,7 +41,7 @@ export function UpdateContactInList(contactJSON, change_info, old_value) {
                 
                 if (contactUsername.textContent === contact.username) {
                     const statusCircle = contactElement.querySelector('.status-circle');
-                    contactElement.querySelector('.contact-status').textContent = contact.status;
+
                     if (old_value === 'online') {
                         statusCircle.classList.remove('online-status-circle');
                         li.classList.remove('online-contact-status')
@@ -54,14 +55,17 @@ export function UpdateContactInList(contactJSON, change_info, old_value) {
                         li.classList.remove('offline-contact-status')
                     }
                     if (contact.status === 'online') {
+                        contactElement.querySelector('.contact-status').textContent = getString('contactComponent/onlineStatus');
                         statusCircle.classList.add('online-status-circle');
                         li.classList.add('online-contact-status');
                     }
                     else if (contact.status === 'away') {
+                        contactElement.querySelector('.contact-status').textContent = getString('contactComponent/awayStatus');
                         statusCircle.classList.add('away-status-circle');
                         li.classList.add('away-contact-status');
                     }
                     else {
+                        contactElement.querySelector('.contact-status').textContent = getString('contactComponent/offlineStatus');
                         statusCircle.classList.add('offline-status-circle');
                         li.classList.add('offline-contact-status');
                     }
@@ -116,7 +120,7 @@ function manageUpdateOfContactRequestList(user, is_sender) {
                 contactRequestList.appendChild(li)
         }
     }
-    pendingSummary.innerHTML = `Contacts Requests - ${liElements.length + 1}`;
+    pendingSummary.innerHTML = getString('contactMenuComponent/pendingContactsTitle') + `- ${liElements.length + 1}`;
 }
 
 function manageUpdateOfContactList(user) {
@@ -183,18 +187,18 @@ export function removeContactFromList(user, requestType) {
         const requestDisplayedCount = document.querySelectorAll('.pending-contact-list-result li').length;
         
         if (requestDisplayedCount === 0) {
-            pendingSummary.innerHTML = `<p>Contacts Requests</p>`;
-            pendingContactList.innerHTML = 'No contacts request...';
+            pendingSummary.innerHTML = `<p>${getString('contactMenuComponent/pendingContactsTitle')}</p>`;
+            pendingContactList.innerHTML = getString('contactMenuComponent/noContactsRequest');
             pendingContactList.classList.add('no-contacts');
         } else {
-            pendingSummary.innerHTML = `<p>Contacts Requests - ${requestDisplayedCount}</p>`;
+            pendingSummary.innerHTML = `<p>${getString('contactMenuComponent/pendingContactsTitle')} - ${requestDisplayedCount}</p>`;
         }
     } else {
         const contactsList = document.querySelector('.contact-list-result')
         const contactsDisplayedCount = document.querySelectorAll('.contact-list-result li').length;
 
         if (contactsDisplayedCount === 0) {
-            contactsList.innerHTML = 'No contacts...';
+            contactsList.innerHTML = getString('contactMenuComponent/noContacts');
             contactsList.classList.add('no-contacts');
         }
     }
