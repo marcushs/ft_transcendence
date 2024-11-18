@@ -4,8 +4,21 @@ import { gameWebsocket, gameSocket } from "../../components/Game/states/inGame/g
 import getUserId from "../getUserId.js";
 import TournamentLost from "../../components/Game/states/tournamentHome/TournamentLost.js";
 import { tournamentSocket } from "../../views/websocket/loadWebSocket.js";
+import {throwRedirectionEvent} from "../throwRedirectionEvent.js";
 
 export function redirectToTournamentMatch(tournamentBracket) {
+	if (location.pathname !== '/') {
+		throwRedirectionEvent('/');
+		document.addEventListener('gameComponentLoaded', () => {
+			redirect(tournamentBracket);
+		});
+	} else {
+		redirect(tournamentBracket)
+	}
+}
+
+
+function redirect(tournamentBracket) {
 	const gameComponent = document.querySelector('game-component');
 	const tournamentMatchState = gameComponent.states['tournamentMatch'];
 	const tournamentMatch = new TournamentMatch(tournamentBracket);
@@ -22,11 +35,6 @@ export async function startTournamentMatchInstance() {
 }
 
 export function proceedInTournament(gameId, userId) {
-	console.log('proceed to next stage');
-
-	console.log('gameId is: ', gameId)
-	console.log('userId is: ', userId)
-
 	const payload = {
 		'type': 'proceed_tournament',
 		'user_id': userId,
@@ -40,7 +48,6 @@ export async function redirectToTournamentLostMatch(matchId) {
 		const res = await sendRequest('GET', `/api/tournament/get_match_by_id/?match_id=${matchId}`, null, false);
 	
 		const match = res.match;
-		console.log('qolkwierhtg: ', res.match)
 		const gameComponent = document.querySelector('game-component');
 		const tournamentLostState = gameComponent.states['tournamentLost'];
 		const tournamentLost = new TournamentLost(match);

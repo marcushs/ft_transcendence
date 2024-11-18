@@ -163,8 +163,12 @@ async function displayButtons(userInfos) {
     if (friends_status)
         divUserContent.innerHTML += `<friendship-button-component button-status=${friends_status}></friendship-button-component>`;
 
-    if (await isOneself(userInfos.id) === false)
-        divUserContent.innerHTML +=  '<user-profile-send-message-btn></user-profile-send-message-btn>';
+    if (await isOneself(userInfos.id) === false) {
+        const userProfileSendMessageBtn = new UserProfileSendMessageBtn(userInfos);
+
+        divUserContent.appendChild(userProfileSendMessageBtn);
+        // divUserContent.innerHTML +=  '<user-profile-send-message-btn></user-profile-send-message-btn>';
+    }
 }
 
 async function checkFriendshipStatus() {

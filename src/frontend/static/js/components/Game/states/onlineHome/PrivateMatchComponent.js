@@ -4,6 +4,7 @@ import {matchmakingWebsocket, matchmakingSocket} from "../../../../utils/matchma
 import {gameSocket, gameWebsocket} from "../inGame/gameWebsocket.js";
 import getUserId from "../../../../utils/getUserId.js";
 import disableButtonsInGameResearch from "../../../../utils/disableButtonsInGameResearch.js";
+import resetButtonsOnMatchmakingCanceled from "../../../../utils/resetButtonsOnMatchmakingCanceled.js";
 
 class PrivateMatchComponent extends HTMLElement {
 	constructor() {
@@ -129,6 +130,7 @@ class PrivateMatchComponent extends HTMLElement {
 			this.displayWaitingState();
 			this.state = "waiting";
 			localStorage.setItem("isSearchingPrivateMatch", username);
+			disableButtonsInGameResearch();
 		} catch (error) {
 			this.querySelector('.feedback-error').style.visibility = "visible";
 			this.querySelector('.feedback-error').textContent = getString(`gameComponent/${error.message}`);
@@ -141,7 +143,7 @@ class PrivateMatchComponent extends HTMLElement {
 		try {
 			const input = this.querySelector('input');
 
-			this.resetContactsInviteElements();
+			resetButtonsOnMatchmakingCanceled();
 			this.cancelPrivateMatchLobby();
 			input.value = "";
 			input.disabled = false;
@@ -154,7 +156,6 @@ class PrivateMatchComponent extends HTMLElement {
 			const data = await sendRequest("POST", "/api/matchmaking/cancel_private_match/", { invitedUsername: username });
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
-
 		} catch (error) {
 			this.redirectToInitialState();
 		}
@@ -163,7 +164,7 @@ class PrivateMatchComponent extends HTMLElement {
 
 	async handleReadyStateClick() {
 		try {
-			this.resetContactsInviteElements();
+			resetButtonsOnMatchmakingCanceled();
 			const input = this.querySelector('input');
 			const data = await sendRequest("POST", "/api/matchmaking/start_private_match/", { invitedUsername: input.value });
 			await gameWebsocket(await getUserId());
@@ -181,7 +182,7 @@ class PrivateMatchComponent extends HTMLElement {
 
 	async handleLeaveLobby() {
 		try {
-			this.resetContactsInviteElements();
+			resetButtonsOnMatchmakingCanceled();
 			const data = await sendRequest("POST", "/api/matchmaking/cancel_private_match/", null);
 			this.cancelPrivateMatchLobby();
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
@@ -209,7 +210,6 @@ class PrivateMatchComponent extends HTMLElement {
 	displayInitialState() {
 		const genericBtn = this.querySelector('#genericBtn button');
 
-		this.resetContactsInviteElements();
 		this.querySelector('.loading-wheel').style.visibility = "hidden";
 		this.querySelector('.accept-icon').style.visibility = "hidden";
 		if (genericBtn) {
@@ -303,14 +303,6 @@ class PrivateMatchComponent extends HTMLElement {
 	cancelPrivateMatchLobby() {
 		document.querySelector('#rankedGenericBtn').className = "generic-btn";
 		document.querySelector('#unrankedGenericBtn').className = "generic-btn";
-	}
-
-	resetContactsInviteElements() {
-		const invitePlayerElement = document.querySelectorAll('.contact-action-invite-play');
-
-		invitePlayerElement.forEach(player => {
-			player.classList.remove('contact-action-disabled');
-		})
 	}
 }
 

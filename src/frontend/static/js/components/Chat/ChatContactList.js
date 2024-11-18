@@ -61,8 +61,12 @@ class ChatContactList extends HTMLElement {
 		const contactedListUl = document.querySelector('.contacted-list > ul');
 		const chatContactCountEl = document.getElementById('chat-contact-count');
 
-		chatContactCountEl.innerText = `(${contactCount})`;
-		contactedListUl.innerHTML = '';
+		if (chatContactCountEl)
+			chatContactCountEl.innerText = `(${contactCount})`;
+		if (contactedListUl)
+			contactedListUl.innerHTML = '';
+		else
+			return;
 
 		chatroomsList.forEach(chatroom => {
 			let user_data = userId === chatroom.members[0].id ? chatroom.members[1] : chatroom.members[0];
