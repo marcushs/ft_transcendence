@@ -266,7 +266,14 @@
 	  "noContacts": "You have no contacts",
 	  "playInvite": "Invite to play",
 	  "yesterday": "Yesterday"
-	}
+	},
+	"matchmakingResearch": {
+		"searching": "Searching",
+		"joining": "Joining",
+		"unranked": "unranked",
+		"ranked": "ranked",
+		"game": "game"
+	  }
   },
 
   "fr": {
@@ -536,7 +543,14 @@
 	  "noContacts": "Vous n'avez pas de contacts",
 	  "playInvite": "Inviter à jouer",
 	  "yesterday": "Hier"
-	}
+	},
+	"matchmakingResearch": {
+		"searching": "Recherche d'une",
+		"joining": "Connection à la",
+		"unranked": "partie non classée",
+		"ranked": "partie classée",
+		"game": ""
+	  }
   },
 
   "zh": {

@@ -34,9 +34,7 @@ class update_user(View):
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'User not found'}, status=400)
         data = json.loads(request.body.decode('utf-8'))
-        for field in ['username', 'is_verified', 'two_factor_method']:
-            print(f'----------- field = {field} ------------') 
-            if field in data:
-                setattr(request.user, field, data[field])
+        if 'username' in data:
+            setattr(request.user, 'username', data['username'])
         request.user.save()
         return JsonResponse({'message': 'User updated successfully'}, status=200)
