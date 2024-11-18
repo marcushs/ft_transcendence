@@ -29,7 +29,6 @@ class StatsComponent extends HTMLElement {
 
 		statistics = statistics.user_statistics;
 
-		console.log(statistics)
 		this.innerHTML = `
 			<div class="rank-infos">
 				${this.createRankContainer(statistics.rank, statistics.rank_points)}

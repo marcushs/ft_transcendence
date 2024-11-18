@@ -129,7 +129,6 @@ class TwoFactorInputComponent extends HTMLElement {
 		const inputs = this.querySelectorAll('input');
 
 		for (let input of inputs) {
-			console.log(input.value)
 			if (input.value === '')
 				return false;
 		}

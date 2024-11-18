@@ -7,7 +7,6 @@ class ContactMenuSearchBar extends HTMLElement {
 	};
 
 	render() {
-		console.log("rendering contact menu search bar");
 		this.innerHTML = `
 			<div class="contact-menu-search-bar">
 				<p class="contact-text">CONTACTS</p>

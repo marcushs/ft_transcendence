@@ -5,7 +5,6 @@ import getProfileImage from '../../utils/getProfileImage.js';
 export function UpdateContactInList(contactJSON, change_info, old_value) {
     const contactList = document.querySelectorAll('contact-component');
     const contact = JSON.parse(contactJSON)
-    console.log('change_info: ', change_info);
     
     
     if (contactList) {
@@ -40,8 +39,6 @@ export function UpdateContactInList(contactJSON, change_info, old_value) {
                 contactElement.setAttribute('data-user', contactUserData);
                 
                 if (contactUsername.textContent === contact.username) {
-                    console.log(`old_status = ${old_value}`);
-                    console.log(`new_status = ${contact.status}`);
                     const statusCircle = contactElement.querySelector('.status-circle');
                     contactElement.querySelector('.contact-status').textContent = contact.status;
                     if (old_value === 'online') {

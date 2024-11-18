@@ -53,8 +53,6 @@ export default class ChatRoomConversation extends HTMLElement {
 
 		const res = await sendRequest('GET', `/api/chat/get_last_20_messages/?chatroomId=${this.chatroom}`, null, false);
 
-		console.log('in displayLast20Messages', res);
-
 		const last20Messages = res.last20Messages;
 
 		for (let i = last20Messages.length - 1; i >= 0; --i) {

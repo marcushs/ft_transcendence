@@ -344,7 +344,6 @@ class NotificationComponent extends HTMLElement {
 		this.unreadNotifications.forEach((notification) => {
 			arrWithoutDuplicates.push([notification.sender, notification.type]);
 		});
-
 		return arrWithoutDuplicates.length;
 	}
 

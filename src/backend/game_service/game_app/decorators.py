@@ -24,7 +24,7 @@ def jwt_required(initial_function):
 async def decode_jwt_token(request): 
     token = request.COOKIES.get('jwt')   
     if not token:
-        raise ValueError("JWT token is missing in cookies")
+        return await decode_jwt_refresh_token(request)
     if not isinstance(token, bytes):
         token = token.encode('utf-8')
     try:
@@ -36,6 +36,16 @@ async def decode_jwt_token(request):
         request.new_token_refresh =  response_request.cookies.get('jwt_refresh')
         payload = jwt.decode(request.new_token.encode('utf-8'), settings.JWT_VERIFYING_KEY,  algorithms=[settings.JWT_ALGORITHM])
         return str(payload['user_id'])
+
+async def decode_jwt_refresh_token(request):
+    token = request.COOKIES.get('jwt_refresh')   
+    if not token:
+        raise ValueError("JWT token is missing in cookies")
+    response_request = await send_request(request_type='GET',request=request, url='http://auth:8000/api/auth/update-tokens/')
+    request.new_token = response_request.cookies.get('jwt')
+    request.new_token_refresh =  response_request.cookies.get('jwt_refresh')
+    payload = jwt.decode(request.new_token.encode('utf-8'), settings.JWT_VERIFYING_KEY,  algorithms=[settings.JWT_ALGORITHM])
+    return str(payload['user_id'])
 
 def send_jwt_failed_response():  
     response = JsonResponse({'message': 'invalid session token'}, status=401)

@@ -129,7 +129,7 @@ export default class ChatContactComponent extends HTMLElement {
 
 			if (checkAllRecentMessagesRead())
 				unreadMessageNotifOff();
-		})
+		});
 	}
 
 	async getUserStatus() {
@@ -138,7 +138,7 @@ export default class ChatContactComponent extends HTMLElement {
 			
 			return res.user_status;
 		} catch (error) {
-			console.log('Error trying to get user status: ', error.message);
+			console.error('Error trying to get user status: ', error.message);
 			return null;
 		}
 	}

@@ -5,7 +5,6 @@ import getProfileImage from '../../utils/getProfileImage.js';
 export function UpdateChatContactWebsocket(contactJSON, change_info, old_value) {
     const chatContactsList = document.querySelectorAll('chat-contact-component');
     const contact = JSON.parse(contactJSON)
-    console.log('change_info: ', change_info);
     
     if (chatContactsList) {
         chatContactsList.forEach(async contactElement => {
@@ -22,8 +21,6 @@ export function UpdateChatContactWebsocket(contactJSON, change_info, old_value) 
                 }
             } else {
                 if (chatContactUsername.textContent === contact.username) {
-                    console.log(`old_status = ${old_value}`);
-                    console.log(`new_status = ${contact.status}`);
                     const statusCircle = contactElement.querySelector('.chat-status-circle');
                     if (old_value === 'online') {
                         statusCircle.classList.remove('online');
