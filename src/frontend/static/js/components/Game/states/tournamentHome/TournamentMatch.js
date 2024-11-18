@@ -43,6 +43,7 @@ class TournamentMatchElement extends HTMLElement {
 	}
 
 	async render() {
+		const opponent = await this.getOpponent();
 		this.innerHTML = `
 			<div class="tournament-match" data-tournament="${this.tournamentId}">
 				<h3 class="tournament-match-title">Waiting Room</h3>
@@ -53,9 +54,9 @@ class TournamentMatchElement extends HTMLElement {
 						</div>
 						<h4 class="tournament-name">${this.tournamentName}</h4>
 						<p>Stage: <span>${this.formatCurrentStage(this.stage)}</span></p>
-						<p>Opponent: <span id='opponent-span'>${await this.getOpponent()}</span></p>
+						<p>Opponent: <span id='opponent-span'>${opponent}</span></p>
 						<div class="countdown-container">
-							<button type="button" class="tournament-match-ready-btn">Ready</button>
+							<button type="button" class="tournament-match-ready-btn ${opponent === 'To Be Determined...' ? 'clicked' : ''}">Ready</button>
 							<p class="match-countdown">Match starts in <span>60</span>s</p>
 						</div>
 					</div>
@@ -77,7 +78,7 @@ class TournamentMatchElement extends HTMLElement {
 		if (!this.userId) return console.log('Cannot find userId');
 
 		if (this.match.players.length === 2)
-			return this.match.players[0].id === this.userId ? this.match.players[1].username : this.match.players[0].username;
+			return this.match.players[0].id === this.userId ? this.match.players[1].alias : this.match.players[0].alias;
 		return 'To Be Determined...';
 	}
 

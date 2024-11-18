@@ -1,17 +1,18 @@
-from .utils.jwt_utils import get_user_from_jwt
 from django.utils.deprecation import MiddlewareMixin # assure the retro-compability for recent django middleware
 from django.contrib.auth.models import AnonymousUser
+from .utils.jwt_utils import get_user_from_jwt
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.conf import settings
 
-User = get_user_model()
 # Middleware for jwt authentication
+from .utils.request import send_request_with_request
 
-from .utils.user_utils import send_async_request
+User = get_user_model()
+        
 class JWTAuthMiddleware(MiddlewareMixin):
     
-    async def __call__(self, request):
+    async def __call__(self, request):  
         response = await self.process_request(request)
         response = await self.process_response(request, response)
         return response
@@ -43,7 +44,8 @@ class JWTAuthMiddleware(MiddlewareMixin):
     
     async def send_new_token_request(self, request, jwt_user):
         try:
-            request_response = await send_async_request(request_type='GET',request=request, url='http://auth:8000/api/auth/update-tokens/')
+            request_response = await send_request_with_request(request_type='GET',request=request, url='http://auth:8000/api/auth/update-tokens/')
+            # print(f'-> request_response: {request_response} <-')
             if request_response and request_response.cookies:
                 request.new_token = request_response.cookies.get('jwt')
                 request.new_token_refresh =  request_response.cookies.get('jwt_refresh')
@@ -52,12 +54,11 @@ class JWTAuthMiddleware(MiddlewareMixin):
             else:
                 request.user = AnonymousUser()
         except Exception as e:
-            print(f'-> Error while requesting: {str(e)} <-')
             request.jwt_failed = True
             request.user = AnonymousUser() 
     
-    async def process_response(self, request, response):
-        if hasattr(request, 'jwt_failed'): 
+    async def process_response(self, request, response):  
+        if hasattr(request, 'jwt_failed'):
             response = JsonResponse({'error': 'invalid session token'}, status=401)
             response.delete_cookie('jwt')
             response.delete_cookie('jwt_refresh')
@@ -66,5 +67,3 @@ class JWTAuthMiddleware(MiddlewareMixin):
         if hasattr(request, 'new_token_refresh'):
             response.set_cookie('jwt_refresh', request.new_token_refresh, httponly=True, max_age=settings.REFRESH_TOKEN_LIFETIME)
         return response
-
-

@@ -1,5 +1,4 @@
 import { getCookie } from "../utils/cookie.js";
-import { getPortNumber } from "../utils/oauthUtils.js";
 import {getString} from "../utils/languageManagement.js";
 import rotatingGradient from "../anim/rotatingGradient.js";
 

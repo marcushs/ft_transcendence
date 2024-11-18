@@ -41,7 +41,7 @@
 	margin: 0;
 }
 
-.tournament-lost-leave-btn{
+.tournament-lost-leave-btn { 
 	background: none;
 	color: red;
 	font-size: 2.2rem;
@@ -49,4 +49,8 @@
 	border: 1px solid red;
 	border-radius: 5px;
 	cursor: pointer;
+}
+
+.tournament-lost-leave-btn:active {
+	scale: 0.98;
 }

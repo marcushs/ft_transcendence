@@ -2,6 +2,7 @@ import { TournamentComponent } from "../../components/Game/states/tournamentHome
 import TournamentWaitingRoom from "../../components/Game/states/tournamentHome/TournamentWaitingRoom.js";
 import TournamentWon from "../../components/Game/states/tournamentHome/TournamentWon.js";
 import resetButtonsOnMatchmakingCanceled from "../resetButtonsOnMatchmakingCanceled.js";
+import disableButtonsInGameResearch from "../disableButtonsInGameResearch.js";
 
 export function putNewTournamentToDOM(tournament) {
 	const tournamentsList = document.querySelector('.tournaments-list');
@@ -14,6 +15,7 @@ export function putNewTournamentToDOM(tournament) {
 }
 
 export function redirectToTournamentWaitingRoom(tournamentData) {
+	disableButtonsInGameResearch();
 	const gameComponent = document.querySelector('game-component');
 	const tournamentWaitingRoomState = gameComponent.states['tournamentWaitingRoom'];
 	const tournamentWaitingRoom = new TournamentWaitingRoom(tournamentData);

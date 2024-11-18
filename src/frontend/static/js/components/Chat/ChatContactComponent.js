@@ -66,12 +66,14 @@ export default class ChatContactComponent extends HTMLElement {
 	};
 
 	async getChatroomLastMessage() {
-		let res = await sendRequest('GET', `/api/chat/get_chatroom_last_message/?chatroomId=${this.chatroom}`, null, false);
-
-		if (res.status === 'Error') return 'Problem getting last message of chatroom';
-
-		console.log(res);
-		return res.lastMessage[0].fields;
+		try {
+			let res = await sendRequest('GET', `/api/chat/get_chatroom_last_message/?chatroomId=${this.chatroom}`, null, false);
+	
+			return res.lastMessage[0].fields;
+		} catch (error) {
+			console.log('Error trying to fetch chatroom last message: ', error.message);
+			return 'Problem getting last message of chatroom';
+		}
 	}
 
 	formatLastMessage(lastMessage) {
@@ -127,7 +129,6 @@ export default class ChatContactComponent extends HTMLElement {
 
 			if (checkAllRecentMessagesRead())
 				unreadMessageNotifOff();
-
 		})
 	}
 
@@ -137,7 +138,8 @@ export default class ChatContactComponent extends HTMLElement {
 			
 			return res.user_status;
 		} catch (error) {
-			
+			console.log('Error trying to get user status: ', error.message);
+			return null;
 		}
 	}
 }
