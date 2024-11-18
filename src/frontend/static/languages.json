@@ -258,7 +258,8 @@
 	  "noRecentMessage": "No recent message",
 	  "tournamentBot": "Tournament Bot",
 	  "noContacts": "You have no contacts",
-	  "playInvite": "Invite to play"
+	  "playInvite": "Invite to play",
+	  "yesterday": "Yesterday"
 	}
   },
 
@@ -520,7 +521,8 @@
 	  "noRecentMessage": "Aucun message récent",
 	  "tournamentBot": "Bot du tournoi",
 	  "noContacts": "Vous n'avez pas de contacts",
-	  "playInvite": "Inviter à jouer"
+	  "playInvite": "Inviter à jouer",
+	  "yesterday": "Hier"
 	}
   },
 
