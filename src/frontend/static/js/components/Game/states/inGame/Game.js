@@ -58,11 +58,11 @@ export default class Game {
 		this.isSentEmoteAnimationEnabled = false;
 		this.isReceivedEmoteAnimationEnabled = false;
 
-		const is_ranked = (this.gameType === 'ranked') ? true : false;
+		this.is_ranked = (this.gameType === 'ranked') ? true : false;
 
-		this.Intro = new Intro(this.canvas, is_ranked, gameState.player_two.user_infos, gameState.player_one.user_infos);
-		this.Outro = new Outro(this.canvas, is_ranked);
-		if (is_ranked)
+		this.Intro = new Intro(this.canvas, this.is_ranked, gameState.player_two.user_infos, gameState.player_one.user_infos);
+		this.Outro = new Outro(this.canvas, this.is_ranked);
+		if (this.is_ranked)
 			this.RankOutro = new RankOutro(this.canvas);
 
 		this.gameTopBar = document.querySelector('game-top-bar');
@@ -463,7 +463,7 @@ export default class Game {
 
 		setTimeout(() => {
 			this.isOutroAnimationEnabled = false;
-			if (!this.gameState.is_ranked) {
+			if (!this.is_ranked) {
 				this.gameInProgress = false;
 				disconnectGameWebSocket(this.userId, false);
 				throwRedirectionEvent('/');

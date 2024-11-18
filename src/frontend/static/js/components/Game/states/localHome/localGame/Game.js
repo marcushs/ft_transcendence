@@ -4,6 +4,7 @@ import Spark from "./Spark.js";
 import Intro from "./Intro.js";
 import Outro from "./Outro.js";
 import {throwRedirectionEvent} from "../../../../../utils/throwRedirectionEvent.js";
+import {getString} from "../../../../../utils/languageManagement.js";
 
 export default class Game {
 	constructor(canvas, ballSpeed, paddleSpeed, scoreToWin) {
@@ -219,7 +220,7 @@ export default class Game {
 
 	handlePlayerOneScore() {
 		if (++this.playerOneScore === this.scoreToWin) {
-			this.endGame("PLAYER 1");
+			this.endGame(getString("localGame/playerOneWon"));
 			return ;
 		}
 
@@ -233,7 +234,7 @@ export default class Game {
 
 	handlePlayerTwoScore() {
 		if (++this.playerTwoScore === this.scoreToWin) {
-			this.endGame("PLAYER 2");
+			this.endGame(getString("localGame/playerTwoWon"));
 			return ;
 		}
 

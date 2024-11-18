@@ -1,3 +1,5 @@
+import {getString} from "../../../../../utils/languageManagement.js";
+
 export default class Intro {
 	constructor(canvas, playerOneInfos, playerTwoInfos) {
 		this.canvas = canvas;
@@ -79,7 +81,7 @@ export default class Intro {
 		this.canvas.ctx.restore();
 		this.canvas.ctx.closePath();
 
-		this.drawPlayerName(this.playerOneInfosX, this.canvas.height / 4 * 3, "Player 1");
+		this.drawPlayerName(this.playerOneInfosX, this.canvas.height / 4 * 3,  getString("localGame/playerOne"));
 		this.drawLine(this.leftSectionTopRightX, this.leftSectionBottomRightX);
 	}
 
@@ -99,7 +101,7 @@ export default class Intro {
 		this.canvas.ctx.restore();
 		this.canvas.ctx.closePath();
 
-		this.drawPlayerName(this.playerTwoInfosX, this.canvas.height / 4, "Player 2");
+		this.drawPlayerName(this.playerTwoInfosX, this.canvas.height / 4, getString("localGame/playerTwo"));
 		this.drawLine(this.rightSectionBottomLeftX, this.rightSectionTopLeftX);
 	}
 

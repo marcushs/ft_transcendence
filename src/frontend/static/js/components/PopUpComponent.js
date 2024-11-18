@@ -150,7 +150,7 @@ class PopUpComponent extends HTMLElement {
 			}
 			return false;
 		} catch (error) {
-			console.error('catch: ', error);
+			console.error(error);
 			return false;
 		}
 	}

@@ -186,7 +186,6 @@ class FriendsMenuComponent extends HTMLElement {
         } else {
             let displayedUsername = this.getCurrentDisplayedContactUsername();
             if (displayedUsername.length === 0) {
-                this.contactList.innerHTML = '';
                 this.contactList.innerHTML = `${getString('contactMenuComponent/noContacts')}`;
                 this.contactList.classList.add('no-contacts');
             }

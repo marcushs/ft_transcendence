@@ -51,7 +51,7 @@ export default class Outro {
 		this.canvas.ctx.font = `bold ${this.resultFontSize}px Poppins`;
 		this.canvas.ctx.textAlign = 'center';
 		this.canvas.ctx.textBaseline = 'middle';
-		this.canvas.ctx.fillText(`${this.winnerName} WON`, this.canvas.width / 2, this.canvas.height / 2);
+		this.canvas.ctx.fillText(`${this.winnerName}`, this.canvas.width / 2, this.canvas.height / 2);
 		this.canvas.ctx.closePath();
 	}
 
@@ -77,7 +77,7 @@ export default class Outro {
 
 	updateResult() {
 		const intervalId = setInterval(() => {
-			if (this.resultFontSize > 180) {
+			if (this.resultFontSize > 150) {
 				this.resultFontSize -= 30;
 			} else {
 				this.generateSparks(this.canvas.width / 2, this.canvas.height / 2);

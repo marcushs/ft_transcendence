@@ -259,6 +259,12 @@
 	  "tournamentBot": "Tournament Bot",
 	  "noContacts": "You have no contacts",
 	  "playInvite": "Invite to play"
+	},
+	"localGame": {
+	  "playerOne": "Player 1",
+	  "playerTwo": "Player 2",
+	  "playerOneWon": "Player 1 won",
+	  "playerTwoWon": "Player 2 won"
 	}
   },
 
@@ -521,6 +527,12 @@
 	  "tournamentBot": "Bot du tournoi",
 	  "noContacts": "Vous n'avez pas de contacts",
 	  "playInvite": "Inviter à jouer"
+	},
+	"localGame": {
+	  "playerOne": "Joueur 1",
+	  "playerTwo": "Joueur 2",
+	  "playerOneWon": "Le joueur 1 a gagné",
+	  "playerTwoWon": "Le joueur 2 a gagné"
 	}
   },
 

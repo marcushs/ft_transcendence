@@ -103,11 +103,11 @@ export default class RankOutro {
 		this.deltaTime = (performance.now() - this.lastTime) / 1000;
 		this.drawResult();
 		this.drawBackground();
-		// if (this.isResultDrawable
 		this.drawTitle();
 		this.drawRank(this.canvas.width / 2, this.canvas.height / 2 * 0.8, this.rankImages[this.currentRank]);
 		this.drawRankPoints();
-		this.drawRankBar(this.canvas.width / 2, (this.canvas.height / 4) * 2.75);
+		if (this.rankData.old_rank_points < 10000)
+			this.drawRankBar(this.canvas.width / 2, (this.canvas.height / 4) * 2.75);
 	}
 
 
