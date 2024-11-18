@@ -62,6 +62,7 @@ async function handleOauthCallback(oauthProvider, code, state) {
 		const res = await fetch(`/api/${oauthProvider}/redirect/?code=${code}&state=${state}`, config);
 		const data = await res.json();
 		console.log(data)
+		// redirection to login page
 		return data;
 	} catch (error) {
 		console.log(error);
@@ -78,10 +79,4 @@ async function accessResource(oauthProvider) {
 		console.log(error);
 		return null;
 	}
-}
-
-export function getPortNumber(oauthProvider) {
-	if (oauthProvider === "oauth_42") return "8003"; 
-	if (oauthProvider === "oauth_google") return "8004"; 
-	if (oauthProvider === "oauth_github") return "8005"; 
 }

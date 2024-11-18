@@ -479,6 +479,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			tournament.isJoinable = False
 			tournament.save()
 
+	def set_tournament_is_over(self, tournament):
+		with transaction.atomic():
+			tournament.isOver = True
+			tournament.save()
+
 	@database_sync_to_async
 	def match_in_next_round(self, user, last_match):
 		tournament = last_match.tournament
@@ -620,4 +625,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.remove_user_from_tournament(tournament)
 		await self.channel_layer.group_discard(str(tournament.tournament_id), self.channel_name)
 		self.channel_groups.discard(str(tournament.tournament_id))
+		member_count = await self.get_members_count(tournament)
+		if member_count == 0:
+			await sync_to_async(self.set_tournament_is_over)(tournament)
 		await self.send(text_data=json.dumps({'type': 'redirect_to_tournament_home'}))
