@@ -7,9 +7,6 @@ from asgiref.sync import sync_to_async
 from django.forms.models import model_to_dict
 from django.db.models import Prefetch
 
-def user_directory_path(instance, filename):
-    return f'profile_images/{instance.id}/{filename}'
-
 ROUND_CHOICES = [
     ('finals', 'Finals'),
     ('semi_finals', 'Semi-Finals'),

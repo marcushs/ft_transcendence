@@ -16,6 +16,24 @@ from asgiref.sync import sync_to_async, async_to_sync
 
 User = get_user_model()
 
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections = {}
+
+    def add_connection(self, user_id, connection):
+        if user_id in self.active_connections:
+            old_connection = self.active_connections[user_id]
+            old_connection.close()
+        self.active_connections[user_id] = connection
+
+    def remove_connection(self, user_id):
+        self.active_connections.pop(user_id, None)
+
+    def get_connection(self, user_id):
+        return self.active_connections.get(user_id)
+
+connection_manager = ConnectionManager()
+
 class TournamentConsumer(AsyncWebsocketConsumer):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -38,6 +56,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		if isinstance(self.user, AnonymousUser):
 			await self.close()
 		else: 
+			connection_manager.add_connection(self.user.id, self)
 			await self.accept()
 			await self.channel_layer.group_add('tournament_updates', self.channel_name)
 			self.channel_groups.add('tournament_updates')
@@ -49,7 +68,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):  
 		data = json.loads(text_data)
 		message_type = data['type']
-
+		try:
+			await self.check_player_availability()
+		except Exception as e:
+			return await self.send_error_message(message_type, str(e))
+	
 		if message_type == 'create_tournament': 
 			tournament, result = await self.createTournamentInDB(data)
 			if result != 'Tournament created successfully':
@@ -126,6 +149,19 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			if exists:
 				return await self.start_leave_countdown(data['tournament_id'])
 			await self.send_error_message(message_type, 'Invalid tournament Id')
+
+
+	async def check_player_availability(self):
+		is_waiting_response = await send_request_with_headers(request_type='GET', url='http://matchmaking:8000/api/matchmaking/is_waiting/', headers=self.headers, cookies=self.cookies)
+		if is_waiting_response.json().get('waiting') == True:
+			raise Exception('alreadyInGameResearch')
+		is_playing_response = await send_request_with_headers(request_type='GET', url='http://matchmaking:8000/api/matchmaking/user_is_in_game/', headers=self.headers, cookies=self.cookies)
+		if is_playing_response.json().get('is_in_game') == True:
+			raise Exception('alreadyInGame')
+		is_playing_response = await send_request_with_headers(request_type='GET', url='http://matchmaking:8000/api/matchmaking/check_private_match/', headers=self.headers, cookies=self.cookies)
+		if is_playing_response.json().get('in_private_lobby') == True:
+			raise Exception('alreadyInPrivateLobby')
+			
 
 
 # -------------------------------> Channel layer event handlers <---------------------------------

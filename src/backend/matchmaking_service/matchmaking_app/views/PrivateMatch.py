@@ -5,7 +5,7 @@ from django.contrib.auth.models import AnonymousUser
 from .process_matchmaking import send_start_game
 from ..models import PrivateMatchLobby, User
 from ..utils.user_utils import send_request
-from asgiref.sync import async_to_sync
+from asgiref.sync import async_to_sync, sync_to_async
 from django.http import JsonResponse 
 from django.db.models import Q
 from django.views import View
@@ -24,6 +24,21 @@ def is_player_in_private_lobby(player):
     if lobby:
         return True
     return False
+
+#//---------------------------------------> is in private match endpoint <--------------------------------------\\#
+
+class CheckUserInPrivateLobby(View): 
+    def __init__(self):
+        super()
+
+    async def get(self, request):
+        if isinstance(request.user, AnonymousUser):  
+            return JsonResponse({'message': 'No connected user'}, status=401)
+        if await sync_to_async(is_player_in_private_lobby)(request.user):
+            return JsonResponse({'in_private_lobby': True}, status=200)
+        return JsonResponse({'in_private_lobby': False}, status=200)
+        
+
 
 #//---------------------------------------> private match endpoint <--------------------------------------\\#
 

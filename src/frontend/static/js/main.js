@@ -143,6 +143,14 @@ document.addEventListener("inactiveGame", () => {
     }
 })
 
+document.addEventListener("uitTournament", () => {
+    const isRender = document.querySelector('quit-tournament-component');
+    if (!isRender) {
+        const quitTournamentComponent = document.createElement('quit-tournament-component');
+        app.appendChild(quitTournamentComponent);
+    }
+})
+
 document.addEventListener("matchmakingResearch", () => {
     const isRender = document.querySelector('matchmaking-research-component');
     if (!isRender) {

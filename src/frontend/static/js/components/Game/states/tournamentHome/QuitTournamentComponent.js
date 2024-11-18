@@ -9,9 +9,10 @@ class QuitTournamentComponent extends HTMLElement {
         }
         QuitTournamentComponent.instance = this
 
-        const savedState = localStorage.getItem('inGameComponentState');
-        this.gameState = savedState ? JSON.parse(savedState) : null;
+        const savedState = localStorage.getItem('tournamentData');
+        this.tournamentState = savedState ? JSON.parse(savedState) : null;
         this.isGameRendered = document.querySelector('in-game-component');
+        console.log(this.tournamentState);
     }
 
     connectedCallback() {
@@ -19,7 +20,7 @@ class QuitTournamentComponent extends HTMLElement {
     }
 
     async listenChoices() {
-        if (!this.gameState || this.isGameRendered)
+        if (!this.tournamentState || this.isGameRendered)
             return;
         this.render();
         this.attachEventsListener();
@@ -27,30 +28,29 @@ class QuitTournamentComponent extends HTMLElement {
 
     render() {
         this.innerHTML = `
-        <div class="inactive-game-pop-up-background">
+        <div class="quit-tournament-pop-up-background">
             <div class="background-overlay"></div>
-            <div class="inactive-game-pop-up">
-                <p>you have a game in progress</p>
-                <p>reconnect or leave?</p>
-                <div class="inactive-game-choice-icon">
-                    <p class="inactive-game-choice-reconnect">Reconnect</p>
-                    <p class="inactive-game-choice-leave">Leave</p>
+            <div class="quit-tournament-pop-up">
+                <p>You are in a tournament</p>
+                <p>stay or leave?</p>
+                <div class="quit-tournament-choice-icon">
+                    <p class="quit-tournament-choice-reconnect">Stay</p>
+                    <p class="quit-tournament-choice-leave">Leave</p>
                 </div>
             </div>
         </div>
         `
-        this.inactivePopUp = document.querySelector('.inactive-game-pop-up')
-        this.reconnectChoice = document.querySelector('.inactive-game-choice-reconnect');
-        this.LeaveChoice = document.querySelector('.inactive-game-choice-leave');
+        this.inactivePopUp = document.querySelector('.quit-tournament-pop-up')
+        this.reconnectChoice = document.querySelector('.quit-tournament-choice-reconnect');
+        this.LeaveChoice = document.querySelector('.quit-tournament-choice-leave');
     }
 
     attachEventsListener() {
-        this.reconnectChoice.addEventListener('click', async () => {
-            await handleGameReconnection(this.gameState.userId, this.gameState)
+        this.stayChoice.addEventListener('click', () => {
             this.removeInstance();
         })
         this.LeaveChoice.addEventListener('click', async () => {            
-            await surrenderHandler();
+            // await surrenderHandler();
             this.removeInstance();
         })
     }

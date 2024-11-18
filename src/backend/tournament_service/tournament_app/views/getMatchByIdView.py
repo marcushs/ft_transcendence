@@ -14,6 +14,8 @@ class getMatchByIdView(View):
 		super().__init__
 
 	def get(self, request):
+		if isinstance(request.user, AnonymousUser):
+			return JsonResponse({'message': 'unknownUser'}, status=400)
 		match_id = request.GET.get('match_id')
 
 		try:
