@@ -1,6 +1,6 @@
 import { sendRequest } from "../../utils/sendRequest.js";
 import ChatMessageComponent from "./ChatMessageComponent.js";
-import { isSentOrReceivedMessage } from "../../utils/chatUtils/sendPrivateMessage.js";0
+import { isSentOrReceivedMessage } from "../../utils/chatUtils/sendPrivateMessage.js";
 import {getString} from "../../utils/languageManagement.js";
 
 export default class ChatRoomConversation extends HTMLElement {

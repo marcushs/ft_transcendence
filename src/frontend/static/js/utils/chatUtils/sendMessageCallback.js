@@ -8,7 +8,6 @@ export async function sendMessageCallback(targetUserData) {
 };
 
 export async function displayChatroomComponent(targetUserData, fromContact=false) {
-	console.log("qwwqerer: ", targetUserData)
 	const userData = JSON.stringify(targetUserData);
 	const chatMainMenu = document.querySelector('.chat-main-menu');
 	const contactMenu = document.querySelector('.contact-menu');
@@ -44,7 +43,7 @@ function displayChatroomLayout(userData) {
 	chatRoom.appendChild(chatRoomConversation);
 	
 	// Create and append chatroom-bottom-bar
-	if (JSON.parse(userData).username === 'Tournament Bot') return;
+	if (JSON.parse(userData).isBot === true) return;
 	const chatRoomBottomBar = new ChatRoomBottomBar();
 	chatRoom.appendChild(chatRoomBottomBar);
 }

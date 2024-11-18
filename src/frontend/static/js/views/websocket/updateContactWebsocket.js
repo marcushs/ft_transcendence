@@ -4,18 +4,17 @@ import getProfileImage from '../../utils/getProfileImage.js';
 
 export function UpdateContactInList(contactJSON, change_info, old_value) {
     const contactList = document.querySelectorAll('contact-component');
-    const contact = JSON.parse(contactJSON)
-    
+    const contact = JSON.parse(contactJSON);
     
     if (contactList) {
         contactList.forEach(async contactElement => {
-            const contactUsername = contactElement.querySelector('.contact-username')
+            const contactUsername = contactElement.querySelector('.contact-username');
             if (change_info === 'username') {
                 if (contactUsername.textContent === old_value) {
                     const contactUserData = JSON.stringify({
                         ...JSON.parse(contactElement.getAttribute('data-user')),
                         username: contact.username
-                    })
+                    });
                     contactElement.setAttribute('data-user', contactUserData);
                     contactUsername.textContent = contact.username;
                 }
@@ -25,7 +24,7 @@ export function UpdateContactInList(contactJSON, change_info, old_value) {
                         ...JSON.parse(contactElement.getAttribute('data-user')),
                         profile_image: contact.profile_image,
                         profile_image_link: contact.profile_image_link
-                    })
+                    });
                     contactElement.setAttribute('data-user', contactUserData);
                     const contactPictureUrl = await getProfileImage(contact);
                     contactElement.querySelector('.contact-picture').src = contactPictureUrl;

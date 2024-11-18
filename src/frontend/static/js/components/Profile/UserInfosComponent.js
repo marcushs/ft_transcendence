@@ -1,6 +1,6 @@
 import getProfileImage from "../../utils/getProfileImage.js";
 import getUserData from "../../utils/getUserData.js";
-import { isAlphanumeric } from "../../utils/utils.js";
+import { isAlphanumeric } from "../../utils/isAlphanumeric.js";
 import '../PopUpComponent.js'
 import {getString} from "../../utils/languageManagement.js";
 import { throwRedirectionEvent } from "../../utils/throwRedirectionEvent.js";

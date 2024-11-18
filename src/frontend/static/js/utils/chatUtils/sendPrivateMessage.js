@@ -44,7 +44,6 @@ export async function updateCurrentChatroomId(userId) {
 }
 
 export async function putMessageToChatroomConversation(messageData) {
-	console.log('putMessageToChatroom called???????')
 	const chatroomConversation = document.querySelector('chatroom-conversation');
 	if (!chatroomConversation) {
 		unreadMessageNotifOn();
@@ -57,8 +56,7 @@ export async function putMessageToChatroomConversation(messageData) {
 		const chatroomConversationUl = chatroomConversation.querySelector('.chatroom-conversation-message-container > ul');
 		const liElem = document.createElement('li');
 		const messageComponent = new ChatMessageComponent(messageData);
-	
-		console.log('putMessageToChatroom: ', messageData);
+
 		const isSent = await isSentOrReceivedMessage(messageData.author);
 		console.log(isSent)
 		messageComponent.classList.add(isSent);

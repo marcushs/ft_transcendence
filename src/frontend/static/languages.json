@@ -265,7 +265,26 @@
 	  "tournamentBot": "Tournament Bot",
 	  "noContacts": "You have no contacts",
 	  "playInvite": "Invite to play",
-	  "yesterday": "Yesterday"
+	  "yesterday": "Yesterday",
+	  "block": "Block",
+	  "unblock": "Unblock",
+	  "searchContacts": "Search contacts",
+	  "finals": "Final",
+	  "semi_finals": "Semi final",
+	  "quarter_finals": "Quarter final",
+	  "eighth_finals": "Round of sixteen",
+	  "tournamentBotSentencePrefix": ": The match against ",
+	  "tournamentBotSentenceSuffix": "will start soon!\n\t\t\tClick the \"Ready\" button when ready! GLHF!"
+	},
+	"oauthRedirect": {
+	  "redirect": "redirect...",
+	  "loginProcessing": "Processing your login..."
+	},
+	"oauthUtils": {
+	  "successfullyLogin": "Successfully logged in",
+	  "error": "Error",
+	  "fetchFailed": "Fetch failed",
+	  "invalidRequest": "Error: Invalid request"
 	}
   },
 
@@ -535,7 +554,23 @@
 	  "tournamentBot": "Bot du tournoi",
 	  "noContacts": "Vous n'avez pas de contacts",
 	  "playInvite": "Inviter à jouer",
-	  "yesterday": "Hier"
+	  "yesterday": "Hier",
+	  "block": "Bloquer",
+	  "unblock": "Débloquer",
+	  "searchContacts": "Chercher des contacts",
+	  "finals": "Finale",
+	  "semi_finals": "Demi finale",
+	  "quarter_finals": "Quarts de final",
+	  "eighth_finals": "Huitièmes de finale",
+	  "tournamentBotSentencePrefix": ": Le match contre ",
+	  "tournamentBotSentenceSuffix": "va bientôt commencer !\n\t\t\tCliquez sur le bouton « Prêt » lorsque vous êtes prêt ! GLHF !"
+	},
+	"oauthRedirect": {
+	  "redirect": "redirection...",
+	  "loginProcessing": "Traitement de la connexion..."
+	},
+	"oauthUtils": {
+	  "successfullyLogin": "Successfully logged in"
 	}
   },
 

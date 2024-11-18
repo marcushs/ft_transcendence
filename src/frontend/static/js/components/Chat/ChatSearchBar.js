@@ -1,3 +1,5 @@
+import {getString} from "../../utils/languageManagement.js";
+
 class ChatSearchBar extends HTMLElement {
 	constructor() {
 		super();
@@ -11,9 +13,9 @@ class ChatSearchBar extends HTMLElement {
 	render() {
 		this.innerHTML = `
 			<div class="chat-search-bar">
-				<p class="contact-text">CONTACTS</p>
+				<p class="contact-text">${getString(`chatComponent/contact`).toUpperCase()}</p>
 				<div class='chat-search-box'>
-					<input type="text" placeholder="Search contacts" id="chat-search-contact-input" maxlength="12"/>
+					<input type="text" placeholder="${getString("chatComponent/searchContacts")}" id="chat-search-contact-input" maxlength="12"/>
 				</div>
 				<i id="search-bar-close-btn" class="fa-solid fa-xmark" aria-hidden="true"></i>
 				<img id="search-bar-icon" src="../../assets/search-bar-icon.svg" alt="search-bar-icon">
@@ -86,7 +88,6 @@ class ChatSearchBar extends HTMLElement {
 		contacts.forEach(contact => {
 			const userData = JSON.parse(contact.getAttribute('data-user'));
 
-			console.log(userData, searchInput);
 			if (!userData.username.includes(searchInput)) {
 				contact.parentElement.style.display = "none";
 			} else {
@@ -109,6 +110,6 @@ class ChatSearchBar extends HTMLElement {
 		});
 	}
 
-};
+}
 
 customElements.define('chat-search-bar', ChatSearchBar);

@@ -62,7 +62,7 @@ export default () => {
 function handleInputChange(event) {
 	const feedbackElement = event.target.parentElement.querySelector('#currentPasswordFeedback');
 
-	if (feedbackElement.innerHTML === 'Incorrect current password')
+	if (feedbackElement.innerHTML === getString("changePasswordView/incorrectCurrentPassword"))
 		feedbackElement.innerHTML = '';
 }
 

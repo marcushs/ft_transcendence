@@ -77,20 +77,19 @@ async function postNewUsername() {
 		headers: {
 			'Accept': 'application/json',
 			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken') // Protect from csrf attack
+			'X-CSRFToken': getCookie('csrftoken')
 		},
-		credentials: 'include', // Needed for send cookie
-		body: JSON.stringify({newUsername: newUsername}), // Send form values as JSON
+		credentials: 'include',
+		body: JSON.stringify({newUsername: newUsername}),
 	};
 
 	try {
 		const res = await fetch(`/api/${oauthProvider}/update_username/`, config);
-		// if (res.status == 403)
-		// 	throw new Error('Access Denied')
+
 		const data = await res.json();
 		if (data.status !== "Error")
 			window.location.replace(data.url);
 	} catch (error) {
-		// console.log('Catch error :', error);
+		console.error(error);
 	}
 }

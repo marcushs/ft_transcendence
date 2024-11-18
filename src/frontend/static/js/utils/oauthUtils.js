@@ -1,5 +1,6 @@
 import { getCookie } from "./cookie.js";
 import { throwRedirectionEvent } from "./throwRedirectionEvent.js";
+import {getString} from "./languageManagement";
 
 const config = {
 		headers: {
@@ -26,25 +27,25 @@ export async function oauthRedirectCallback() {
 			// if handleOauthCallback success
 			const login_res = await accessResource(oauthProvider);
 			if (!login_res || login_res.status === 'Error') {
-				status_text.textContent = `Error: ${login_res ? login_res.message : 'Fetch failed'}`
+				status_text.textContent = `${getString("oauthUtils/error")}: ${login_res ? login_res.message : getString("oauthUtils/fetchFailed")}`;
 
 				if (login_res && login_res.url)
 					return setTimeout(() => window.location.href = login_res.url, 2000);
 				setTimeout(() => throwRedirectionEvent('/login'), 2000);
 				return ;
 			}
-			status_text.textContent = 'Successfully logged in';
+			status_text.textContent = getString("oauthUtils/successfullyLogin");
 			const event = new CustomEvent('userLoggedIn');
 			document.dispatchEvent(event);
 			throwRedirectionEvent('/');
 		} else {
 			// handleOauthCallback error
-			status_text.textContent = `Error: ${data.message}`;
+			status_text.textContent = `${getString("oauthUtils/error")}: ${data.message}`;
 			// throwRedirectionEvent('/login');
 		}
 	} else {
 		// No query params, not from 42 oauth
-		status_text.textContent = 'Error: Invalid request';
+		status_text.textContent = getString("oauthUtils/invalidRequest");
 			// throwRedirectionEvent('/login');
 	}
 }
@@ -52,13 +53,13 @@ export async function oauthRedirectCallback() {
 // Callback function for login view
 export async function redirectToOauth(oauthProvider) {
 	try {
-	const res = await fetch(`/api/${oauthProvider}/auth/`, config);
-	const data = await res.json();
-	console.log(data);
-	window.location.replace(data.url);
-} catch (error) {
-	console.log(error);
-}
+		const res = await fetch(`/api/${oauthProvider}/auth/`, config);
+		const data = await res.json();
+
+		window.location.replace(data.url);
+	} catch (error) {
+		console.log(error);
+	}
 }
 
 async function handleOauthCallback(oauthProvider, code, state) {
