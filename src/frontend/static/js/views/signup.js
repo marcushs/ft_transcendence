@@ -32,7 +32,7 @@ export default () => {
 						<span id="confirmPasswordFeedback" class="input-feedback"></span>
 					</div>
 					<button-component id="signupBtn" label="signup" class="generic-auth-btn-disabled"></button-component>
-					<p>${getString('signupView/existingAccountSentence')} <a href="/login">${getString('signupView/login')}</a></p>
+					<p>${getString('signupView/existingAccountSentence')} <a id="login-redirect-button">${getString('signupView/login')}</a></p>
 					<span id="errorFeedback" class="input-feedback"></span>
 				</form>
 			</div>
@@ -40,7 +40,10 @@ export default () => {
 
 	setTimeout(() =>{
 		const signupBtn = document.querySelector('#signupBtn');
+		const loginRedirectButton = document.querySelector('#login-redirect-button');
 
+		loginRedirectButton.addEventListener('click', () => throwRedirectionEvent('/login'));
+		
 		signupBtn.addEventListener('click', event => {
 			event.preventDefault();
 			if (signupBtn.className === 'generic-auth-btn') {

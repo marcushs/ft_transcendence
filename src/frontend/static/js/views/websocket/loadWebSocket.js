@@ -165,7 +165,7 @@ function loadChatWebSocket() {
 	};
 
 	chatSocket.onclose = function(e) {
-		console.log('chatSocket', e);
+		console.log('Chat socket closed');
 	};
 }
 
@@ -173,12 +173,11 @@ function loadTournamentWebSocket() {
 	tournamentSocket = new WebSocket('/ws/tournament/');
 
 	tournamentSocket.onopen = function (e) {
-		console.log("The tournament websocket connection was setup successfully !");
+		console.log("Tournament websocket started");
 	};
 
 	tournamentSocket.onmessage = async function(e) {
 		const data = JSON.parse(e.data)
-		console.log(data)
 
 		const messageHandlers = {
 			'create_tournament': tournamentHandlers.handleCreateTournament,
@@ -197,7 +196,7 @@ function loadTournamentWebSocket() {
 		if (handler) {
 			await handler(data);
 		} else {
-			console.log('Unhandled message type:', data.type);
+			console.error('Unknown message type:', data.type);
 		}
 	};
 

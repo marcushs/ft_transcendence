@@ -63,7 +63,7 @@ async function enableTwoFactorRequest() {
 		sessionStorage.setItem('qrcodeuri', data.qrcode);
 		sessionStorage.setItem('qrcode_token', data.qrcode_token);
 	} catch (error) {
-		console.error('Error with qrcode render display: ', error);
+		console.error(error);
 		throwRedirectionEvent('/');
 	}
 }

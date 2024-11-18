@@ -8,7 +8,6 @@ export async function getUserLanguage() {
 	let userLanguage;
 	const isAuthenticated = await checkAuthentication();
 
-	console.log(isAuthenticated);
 	if (isAuthenticated) {
 		
 		userLanguage = await getUserLanguageFromDb();

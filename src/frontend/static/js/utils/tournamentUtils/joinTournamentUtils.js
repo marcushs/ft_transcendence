@@ -63,10 +63,8 @@ export function updateTournamentInfo(tournamentData) {
 	const joinComponent = document.querySelector('join-component');
 	
 	if (waitingRoom && (waitingRoom.getAttribute('data-tournament') === joinedTournamentId)) {
-		console.log('updateWaitingRoomPlayerCount')
 		updateWaitingRoomPlayerCount(tournamentData);
 	} else if (joinComponent) {
-		console.log('updateTournamentComponentPlayerCount')
 		updateTournamentComponentPlayerCount(tournamentData, joinComponent, joinedTournamentId);
 	}
 }

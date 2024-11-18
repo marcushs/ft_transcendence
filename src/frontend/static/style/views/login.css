@@ -111,6 +111,22 @@
 	-webkit-text-fill-color: transparent;
 }
 
+/* .login-page .noAccountSentence {
+	align-items: center;
+}
+
+.login-page .signup-redirect-button {
+	background: linear-gradient(45deg, var(--neon-pink), var(--neon-blue));
+	font-weight: 700;
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.login-page .signup-redirect-button:hover {
+	cursor: pointer;
+} */
+
 .login-page p a:hover {
 	cursor: pointer;
 }

@@ -1,3 +1,5 @@
+import {getString} from "../../utils/languageManagement.js";
+
 export default class ChatMessageComponent extends HTMLElement {
 	constructor(messageData) {
 		super();
@@ -23,11 +25,11 @@ export default class ChatMessageComponent extends HTMLElement {
 		yesterday.setDate(yesterday.getDate() - 1);
 	  
 		if (this.isSameDay(date, now)) {
-		  return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+			return date.toLocaleTimeString(localStorage.getItem('userLanguage'), { hour: '2-digit', minute: '2-digit' });
 		} else if (this.isSameDay(date, yesterday)) {
-		  return 'Yesterday';
+			return getString("chatComponent/yesterday");
 		} else {
-		  return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+			return date.toLocaleDateString(localStorage.getItem('userLanguage'), { day: '2-digit', month: '2-digit', year: 'numeric' });
 		}
 	  }
 	  

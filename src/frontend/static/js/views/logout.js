@@ -50,7 +50,7 @@ function attachEvent() {
 			closeAllWebsocket();
             throwRedirectionEvent('/');
         } catch (error) {
-            console.log(`${error}`);
+            console.error(error);
         }
     });
 }

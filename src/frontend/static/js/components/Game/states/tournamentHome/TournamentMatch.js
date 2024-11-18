@@ -5,6 +5,7 @@ import { displayChatroomComponent } from "../../../../utils/chatUtils/sendMessag
 import { putMessageToChatroomConversation } from "../../../../utils/chatUtils/sendPrivateMessage.js";
 import BracketObj from "./bracket/BracketObj.js";
 import { sendRequest } from "../../../../utils/sendRequest.js";
+import {getString} from "../../../../utils/languageManagement.js";
 
 export default class TournamentMatch {
 	constructor(match) {
@@ -75,7 +76,7 @@ class TournamentMatchElement extends HTMLElement {
 	async getOpponent() {
 		this.userId = await getUserId();
 		
-		if (!this.userId) return console.log('Cannot find userId');
+		if (!this.userId) return console.error('Cannot find userId');
 
 		if (this.match.players.length === 2)
 			return this.match.players[0].id === this.userId ? this.match.players[1].alias : this.match.players[0].alias;
@@ -141,15 +142,15 @@ class TournamentMatchElement extends HTMLElement {
 
 		const botData = {
 			id: 'tournament_bot',
-			username: 'Tournament Bot',
+			username: getString("chatComponent/tournamentBot"),
+			isBot: true,
 			profile_image_link: 'https://img.freepik.com/vecteurs-libre/chatbot-est-vecteur-message_78370-4104.jpg'
 		}
 
 		const matchMessage = {
 			chatroom: 'tournament_match',
 			author: botData,
-			message: `${this.formatCurrentStage(this.stage)} match against ${await this.getOpponent()} will start soon!
-			Click the "Ready" button when ready! GLHF!`,
+			message: `${getString(`chatComponent/${this.stage}`)} ${getString(`chatComponent/tournamentBotSentencePrefix`)} ${await this.getOpponent()} ${getString("chatComponent/tournamentBotSentenceSuffix")}`,
 			created: new Date(),
 		}
 

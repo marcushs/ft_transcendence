@@ -10,7 +10,6 @@ import {getString} from "../utils/languageManagement.js";
 import {sendRequest} from "../utils/sendRequest.js";
 
 export class TwoFactorVerify {
-	// enableTwoFactorRequest();
 	constructor(userCredentials, userData) {
 		this.userCredentials = userCredentials;
 

@@ -17,7 +17,13 @@
 	  "errorWhileLogin": "An error occured while logging in",
 	  "userNotFound": "User not found",
 	  "loginSuccessfully": "Login successfully",
-	  "accountCreated": "Account successfully created"
+	  "accountCreated": "Account successfully created",
+	  "invalidEmail": "Please enter a valid email address.",
+	  "validEmail": "Email is valid ✓",
+	  "invalidPreviewPassword": "The password must contain at least 8 characters, 1 number, 1 uppercase letter and 1 special symbol.",
+	  "validPreviewPassword": "Password is valid ✓",
+	  "passwordMatch": "Password match!",
+	  "passwordNotMatch": "Password does not match"
 	},
 	"signupView": {
 	  "signupTitle": "Signup",
@@ -258,6 +264,27 @@
 	  "noRecentMessage": "No recent message",
 	  "tournamentBot": "Tournament Bot",
 	  "noContacts": "You have no contacts",
+	  "playInvite": "Invite to play",
+	  "yesterday": "Yesterday",
+	  "block": "Block",
+	  "unblock": "Unblock",
+	  "searchContacts": "Search contacts",
+	  "finals": "Final",
+	  "semi_finals": "Semi final",
+	  "quarter_finals": "Quarter final",
+	  "eighth_finals": "Round of sixteen",
+	  "tournamentBotSentencePrefix": ": The match against ",
+	  "tournamentBotSentenceSuffix": "will start soon!\n\t\t\tClick the \"Ready\" button when ready! GLHF!"
+	},
+	"oauthRedirect": {
+	  "redirect": "redirect...",
+	  "loginProcessing": "Processing your login..."
+	},
+	"oauthUtils": {
+	  "successfullyLogin": "Successfully logged in",
+	  "error": "Error",
+	  "fetchFailed": "Fetch failed",
+	  "invalidRequest": "Error: Invalid request",
 	  "playInvite": "Invite to play"
 	},
 	"localGame": {
@@ -286,7 +313,14 @@
 	  "errorWhileLogin": "Une erreur s'est produite lors de la connexion",
 	  "userNotFound": "Utilisateur non trouvé",
 	  "loginSuccessfully": "Connexion réussie",
-	  "accountCreated": "Le compte a été créé avec succès"
+	  "accountCreated": "Le compte a été créé avec succès",
+	  "invalidEmail": "Veuillez saisir une adresse email valide",
+	  "validEmail": "L'email est valide ✓",
+	  "invalidPreviewPassword": "Le mot de passe doit contenir au moins 8 caractères, 1 chiffre, 1 lettre majuscule et 1 symbole spécial",
+	  "validPreviewPassword": "Le mot de passe est valide ✓",
+	  "passwordMatch": "Le mot de passe correpond",
+	  "passwordNotMatch": "Le mot de passe ne correspond pas"
+
 	},
 	"signupView": {
 	  "signupTitle": "Inscription",
@@ -526,6 +560,24 @@
 	  "noRecentMessage": "Aucun message récent",
 	  "tournamentBot": "Bot du tournoi",
 	  "noContacts": "Vous n'avez pas de contacts",
+	  "playInvite": "Inviter à jouer",
+	  "yesterday": "Hier",
+	  "block": "Bloquer",
+	  "unblock": "Débloquer",
+	  "searchContacts": "Chercher des contacts",
+	  "finals": "Finale",
+	  "semi_finals": "Demi finale",
+	  "quarter_finals": "Quarts de final",
+	  "eighth_finals": "Huitièmes de finale",
+	  "tournamentBotSentencePrefix": ": Le match contre ",
+	  "tournamentBotSentenceSuffix": "va bientôt commencer !\n\t\t\tCliquez sur le bouton « Prêt » lorsque vous êtes prêt ! GLHF !"
+	},
+	"oauthRedirect": {
+	  "redirect": "redirection...",
+	  "loginProcessing": "Traitement de la connexion..."
+	},
+	"oauthUtils": {
+	  "successfullyLogin": "Successfully logged in",
 	  "playInvite": "Inviter à jouer"
 	},
 	"localGame": {

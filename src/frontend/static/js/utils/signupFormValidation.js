@@ -1,3 +1,5 @@
+import {getString} from './languageManagement.js'
+
 export default function validateSignupInputs() {
 	let inputRequiredInfos = { user: false, email: false, password: false, passwordMatch: false };
 	const btn = document.querySelector('.generic-auth-btn-disabled');
@@ -44,10 +46,10 @@ function updateEmailFeedback() {
 	if (emailValue === '')
 		feedbackElement.textContent = '';
 	else if (emailRegex.test(emailValue)) {
-		feedbackElement.textContent = "Email is valid ✓"; // Email is valid
+		feedbackElement.textContent = getString('loginView/validEmail');
 		feedbackElement.style.color = '#32CD32';
 	} else {
-		feedbackElement.textContent = "Please enter a valid email address.";
+		feedbackElement.textContent = getString('loginView/invalidEmail');
 		feedbackElement.style.color = 'red';
 	}
 }
@@ -88,10 +90,10 @@ function updatePasswordFeedback(inputRequiredInfos, passwordRequirements) {
 	if (passwordValue === '')
 		feedbackElement.textContent = '';
 	else if (inputRequiredInfos.password) {
-		feedbackElement.textContent = "Password is valid ✓"; // Email is valid
+		feedbackElement.textContent = getString('loginView/validPreviewPassword'); // Email is valid
 		feedbackElement.style.color = '#32CD32';
 	} else {
-		feedbackElement.textContent = "The password must contain at least 8 characters, 1 number, 1 uppercase letter and 1 special symbol.";
+		feedbackElement.textContent = getString('loginView/invalidPreviewPassword');
 		feedbackElement.style.color = 'red';
 	}
 }
@@ -115,11 +117,11 @@ function updateConfirmPasswordMatchFeedback(inputRequiredInfos) {
 		feedbackElement.textContent = '';
 		inputRequiredInfos.passwordMatch = false;
 	} else if (passwordValue === confirmPasswordValue) {
-		feedbackElement.textContent = 'Password match!';
+		feedbackElement.textContent = getString('loginView/passwordMatch');
 		feedbackElement.style.color = '#32CD32';
 		inputRequiredInfos.passwordMatch = true;
 	} else {
-		feedbackElement.textContent = "Password does not match.";
+		feedbackElement.textContent = getString('loginView/passwordNotMatch');
 		feedbackElement.style.color = 'red';
 		inputRequiredInfos.passwordMatch = false;
 	}

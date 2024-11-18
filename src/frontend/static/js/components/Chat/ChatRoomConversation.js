@@ -1,6 +1,6 @@
 import { sendRequest } from "../../utils/sendRequest.js";
 import ChatMessageComponent from "./ChatMessageComponent.js";
-import { isSentOrReceivedMessage } from "../../utils/chatUtils/sendPrivateMessage.js";0
+import { isSentOrReceivedMessage } from "../../utils/chatUtils/sendPrivateMessage.js";
 import {getString} from "../../utils/languageManagement.js";
 
 export default class ChatRoomConversation extends HTMLElement {
@@ -52,8 +52,6 @@ export default class ChatRoomConversation extends HTMLElement {
 		if (!this.chatroom || this.chatroom === '') return ;
 
 		const res = await sendRequest('GET', `/api/chat/get_last_20_messages/?chatroomId=${this.chatroom}`, null, false);
-
-		console.log('in displayLast20Messages', res);
 
 		const last20Messages = res.last20Messages;
 

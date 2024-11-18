@@ -1,14 +1,14 @@
 import { oauthRedirectCallback } from "../utils/oauthUtils.js";
+import {getString} from "../utils/languageManagement.js";
 
 export default () => {
 	const oauthProvider = parseOAuthProvider();
 	const html = `
-		<h1>Oauth ${oauthProvider} Redirect...</h1>
-		<p id="status">Processing your login...</p>
+		<h1>Oauth ${oauthProvider} ${getString("oauthRedirect/redirect")}</h1>
+		<p id="status">${getString("oauthRedirect/loginProcessing")}</p>
 	`;
 
 	setTimeout(() => {
-		console.log(oauthProvider);
 		oauthRedirectCallback(oauthProvider);
 	}, 0);
 

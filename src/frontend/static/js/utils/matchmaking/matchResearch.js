@@ -20,7 +20,6 @@ export async function sendMatchSearchRequest(match_type) {
         }));
         const researchComponent = document.createElement('matchmaking-research-component');
         app.appendChild(researchComponent);
-        console.log(requestResponse.message);
         return true;
     } catch (error) {
         if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)

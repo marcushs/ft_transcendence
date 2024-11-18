@@ -38,7 +38,6 @@ export default () => {
 			event.preventDefault();
 			const inputs = [...event.target.querySelectorAll('input')];
 			const verificationCode = inputs.reduce((acc, input) => acc += input.value, '');
-			console.log(verificationCode)
 			VerifyTwoFactorRequest(verificationCode);
 		});
 

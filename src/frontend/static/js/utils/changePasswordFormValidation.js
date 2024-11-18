@@ -1,3 +1,5 @@
+import {getString} from "./languageManagement.js";
+
 export default function validateChangePasswordInputs() {
 	let inputRequiredInfos = { password: false, newPassword: false, newPasswordMatch: false };
 	const passwordInput = document.querySelector('input[type="password"]');
@@ -51,10 +53,10 @@ function updateNewPasswordFeedback(inputRequiredInfos, passwordRequirements) {
 	if (passwordValue === '')
 		feedbackElement.textContent = '';
 	else if (inputRequiredInfos.newPassword) {
-		feedbackElement.textContent = "Password is valid ✓"; // Email is valid
+		feedbackElement.textContent = getString('loginView/validPreviewPassword');
 		feedbackElement.style.color = '#32CD32';
 	} else {
-		feedbackElement.textContent = "The password must contain at least 8 characters, 1 number, 1 uppercase letter and 1 special symbol.";
+		feedbackElement.textContent = getString('loginView/invalidPreviewPassword');
 		feedbackElement.style.color = 'red';
 	}
 }
@@ -78,11 +80,11 @@ function updateConfirmNewPasswordMatchFeedback(inputRequiredInfos) {
 		feedbackElement.textContent = '';
 		inputRequiredInfos.newPasswordMatch = false;
 	} else if (newPasswordValue === confirmNewPasswordValue) {
-		feedbackElement.textContent = 'Password match!';
+		feedbackElement.textContent = getString('loginView/passwordMatch');
 		feedbackElement.style.color = '#32CD32';
 		inputRequiredInfos.newPasswordMatch = true;
 	} else {
-		feedbackElement.textContent = "Password does not match.";
+		feedbackElement.textContent = getString('loginView/passwordNotMatch');
 		feedbackElement.style.color = 'red';
 		inputRequiredInfos.newPasswordMatch = false;
 	}

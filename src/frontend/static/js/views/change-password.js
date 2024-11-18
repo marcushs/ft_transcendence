@@ -62,7 +62,7 @@ export default () => {
 function handleInputChange(event) {
 	const feedbackElement = event.target.parentElement.querySelector('#currentPasswordFeedback');
 
-	if (feedbackElement.innerHTML === 'Incorrect current password')
+	if (feedbackElement.innerHTML === getString("changePasswordView/incorrectCurrentPassword"))
 		feedbackElement.innerHTML = '';
 }
 
@@ -116,7 +116,6 @@ async function postNewPassword(formData) {
 			localStorage.setItem('passwordFeedback', getString("changePasswordView/passwordSuccessfullyChanged"));
 			throwRedirectionEvent('/profile');
 		} else {
-			console.log(data);
 			localStorage.setItem('userUpdateResponse', JSON.stringify(data));
 			throwRedirectionEvent('/change-password');
 		}

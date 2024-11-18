@@ -2,6 +2,7 @@ import getProfileImage from "../../utils/getProfileImage.js";
 import { sendRequest } from "../../utils/sendRequest.js";
 import { displayChatroomComponent } from "../../utils/chatUtils/sendMessageCallback.js";
 import { checkAllRecentMessagesRead, unreadMessageNotifOff } from "../../utils/chatUtils/sendPrivateMessage.js";
+import {getString} from "../../utils/languageManagement.js";
 
 export default class ChatContactComponent extends HTMLElement {
 	static get observedAttributes() {
@@ -30,7 +31,7 @@ export default class ChatContactComponent extends HTMLElement {
 		this.innerHTML = `
 		<div class="chat-contact-profile-picture">
 			<img src=${profileImage} alt='contact picture'>
-			<div class="chat-status-circle ${await this.getUserStatus()}"></div> 
+			<div class="chat-status-circle ${await this.getUserStatus()}"></div>
 		</div>
 		<div class="chat-contact-info">
 			<p class="chat-contact-username">${this.userData.username}</p>
@@ -71,8 +72,7 @@ export default class ChatContactComponent extends HTMLElement {
 	
 			return res.lastMessage[0].fields;
 		} catch (error) {
-			console.log('Error trying to fetch chatroom last message: ', error.message);
-			return 'Problem getting last message of chatroom';
+			console.error(error);
 		}
 	}
 
@@ -85,13 +85,13 @@ export default class ChatContactComponent extends HTMLElement {
 		const now = new Date();
 		const yesterday = new Date(now);
 		yesterday.setDate(yesterday.getDate() - 1);
-	  
+
 		if (this.isSameDay(date, now)) {
-		  return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+		  return date.toLocaleTimeString(localStorage.getItem('userLanguage'), { hour: '2-digit', minute: '2-digit' });
 		} else if (this.isSameDay(date, yesterday)) {
-		  return 'Yesterday';
+		  return getString("chatComponent/yesterday");
 		} else {
-		  return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+		  return date.toLocaleDateString(localStorage.getItem('userLanguage'), { day: '2-digit', month: '2-digit', year: 'numeric' });
 		}
 	  }
 	  
@@ -129,7 +129,7 @@ export default class ChatContactComponent extends HTMLElement {
 
 			if (checkAllRecentMessagesRead())
 				unreadMessageNotifOff();
-		})
+		});
 	}
 
 	async getUserStatus() {
@@ -138,7 +138,7 @@ export default class ChatContactComponent extends HTMLElement {
 			
 			return res.user_status;
 		} catch (error) {
-			console.log('Error trying to get user status: ', error.message);
+			console.error('Error trying to get user status: ', error.message);
 			return null;
 		}
 	}

@@ -1,11 +1,10 @@
 import '../../components/ContactComponent.js'
-import { sendRequest } from '../../utils/sendRequest.js';
 import getProfileImage from '../../utils/getProfileImage.js';
+import {getString} from "../../utils/languageManagement.js";
 
 export async function UpdateChatroomTopBarWebsocket(contactJSON, change_info, old_value) {
     const chatroomTopBar = document.querySelector('chatroom-top-bar');
     const contact = JSON.parse(contactJSON)
-    console.log('change_info: ', change_info);
     
     if (chatroomTopBar) {
         const targetUsername = chatroomTopBar.querySelector('.chatroom-top-bar-username')
@@ -22,8 +21,6 @@ export async function UpdateChatroomTopBarWebsocket(contactJSON, change_info, ol
             }
         } else {
             if (targetUsername.textContent === contact.username) {
-                console.log(`old_status = ${old_value}`);
-                console.log(`new_status = ${contact.status}`);
                 const statusCircle = chatroomTopBar.querySelector('.chat-status-circle');
                 const statusText = chatroomTopBar.querySelector('.chat-contact-name-status p:nth-child(2)')
                 if (old_value === 'online') {
@@ -40,7 +37,7 @@ export async function UpdateChatroomTopBarWebsocket(contactJSON, change_info, ol
                 }
                 statusCircle.classList.add(`${contact.status}`);
                 statusText.classList.add(`${contact.status}`);
-                statusText.innerText = `${contact.status}`;
+                statusText.innerText = getString(`contactComponent/${contact.status}Status`);
             }
         }
     }

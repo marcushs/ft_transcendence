@@ -1,6 +1,5 @@
 export default class Ball {
 	constructor(canvas, x, y, ballSpeed) {
-		console.log('ball speed = ', ballSpeed);
 		this.canvas = canvas;
 		this.x = x;
 		this.y = y;

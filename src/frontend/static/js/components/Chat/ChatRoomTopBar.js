@@ -32,7 +32,6 @@ export default class ChatRoomTopBar extends HTMLElement {
 		let isUserBlocked = await this.isTargetUserBlocked();
 		const isSearchingGame = localStorage.getItem("isSearchingPrivateMatch") || localStorage.getItem("isReadyToPlay")
 			|| localStorage.getItem("isInGuestState") || localStorage.getItem("isSearchingGame") || localStorage.getItem("tournamentData");
-
 		this.innerHTML = `
 			<i id="chatroom-back-btn" class="fa-solid fa-arrow-left"></i>
 			<div class="chatroom-profile-picture" style="background: no-repeat center/100% url('${profileImage}')">
@@ -40,23 +39,22 @@ export default class ChatRoomTopBar extends HTMLElement {
 			</div>
 			<div class="chat-contact-name-status">
 				<p class="chatroom-top-bar-username">${this.userData.username}</p>
-				<p class="${status}">${status}</p>
+				<p class="${status}">${getString(`contactComponent/${status}Status`)}</p>
 			</div>
-			${this.userData.username !== "Tournament Bot" ? `
+			${this.userData.isBot !== true ? `
 			<button class="${(isSearchingGame === null) ? 'play-invitation-button' : 'play-invitation-button-disabled'}">${getString("chatComponent/playInvite")}</button>
 			<div id="chat-block-user" class="chat-block-user ${isUserBlocked ? 'blocked' : ''}">
 				<p>
 					<i class="fa-solid fa-ban"></i>
 					<i class="fa-regular fa-circle-check"></i>
-					<span>${isUserBlocked ? 'Unblock' : 'Block'} ${this.userData.username}</span>
+					<span>${isUserBlocked ? getString(`chatComponent/unblock`) : getString(`chatComponent/block`)} ${this.userData.username}</span>
 				</p>
 			</div>` : ''}
 		`;
-
 	};
 
 	async getUserStatus() {
-		if (this.userData.username === 'Tournament Bot') return 'online';
+		if (this.userData.isBot === true) return 'online';
 		try {
 			let res = await sendRequest('GET', `/api/user/get_user_status/?userId=${this.userData.id}`, null, false);
 			
@@ -76,11 +74,11 @@ export default class ChatRoomTopBar extends HTMLElement {
 		chatBlockUser.firstElementChild.addEventListener('click', async () => {
 			if (chatBlockUser.classList.contains('blocked')) {
 				chatBlockUser.classList.remove('blocked');
-				chatBlockUserSpan.innerText = `Block ${this.userData.username}`;
+				chatBlockUserSpan.innerText = `${getString(`chatComponent/block`)} ${this.userData.username}`;
 				this.unblockUser();
 			} else {
 				chatBlockUser.classList.add('blocked');
-				chatBlockUserSpan.innerText = `Unblock ${this.userData.username}`;
+				chatBlockUserSpan.innerText = `${getString(`chatComponent/unblock`)} ${this.userData.username}`;
 				this.blockUser();
 			}
 		});
@@ -133,7 +131,6 @@ export default class ChatRoomTopBar extends HTMLElement {
 		try {
 			let res = await sendRequest('GET', `/api/chat/block_user/?blockedUserId=${this.userData.id}`, null, false);
 
-			console.log("blocked user", res);
 		} catch (error) {
 			console.log("Error occured when blocking user", error.message);
 		}
@@ -143,7 +140,6 @@ export default class ChatRoomTopBar extends HTMLElement {
 		try {
 			let res = await sendRequest('GET', `/api/chat/unblock_user/?blockedUserId=${this.userData.id}`, null, false);
 
-			console.log("unblocked user", res);
 		} catch (error) {
 			console.log("Error occured when unblocking user: ", error.message);
 		}

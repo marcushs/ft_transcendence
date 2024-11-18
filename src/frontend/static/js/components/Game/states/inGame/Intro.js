@@ -10,20 +10,6 @@ export default class Intro {
 
 		this.isRanked = isRanked;
 
-		this.playersInfos = {
-			isRanked: false,
-			playerOne: {
-				name: "Theo",
-				profileImage: "https://imgs.search.brave.com/iSAvbiep4QwLA-UQyDCBMZsxBkcoa3eu7mv2ycTyU3I/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXM1LmFscGhhY29k/ZXJzLmNvbS81OTMv/NTkzMzMzLmpwZw",
-				rank: "master"
-			},
-			playerTwo: {
-				name: "Alex",
-				profileImage: "https://imgs.search.brave.com/yhsJnp0ftGpvmQ6t71zUYHHDynOvfO1xoG8mGtodmMk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLmpl/dXhhY3R1cy5jb20v/ZGF0YXMvamV1eC9y/L28vcm9ja2V0LWxl/YWd1ZS92bi9yb2Nr/ZXQtbGVhZ3VlLTYx/NWU2NzY4MTZhZTYu/anBn",
-				rank: "diamond"
-			}
-		}
-
 		localStorage.removeItem("isSearchingPrivateMatch");
 		localStorage.removeItem("isReadyToPlay");
 		localStorage.removeItem("isInGuestState");
@@ -45,10 +31,7 @@ export default class Intro {
 		this.backgroundImage = this.loadImage("../../../../../assets/gameStartAnimationBackground.svg");
 
 		this.playerOneImage = this.loadImage(this.leftPlayer.profile_image);
-		this.playerOneRankImage = this.loadImage(`../../../../../assets/rank-${this.playersInfos.playerOne.rank}.svg`);
-
 		this.playerTwoImage = this.loadImage(this.rightPlayer.profile_image);
-		this.playerTwoRankImage = this.loadImage(`../../../../../assets/rank-${this.playersInfos.playerTwo.rank}.svg`);
 	}
 
 
@@ -114,8 +97,6 @@ export default class Intro {
 		this.canvas.ctx.closePath();
 
 		this.drawPlayer(this.leftPlayerX, this.canvas.height / 4 * 2.8, this.playerOneImage, this.leftPlayer.username);
-		if (this.isRanked)
-			this.drawRank(this.leftPlayerX, this.canvas.height / 4 * 2.8, this.playerOneRankImage);
 		this.drawLine(this.leftSectionTopRightX, this.leftSectionBottomRightX);
 	}
 
@@ -136,9 +117,6 @@ export default class Intro {
 		this.canvas.ctx.closePath();
 
 		this.drawPlayer(this.rightPlayerX, this.canvas.height / 4, this.playerTwoImage, this.rightPlayer.username);
-		if (this.isRanked)
-			this.drawRank(this.rightPlayerX, this.canvas.height / 4, this.playerTwoRankImage);
-
 		this.drawLine(this.rightSectionBottomLeftX, this.rightSectionTopLeftX);
 	}
 
@@ -187,22 +165,6 @@ export default class Intro {
 		this.canvas.ctx.textBaseline = 'middle';
 		this.canvas.ctx.fillText(playerName, x, y);
 		this.canvas.ctx.closePath();
-	}
-
-
-	drawRank(x, y, img) {
-		const imgWidth = 140;
-		const imgHeight = 85;
-
-		this.canvas.ctx.save();
-		this.canvas.ctx.beginPath();
-		this.canvas.ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
-		this.canvas.ctx.shadowBlur = 50;
-		this.canvas.ctx.shadowOffsetX = 0;
-		this.canvas.ctx.shadowOffsetY = 0;
-		this.canvas.ctx.drawImage(img, x - imgWidth / 2, y + imgHeight * 2, imgWidth, imgHeight);
-		this.canvas.ctx.closePath();
-		this.canvas.ctx.restore();
 	}
 
 

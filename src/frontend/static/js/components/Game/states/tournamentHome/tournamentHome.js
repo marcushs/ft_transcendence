@@ -27,7 +27,7 @@ class tournamentHome {
 		} else {
 			return `
 				<div class="tournament-home-container">
-					<h3 state-redirect bracket>${getString('gameComponent/tournaments')}</h3>
+					<h3>${getString('gameComponent/tournaments')}</h3>
 					<div class="tournament-components-container">
 						<create-component></create-component>
 						<join-component></join-component>

@@ -67,7 +67,7 @@ export async function gameWebsocket(userId) {
 	}
 
     gameSocket.onerror = function(event) {
-        console.log("Websocket error: ", event);
+        console.error(event);
     };
 }
 
