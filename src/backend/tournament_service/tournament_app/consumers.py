@@ -82,14 +82,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await self.handle_join_tournament(data=data)
 		elif message_type == 'leave_tournament':
 			await self.handle_leave_tournament(data=data)
-		elif message_type == 'user_ready_for_match':
+		elif message_type == 'user_ready_for_match': 
 			await self.handle_user_ready(data=data)
-		elif message_type == 'proceed_tournament': 
-			await self.handle_proceed_tournament(data=data)
-		elif message_type == 'start_leave_countdown':
-			await self.handle_start_leave_countdown(data=data)
-
-			
 
 
 # -------------------------------> Handle Create Tournament <---------------------------------
@@ -147,16 +141,17 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def add_players_to_match_group(self, event):
 		match_id = await find_player_match(event, self.user)
 		player_ids = await get_player_ids_for_match(match_id)
-		await self.start_match_countdown(match_id=match_id, player_ids=player_ids)
+		await self.start_match_countdown(match_id=match_id, player_ids=player_ids, start=False)
 		match = await sync_to_async(TournamentMatch.objects.get)(match_id=match_id)
-		payload = {'type': 'load_match', 'match': await match.to_dict(),}
+		payload = {'type': 'load_match', 'match': await match.to_dict(), 'from_match': False}
 		await self.channel_layer.group_send(group_names[str(player_ids[0])], payload)
 		await self.channel_layer.group_send(group_names[str(player_ids[1])], payload)
 		
 	async def load_match(self, event):
 		await self.send(text_data=json.dumps({
 			'type': 'load_match',
-			'match': event['match']
+			'match': event['match'],
+			'fromMatch': event['from_match']
 		}))
 
 	async def redirect_to_waiting_room(self, event):
@@ -187,20 +182,24 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		}))
 
 	async def exit_tournament(self, tournament):
-		await self.stop_leave_countdown()
+		print('******entered exit')
+		await self.channel_layer.group_send(group_names[str(self.user.id)], {'type': 'redirect_to_tournament_home'})
 		await remove_user_from_tournament(tournament, self.user)
-		member_count = await self.get_members_count(tournament)
+		member_count = await get_members_count(tournament)
 		if member_count == 0:
-			await sync_to_async(self.set_tournament_is_over)(tournament)
-		await self.send(text_data=json.dumps({'type': 'redirect_to_tournament_home'}))
+			await sync_to_async(set_tournament_is_over)(tournament)
+		await self.stop_leave_countdown()
 
+
+	async def redirect_to_tournament_home(self, event):
+		await self.send(text_data=json.dumps({'type': 'redirect_to_tournament_home'}))  
 
 
 # -------------------------------> Handle User Ready <---------------------------------
 
 	async def handle_user_ready(self, data):
 		match_id = data['matchId']
-		result = await set_player_ready(match_id, self.user)
+		result = await set_player_ready(match_id, self.user) 
 		if result == 'start game':
 			player_ids = await get_player_ids_for_match(match_id)
 			payload = {
@@ -224,17 +223,21 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 # -------------------------------> Handle Proceed Tournament <---------------------------------
 
+	async def proceed_tournament(self, event):
+		await self.handle_proceed_tournament(event)
+
 	async def handle_proceed_tournament(self, data):
 		try:
-			last_match = await aget_object_or_404(TournamentMatch, match_id=data['match_id'])
+			last_match = data['match']
 			player = await aget_object_or_404(User, id=data['user_id'])
-			tournament = sync_to_async(last_match.tournament)()
+			tournament = await aget_object_or_404(Tournament, tournament_id=last_match['tournament_id'])
+			# tournament = await sync_to_async(lambda: last_match.tournament)()
 			if tournament.isOver == True:
 				return async_to_sync(self.send_error_message)('next_round', 'Tournament is over')
-			tournament_bracket = Bracket.objects.filter(tournament=tournament).first()
+			tournament_bracket = await sync_to_async(lambda: Bracket.objects.filter(tournament=tournament).first())()  
 			if tournament_bracket is None:
 				return async_to_sync(self.send_error_message)('next_round', 'Bracket not found')
-			await self.match_in_next_round(player, last_match, tournament, tournament_bracket)
+			await self.match_in_next_round(player, last_match, tournament_bracket)
 		except Http404:
 			await self.send_error_message(data['type'], 'Error in finding last match or user')
 
@@ -243,7 +246,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		payload = { 
 			'game_type': 'tournament',
 			'match_id': event['match_id'], 
-			'player1': event['player1'], 
+			'player1': event['player1'],  
 			'player2': event['player2'] 
 		}
 		await self.channel_layer.group_send(group_names[event['player1']], {'type': 'start_game_instance', 'payload': payload})
@@ -263,7 +266,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	@database_sync_to_async
 	def match_in_next_round(self, user, last_match, tournament_bracket):
-		last_round = last_match.tournament_round
+		last_round = last_match['tournament_round']
 		if last_round == 'finals':
 			tournament_bracket_dict = tournament_bracket.to_dict_sync()
 			tournament_bracket_dict['alias'] = user.alias
@@ -285,7 +288,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		last_round_matches = round_mapping[last_round]
 		next_round = next_rounds[last_round]
-		last_match_index = last_match.bracket_index
+		last_match_index = last_match['bracket_index']
 		adjacent_match_index = last_match_index + 1 if last_match_index % 2 == 0 else last_match_index - 1
 
 		if last_round_matches['matches_per_side'] > 1: 
@@ -308,7 +311,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						'tournament': tournament_bracket.tournament,
 						'tournament_round': next_round,
 						'bracket_index': 0
-					}
+					} 
 				)
 				player_count = TournamentMatchPlayer.objects.filter(match=final_match).count()
 				if player_count < 2:
@@ -317,10 +320,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						player=user,
 						player_number=TournamentMatchPlayer.PlayerNumber.ONE if last_match_index % 2 == 0 else TournamentMatchPlayer.PlayerNumber.TWO
 					)
-					payload = {'type': 'load_match', 'match': final_match.to_dict_sync()}
+					payload = {'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True}
 					async_to_sync(self.channel_layer.group_send)(group_names[str(user.id)], payload)
 					if TournamentMatchPlayer.objects.filter(match=final_match).count() == 2:
-						async_to_sync(self.start_match_countdown)(match_id=str(final_match.match_id))
+						player_ids = list(TournamentMatchPlayer.objects.filter(match_id=final_match.match_id).values_list('player_id', flat=True))
+						payload = {'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True}
+						async_to_sync(self.channel_layer.group_send)(group_names[str(player_ids[0])], payload)
+						async_to_sync(self.channel_layer.group_send)(group_names[str(player_ids[1])], payload)
+						async_to_sync(self.start_match_countdown)(match_id=str(final_match.match_id), player_ids=player_ids, start=True) 
 						return final_match
 				else:
 					# Handle the case where the match is already full
@@ -354,10 +361,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						player=user,
 						player_number=TournamentMatchPlayer.PlayerNumber.ONE if last_match_index % 2 == 0 else TournamentMatchPlayer.PlayerNumber.TWO
 					)
-				payload = {'type': 'load_match', 'match': final_match.to_dict_sync()}
+				payload = {'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True}
 				async_to_sync(self.channel_layer.group_send)(group_names[str(user.id)], payload)
 				if TournamentMatchPlayer.objects.filter(match=next_match).count() == 2:
-					async_to_sync(self.start_match_countdown)(match_id=str(next_match.match_id))
+					player_ids = list(TournamentMatchPlayer.objects.filter(match_id=next_match.match_id).values_list('player_id', flat=True))
+					payload = {'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True}
+					async_to_sync(self.channel_layer.group_send)(group_names[str(player_ids[0])], payload)
+					async_to_sync(self.channel_layer.group_send)(group_names[str(player_ids[1])], payload)
+					async_to_sync(self.start_match_countdown)(match_id=str(next_match.match_id), player_ids=player_ids, start=True) 
 					return next_match
 			else:
 				# Handle the case where the match is already full
@@ -368,8 +379,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def redirect_to_winner_page(self, event):
 		await self.send(text_data=json.dumps({
 			'type': 'redirect_to_winner_page',
-			'tournament_bracket': event['tournament_bracket']
+			'tournament_bracket': event['tournament_bracket']  
 		}))
+		await self.start_leave_countdown(event['tournament_bracket']['tournament']['tournament_id']) 
 
 
 
@@ -380,11 +392,21 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			return await self.start_leave_countdown(data['tournament_id'])
 		await self.send_error_message(data['type'], 'Invalid tournament Id')
 
+
+	async def redirect_to_tournament_lost(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'redirect_to_tournament_lost', 
+			'match': event['match']
+		})) 
+		await self.start_leave_countdown(event['match']['tournament_id']) 
+
 	# -------------------------------> Countdown functions <---------------------------------
 
-	async def start_match_countdown(self, match_id, player_ids):
+	async def start_match_countdown(self, match_id, player_ids, start):
 		if self.match_countdown_task:
 			self.match_countdown_task.cancel()
+		if start:
+			await self.start_match_countdown_task(match_id, 60, player_ids)  # Default 60 seconds
 		if self.user.id == player_ids[0]:
 			await self.start_match_countdown_task(match_id, 60, player_ids)  # Default 60 seconds
 
@@ -406,7 +428,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def run_match_countdown(self, match_id, player_ids):
 		while True:
 			countdown = int(redis_instance.get(match_id) or 0)
-			
+			 
 			if countdown < 0:
 				payload = {
 					"type": "launch.game",
@@ -420,7 +442,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				break
 			
 			payload = {'type': 'countdown_update', 'time': countdown}
-
 			await self.channel_layer.group_send(group_names[str(player_ids[0])], payload)
 			await self.channel_layer.group_send(group_names[str(player_ids[1])], payload)
 			
@@ -433,22 +454,25 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def start_leave_countdown(self, tournament_id):
 		if self.leave_countdown_task:
 			self.leave_countdown_task.cancel()
-		await self.start_leave_countdown_task(tournament_id, 60)
+		await self.start_leave_countdown_task(tournament_id, 67)
 
 	async def start_leave_countdown_task(self, tournament_id, duration):
 		redis_instance.set(str(self.user.id), duration)
-		self.match_countdown_task = asyncio.create_task(self.run_leave_countdown(tournament_id))
+		self.leave_countdown_task = asyncio.create_task(self.run_leave_countdown(tournament_id)) 
 
 	async def run_leave_countdown(self, tournament_id):
 		while True:
 			countdown = int(redis_instance.get(str(self.user.id)) or 0)
 			
 			if countdown < 0:
-				await self.stop_leave_countdown()
-				tournament = Tournament.objects.get(tournament_id=tournament_id)
+				print("-------do I get in here?") 
+				tournament = await sync_to_async(Tournament.objects.get)(tournament_id=tournament_id)
+				print("----before")
 				await self.exit_tournament(tournament)
+				print("----after")
+				await self.stop_leave_countdown() 
 				break
-			
+			 
 			payload = {'type': 'countdown_update', 'time': countdown}
 
 			await self.channel_layer.group_send(group_names[str(self.user.id)], payload)
@@ -497,4 +521,4 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'status': 'success',
 			'message': message,
 			'tournament': await tournament.to_dict()
-		})) 
+		}))

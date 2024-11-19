@@ -63,7 +63,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Tournament(models.Model):
     tournament_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    tournament_name = models.CharField(max_length=30, unique=True, editable=False)
+    tournament_name = models.CharField(max_length=30 , editable=False)
     creator = models.ForeignKey(User, related_name='created_tournaments', on_delete=models.CASCADE)
     tournament_size = models.IntegerField()
     members = models.ManyToManyField(User, related_name='joined_tournaments', blank=True)
@@ -136,7 +136,7 @@ class TournamentMatch(models.Model):
     tournament_round = models.CharField(max_length=20, choices=ROUND_CHOICES)
     bracket_index = models.IntegerField(default=0)
     isOver = models.BooleanField(default=False)
-
+ 
     async def to_dict(self):
         obj_dict = {
             'match_id': str(self.match_id),

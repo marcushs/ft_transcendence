@@ -10,7 +10,9 @@ export function putNewTournamentToDOM(tournament) {
 	if (!tournamentsList) return ;
 	
 	const tournamentEl = new TournamentComponent(tournament);
+	const noJoinableP = document.querySelector('p.');
 
+	noJoinableP.innerText = "No Joinable Tournament";
 	tournamentsList.appendChild(tournamentEl);
 }
 

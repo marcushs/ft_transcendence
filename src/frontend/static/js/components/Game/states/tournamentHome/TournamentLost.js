@@ -28,6 +28,7 @@ class TournamentLostElement extends HTMLElement {
 		this.tournamentId = this.match.tournament_id;
 		this.tournamentName = this.match.tournament_name;
 		this.bracketObj = null;
+		console.log('asdfsfdsdfq4erwqerqwer ', this.match)
 		this.stage = this.match.tournament_round;
 	}
 	

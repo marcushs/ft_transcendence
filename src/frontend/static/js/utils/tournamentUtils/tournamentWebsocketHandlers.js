@@ -1,5 +1,5 @@
 import { putNewTournamentToDOM, redirectToTournamentWaitingRoom, updateTournamentInfo, redirectToTournamentHome, redirectToWinnerPage } from './joinTournamentUtils.js';
-import { redirectToTournamentMatch, startTournamentMatchInstance } from './tournamentMatchUtils.js';
+import { redirectToTournamentLostMatch, redirectToTournamentMatch, startTournamentMatchInstance } from './tournamentMatchUtils.js';
 import getUserId from "../getUserId.js";
 
 export async function handleCreateTournament(data) {
@@ -72,7 +72,20 @@ export function handleLoadMatch(data) {
 
     localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
     console.log('test load match instance')
-    redirectToTournamentMatch(data.match);
+    console.log('lijqweorjblkjblk: ', data.fromMatch)
+    if (data.fromMatch) {
+        setTimeout(() => {
+            redirectToTournamentMatch(data.match);
+        }, 7000);
+        return;
+    }
+    redirectToTournamentMatch(data.match)
+}
+
+export function handleRedirectToTournamentLost(data) {
+    setTimeout(() => {
+        redirectToTournamentLostMatch(data.match)
+    }, 7000);
 }
 
 export function handleRedirectToTournamentHome() {
@@ -107,5 +120,7 @@ export function handleError(message) {
 }
 
 export function handleRedirectToWinnerPage(data) {
-    redirectToWinnerPage(data.tournament_bracket);
+    setTimeout(() => {
+        redirectToWinnerPage(data.tournament_bracket);
+    }, 7000);
 }

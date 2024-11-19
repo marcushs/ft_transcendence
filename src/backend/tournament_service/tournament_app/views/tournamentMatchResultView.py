@@ -6,6 +6,8 @@ from django.contrib.auth import get_user_model
 from ..models import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
+from ..utils.weboscket_utils import send_websocket_info
+from asgiref.sync import async_to_sync
 import json
 
 User = get_user_model()
@@ -29,7 +31,22 @@ class tournamentMatchResultView(View):
 			match.loser_score = data['loser']['score']
 			match.isOver = True
 			match.save()
+			payload_winner = {
+				'type': 'proceed_tournament',
+				'user_id': str(winner.id),
+				'match': match.to_dict_sync()
+			}
+			payload_loser = {
+				'type': 'redirect_to_tournament_lost',
+				'user_id': str(loser.id),
+				'match': match.to_dict_sync()
+			}
+
+			async_to_sync(send_websocket_info)(player_id=winner.id, payload=payload_winner)
+			async_to_sync(send_websocket_info)(player_id=loser.id, payload=payload_loser)
+
 			return JsonResponse({'status': 'success'}, status=200) 
 		except ObjectDoesNotExist:
 			return JsonResponse({'status': 'error', 'message': 'Match not found'}, status=400)
   
+

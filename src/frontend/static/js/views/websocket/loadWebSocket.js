@@ -170,6 +170,10 @@ function loadChatWebSocket() {
 }
 
 function loadTournamentWebSocket() {
+	if (tournamentSocket && tournamentSocket.readyState === WebSocket.OPEN) {
+		console.log('already connected to tournament Websocket');
+		return;
+	}
 	tournamentSocket = new WebSocket('/ws/tournament/');
 
 	tournamentSocket.onopen = function (e) {
@@ -191,6 +195,7 @@ function loadTournamentWebSocket() {
 			"countdown_update": tournamentHandlers.handleCountdownUpdate,
 			"start_game_instance": tournamentHandlers.handleStartGameInstance,
 			"redirect_to_winner_page": tournamentHandlers.handleRedirectToWinnerPage,
+			"redirect_to_tournament_lost": tournamentHandlers.handleRedirectToTournamentLost
 		};
 
 		const handler = messageHandlers[data.type];

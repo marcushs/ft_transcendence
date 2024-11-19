@@ -20,7 +20,7 @@ class PongGameEngine:
  #//---------------------------------------> Initial game attributes <--------------------------------------\\#
 
     def init_game_attributes(self, game_data):
-        map_dimension = get_map_dimension()
+        map_dimension = get_map_dimension() 
         self.game_id = str(game_data['game'])
         self.game_type = str(game_data['game_type'])
         self.player_one_id = str(game_data['player_one']['id'])

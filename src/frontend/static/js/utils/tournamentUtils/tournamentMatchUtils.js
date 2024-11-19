@@ -36,19 +36,21 @@ export async function startTournamentMatchInstance() {
 }
 
 export function proceedInTournament(gameId, userId) {
+	console.log('---called proceedInTournament----')
 	const payload = {
 		'type': 'proceed_tournament',
 		'user_id': userId,
 		'match_id': gameId
-	}
-	tournamentSocket.send(JSON.stringify(payload));
+	} 
+	tournamentSocket.send(JSON.stringify(payload)); 
 }
 
-export async function redirectToTournamentLostMatch(matchId) {
+export async function redirectToTournamentLostMatch(match) {
 	try {
-		const res = await sendRequest('GET', `/api/tournament/get_match_by_id/?match_id=${matchId}`, null, false);
+		// const res = await sendRequest('GET', `/api/tournament/get_match_by_id/?match_id=${matchId}`, null, false);
 	
-		const match = res.match;
+		// const match = res.match;
+		console.log('match is: ', match)
 		const gameComponent = document.querySelector('game-component');
 		const tournamentLostState = gameComponent.states['tournamentLost'];
 		const tournamentLost = new TournamentLost(match);

@@ -442,18 +442,18 @@ export default class Game {
 // --------------------------------------- Game finished render -------------------------------------- //
 
 	gameFinished(isWin, data) {
+		localStorage.removeItem("inGameComponentState");
 		this.throwLoadOutroAnimationEvent(isWin);
 		this.isOutroAnimationEnabled = true;
 
-		if (this.gameType === 'tournament') {
-			setTimeout(() => {
-				this.gameInProgress = false;
-				if (isWin) return proceedInTournament(this.gameId, this.userId);
-				disconnectGameWebSocket(this.userId, false);
-				redirectToTournamentLostMatch(this.gameId); //temporary redirection for loser
-			}, 7000);
-			return ;
-		}
+		// if (this.gameType === 'tournament') {
+		// 	setTimeout(() => {
+		// 		this.gameInProgress = false;
+		// 		this.cleanup();
+		// 		disconnectGameWebSocket(this.userId, false);
+		// 	}, 7000);
+		// 	return ;
+		// }
 
 		if (this.gameType === "private_match") {
 			localStorage.removeItem("isSearchingPrivateMatch");
