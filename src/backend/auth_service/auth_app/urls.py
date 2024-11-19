@@ -12,7 +12,6 @@ urlpatterns = [
   	path('change-password/', change_password.ChangePassword.as_view(), name='change-password'),
   	path('update-tokens/', jwt_utils.UpdateJwtToken.as_view(), name='update-tokens'),
     path('add_oauth_user/', user_utils.add_oauth_user.as_view(), name='add_oauth_user'),
-    path('add_oauth_user/', user_utils.add_oauth_user.as_view(), name='add_oauth_user'),
     path('auth_type/', GetAuthType.GetAuthType.as_view(), name='auth_type'),
     
 ]
