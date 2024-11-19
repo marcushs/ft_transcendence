@@ -26,10 +26,9 @@ class get42ImageView(View):
         super().__init__
 
     def get(self, request):
-        user = request.user
-        if isinstance(user, AnonymousUser):
-            return JsonResponse({'message': 'You are not logged in', 'status': 'Error'}, status=400)
-        if User.objects.filter(id=user.id).exists():
+        user_id = request.GET.get('user_id')
+        if User.objects.filter(id=user_id).exists():
+            user = User.objects.filter(id=user_id)
             pp_link = user.profile_image_link
             print(pp_link)
             return JsonResponse({'message': 'pp_link', 'status': 'Success'}, status=200)
