@@ -55,6 +55,11 @@ class FriendshipButtonComponent extends HTMLElement {
         try {
             const data = await sendRequest('POST', '/api/friends/manage_friendship/', payload);
             if (data.status === 'success') {
+                const username = document.querySelector('.users-profile-page .user-info .username');
+
+                console.log(this.buttonStatus)
+                if (username && this.buttonStatus === "not_friend")
+                    await this.sendNotification(username.innerHTML, 'friend-request-pending');
                 this.setAttribute('button-status', data.friendship_status);
             }
         } catch (error) {
@@ -64,6 +69,21 @@ class FriendshipButtonComponent extends HTMLElement {
 
     setClass(newState) {
         this.currentState = newState;
+    }
+
+    async sendNotification(receiver, type){
+        const url = '/api/notifications/manage_notifications/';
+        const payload = {
+            receiver: receiver,
+            type: type
+        };
+        try {
+            const data = await sendRequest('POST', url, payload);
+            if (data.status === 'error')
+                console.error(data.message);
+        } catch (error) {
+            console.error(error.message);
+        }
     }
 }
 

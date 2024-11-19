@@ -156,7 +156,8 @@ class FriendsMenuComponent extends HTMLElement {
         this.searchContactInput.addEventListener('input', () => this.updateContactList());
 
         document.addEventListener('click', (event) => {
-            this.contactMenuDiv.style.display = 'none';
+            if (this.contactMenuDiv)
+                this.contactMenuDiv.style.display = 'none';
         });
     }
 
@@ -232,4 +233,5 @@ class FriendsMenuComponent extends HTMLElement {
         document.dispatchEvent(event);
     }
 }
+
 customElements.define("contact-menu-component", FriendsMenuComponent);

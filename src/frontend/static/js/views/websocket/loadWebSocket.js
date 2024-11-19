@@ -39,8 +39,8 @@ async function loadContactsWebSocket() {
 
     contactSocket.onmessage = function(event) {
         const data = JSON.parse(event.data);
-        
-        const contactMenuComponent = document.querySelector('contact-menu-component')
+        const contactMenuComponent = document.querySelector('contact-menu-component');
+
         if (!contactMenuComponent)
             return;
         if (data.type === 'deleted contact' || data.type === 'deleted contact request') {
