@@ -12,19 +12,6 @@ contact-menu-component {
     right: 0;
 }
 
-/* .full-border {
-    border: 1px solid var(--light-grey);
-    border-radius: 10px;
-}
-
-.partial-border {
-    border-left: 1px solid var(--light-grey);
-    border-top: 1px solid var(--light-grey);
-    border-bottom: 1px solid var(--light-grey);
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-} */
-
 .contact-menu {
     position: absolute;
     height: 48rem;
