@@ -45,7 +45,7 @@ class MatchmakingTournament(View):
             print(f'Error: {str(e)}') 
             await sync_to_async(change_is_ingame_state)(value=False, user_instance=players[0])
             await sync_to_async(change_is_ingame_state)(value=False, user_instance=players[1])
-            return JsonResponse({'status': 'error', 'message': 'An error occurred while starting the game'}, status=500)
+            return JsonResponse({'status': 'error', 'message': 'An error occurred while starting the game'}, status=400)
         
     def get_players_data(self, player_one_id, player_two_id):
         player_one = get_user_by_id(player_one_id)

@@ -48,7 +48,7 @@ class oauthGithubAccessResourceView(View):
         except ValueError:
             response = JsonResponse({'message': 'Invalid JSON response',
                                  'status': 'Error'}, 
-                                 status=500)
+                                 status=400)
             response.delete_cookie('github_access_token')  
             return response
         

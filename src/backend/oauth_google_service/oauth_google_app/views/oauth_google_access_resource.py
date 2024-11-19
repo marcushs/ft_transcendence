@@ -11,7 +11,7 @@ import json
 import environ
 import os
 import requests
-from ..utils.send_post_request import send_post_request
+from ..utils.send_post_request import send_post_request 
 from ..utils.login_utils import login
 
 User = get_user_model()
@@ -46,7 +46,7 @@ class oauthGoogleAccessResourceView(View):
         except ValueError:
             response = JsonResponse({'message': 'Invalid JSON response',
                                  'status': 'Error'}, 
-                                 status=500)
+                                 status=400)
             response.delete_cookie('google_access_token')  
             return response
         
