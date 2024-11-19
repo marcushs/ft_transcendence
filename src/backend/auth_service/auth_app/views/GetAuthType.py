@@ -1,13 +1,9 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
 from send_request import send_request_with_token
 from django.http import JsonResponse
 from django.views import View
-from ..models import User
-import json
-import re
  
-class AliasManager(View):
+class GetAuthType(View):
     def __init__(self):
         super().__init__
      
