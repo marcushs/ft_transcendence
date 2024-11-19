@@ -8,13 +8,10 @@ import {sendRequest} from "../../utils/sendRequest.js";
 
 class UserInfosComponent extends HTMLElement {
 
-	// Component creation
-
 	constructor() {
 		super();
 
 		this.hasProfilePictureChanged = false;
-		this.initializeComponent();
 	}
 
 
@@ -51,7 +48,13 @@ class UserInfosComponent extends HTMLElement {
 	}
 
 
-	connectedCallback() {
+	async connectedCallback() {
+		this.initializeComponent();
+
+		const test = await sendRequest("GET", "/api/auth/auth_type/", null);
+
+		console.log(test)
+
 		this.usernameInput = this.querySelector('input[name="username"]');
 		this.emailInput = this.querySelector('input[name="email"]');
 		this.profileImageInput = this.querySelector('input[name="profile-image"]');

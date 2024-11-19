@@ -44,7 +44,6 @@ REFRESH_TOKEN_LIFETIME = 86400 # 1 day
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ['localhost', 'transcendence', '127.0.0.1', 'matchmaking']
 ALLOWED_HOSTS = ['*']
 
 
