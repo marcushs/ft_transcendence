@@ -38,7 +38,7 @@ export default () => {
 			</div>
 		</section>`;
 
-	setTimeout(() =>{
+	setTimeout(() => {
 		const signupBtn = document.querySelector('#signupBtn');
 		const loginRedirectButton = document.querySelector('#login-redirect-button');
 

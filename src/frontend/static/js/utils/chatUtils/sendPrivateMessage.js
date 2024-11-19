@@ -49,16 +49,16 @@ export async function putMessageToChatroomConversation(messageData) {
 		unreadMessageNotifOn();
 		return ;
 	}
-	
+
 	const currentChatroomId = chatroomConversation.getAttribute('data-chatroom');
-	
+
 	if (messageData.chatroom === 'tournament_match' || isTargetChatroom(currentChatroomId, messageData.chatroom)) {
 		const chatroomConversationUl = chatroomConversation.querySelector('.chatroom-conversation-message-container > ul');
 		const liElem = document.createElement('li');
 		const messageComponent = new ChatMessageComponent(messageData);
 
+		console.log('putMessageToChatroom: ', messageData);
 		const isSent = await isSentOrReceivedMessage(messageData.author);
-		console.log(isSent)
 		messageComponent.classList.add(isSent);
 		liElem.appendChild(messageComponent);
 		chatroomConversationUl.appendChild(liElem);
@@ -83,6 +83,9 @@ function isMessageValid(message) {
 function unreadMessageNotifOn() {
 	const chatUnreadNotif = document.querySelector('.chat-unread-message-notif');
 
+	if (!chatUnreadNotif)
+		return;
+
 	if (chatUnreadNotif.classList.contains('active')) return;
 
 	chatUnreadNotif.classList.add('active');
@@ -96,9 +99,9 @@ export function unreadMessageNotifOff() {
 
 export async function messageReceptionDOMUpdate(messageData) {
 	updateChatContactComponents(messageData);
-	
+
 	const chatroomConversation = document.querySelector('chatroom-conversation');
-	
+
 	if (!chatroomConversation) { // need to check if the chatroom conversation is the matching one as well
 		unreadMessageNotifOn();
 		return ;
@@ -125,32 +128,32 @@ function updateChatContactComponents(messageData) {
 
 function observeUlChanges(element, messageData) {
 	const observer = new MutationObserver((mutations) => {
-	  mutations.forEach((mutation) => {
-		if (mutation.type === 'childList') {
-			mutation.addedNodes.forEach(node => {
-				if (node.nodeName === 'LI') {
-					const contact = node.querySelector('chat-contact-component');
-					if (contact) {
-						contact.whenRendered().then(async () => {
-							if (await isSentOrReceivedMessage(messageData.author) === 'received' && !document.querySelector('.chatroom.active')) {
-								contact.querySelector('.unread-circle').classList.add('active');
-							}
-						})
+		mutations.forEach((mutation) => {
+			if (mutation.type === 'childList') {
+				mutation.addedNodes.forEach(node => {
+					if (node.nodeName === 'LI') {
+						const contact = node.querySelector('chat-contact-component');
+						if (contact) {
+							contact.whenRendered().then(async () => {
+								if (await isSentOrReceivedMessage(messageData.author) === 'received' && !document.querySelector('.chatroom.active')) {
+									contact.querySelector('.unread-circle').classList.add('active');
+								}
+							})
+						}
 					}
-				}
-			  });
-		}
-	  });
+				});
+			}
+		});
 	});
-  
+
 	const config = {
-	  childList: true,
+		childList: true,
 	};
-  
+
 	observer.observe(element, config);
-  
+
 	return observer;
-  }
+}
 
 export function checkAllRecentMessagesRead() {
 	const listItems = document.querySelectorAll('chat-contact-component');

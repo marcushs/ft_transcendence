@@ -8,12 +8,13 @@ export async function sendMessageCallback(targetUserData) {
 };
 
 export async function displayChatroomComponent(targetUserData, fromContact=false) {
+	console.log("qwwqerer: ", targetUserData)
 	const userData = JSON.stringify(targetUserData);
 	const chatMainMenu = document.querySelector('.chat-main-menu');
 	const contactMenu = document.querySelector('.contact-menu');
 	const chatRoom = document.querySelector('.chatroom');
 	const chatLobby = document.querySelector('.chat-lobby');
-	
+
 	toggleContactMenuToChatMainMenu(chatMainMenu, contactMenu, chatRoom, chatLobby);
 	displayChatroomLayout(userData);
 	addEventListenersToTopBar(chatMainMenu, contactMenu, chatRoom, chatLobby, fromContact);
@@ -21,16 +22,23 @@ export async function displayChatroomComponent(targetUserData, fromContact=false
 }
 
 function toggleContactMenuToChatMainMenu(chatMainMenu, contactMenu, chatRoom, chatLobby) {
-	chatMainMenu.style.display = 'block';
-	contactMenu.style.display = 'none';
-	chatRoom.classList.add('active');
-	chatLobby.classList.remove('active');
+	if (chatMainMenu)
+		chatMainMenu.style.display = 'block';
+	if (contactMenu)
+		contactMenu.style.display = 'none';
+	if (chatRoom)
+		chatRoom.classList.add('active');
+	if (chatLobby)
+		chatLobby.classList.remove('active');
 }
 
 function displayChatroomLayout(userData) {
-    const chatRoom = document.querySelector('.chatroom');
-    // Clear existing content
-    chatRoom.innerHTML = '';
+	const chatRoom = document.querySelector('.chatroom');
+
+	if (!chatRoom)
+		return;
+	// Clear existing content
+	chatRoom.innerHTML = '';
 
 	// Create and append chatroom-top-bar
 	const chatRoomTopBar = new ChatRoomTopBar()
@@ -41,15 +49,18 @@ function displayChatroomLayout(userData) {
 	const chatRoomConversation = new ChatRoomConversation();
 	chatRoomConversation.setAttribute('data-user', userData);
 	chatRoom.appendChild(chatRoomConversation);
-	
+
 	// Create and append chatroom-bottom-bar
-	if (JSON.parse(userData).isBot === true) return;
+	if (JSON.parse(userData).username === 'Tournament Bot') return;
 	const chatRoomBottomBar = new ChatRoomBottomBar();
 	chatRoom.appendChild(chatRoomBottomBar);
 }
 
 function addEventListenersToTopBar(chatMainMenu, contactMenu, chatRoom, chatLobby, fromContact) {
 	const topBar = document.querySelector('chatroom-top-bar');
+
+	if (!topBar)
+		return ;
 
 	const handleBackBtnClickFromSendMessage = (e) => {
 		if (e.target.id === 'chatroom-back-btn') {
@@ -59,14 +70,14 @@ function addEventListenersToTopBar(chatMainMenu, contactMenu, chatRoom, chatLobb
 			chatLobby.classList.add('active');
 		}
 	};
-	
+
 	const handleBackBtnClickFromChatContact = (e) => {
 		if (e.target.id === 'chatroom-back-btn') {
 			chatRoom.innerHTML = '';
 			chatLobby.classList.add('active');
 		}
 	}
-	
+
 	topBar.removeEventListener('click', handleBackBtnClickFromSendMessage)
 	topBar.removeEventListener('click', handleBackBtnClickFromChatContact)
 
@@ -78,7 +89,7 @@ function addEventListenersToMessageInput() {
 	const chatroomMessageInput = document.querySelector('.chatroom-message-input');
 	if (!chatroomMessageInput) return;
 	const sendMessageBtn = document.querySelector('.send-message-btn');
-	
+
 	chatroomMessageInput.focus();
 	chatroomMessageInput.addEventListener('keyup', (e) => {
 		if (e.keyCode === 13) sendPrivateMessage();
