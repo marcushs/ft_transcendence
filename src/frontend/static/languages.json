@@ -292,7 +292,14 @@
 	  "playerTwo": "Player 2",
 	  "playerOneWon": "Player 1 won",
 	  "playerTwoWon": "Player 2 won"
-	}
+	},
+	"matchmakingResearch": {
+		"searching": "Searching",
+		"joining": "Joining",
+		"unranked": "unranked",
+		"ranked": "ranked",
+		"game": "game"
+	  }
   },
 
   "fr": {
@@ -585,7 +592,14 @@
 	  "playerTwo": "Joueur 2",
 	  "playerOneWon": "Le joueur 1 a gagné",
 	  "playerTwoWon": "Le joueur 2 a gagné"
-	}
+	},
+	"matchmakingResearch": {
+		"searching": "Recherche d'une",
+		"joining": "Connection à la",
+		"unranked": "partie non classée",
+		"ranked": "partie classée",
+		"game": ""
+	  }
   },
 
   "zh": {

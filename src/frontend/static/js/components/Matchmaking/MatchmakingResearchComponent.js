@@ -1,5 +1,6 @@
 import { sendRequest } from "../../utils/sendRequest.js";
 import { matchmakingSocket } from "../../utils/matchmaking/matchmakingWebsocket.js";
+import { getString } from "../../utils/languageManagement.js";
 
 class MatchmakingResearchComponent extends HTMLElement {
     constructor() {
@@ -22,7 +23,7 @@ class MatchmakingResearchComponent extends HTMLElement {
         this.innerHTML = `
             <div class='matchmaking-research matchmaking-research-processing'>
                 <div class="matchmaking-research-section">                
-                    <p class='matchmaking-research-title'>Searching ${this.isSearching.type} game</p>
+                    <p class='matchmaking-research-title'>${getString("matchmakingResearch/searching")} ${getString("matchmakingResearch/" + this.isSearching.type)} ${getString("matchmakingResearch/game")}</p>
                     <div class='matchmaking-search-indicator'>
                         <div class='matchmaking-search-indicator-bar'></div>
                         <div class='matchmaking-search-indicator-bar'></div>
@@ -70,7 +71,7 @@ class MatchmakingResearchComponent extends HTMLElement {
     setFoundGameRender() {
         this.isSearching.status = 'joining';
         localStorage.setItem('isSearchingGame', JSON.stringify(this.isSearching));
-        this.popUpTitle.textContent = `Joining ${this.isSearching.type} game`;
+        this.popUpTitle.textContent = `${getString("matchmakingResearch/joining")} ${getString("matchmakingResearch/" + this.isSearching.type)} ${getString("matchmakingResearch/game")}`;
         this.cancelResearchIcon.remove();
         this.mainDiv.classList.remove('matchmaking-research-processing');
 		this.mainDiv.classList.add('matchmaking-research-finished');

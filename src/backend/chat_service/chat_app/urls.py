@@ -1,10 +1,11 @@
 from django.urls import path
 
 from .views import getChatroomsView, findMatchingChatroomView, getLast20MessagesView, getChatroomLastMessageView, getChatroomInfoView, blockUserView
-from .utils.user_utils import add_new_user
+from .utils.user_utils import add_new_user, update_user
 
 
 urlpatterns = [
+	path('update_user/', update_user.as_view(), name='update_user'),
 	path('add_user/', add_new_user.as_view(), name='add_user'),
 	path('get_chatrooms/', getChatroomsView.getChatroomsView.as_view(), name='get_chatrooms'),
 	path('find_matching_chatroom/', findMatchingChatroomView.findMatchingChatroomView.as_view(), name='find_matching_chatroom'),

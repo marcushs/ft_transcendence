@@ -27,25 +27,22 @@ class ChangeUserInfosView(View):
 
         try:
             await self.check_update_error(User, request)
-        except ValueError as e:
-            return JsonResponse({'message': str(e)}, status=400)
+            username = request.POST.get('username')
+
+            if username and request.user.username != username:
+                response.update(await self.change_username(User, request))
+                send_request(request_type='PUT', request=request, url='http://notifications:8000/api/notifications/manage_notifications/', payload={'sender_id': request.user.id, 'type': 'change_sender_name'})
+            if request.POST.get('email') and request.user.email != request.POST.get('email'):
+                response.update(await self.change_email(User, request))
+            if request.FILES.get('profile_image'):
+                response.update(await self.change_profile_image(request))
+            elif request.POST.get('profile_image_link'):
+                response.update(await self.change_profile_image_link(request))
+            return JsonResponse(response, status=201)
         except ValidationError as e:
-            return JsonResponse({'message': e.message_dict['error']}, status=409)
-
-        username = request.POST.get('username')
-        
-        if username and request.user.username != username:
-            response.update(await self.change_username(User, request))
-            send_request(request_type='PUT', request=request, url='http://notifications:8000/api/notifications/manage_notifications/', payload={'sender_id': await sync_to_async(get_user_id_by_username)(request.user.username), 'type': 'change_sender_name'})
-        if request.POST.get('email') and request.user.email != request.POST.get('email'):
-            response.update(await self.change_email(User, request))
-        if request.FILES.get('profile_image'):
-            response.update(await self.change_profile_image(request))
-        elif request.POST.get('profile_image_link'):
-            response.update(await self.change_profile_image_link(request))
-
-        return JsonResponse(response, status=201)
-        
+            return JsonResponse({'message': e.message_dict['error']}, status=409)        
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=400)
 
     async def check_update_error(self, User, request):
         new_username = request.POST.get('username')
