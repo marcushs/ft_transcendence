@@ -27,8 +27,8 @@ class tournamentMatchResultView(View):
 			match.winner_score = data['winner']['score']
 			match.loser = loser
 			match.loser_score = data['loser']['score']
-			match.save()  
-			print('reached tournament match result', data) 
+			match.isOver = True
+			match.save()
 			return JsonResponse({'status': 'success'}, status=200) 
 		except ObjectDoesNotExist:
 			return JsonResponse({'status': 'error', 'message': 'Match not found'}, status=400)

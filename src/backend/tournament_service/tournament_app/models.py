@@ -135,6 +135,7 @@ class TournamentMatch(models.Model):
     date = models.DateTimeField(default=timezone.now)
     tournament_round = models.CharField(max_length=20, choices=ROUND_CHOICES)
     bracket_index = models.IntegerField(default=0)
+    isOver = models.BooleanField(default=False)
 
     async def to_dict(self):
         obj_dict = {

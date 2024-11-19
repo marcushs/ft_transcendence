@@ -31,6 +31,7 @@ function redirect(tournamentBracket) {
 export async function startTournamentMatchInstance() {
 	const userId = await getUserId();
 
+	if (!userId) return console.error('Cannot find userId');
 	gameWebsocket(userId);
 }
 
