@@ -46,19 +46,22 @@ class ping_status_user(View):
         super().__init__   
 
     async def post(self, request):
-        from .websocket_utils import notify_user_info_display_change
+        try:
+            from .websocket_utils import notify_user_info_display_change
 
-        if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'status': 'fail', 'message': 'User not found'}, status=200)
-        request.user.last_active = timezone.now()
-        if request.user.status == 'offline' or request.user.status == 'away':
-            old_status = request.user.status
-            request.user.status = 'online'
-            await sync_to_async(request.user.save)()
-            await notify_user_info_display_change(request=request, change_info='status', old_value=old_status)
-        else:
-            await sync_to_async(request.user.save)()
-        return JsonResponse({'status': 'success', "message": 'pong'}, status=200) 
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'status': 'fail', 'message': 'User not found'}, status=200)
+            request.user.last_active = timezone.now()
+            if request.user.status == 'offline' or request.user.status == 'away':
+                old_status = request.user.status
+                request.user.status = 'online'
+                await sync_to_async(request.user.save)()
+                await notify_user_info_display_change(request=request, change_info='status', old_value=old_status)
+            else:
+                await sync_to_async(request.user.save)()
+            return JsonResponse({'status': 'success', "message": 'pong'}, status=200)
+        except Exception as e:
+            return JsonResponse({"message": str(e)}, status=400) 
 
 
 class AddNewUser(View):
