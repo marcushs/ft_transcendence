@@ -52,10 +52,10 @@ export default () => {
 				postData(event, loginBtn);
 		});
 
-		oauth42LoginBtn.addEventListener('click', () => redirectToOauth("oauth_42"));
+		oauth42LoginBtn.addEventListener('click', () => redirectToOauth("oauth42"));
 		redirectSignupBtn.addEventListener('click', () => throwRedirectionEvent('/signup'));
-		oauthGoogleLoginBtn.addEventListener('click', () => redirectToOauth("oauth_google"));
-		oauthGithubLoginBtn.addEventListener('click', () => redirectToOauth("oauth_github"));
+		oauthGoogleLoginBtn.addEventListener('click', () => redirectToOauth("oauthgoogle"));
+		oauthGithubLoginBtn.addEventListener('click', () => redirectToOauth("oauthgithub"));
 
 		document.addEventListener('input', event => {
 			if (event.target.className === 'login-input')

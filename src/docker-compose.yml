@@ -19,9 +19,9 @@ services:
       - friends
       - notifications
       - twofactor
-      - oauth_42
-      - oauth_github
-      - oauth_google
+      - oauth42
+      - oauthgithub
+      - oauthgoogle
       - matchmaking
       - game
       - statistics
@@ -381,13 +381,13 @@ services:
   # -----> OAUTH_42 <----- #
 
   # Service
-  oauth_42:
-    container_name: oauth_42
+  oauth42:
+    container_name: oauth42
     restart: always
     build:
-      context: ./backend/oauth_42_service
+      context: ./backend/oauth42_service
       dockerfile: docker/Dockerfile
-    image: oauth_42
+    image: oauth42
     env_file:
       - ./backend/.env
     command: >
@@ -397,16 +397,16 @@ services:
           python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/oauth_42_service:/app
+      - ./backend/oauth42_service:/app
     depends_on:
-      oauth_42_db:
+      oauth42_db:
         condition: service_healthy
     networks:
       - transcendence-network
 
   # DB
-  oauth_42_db:
-    container_name: oauth_42_db
+  oauth42_db:
+    container_name: oauth42_db
     image: postgres
     restart: always
     env_file: ./backend/.env
@@ -416,7 +416,7 @@ services:
       - POSTGRES_PASSWORD=${OAUTH_42_DB_PASSWORD}
     shm_size: 128mb
     volumes:
-      - oauth_42_pgdata:/var/lib/postgresql/data
+      - oauth42_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
     healthcheck:
@@ -428,13 +428,13 @@ services:
   # -----> OAUTH_GOOGLE <----- #
 
   # Service
-  oauth_google:
-    container_name: oauth_google
+  oauthgoogle:
+    container_name: oauthgoogle
     restart: always
     build:
-      context: ./backend/oauth_google_service
+      context: ./backend/oauthgoogle_service
       dockerfile: docker/Dockerfile
-    image: oauth_google
+    image: oauthgoogle
     env_file:
       - ./backend/.env
     command: >
@@ -444,16 +444,16 @@ services:
           python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/oauth_google_service:/app
+      - ./backend/oauthgoogle_service:/app
     depends_on:
-      oauth_google_db:
+      oauthgoogle_db:
         condition: service_healthy
     networks:
       - transcendence-network
 
   # DB
-  oauth_google_db:
-    container_name: oauth_google_db
+  oauthgoogle_db:
+    container_name: oauthgoogle_db
     image: postgres
     restart: always
     env_file: ./backend/.env
@@ -463,7 +463,7 @@ services:
       - POSTGRES_PASSWORD=${OAUTH_GOOGLE_DB_PASSWORD}
     shm_size: 128mb
     volumes:
-      - oauth_google_pgdata:/var/lib/postgresql/data
+      - oauthgoogle_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
     healthcheck:
@@ -475,13 +475,13 @@ services:
   # -----> OAUTH_GITHUB <----- #
 
   # Service
-  oauth_github:
-    container_name: oauth_github
+  oauthgithub:
+    container_name: oauthgithub
     restart: always
     build:
-      context: ./backend/oauth_github_service
+      context: ./backend/oauthgithub_service
       dockerfile: docker/Dockerfile
-    image: oauth_github
+    image: oauthgithub
     env_file:
       - ./backend/.env
     command: >
@@ -491,16 +491,16 @@ services:
           python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/oauth_github_service:/app
+      - ./backend/oauthgithub_service:/app
     depends_on:
-      oauth_github_db:
+      oauthgithub_db:
         condition: service_healthy
     networks:
       - transcendence-network
 
   # DB
-  oauth_github_db:
-    container_name: oauth_github_db
+  oauthgithub_db:
+    container_name: oauthgithub_db
     image: postgres
     restart: always
     env_file: ./backend/.env
@@ -510,7 +510,7 @@ services:
       - POSTGRES_PASSWORD=${OAUTH_GITHUB_DB_PASSWORD}
     shm_size: 128mb
     volumes:
-      - oauth_github_pgdata:/var/lib/postgresql/data
+      - oauthgithub_pgdata:/var/lib/postgresql/data
     networks:
       - transcendence-network
     healthcheck:
@@ -654,12 +654,12 @@ volumes:
     name: matchmaking_data
   statistics_pgdata:
     name: statistics_data
-  oauth_42_pgdata:
-    name: oauth_42_data
-  oauth_google_pgdata:
-    name: oauth_google_data
-  oauth_github_pgdata:
-    name: oauth_github_data
+  oauth42_pgdata:
+    name: oauth42_data
+  oauthgoogle_pgdata:
+    name: oauthgoogle_data
+  oauthgithub_pgdata:
+    name: oauthgithub_data
   chat_pgdata:
     name: chat_data
   tournament_pgdata:

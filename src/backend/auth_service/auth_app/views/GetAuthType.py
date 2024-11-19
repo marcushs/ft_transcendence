@@ -22,16 +22,16 @@ class GetAuthType(View):
 
      
     def get_oauth_type(self, request):
-        response = send_request_with_token(request_type='GET', request=request, url='http://oauth_42:8000/api/oauth_42/is_auth/')
-        oauth_42_response = response.json()
-        if oauth_42_response.get('status') == 'Success':
-            return 'oauth_42'
-        response = send_request_with_token(request_type='GET', request=request, url='http://oauth_google:8000/api/oauth_google/is_auth/')
-        oauth_google_response = response.json()
-        if oauth_google_response.get('status') == 'Success':
-            return 'oauth_google'
-        response = send_request_with_token(request_type='GET', request=request, url='http://oauth_github:8000/api/oauth_github/is_auth/')
-        oauth_42_response = response.json()
-        if oauth_42_response.get('status') == 'Success':
-            return 'oauth_github'
+        response = send_request_with_token(request_type='GET', request=request, url=f'http://oauth42:8000/api/oauth42/is_auth/?user_id={str(request.user.id)}')
+        oauth42_response = response.json()
+        if oauth42_response.get('status') == 'Success':
+            return 'oauth42'
+        response = send_request_with_token(request_type='GET', request=request, url=f'http://oauthgoogle:8000/api/oauthgoogle/is_auth/?user_id={str(request.user.id)}')
+        oauthgoogle_response = response.json()
+        if oauthgoogle_response.get('status') == 'Success':
+            return 'oauthgoogle'
+        response = send_request_with_token(request_type='GET', request=request, url=f'http://oauthgithub:8000/api/oauthgithub/is_auth/?user_id={str(request.user.id)}')
+        oauth42_response = response.json()
+        if oauth42_response.get('status') == 'Success':
+            return 'oauthgithub'
         return None

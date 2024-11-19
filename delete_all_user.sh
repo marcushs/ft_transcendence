@@ -6,17 +6,17 @@ export $(grep -v '^#' ./src/backend/.env | xargs)
 echo -e "________AUTH CONTAINER_________\n"
 docker exec -e PGPASSWORD=$AUTH_DB_PASSWORD auth psql -U $AUTH_DB_USER -d $AUTH_DB_NAME -h $AUTH_DB_HOST -c "DELETE FROM auth_app_user;"
 
-#oauth_42
+#oauth42
 echo -e "________OAUTH_42 CONTAINER_________\n"
-docker exec -e PGPASSWORD=$OAUTH_42_DB_PASSWORD oauth_42 psql -U $OAUTH_42_DB_USER -d $OAUTH_42_DB_NAME -h $OAUTH_42_DB_HOST -c "DELETE FROM oauth_42_app_user;"
+docker exec -e PGPASSWORD=$OAUTH_42_DB_PASSWORD oauth42 psql -U $OAUTH_42_DB_USER -d $OAUTH_42_DB_NAME -h $OAUTH_42_DB_HOST -c "DELETE FROM oauth42_app_user;"
 
-#oauth_google
+#oauthgoogle
 echo -e "________OAUTH_GOOGLE CONTAINER_________\n"
-docker exec -e PGPASSWORD=$OAUTH_GOOGLE_DB_PASSWORD oauth_google psql -U $OAUTH_GOOGLE_DB_USER -d $OAUTH_GOOGLE_DB_NAME -h $OAUTH_GOOGLE_DB_HOST -c "DELETE FROM oauth_google_app_user;"
+docker exec -e PGPASSWORD=$OAUTH_GOOGLE_DB_PASSWORD oauthgoogle psql -U $OAUTH_GOOGLE_DB_USER -d $OAUTH_GOOGLE_DB_NAME -h $OAUTH_GOOGLE_DB_HOST -c "DELETE FROM oauthgoogle_app_user;"
 
-#oauth_github
+#oauthgithub
 echo -e "________OAUTH_GITHUB CONTAINER_________\n"
-docker exec -e PGPASSWORD=$OAUTH_GITHUB_DB_PASSWORD oauth_github psql -U $OAUTH_GITHUB_DB_USER -d $OAUTH_GITHUB_DB_NAME -h $OAUTH_GITHUB_DB_HOST -c "DELETE FROM oauth_github_app_user;"
+docker exec -e PGPASSWORD=$OAUTH_GITHUB_DB_PASSWORD oauthgithub psql -U $OAUTH_GITHUB_DB_USER -d $OAUTH_GITHUB_DB_NAME -h $OAUTH_GITHUB_DB_HOST -c "DELETE FROM oauthgithub_app_user;"
 
 #twofactor
 echo -e "________TWO FACTOR CONTAINER_________\n"
