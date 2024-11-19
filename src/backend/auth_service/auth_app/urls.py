@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import login, logout, signup
+from .views import login, logout, signup, GetAuthType
 from .utils import csrf_utils, user_utils, change_password, jwt_utils
 
 urlpatterns = [
@@ -12,4 +12,6 @@ urlpatterns = [
   	path('change-password/', change_password.ChangePassword.as_view(), name='change-password'),
   	path('update-tokens/', jwt_utils.UpdateJwtToken.as_view(), name='update-tokens'),
     path('add_oauth_user/', user_utils.add_oauth_user.as_view(), name='add_oauth_user'),
+    path('auth_type/', GetAuthType.GetAuthType.as_view(), name='auth_type'),
+    
 ]
