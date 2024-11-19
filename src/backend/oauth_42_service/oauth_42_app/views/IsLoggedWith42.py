@@ -1,27 +1,11 @@
 # --- SRC --- #
-from django.views import View
-from django.http import JsonResponse, HttpResponseRedirect
-from ..models import User
-from django.contrib.auth import get_user_model
-from oauthlib.oauth2 import WebApplicationClient
-import secrets
-from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
+from django.http import JsonResponse
+from django.views import View
+from ..models import User
 
-# --- UTILS --- #
-import json
-import re #regular expression
-import environ
-import os
-import requests
 
-User = get_user_model()
-
-env = environ.Env()
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-
-class is_logged_with_42(View):
+class IsLoggedWith42(View):
     def __init__(self):
         super().__init__
 
