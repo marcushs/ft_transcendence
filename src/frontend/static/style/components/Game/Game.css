@@ -20,6 +20,7 @@ game-component {
     padding: 3px;
     border-radius: 10px;
     flex-shrink: 0;
+    max-width: 100%;
 }
 
 game-component .states-container * {
@@ -77,44 +78,6 @@ game-component .states-container {
     z-index: 1;
 }
 
-.reduced-game {
-    position: absolute;
-    transition: height 0.2s linear, width 0.2s linear;
-    animation: move-game-to-left 0.2s linear forwards;
-}
-
-@keyframes move-game-to-left {
-    0% {
-        top: 2.5vh;
-        left: calc(calc(100% - (95vh * 100) / 63) / 2);
-    }
-    100% {
-        top: 25rem;
-        left: 10rem;
-    }
-
-}
-
-.extended-game {
-    position: absolute;
-    width: calc((95vh * 100) / 63);
-    height: 95vh;
-    transition: height 0.2s linear, width 0.2s linear;
-    animation: move-game-to-center 0.2s linear forwards;
-}
-
-@keyframes move-game-to-center {
-    0% {
-        top: 25rem;
-        left: 10rem;
-    }
-    100% {
-        top: 2.5vh;
-        left: calc(calc(100% - (95vh * 100) / 63) / 2);
-    }
-
-}
-
 
 /* ----------------- GAME TEST COMPONENT ----------------- */
 
@@ -144,4 +107,78 @@ canvas {
 .player2 {
     top: 15px;
     right: 15px;
+}
+
+
+@media (max-width: 1310px) {
+    .extended-game {
+        position: absolute;
+        width: 95vw;
+        height: calc((100vw / 100) * 63);
+        transition: height 0.2s linear, width 0.2s linear;
+        animation: move-game-to-center 0.2s linear forwards;
+    }
+    @keyframes move-game-to-center {
+        0% {
+            top: 10rem;
+        }
+        100% {
+            top: 50%;
+            transform: translateY(-67%);
+        }
+    }
+    .reduced-game {
+        position: absolute;
+        transition: height 0.2s linear, width 0.2s linear;
+        animation: move-game-to-left 0.2s linear forwards;
+    }
+
+    @keyframes move-game-to-left {
+        0% {
+            top: 50%;
+            transform: translateY(-67%);
+        }
+        100% {
+            top: 10rem;
+        }
+
+    }
+}
+
+@media (min-width: 1311px) {
+    .extended-game {
+        position: absolute;
+        width: calc((95vh * 100) / 63);
+        height: 95vh;
+        transition: height 0.2s linear, width 0.2s linear;
+        animation: move-game-to-center 0.2s linear forwards;
+    }
+
+    @keyframes move-game-to-center {
+        0% {
+            top: 25rem;
+            left: 10rem;
+        }
+        100% {
+            top: 2.5vh;
+            left: calc(calc(100% - (95vh * 100) / 63) / 2);
+        }
+    }
+    .reduced-game {
+        position: absolute;
+        transition: height 0.2s linear, width 0.2s linear;
+        animation: move-game-to-left 0.2s linear forwards;
+    }
+
+    @keyframes move-game-to-left {
+        0% {
+            top: 2.5vh;
+            left: calc(calc(100% - (95vh * 100) / 63) / 2);
+        }
+        100% {
+            top: 25rem;
+            left: 10rem;
+        }
+
+    }
 }

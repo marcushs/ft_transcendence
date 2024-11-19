@@ -265,7 +265,7 @@ class UserInfosComponent extends HTMLElement {
 		penButton.style.display = 'none';
 
 		const handler = (event) => this.handleClickOutsideInput(event, input, penButton, handler); // Create handler reference to delete it in handleClickOutsideInput (event should be give by eventListener)
-		window.addEventListener('click', handler);
+		document.addEventListener('click', handler);
 	}
 
 
@@ -384,7 +384,11 @@ class UserInfosComponent extends HTMLElement {
 			const response = JSON.parse(localStorage.getItem('userUpdateResponse'));
 
 			if (response) {
-				const inputs = [this.usernameInput, this.emailInput, this.profileImageInput];
+				let inputs;
+				if (this.isOauthLog)
+					inputs = [this.usernameInput, this.profileImageInput];
+				else
+					inputs = [this.usernameInput, this.emailInput, this.profileImageInput];
 
 				this.showUserInfosFeedback(response, inputs);
 				localStorage.removeItem('userUpdateResponse');

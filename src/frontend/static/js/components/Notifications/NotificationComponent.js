@@ -225,9 +225,9 @@ class NotificationComponent extends HTMLElement {
 				this.setUnreadNotifications();
 				this.changeNumberOfNotifications();
 				if (this.notifications.length === 0) this.closeNotificationsComponent();
-				const notification = document.querySelector(`#${event.detail.notification.uuid}`);
-				if (notification)
-					notification.remove();
+				const notificationElement = document.querySelector(`#${event.detail.notification.uuid}`);
+				if (notificationElement)
+					notificationElement.remove();
 			}
 		})
 	}
