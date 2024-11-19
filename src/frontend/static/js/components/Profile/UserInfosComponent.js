@@ -5,6 +5,7 @@ import '../PopUpComponent.js'
 import {getString} from "../../utils/languageManagement.js";
 import { throwRedirectionEvent } from "../../utils/throwRedirectionEvent.js";
 import {sendRequest} from "../../utils/sendRequest.js";
+import getUserId from "../../utils/getUserId.js";
 
 class UserInfosComponent extends HTMLElement {
 
@@ -47,14 +48,15 @@ class UserInfosComponent extends HTMLElement {
 	}
 
 
-	initializeComponentOauth() {
+	initializeComponentOauth(oauthType) {
+		oauthType = oauthType.slice(5, oauthType.length)
 		this.innerHTML = `
 			<form>
 				<div class="user-info user-info-image">
 					<div class="change-profile-image">
 						<p id="imageLink">${getString('profileComponent/imageLink')} <i class="fa-solid fa-link"></i></p>
 						<p id="uploadImage">${getString('profileComponent/importImage')} <i class="fa-solid fa-upload"></i></p>
-						<p id="image42">${getString('profileComponent/image42')} <img src="../../assets/42_Logo.png" alt="42 logo"></p>
+						<p id="imageOauth">${getString(`profileComponent/image${oauthType}`)} <img src="../../assets/${oauthType}_Logo.png" alt="${oauthType} logo"></p>
 						<i class="fa-solid fa-pen profile-picture-pen"></i>
 					</div>
 					<img id="profileImage" src="" alt="profile picture">
@@ -76,13 +78,14 @@ class UserInfosComponent extends HTMLElement {
 
 	async connectedCallback() {
 		const oauthInfos = await sendRequest("GET", "/api/auth/auth_type/", null);
-
 		this.isOauthLog = oauthInfos.oauth_log;
 
-		if (this.isOauthLog)
-			this.initializeComponentOauth();
-		else
+		if (this.isOauthLog) {
+			this.oauthType = oauthInfos.oauth_type;
+			this.initializeComponentOauth(oauthInfos.oauth_type);
+		} else {
 			this.initializeComponent();
+		}
 
 		this.usernameInput = this.querySelector('input[name="username"]');
 		if (!this.isOauthLog)
@@ -131,6 +134,11 @@ class UserInfosComponent extends HTMLElement {
 		this.addEventListener('input', (event) => this.handleInputsChanged(event, userData));
 		this.profileImageInput.addEventListener('change', (event) => this.handleProfileImageUpload(event, userData));
 		document.addEventListener('imageLinkSaved', (event) => this.handleProfileImageLinkSet(event, userData));
+
+		const changeImgWithOauth = this.querySelector('#imageOauth');
+
+		if (changeImgWithOauth)
+			changeImgWithOauth.addEventListener('click', () => this.handleOauthProfileSet(userData));
 	}
 
 
@@ -211,6 +219,27 @@ class UserInfosComponent extends HTMLElement {
 			this.updateImageFeedback(isValidImageUrl);
 			this.newUploadedImage = null;
 			this.newProfileImageLink = event.detail.url;
+			this.hasProfilePictureChanged = true;
+		}
+		else {
+			this.updateImageFeedback(isValidImageUrl, getString("profileComponent/invalidImageLink"));
+		}
+		this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), (this.isOauthLog) ? true : this.isValidEmail(this.emailInput.value));
+	}
+
+
+	async handleOauthProfileSet(userData) {
+		const userId = await getUserId();
+		let img = await sendRequest("GET", `/api/${this.oauthType}/get_image/?user_id=${userId}`, null);
+		if (img)
+			img = img.message.profile_picture;
+		const isValidImageUrl = await this.isValidImageUrl(img);
+
+		if (isValidImageUrl) {
+			this.querySelector('.user-info-image > img').src = img;
+			this.updateImageFeedback(isValidImageUrl);
+			this.newUploadedImage = null;
+			this.newProfileImageLink = img;
 			this.hasProfilePictureChanged = true;
 		}
 		else {

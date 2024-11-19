@@ -48,7 +48,7 @@ class oauth42AccessResourceView(View):
         except ValueError:
             response = JsonResponse({'message': 'Invalid JSON response',
                                  'status': 'Error'}, 
-                                 status=500)
+                                 status=400)
             response.delete_cookie('42_access_token')
             return response
         
