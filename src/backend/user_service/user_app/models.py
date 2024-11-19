@@ -4,13 +4,15 @@ import os
 import uuid
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, username, user_id):
+    def create_user(self, email, username, user_id, language):
         if not email:
             raise ValueError('The Email field must be set')
         if not username:
             raise ValueError('The username field must be set')
+        if not language or language not in ['fr', 'en', 'zh']:
+            language = 'en'
         email = self.normalize_email(email)
-        user = self.model(email=email, username=username, id=user_id)
+        user = self.model(email=email, username=username, id=user_id, language=language)
         user.set_unusable_password()
         user.save(using=self._db)
         return user

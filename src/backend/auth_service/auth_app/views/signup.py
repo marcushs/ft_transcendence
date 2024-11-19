@@ -27,18 +27,23 @@ class signup_view(View):
         if response is not None:
             return response
         user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
-        response = self._send_request(user=user, csrf_token=request.headers.get('X-CSRFToken'))
+        response = self._send_request(user=user, data=data, csrf_token=request.headers.get('X-CSRFToken'))
         if not response:
             user.delete()
             return JsonResponse({'message': 'errorWhileSignup'}, status=400)
         return JsonResponse({'message': 'accountCreated', 'redirect_url': 'login'}, status=200)
 
-    def _send_request(self, user, csrf_token):
+    def _send_request(self, data, user, csrf_token):
+        language = 'en'
+        if data.get('language'):
+            language = data['language']
+        
         payload = {
                 'user_id': str(user.id),
                 'username': user.username,
                 'email': user.email,
                 'logged_in_with_oauth': user.logged_in_with_oauth,
+                'language': language
         }
         try:
             send_request_without_token(request_type='POST', url='http://user:8000/api/user/add_user/', payload=payload, csrf_token=csrf_token)

@@ -82,6 +82,12 @@ async function postData(event, signupBtn) {
 	const form = signupBtn.closest('form');
 	const formData = new FormData(form);
 	const formValues = Object.fromEntries(formData.entries());
+	const currentLanguage = localStorage.getItem('userLanguage');
+
+	if (currentLanguage !== null)
+		formValues["language"] = currentLanguage;
+	else
+		formValues["language"] = 'en';
 	const url = `/api/auth/signup/`;
 
 	try {
