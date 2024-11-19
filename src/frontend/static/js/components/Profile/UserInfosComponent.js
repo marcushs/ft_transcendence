@@ -22,7 +22,6 @@ class UserInfosComponent extends HTMLElement {
 					<div class="change-profile-image">
 						<p id="imageLink">${getString('profileComponent/imageLink')} <i class="fa-solid fa-link"></i></p>
 						<p id="uploadImage">${getString('profileComponent/importImage')} <i class="fa-solid fa-upload"></i></p>
-						<p id="image42">${getString('profileComponent/image42')} <img src="../../assets/42_Logo.png" alt="42 logo"></p>
 						<i class="fa-solid fa-pen profile-picture-pen"></i>
 					</div>
 					<img id="profileImage" src="" alt="profile picture">
@@ -48,15 +47,46 @@ class UserInfosComponent extends HTMLElement {
 	}
 
 
+	initializeComponentOauth() {
+		this.innerHTML = `
+			<form>
+				<div class="user-info user-info-image">
+					<div class="change-profile-image">
+						<p id="imageLink">${getString('profileComponent/imageLink')} <i class="fa-solid fa-link"></i></p>
+						<p id="uploadImage">${getString('profileComponent/importImage')} <i class="fa-solid fa-upload"></i></p>
+						<p id="image42">${getString('profileComponent/image42')} <img src="../../assets/42_Logo.png" alt="42 logo"></p>
+						<i class="fa-solid fa-pen profile-picture-pen"></i>
+					</div>
+					<img id="profileImage" src="" alt="profile picture">
+					<input type="file" accept="image/*" name="profile-image">
+					<span id="profileImageFeedback" class="input-feedback"></span>
+				</div>
+				<div class="user-info">
+					<p id="username">${getString('profileComponent/username')}</p>
+					<input type="text" name="username" maxlength="12" disabled>
+					<i class="fa-solid fa-pen classic-pen"></i>
+					<span id="usernameFeedback" class="input-feedback"></span>
+				</div>
+				<button-component label="save" class="generic-btn-disabled"></button-component>
+			</form>
+			<span id="genericErrorFeedback" class="error-feedback"></span>
+		`;
+	}
+
+
 	async connectedCallback() {
-		this.initializeComponent();
+		const oauthInfos = await sendRequest("GET", "/api/auth/auth_type/", null);
 
-		const test = await sendRequest("GET", "/api/auth/auth_type/", null);
+		this.isOauthLog = oauthInfos.oauth_log;
 
-		console.log(test)
+		if (this.isOauthLog)
+			this.initializeComponentOauth();
+		else
+			this.initializeComponent();
 
 		this.usernameInput = this.querySelector('input[name="username"]');
-		this.emailInput = this.querySelector('input[name="email"]');
+		if (!this.isOauthLog)
+			this.emailInput = this.querySelector('input[name="email"]');
 		this.profileImageInput = this.querySelector('input[name="profile-image"]');
 		this.newUploadedImage = null;
 		this.newProfileImageLink = null;
@@ -109,7 +139,8 @@ class UserInfosComponent extends HTMLElement {
 		const userData = await getUserData();
 
 		this.usernameInput.value = userData.username;
-		this.emailInput.value = userData.email;
+		if (!this.isOauthLog)
+			this.emailInput.value = userData.email;
 		userImage.src = getProfileImage(userData);
 	}
 
@@ -124,7 +155,8 @@ class UserInfosComponent extends HTMLElement {
 			let  newUserData = new FormData();
 
 			newUserData.append(this.usernameInput.name, this.usernameInput.value);
-			newUserData.append(this.emailInput.name, this.emailInput.value);
+			if (!this.isOauthLog)
+				newUserData.append(this.emailInput.name, this.emailInput.value);
 			if (this.newUploadedImage)
 				newUserData.append('profile_image', this.newUploadedImage);
 			if (this.newProfileImageLink)
@@ -138,10 +170,11 @@ class UserInfosComponent extends HTMLElement {
 	handleInputsChanged(event, userData) {
 		if (event.target.type !== 'file') {
 			const isValidUsername = this.isValidUsername(this.usernameInput.value);
-			const isValidEmail = this.isValidEmail(this.emailInput.value);
+			const isValidEmail = (this.isOauthLog) ? true : this.isValidEmail(this.emailInput.value);
 
 			this.updateUsernameFeedback(this.usernameInput.value, isValidUsername);
-			this.updateEmailFeedback(this.emailInput.value, isValidEmail);
+			if (!this.isOauthLog)
+				this.updateEmailFeedback(this.emailInput.value, isValidEmail);
 			this.updateSaveButtonState(userData, isValidUsername, isValidEmail);
 		}
 	}
@@ -162,7 +195,7 @@ class UserInfosComponent extends HTMLElement {
 			} else {
 				this.updateImageFeedback(isValidImage, getString("profileComponent/invalidImageFile"));
 			}
-			this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), this.isValidEmail(this.emailInput.value));
+			this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), (this.isOauthLog) ? true : this.isValidEmail(this.emailInput.value));
 		};
 
 		reader.readAsDataURL(file);
@@ -183,7 +216,7 @@ class UserInfosComponent extends HTMLElement {
 		else {
 			this.updateImageFeedback(isValidImageUrl, getString("profileComponent/invalidImageLink"));
 		}
-		this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), this.isValidEmail(this.emailInput.value));
+		this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), (this.isOauthLog) ? true : this.isValidEmail(this.emailInput.value));
 	}
 
 
@@ -292,7 +325,7 @@ class UserInfosComponent extends HTMLElement {
 	isUserInfosChanged(userData) {
 		if (userData[this.usernameInput.name] !== this.usernameInput.value)
 			return true;
-		if (userData[this.emailInput.name] !== this.emailInput.value)
+		if (!this.isOauthLog && userData[this.emailInput.name] !== this.emailInput.value)
 			return true;
 		if (this.hasProfilePictureChanged)
 			return true;
