@@ -172,7 +172,7 @@ class ContactComponent extends HTMLElement {
             action.addEventListener('click', async () => {
                 switch (action.classList[0]) {
                     case 'contact-action-send-message':
-                        sendMessageCallback(this.userData);
+                        await sendMessageCallback(this.userData);
                         break;
                     case 'contact-action-invite-play':
                         if (action.classList[1] === "contact-action-disabled")

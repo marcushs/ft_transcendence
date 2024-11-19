@@ -6,12 +6,13 @@ export default class UserProfileSendMessageBtn extends HTMLElement {
 		super();
 		this.userData = userData;
 		this.render();
+		this.id = "sendMsgBtn";
 		this.addEventListeners();
 	}
 
 	render() {
 		this.innerHTML = `
-			<p>${getString("sendMessageButton")}</p>
+			<p id="sendMsgBtnP">${getString("sendMessageButton")}</p>
 			<i class="fa-regular fa-paper-plane"></i>
 		`;
 	}

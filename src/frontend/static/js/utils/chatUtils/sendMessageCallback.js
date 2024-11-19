@@ -4,11 +4,10 @@ import ChatRoomConversation from '../../components/Chat/ChatRoomConversation.js'
 import { sendPrivateMessage } from './sendPrivateMessage.js';
 
 export async function sendMessageCallback(targetUserData) {
-	displayChatroomComponent(targetUserData);
+	await displayChatroomComponent(targetUserData);
 };
 
 export async function displayChatroomComponent(targetUserData, fromContact=false) {
-	console.log("qwwqerer: ", targetUserData)
 	const userData = JSON.stringify(targetUserData);
 	const chatMainMenu = document.querySelector('.chat-main-menu');
 	const contactMenu = document.querySelector('.contact-menu');
@@ -93,8 +92,8 @@ function addEventListenersToMessageInput() {
 	chatroomMessageInput.focus();
 	chatroomMessageInput.addEventListener('keyup', (e) => {
 		if (e.keyCode === 13) sendPrivateMessage();
-	})
+	});
 	sendMessageBtn.addEventListener('click', () => {
 		sendPrivateMessage();
-	})
+	});
 }

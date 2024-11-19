@@ -132,7 +132,7 @@ class FriendsMenuComponent extends HTMLElement {
         this.addEventListener('click', (event) => {
             const chatComponent = document.querySelector('.chat-main-menu');
 
-            if (chatComponent && chatComponent.style.display !== 'none')
+            if (chatComponent && chatComponent.style.display !== 'none' && event.target.className !== "contact-action-send-message")
                 this.throwCloseChatComponent();
             event.stopPropagation();
             this.throwCloseContactActionList();

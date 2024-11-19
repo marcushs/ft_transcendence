@@ -88,6 +88,14 @@ export default class ChatRoomTopBar extends HTMLElement {
 				return ;
 			this.handleInvitePlayer();
 		});
+
+		this.querySelector('.chatroom-profile-picture').addEventListener('click',() => {
+			throwRedirectionEvent(`/users/${this.querySelector('.chatroom-top-bar-username').innerHTML}`);
+		});
+
+		this.querySelector('.chat-contact-name-status').addEventListener('click',() => {
+			throwRedirectionEvent(`/users/${this.querySelector('.chatroom-top-bar-username').innerHTML}`);
+		});
 	}
 
 	async handleInvitePlayer() {

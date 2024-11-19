@@ -77,9 +77,9 @@ class ChatComponent extends HTMLElement {
 		});
 
 		document.addEventListener('click', (event) => {
+			if (event.target.className !== "fa-paper-plane" && event.target.id !== "sendMsgBtn" && event.target.id !== "sendMsgBtnP")
+				this.querySelector('.chat-main-menu').style.display = "none";
 			event.stopPropagation();
-
-			this.closeChat();
 		});
 
 		this.chatIcon.addEventListener('click', () => {

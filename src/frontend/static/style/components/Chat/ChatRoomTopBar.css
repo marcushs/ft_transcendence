@@ -27,6 +27,7 @@ chatroom-top-bar i {
 	border-radius: 50%;
 	transform: translateY(-45%);
 	border: 1px solid var(--light-grey);
+	cursor: pointer;
 }
 
 .chatroom-profile-picture .chat-status-circle.online,
@@ -39,7 +40,7 @@ chatroom-top-bar i {
 }
 
 .chat-contact-name-status {
-	width: 55%;
+	cursor: pointer;
 	height: 90%;
 	display: flex;
 	flex-direction: column;
