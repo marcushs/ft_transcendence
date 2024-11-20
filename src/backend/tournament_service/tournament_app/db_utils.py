@@ -6,6 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist
 @database_sync_to_async
 def add_user_to_tournament(tournament, user):
 	if is_user_in_any_tournament(user=user) == False:
+		user.status = 'joined_tournament'
+		user.save()
 		return tournament.members.add(user)
 	return 'User already in tournament'
 
@@ -22,7 +24,7 @@ def remove_user_from_tournament(tournament, user):
 	return tournament.members.remove(user)
 
 def is_user_in_any_tournament(user):
-	return user.joined_tournaments.exists() 
+	return Tournament.objects.filter(members=user, isOver=False).exists()
 
 @database_sync_to_async
 def user_in_match(match, user):

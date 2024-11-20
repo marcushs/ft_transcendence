@@ -14,6 +14,13 @@ ROUND_CHOICES = [
     ('eighth_finals', 'Eighth-Finals'),
 ]
 
+STATUS_CHOICES = [
+    ('joined_tournament', 'Joined Tournament'),
+    ('match', 'Match'),
+    ('lost_match', 'Lost Match'),
+    ('won_tournament', 'Won Tournament'),
+]
+
 class UserManager(BaseUserManager):
     def create_user(self, username, user_id, alias):
         if not username:
@@ -36,6 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=12, unique=True, default='default')
     alias = models.CharField(max_length=12, unique=True, default='default')
+    status = models.CharField(max_length=17, choices=STATUS_CHOICES)
    
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []

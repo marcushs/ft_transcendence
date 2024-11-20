@@ -57,7 +57,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				await self.accept()
 				with connections_lock:
 					connections[str(self.user.id)] = self
-		except Exception as e: 
+		except Exception as e:  
 			print('Error: ', e)
 
 	async def disconnect(self, close_code):
@@ -270,6 +270,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		if last_round == 'finals':
 			tournament_bracket_dict = tournament_bracket.to_dict_sync()
 			tournament_bracket_dict['alias'] = user.alias
+			user.status = 'won_tournament'
+			user.save()
 			payload = {'type': 'redirect_to_winner_page', 'tournament_bracket': tournament_bracket_dict,}
 			return async_to_sync(self.channel_layer.group_send)(group_names[str(user.id)], payload)
 
@@ -441,7 +443,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				await self.stop_match_countdown()
 				break
 			
-			payload = {'type': 'countdown_update', 'time': countdown}
+			payload = {'type': 'countdown_update', 'time': countdown, 'sent_from': group_names[str(self.user.id)]}
 			await self.channel_layer.group_send(group_names[str(player_ids[0])], payload)
 			await self.channel_layer.group_send(group_names[str(player_ids[1])], payload)
 			
@@ -473,7 +475,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				await self.stop_leave_countdown() 
 				break
 			 
-			payload = {'type': 'countdown_update', 'time': countdown}
+			payload = {'type': 'countdown_update', 'time': countdown, 'sent_from': group_names[str(self.user.id)]}
 
 			await self.channel_layer.group_send(group_names[str(self.user.id)], payload)
 			
@@ -487,7 +489,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def countdown_update(self, event):
 		await self.send(text_data=json.dumps({
 			'type': 'countdown_update',
-			'time': event['time']
+			'time': event['time'],
+			'sent_from': event['sent_from']
 		}))
 
 

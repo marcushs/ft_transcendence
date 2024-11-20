@@ -27,6 +27,8 @@ class tournamentMatchResultView(View):
 
 			match.winner = winner
 			match.winner_score = data['winner']['score']
+
+			loser.status = 'lost_match'
 			match.loser = loser
 			match.loser_score = data['loser']['score']
 			match.isOver = True

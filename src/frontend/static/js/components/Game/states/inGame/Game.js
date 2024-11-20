@@ -12,7 +12,6 @@ import Intro from "./Intro.js";
 import Outro from "./Outro.js";
 import CircularList from "../../../../utils/CircularList.js";
 import RankOutro from "./RankOutro.js";
-import { proceedInTournament } from "../../../../utils/tournamentUtils/tournamentMatchUtils.js";
 import { redirectToTournamentLostMatch } from "../../../../utils/tournamentUtils/tournamentMatchUtils.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
@@ -473,7 +472,8 @@ export default class Game {
 				setTimeout(() => {
 					this.gameInProgress = false;
 					disconnectGameWebSocket(this.userId, false);
-					throwRedirectionEvent('/');
+					if (this.gameType !== 'tournament')
+						throwRedirectionEvent('/');
 				}, 6000);
 			}
 		}, 7000);

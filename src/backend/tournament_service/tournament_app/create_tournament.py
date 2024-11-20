@@ -26,6 +26,8 @@ def createTournamentInDB(data, user):
 
 	new_tournament = Tournament.objects.create(creator=creator, tournament_name=tournament_name, tournament_size=tournament_size, current_stage=round_str[round_str_idx])
 	new_tournament.members.add(creator)
+	creator.status = 'joined_tournament'
+	creator.save()
 	return new_tournament, 'Tournament created successfully'
 	
 

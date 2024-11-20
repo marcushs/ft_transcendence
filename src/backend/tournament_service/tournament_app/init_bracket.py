@@ -21,16 +21,22 @@ def init_bracket(tournament):
 	i = 0
 	while i < nb_of_players:
 		match = TournamentMatch.objects.create(tournament=tournament, tournament_round=round, bracket_index=i // 2)
+		player1 = User.objects.get(id=members_copy[i]['id'])
+		player2 = User.objects.get(id=members_copy[i + 1]['id'])
 		TournamentMatchPlayer.objects.create(
 			match=match,
-			player=User.objects.get(id=members_copy[i]['id']),
+			player=player1,
 			player_number=TournamentMatchPlayer.PlayerNumber.ONE
 		)
 		TournamentMatchPlayer.objects.create(
 			match=match,
-			player=User.objects.get(id=members_copy[i + 1]['id']),
+			player=player2,
 			player_number=TournamentMatchPlayer.PlayerNumber.TWO
 		)
+		player1.status = 'match'
+		player2.status = 'match'
+		player1.save()
+		player2.save()
 
 		round_mapping[round].add(match)
 		i += 2

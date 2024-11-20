@@ -25,6 +25,7 @@ class TournamentWonElement extends HTMLElement {
 	constructor() {
 		super();
 		this.tournamentBracket = JSON.parse(this.getAttribute('data-tournament-bracket'));
+		console.log('tournament won element: ', this.tournamentBracket)
 		this.tournamentId = this.tournamentBracket.tournament.tournament_id;
 		this.tournamentName = this.tournamentBracket.tournament.tournament_name;
 		this.tournamentSize = this.tournamentBracket.tournament.tournament_size;
