@@ -61,6 +61,23 @@ class ping_status_user(View):
         return JsonResponse({'status': 'success', "message": 'pong'}, status=200) 
 
 
+class DeleteUser(View):
+    def __init__(self): 
+        super().__init__
+
+    def delete(self, request): 
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            if not 'user_id' in data:
+                raise Exception('missingID')
+            user = User.objects.get(id=str(data['user_id']))
+            user.delete()
+            return JsonResponse({'message': 'User updated successfully'}, status=200)
+        except Exception as e:
+            print(f'Error: {str(e)} -- data: {data}')
+            return JsonResponse({'message': str(e)}, status=400) 
+
+
 class AddNewUser(View):
     def __init__(self):
         super().__init__
@@ -70,18 +87,23 @@ class AddNewUser(View):
     
 
     def post(self, request):
-        data = json.loads(request.body.decode('utf-8'))
-        if not all(key in data for key in ('email', 'username', 'user_id')):
-            return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
-        if User.objects.filter(username=data['username']).exists():
-            return JsonResponse({'message': 'Username already taken! Try another one.', "status": "Error"}, status=400)
-        if User.objects.filter(email=data['email']).exists():
-            return JsonResponse({'message': 'Email address already registered! Try logging in.', "status": "Error"}, status=400)
-        if data['logged_in_with_oauth'] and data['logged_in_with_oauth'] is True:
-            User.objects.create_oauth_user(data)
-        else:
-            User.objects.create_user(email=data['email'], username=data['username'], user_id=data['user_id'])
-        return JsonResponse({"message": 'user added with success', "status": "Success"}, status=200)
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            if not all(key in data for key in ('email', 'username', 'user_id')):
+                raise Exception('requestMissingData')
+            if User.objects.filter(username=data['username']).exists():
+                raise Exception('usernameAlreadyTaken')
+            if User.objects.filter(email=data['email']).exists():
+                return JsonResponse({'message': 'Email address already registered! Try logging in.', "status": "Error"}, status=400)
+            if data['logged_in_with_oauth'] and data['logged_in_with_oauth'] is True:
+                User.objects.create_oauth_user(data)
+            else:
+                User.objects.create_user(email=data['email'], username=data['username'], user_id=data['user_id'])
+            return JsonResponse({"message": 'user added with success', "status": "Success"}, status=200)
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
+            
     
 class update_user(View):
     def __init__(self):

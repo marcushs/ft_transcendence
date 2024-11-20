@@ -1,3 +1,4 @@
+from ..exceptions import ExpectedException
 import requests
 import json
 
@@ -39,21 +40,15 @@ def send_request_without_token(request_type, url, payload, csrf_token):
     try:
         if request_type == 'GET':
             response = requests.get(url=url, headers=headers, cookies=cookies)
+        elif request_type == 'DELETE':
+            response = requests.delete(url=url, headers=headers, cookies=cookies, data=json.dumps(payload))
         else:
             response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
         if response.status_code == 200:
             return response
         else:
             response.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        error_message = e.response.json().get('message', 'unknown error')
-        raise ExpectedException(str(error_message)) 
+    except requests.exceptions.HTTPError as e: 
+        raise ExpectedException(str(e)) 
     except Exception as e:
         raise Exception(f"An error occurred: {e}") 
-
-class ExpectedException(Exception):
-    def __init__(self, message):
-        super().__init__(message)
-
-    def __str__(self):
-        return super().__str__()

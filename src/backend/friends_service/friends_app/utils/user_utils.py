@@ -6,6 +6,23 @@ import requests
 import httpx
 import json
 
+
+class DeleteUser(View):
+    def __init__(self):
+        super().__init__
+
+    def delete(self, request):
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            if not 'user_id' in data:
+                raise Exception('missingID')
+            user = User.objects.get(id=str(data['user_id']))
+            user.delete()
+            return JsonResponse({'message': 'User updated successfully'}, status=200)
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=400)
+
+
 class AddNewUser(View):
     def __init__(self):
         super().__init__
@@ -14,11 +31,14 @@ class AddNewUser(View):
         return JsonResponse({"message": 'get request successfully reached'}, status=200)
 
     def post(self, request):
-        data = json.loads(request.body.decode('utf-8'))
-        if not all(key in data for key in ('username', 'user_id')):
-            return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
-        User.objects.create_user(username=data['username'], user_id=data['user_id'])
-        return JsonResponse({"message": 'user added with success'}, status=200)
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            if not all(key in data for key in ('username', 'user_id')):
+                raise Exception('requestDataMissing')
+            User.objects.create_user(username=data['username'], user_id=data['user_id'])
+            return JsonResponse({"message": 'user added with success'}, status=200)
+        except Exception as e:
+                return JsonResponse({"message": str(e)}, status=400)
     
 class update_user(View): 
     def __init__(self):
