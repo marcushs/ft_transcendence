@@ -87,7 +87,8 @@ class ChatContactList extends HTMLElement {
 
 		const contactedListUl = document.querySelector('#contactList > ul');
 
-		contactedListUl.innerHTML = '';
+		if (contactedListUl)
+			contactedListUl.innerHTML = '';
 
 		contactsData.forEach(contact => {
 			const listElem = document.createElement('li');
@@ -95,8 +96,10 @@ class ChatContactList extends HTMLElement {
 
 			contactComp.setAttribute('data-chatroom', contact.id);
 			contactComp.setAttribute('data-user', JSON.stringify(contact));
-			listElem.appendChild(contactComp);
-			contactedListUl.appendChild(listElem);
+			if (listElem)
+				listElem.appendChild(contactComp);
+			if (contactedListUl)
+				contactedListUl.appendChild(listElem);
 		});
 	}
 

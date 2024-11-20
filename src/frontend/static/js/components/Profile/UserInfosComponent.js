@@ -36,6 +36,12 @@ class UserInfosComponent extends HTMLElement {
 					<span id="usernameFeedback" class="input-feedback"></span>
 				</div>
 				<div class="user-info">
+					<p id="alias">${getString('profileComponent/tournamentAlias')}</p>
+					<input type="text" name="alias" maxlength="12" disabled>
+					<i class="fa-solid fa-pen classic-pen"></i>
+					<span id="aliasFeedback" class="input-feedback"></span>
+				</div>
+				<div class="user-info">
 					<p id="email">${getString('profileComponent/email')}</p>
 					<input type="email" name="email" disabled>
 					<i class="fa-solid fa-pen classic-pen"></i>
@@ -69,6 +75,12 @@ class UserInfosComponent extends HTMLElement {
 					<i class="fa-solid fa-pen classic-pen"></i>
 					<span id="usernameFeedback" class="input-feedback"></span>
 				</div>
+				<div class="user-info">
+					<p id="alias">${getString('profileComponent/tournamentAlias')}</p>
+					<input type="text" name="alias" maxlength="12" disabled>
+					<i class="fa-solid fa-pen classic-pen"></i>
+					<span id="aliasFeedback" class="input-feedback"></span>
+				</div>
 				<button-component label="save" class="generic-btn-disabled"></button-component>
 			</form>
 			<span id="genericErrorFeedback" class="error-feedback"></span>
@@ -88,6 +100,7 @@ class UserInfosComponent extends HTMLElement {
 		}
 
 		this.usernameInput = this.querySelector('input[name="username"]');
+		this.aliasInput = this.querySelector('input[name="alias"]');
 		if (!this.isOauthLog)
 			this.emailInput = this.querySelector('input[name="email"]');
 		this.profileImageInput = this.querySelector('input[name="profile-image"]');
@@ -145,8 +158,11 @@ class UserInfosComponent extends HTMLElement {
 	async generateUserInfos() {
 		const userImage = this.querySelector('.user-info > img');
 		const userData = await getUserData();
+		const alias = await sendRequest("GET", "/api/tournament/alias/", null);
 
 		this.usernameInput.value = userData.username;
+		this.initailAlias = alias.alias;
+		this.aliasInput.value = alias.alias;
 		if (!this.isOauthLog)
 			this.emailInput.value = userData.email;
 		userImage.src = getProfileImage(userData);
@@ -171,6 +187,8 @@ class UserInfosComponent extends HTMLElement {
 				newUserData.append('profile_image_link', this.newProfileImageLink);
 
 			await postNewUserInfos(newUserData);
+			if (this.initailAlias !== this.aliasInput.value)
+				await postNewAlias(this.aliasInput.value);
 		}
 	}
 
@@ -178,12 +196,14 @@ class UserInfosComponent extends HTMLElement {
 	handleInputsChanged(event, userData) {
 		if (event.target.type !== 'file') {
 			const isValidUsername = this.isValidUsername(this.usernameInput.value);
+			const isValidAlias = this.isValidUsername(this.aliasInput.value);
 			const isValidEmail = (this.isOauthLog) ? true : this.isValidEmail(this.emailInput.value);
 
 			this.updateUsernameFeedback(this.usernameInput.value, isValidUsername);
+			this.updateAliasFeedback(this.aliasInput.value, isValidAlias);
 			if (!this.isOauthLog)
 				this.updateEmailFeedback(this.emailInput.value, isValidEmail);
-			this.updateSaveButtonState(userData, isValidUsername, isValidEmail);
+			this.updateSaveButtonState(userData, isValidUsername, isValidEmail, isValidAlias);
 		}
 	}
 
@@ -203,7 +223,7 @@ class UserInfosComponent extends HTMLElement {
 			} else {
 				this.updateImageFeedback(isValidImage, getString("profileComponent/invalidImageFile"));
 			}
-			this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), (this.isOauthLog) ? true : this.isValidEmail(this.emailInput.value));
+			this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), (this.isOauthLog) ? true : this.isValidEmail(this.emailInput.value), this.isValidUsername(this.aliasInput.value));
 		};
 
 		reader.readAsDataURL(file);
@@ -224,7 +244,7 @@ class UserInfosComponent extends HTMLElement {
 		else {
 			this.updateImageFeedback(isValidImageUrl, getString("profileComponent/invalidImageLink"));
 		}
-		this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), (this.isOauthLog) ? true : this.isValidEmail(this.emailInput.value));
+		this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), (this.isOauthLog) ? true : this.isValidEmail(this.emailInput.value), this.isValidUsername(this.aliasInput.value));
 	}
 
 
@@ -245,7 +265,7 @@ class UserInfosComponent extends HTMLElement {
 		else {
 			this.updateImageFeedback(isValidImageUrl, getString("profileComponent/invalidImageLink"));
 		}
-		this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), (this.isOauthLog) ? true : this.isValidEmail(this.emailInput.value));
+		this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), (this.isOauthLog) ? true : this.isValidEmail(this.emailInput.value), this.isValidUsername(this.aliasInput.value));
 	}
 
 
@@ -351,7 +371,9 @@ class UserInfosComponent extends HTMLElement {
 
 	// Check if new user infos on front is different of user infos in back
 
-	isUserInfosChanged(userData) {
+	isUserInfosChanged(userData, alias) {
+		if (this.aliasInput.value !== this.initailAlias)
+			return true;
 		if (userData[this.usernameInput.name] !== this.usernameInput.value)
 			return true;
 		if (!this.isOauthLog && userData[this.emailInput.name] !== this.emailInput.value)
@@ -366,10 +388,10 @@ class UserInfosComponent extends HTMLElement {
 
 	// Update elements (button save and feedbacks)
 
-	updateSaveButtonState(userData, isValidUsername, isValidEmail) {
+	updateSaveButtonState(userData, isValidUsername, isValidEmail, isValidAlias) {
 		const saveButton = this.querySelector('button-component');
 
-		if (isValidUsername && isValidEmail && this.isUserInfosChanged(userData)) {
+		if (isValidUsername && isValidEmail && this.isUserInfosChanged(userData) && isValidAlias) {
 			saveButton.className = 'generic-btn';
 		} else {
 			saveButton.className = 'generic-btn-disabled';
@@ -386,9 +408,9 @@ class UserInfosComponent extends HTMLElement {
 			if (response) {
 				let inputs;
 				if (this.isOauthLog)
-					inputs = [this.usernameInput, this.profileImageInput];
+					inputs = [this.usernameInput, this.profileImageInput, this.aliasInput];
 				else
-					inputs = [this.usernameInput, this.emailInput, this.profileImageInput];
+					inputs = [this.usernameInput, this.emailInput, this.profileImageInput, this.aliasInput];
 
 				this.showUserInfosFeedback(response, inputs);
 				localStorage.removeItem('userUpdateResponse');
@@ -405,8 +427,9 @@ class UserInfosComponent extends HTMLElement {
 
 			if (`${input.name}_error` in response)
 				this.updateFeedback(feedbackErrorElement, getString(`profileComponent/${response[`${input.name}_error`]}`), false);
-			else if (`${input.name}_message` in response)
+			else if (`${input.name}_message` in response) {
 				this.updateFeedback(feedbackSuccessElement, getString(`profileComponent/${response[`${input.name}_message`]}`), true);
+			}
 		});
 	}
 
@@ -422,6 +445,18 @@ class UserInfosComponent extends HTMLElement {
 			this.updateFeedback(usernameFeedbackElement, getString("profileComponent/invalidUsernameFormat"), isValidUsername);
 		else if (usernameFeedbackElement.textContent !== '' && isValidUsername)
 			usernameFeedbackElement.textContent = '';
+	}
+
+
+	updateAliasFeedback(alias, isValidAlias) {
+		const aliasFeedbackElement = this.aliasInput.parentElement.querySelector('.input-feedback');
+
+		if (!isValidAlias && alias === '')
+			this.updateFeedback(aliasFeedbackElement, getString("profileComponent/aliasFormatWarning"), isValidAlias);
+		else if (!isValidAlias && !isAlphanumeric(alias))
+			this.updateFeedback(aliasFeedbackElement, getString("profileComponent/invalidAliasFormat"), isValidAlias);
+		else if (aliasFeedbackElement.textContent !== '' && isValidAlias)
+			aliasFeedbackElement.textContent = '';
 	}
 
 
@@ -468,6 +503,18 @@ async function postNewUserInfos(newUserInfos) {
 
 		localStorage.setItem('userUpdateResponse', JSON.stringify(data));
 		throwRedirectionEvent('/profile');
+	} catch (error) {
+		document.querySelector('.error-feedback').innerHTML = getString(`profileComponent/${error.message}`);
+	}
+}
+
+async function postNewAlias(newAlias) {
+	const url = `/api/tournament/alias/`;
+
+	try {
+		const data = await sendRequest('PUT', url, {new_alias: newAlias});
+
+		localStorage.setItem('userUpdateResponse', JSON.stringify(data));
 	} catch (error) {
 		document.querySelector('.error-feedback').innerHTML = getString(`profileComponent/${error.message}`);
 	}

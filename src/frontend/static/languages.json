@@ -183,8 +183,13 @@
 	  "invalidImageLink": "Invalid image link",
 	  "usernameFormatWarning": "Username cannot be empty",
 	  "invalidUsernameFormat": "Username: letters, numbers, _ , -",
+	  "aliasFormatWarning": "Alias cannot be empty",
+	  "invalidAliasFormat": "Alias: letters, numbers, _ , -",
 	  "emailCannotBeEmpty": "Email address cannot be empty",
-	  "invalidEmail": "Invalid email address"
+	  "invalidEmail": "Invalid email address",
+	  "tournamentAlias": "Tournament alias",
+	  "aliasChanged": "Alias successfully changed",
+	  "aliasError": "Error while changing alias"
 	},
 	"profileNavBarComponent": {
 	  "personalInformation": "Personal information",
@@ -488,8 +493,13 @@
 	  "invalidImageLink": "Lien d'image invalide",
 	  "usernameFormatWarning": "Le nom d'utilisateur ne peut pas être vide",
 	  "invalidUsernameFormat": "Nom d'utilisateur : lettres, chiffres, _ , -",
+	  "aliasFormatWarning": "L'alias d'utilisateur ne peut pas être vide",
+	  "invalidAliasFormat": "Alias: lettres, chiffres, _ , -",
 	  "emailCannotBeEmpty": "L'adresse email ne peut pas être vide",
-	  "invalidEmail": "Adresse email invalide"
+	  "invalidEmail": "Adresse email invalide",
+	  "tournamentAlias": "Alias de tournois",
+	  "aliasChanged": "L'alias a été modifié avec succès",
+	  "aliasError": "Erreur lors du changement d'alias"
 	},
 	"profileNavBarComponent": {
 	  "personalInformation": "Informations personnelles",
