@@ -106,7 +106,7 @@ class AddNewUser(View):
             if data['logged_in_with_oauth'] and data['logged_in_with_oauth'] is True:
                 User.objects.create_oauth_user(data)
             else:
-                User.objects.create_user(email=data['email'], username=data['username'], user_id=data['user_id'])
+                User.objects.create_user(email=data['email'], username=data['username'], user_id=data['user_id'], language=data['language'])
             return JsonResponse({"message": 'user added with success', "status": "Success"}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')

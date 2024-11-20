@@ -1,6 +1,7 @@
 import '../ToggleButtonComponent.js'
 import {throwRedirectionEvent} from "../../utils/throwRedirectionEvent.js";
 import {getString} from "../../utils/languageManagement.js";
+import {sendRequest} from "../../utils/sendRequest.js";
 
 class SecurityComponent extends HTMLElement {
 	constructor() {
@@ -28,7 +29,16 @@ class SecurityComponent extends HTMLElement {
 				</div>
 			</div>
 			<span class="feedbackInformation" id="twoFactorFeedback"></span>
-			<div class="change-password-container">
+		`;
+	}
+
+
+	async connectedCallback() {
+		const oauthInfos = await sendRequest("GET", "/api/auth/auth_type/", null);
+		// this.initializeComponent();
+
+		this.innerHTML += `
+			<div class="change-password-container" style="${!oauthInfos.oauth_log ? '' : 'display: none;'}">
 				<div class="title">
 					<p>${getString('profileComponent/changePasswordTitle')}</p>
 				</div>
@@ -37,10 +47,7 @@ class SecurityComponent extends HTMLElement {
 			</div>
 			<span class="feedbackInformation" id="passwordFeedback"></span>
 		`;
-	}
 
-
-	async connectedCallback() {
 		this.displayFeedbackFromLocalStorage();
 		this.attachEventsListener();
 	}
