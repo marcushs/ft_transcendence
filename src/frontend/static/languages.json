@@ -263,7 +263,8 @@
 	},
 	"oauthUsernameView": {
 	  "title": "Username already taken, please choose a new one",
-	  "usernameFormatError": "Username must container only letters, numbers, _ , -"
+	  "usernameFormatError": "Username must container only letters, numbers, _ , -",
+	  "username": "Username"
 	},
 	"chatComponent": {
 	  "contacted": "Contacted",
@@ -573,7 +574,8 @@
 	},
 	"oauthUsernameView": {
 	  "title": "Nom d'utilisateur déjà pris, veuillez en choisir un nouveau",
-	  "usernameFormatError": "Le nom d'utilisateur ne doit contenir que des lettres, chiffres, _, -"
+	  "usernameFormatError": "Le nom d'utilisateur ne doit contenir que des lettres, chiffres, _, -",
+	  "username": "Nom d'utilisateur"
 	},
 	"chatComponent": {
 	  "contacted": "Contactés",

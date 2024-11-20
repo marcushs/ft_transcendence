@@ -10,12 +10,12 @@ export default () => {
 				<div class="oauth-username-content">
 					<h1>${getString("oauthUsernameView/title")}</h1>
 					<form>
-						<input type="text" placeholder="username" name="newUsername" id="username" maxlength="12"/>
+						<input type="text" placeholder="${getString("oauthUsernameView/username")}" name="newUsername" id="username" maxlength="12"/>
 						<div class="feedback-container">
 							<span id="feedbackElement"></span>
 						</div>
 					</form>
-					<button-component label="submit" id="btn" class="generic-btn-disabled"></button-component>
+					<button-component label="change" id="btn" class="generic-btn-disabled"></button-component>
 				</div>
 			</div>
 		</section>

@@ -8,8 +8,8 @@
 
 .oauth-username-container {
 	position: relative;
-	height: 30%;
-	width: 30%;
+	height: 40rem;
+	width: 65rem;
 	background: var(--neon-gradiant);
 	padding: 3px;
 	border-radius: 10px;
@@ -41,8 +41,8 @@
 .oauth-username-container-background {
 	z-index: 0;
 	position: absolute;
-	height: 30%;
-	width: 30%;
+	height: 40rem;
+	width: 65rem;
 	background: var(--neon-gradiant);
 	filter: blur(15px);
 }

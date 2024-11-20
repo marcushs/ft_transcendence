@@ -26,7 +26,6 @@ import TournamentMatch from "./components/Game/states/tournamentHome/TournamentM
 
 let languageJson;
 
-// localStorage.clear();
 localStorage.setItem('lastAuthorizedPage', '/');
 
 const routes = {
@@ -147,10 +146,12 @@ function handleDynamicURL() {
 	    localStorage.setItem('users-profile-target-username', username);
 	    document.title = username + '-profile';
 	    app.innerHTML = userProfile();
+        localStorage.setItem('lastAuthorizedPage', location.pathname);
 	    return true;
     }
 	return false;
 }
+
 async function isViewAccessible(view) {
     const isUserConnected = await checkAuthentication();
     const loggedOutViews = ['/login', '/signup'];
@@ -172,7 +173,6 @@ async function isViewAccessible(view) {
             return false;
         }
     }
-
     if (view === '/' || view === '/profile')
         localStorage.setItem('lastAuthorizedPage', location.pathname);
     return true;
