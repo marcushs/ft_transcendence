@@ -68,8 +68,8 @@ pop-up-component {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	width: 22.5%;
-	height: 38.5%;
+	width: 50rem;
+	height: 60rem;
 	background: var(--component-background-color);
 	border-radius: 1rem;
 	border: 1px solid #333;
