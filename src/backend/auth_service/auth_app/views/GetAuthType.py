@@ -18,6 +18,7 @@ class GetAuthType(View):
             return JsonResponse({'oauth_log': True, 'oauth_type': str(oauth_type)}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
+            return JsonResponse({'message': str(e)}, status=400)
 
      
     def get_oauth_type(self, request):

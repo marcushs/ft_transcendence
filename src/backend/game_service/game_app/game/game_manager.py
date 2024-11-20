@@ -126,7 +126,6 @@ class SurrendGame(View):
         except ExpectedException as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=200)
         except Exception as e:
-            print(f'error: surrend_game: {str(e)}')
             return JsonResponse({'message': str(e)}, status=400)
 
 

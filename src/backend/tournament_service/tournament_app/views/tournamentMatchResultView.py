@@ -16,20 +16,22 @@ class tournamentMatchResultView(View):
 		super().__init__
 
 	def post(self, request):
-		data = json.loads(request.body.decode('utf-8'))
-
 		try:
+			data = json.loads(request.body.decode('utf-8'))
+
 			match = TournamentMatch.objects.get(match_id=data['game_id'])
 			winner = User.objects.get(id=data['winner']['id'])
-			loser = User.objects.get(id=data['loser']['id']) 
-
+			loser = User.objects.get(id=data['loser']['id'])
+   
 			match.winner = winner
 			match.winner_score = data['winner']['score']
 			match.loser = loser
 			match.loser_score = data['loser']['score']
 			match.save()  
-			print('reached tournament match result', data) 
 			return JsonResponse({'status': 'success'}, status=200) 
 		except ObjectDoesNotExist:
 			return JsonResponse({'status': 'error', 'message': 'Match not found'}, status=400)
+		except Exception as e:
+			print(f'Error: {str(e)}')
+			return JsonResponse({"message": str(e)}, status=400)
   

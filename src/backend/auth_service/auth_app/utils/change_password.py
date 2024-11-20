@@ -13,18 +13,20 @@ class ChangePassword(View):
 
 
     def post(self, request):
-        User = get_user_model()
+        try:
+            User = get_user_model()
 
-        if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'error': 'User not found'}, status=401)
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'error': 'User not found'}, status=401)
 
-        print(request)
-        password_error = self.check_password_errors(User,  request)
-        if password_error:
-            return JsonResponse(password_error, status=200)
+            password_error = self.check_password_errors(User,  request)
+            if password_error:
+                return JsonResponse(password_error, status=200)
 
-        response = self.change_password(User, request)
-        return JsonResponse(response, status=200)
+            response = self.change_password(User, request)
+            return JsonResponse(response, status=200)
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=400)
 
 
     def check_password_errors(self, User, request):

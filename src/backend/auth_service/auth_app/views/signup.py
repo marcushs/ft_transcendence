@@ -20,28 +20,32 @@ class signup_view(View):
         self.regexUsernameCheck = r'^[a-zA-Z0-9_-]+$'
         self.regexEmailCheck = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         self.url_list = [
-            'http://user:8000/api/user',
-            'http://twofactor:8000/api/twofactor',
+            'http://chat:8000/api/chat',
             'http://friends:8000/api/friends',
-            'http://notifications:8000/api/notifications',
             'http://matchmaking:8000/api/matchmaking',
+            'http://notifications:8000/api/notifications',
             'http://statistics:8000/api/statistics',
-            'http://chat:8000/api/chat'
+            'http://tournament:8000/api/tournament',
+            'http://twofactor:8000/api/twofactor',
+            'http://user:8000/api/user'
         ]
         self.sended_url_list = []
     
  
     def post(self, request):
-        data = json.loads(request.body.decode('utf-8'))
-        response = self._check_data(request, data)
-        if response is not None:
-            return response
-        user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
-        response = self._send_request(user=user, csrf_token=request.headers.get('X-CSRFToken'))
-        if not response:
-            user.delete()
-            return JsonResponse({'message': 'errorWhileSignup'}, status=400)
-        return JsonResponse({'message': 'accountCreated', 'redirect_url': 'login'}, status=200)
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            response = self._check_data(request, data)
+            if response is not None:
+                return response
+            user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
+            response = self._send_request(user=user, csrf_token=request.headers.get('X-CSRFToken'))
+            if not response:
+                user.delete()
+                return JsonResponse({'message': 'errorWhileSignup'}, status=400)
+            return JsonResponse({'message': 'accountCreated', 'redirect_url': 'login'}, status=200)
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=400)
 
     def _send_request(self, user, csrf_token):
         try:

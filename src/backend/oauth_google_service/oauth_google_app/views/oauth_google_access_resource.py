@@ -25,30 +25,34 @@ class oauthGoogleAccessResourceView(View):
         super().__init__
     
     def get(self, request):
-        token = request.COOKIES.get('google_access_token') 
-        resource_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
-
-        headers = {
-            'Authorization': f'Bearer {token}'
-        }
-
-        response = requests.get(resource_url, headers=headers)
-
         try:
-            response_data = response.json()
-            if 'error' in response_data:
-                response = JsonResponse({'message': response_data['error'],
-                                     'status': 'Error'}, 
-                                     status=400)
-                response.delete_cookie('google_access_token')
+            token = request.COOKIES.get('google_access_token') 
+            resource_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
+
+            headers = {
+                'Authorization': f'Bearer {token}'
+            }
+
+            response = requests.get(resource_url, headers=headers)
+
+            try:
+                response_data = response.json()
+                if 'error' in response_data:
+                    response = JsonResponse({'message': response_data['error'],
+                                        'status': 'Error'}, 
+                                        status=400)
+                    response.delete_cookie('google_access_token')
+                    return response
+                return self.create_or_login_user(request, response_data)
+            except ValueError:
+                response = JsonResponse({'message': 'Invalid JSON response',
+                                    'status': 'Error'}, 
+                                    status=400)
+                response.delete_cookie('google_access_token')  
                 return response
-            return self.create_or_login_user(request, response_data)
-        except ValueError:
-            response = JsonResponse({'message': 'Invalid JSON response',
-                                 'status': 'Error'}, 
-                                 status=400)
-            response.delete_cookie('google_access_token')  
-            return response
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
         
     def create_or_login_user(self, request, data):
         self.csrf_token = request.headers.get('X-CSRFToken')

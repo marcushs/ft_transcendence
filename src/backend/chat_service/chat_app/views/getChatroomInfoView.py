@@ -13,11 +13,11 @@ class getChatroomInfoView(View):
 		super().__init__
 
 	def get(self, request):
-		chatroom_id = request.GET.get('chatroom_id')
+		try:
+			chatroom_id = request.GET.get('chatroom_id')
 
 
-		try: 
-			chatroom = get_object_or_404(ChatGroup, group_id=chatroom_id)
+			chatroom = get_object_or_404(ChatGroup, group_id=str(chatroom_id))
 			members_list = list(chatroom.members.all())
 			members = []
 			for member in members_list:
@@ -41,4 +41,7 @@ class getChatroomInfoView(View):
 			return JsonResponse({'chatroom_dict': chatroom_dict, 'status': 'Success'}, status=200)
 		except Http404:
 			return JsonResponse({'message': 'Requested chatroom does not exist', 'status': 'Error'}, status=401)
+		except Exception as e:
+			print(f'Error: {str(e)}')
+			return JsonResponse({"message": str(e)}, status=400)
 

@@ -21,20 +21,24 @@ class GetFriendsList(View):
         super()
          
     def get(self, request):
-        if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'status': 'error', 'message': 'unregistered'}, status=200) 
-        self.friend_list = self.get_friend_list(request.user)
-        if not self.friend_list:
-            return JsonResponse({'message': 'Friend list not found', 'status': 'error'}, status=404) 
-        pending_requests = self.get_pending_requests(request.user)
-        return JsonResponse({
-            'status': 'success',
-            'message': {
-                'friends': self.friend_list.to_dict(),
-                'received_requests': pending_requests['received'], 
-                'sent_requests': pending_requests['sent']
-                }
-            }, status=200) 
+        try:
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'status': 'error', 'message': 'unregistered'}, status=200) 
+            self.friend_list = self.get_friend_list(request.user)
+            if not self.friend_list:
+                return JsonResponse({'message': 'Friend list not found', 'status': 'error'}, status=404) 
+            pending_requests = self.get_pending_requests(request.user)
+            return JsonResponse({
+                'status': 'success',
+                'message': {
+                    'friends': self.friend_list.to_dict(),
+                    'received_requests': pending_requests['received'], 
+                    'sent_requests': pending_requests['sent']
+                    }
+                }, status=200) 
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
 
     def get_friend_list(self, user):
         return FriendList.objects.filter(user=user).first()

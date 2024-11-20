@@ -15,25 +15,28 @@ class login_view(View):
         super().__init__
     
     def post(self, request):
-        data = json.loads(request.body.decode('utf-8'))
-        if 'logged_in_with_oauth' in data and data['logged_in_with_oauth'] is True:
-            return self._oauth_login(request, data)
-        if 'twofactor' in data:
-            return self._send_twofactor_request(data=data, csrf_token=request.headers.get('X-CSRFToken'), request=request)
-        response = self._check_data(request=request, data=data)
-        if response is not None:
-            return response
         try:
-            user = User.objects.get(username=data['username'])
-            if check_password(data['password'], user.password):
-                if user.is_verified is True:
-                    return JsonResponse({'message': 'need2faVerification', 'is_verified': user.is_verified, 'two_factor_method': user.two_factor_method, 'email': user.email}, status=200)
-                response = self._create_user_session(user=user, request=request)
-            else:
-                response = JsonResponse({'message': 'invalidPassword'}, status=400)
-        except User.DoesNotExist:
-            response = JsonResponse({'message': 'noExistsUsername'}, status=400)
-        return response
+            data = json.loads(request.body.decode('utf-8'))
+            if 'logged_in_with_oauth' in data and data['logged_in_with_oauth'] is True:
+                return self._oauth_login(request, data)
+            if 'twofactor' in data:
+                return self._send_twofactor_request(data=data, csrf_token=request.headers.get('X-CSRFToken'), request=request)
+            response = self._check_data(request=request, data=data)
+            if response is not None:
+                return response
+            try:
+                user = User.objects.get(username=data['username']) 
+                if check_password(data['password'], user.password):
+                    if user.is_verified is True:
+                        return JsonResponse({'message': 'need2faVerification', 'is_verified': user.is_verified, 'two_factor_method': user.two_factor_method, 'email': user.email}, status=200)
+                    response = self._create_user_session(user=user, request=request)
+                else:
+                    response = JsonResponse({'message': 'invalidPassword'}, status=400)
+            except User.DoesNotExist:
+                response = JsonResponse({'message': 'noExistsUsername'}, status=400)
+            return response
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=400)
     
     def _oauth_login(self, request, data):
         if 'twofactor' in data:

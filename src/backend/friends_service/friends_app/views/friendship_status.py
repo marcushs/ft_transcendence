@@ -10,14 +10,18 @@ class GetFriendShipStatus(View):
         super()
         
     def get(self, request):
-        if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'status': 'error', 'message': 'unregistered'}, status=200)
-        self.init(request=request)
-        response = self.check_data(user=request.user)
-        if response['status'] != 200:
-            return JsonResponse({'message': response['message']}, status=response['status'])
-        return self.get_friend_request_status(user=request.user)
-        
+        try:
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'status': 'error', 'message': 'unregistered'}, status=200)
+            self.init(request=request)
+            response = self.check_data(user=request.user)
+            if response['status'] != 200:
+                return JsonResponse({'message': response['message']}, status=response['status'])
+            return self.get_friend_request_status(user=request.user)
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
+            
     def  init(self, request):
         self.is_self = True
         self.User = get_user_model()

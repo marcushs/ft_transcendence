@@ -24,25 +24,31 @@ class oauth42UpdateUsernameView(View):
         super().__init__
         
     def post(self, request):
-        data = json.loads(request.body.decode('utf-8'))
+        try:
+            data = json.loads(request.body.decode('utf-8'))
 
-        new_username = data['newUsername']
-        id = request.COOKIES.get('id')
-        self.csrf_token = request.headers.get('X-CSRFToken')
-        response = self.check_new_username_taken(new_username)
-        if response.status_code == 200:
-            try:
-                user = User.objects.get(id=id)
-                user.username = new_username
-                user.save()
-                response = JsonResponse({"message": "Set username succesfully", "status": "Success"}, status=200)
-                response.delete_cookie("id")
-                self.init_payload(user)
-                self.send_create_user_request_to_endpoints()
-                return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
-            except User.DoesNotExist:
-                return JsonResponse({"message": "User not found", "url":"/login", "status": "Error"}, status=404)
-        return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
+            if 'newUsername' not in data:
+                raise Exception('requestMissingData')
+            new_username = str(data['newUsername'])
+            id = request.COOKIES.get('id')
+            self.csrf_token = request.headers.get('X-CSRFToken')
+            response = self.check_new_username_taken(new_username)
+            if response.status_code == 200:
+                try:
+                    user = User.objects.get(id=id)
+                    user.username = new_username
+                    user.save()
+                    response = JsonResponse({"message": "Set username succesfully", "status": "Success"}, status=200)
+                    response.delete_cookie("id")
+                    self.init_payload(user)
+                    self.send_create_user_request_to_endpoints()
+                    return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
+                except User.DoesNotExist:
+                    return JsonResponse({"message": "User not found", "url":"/login", "status": "Error"}, status=404)
+            return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
          
     def check_new_username_taken(self, username):
         url = 'http://user:8000/api/user/check_username/'

@@ -15,13 +15,17 @@ class getJoinableTournamentsView(View):
 		super().__init__
 
 	def get(self, request):
-		joinable_tournaments = Tournament.objects.annotate(
-			member_count=Count('members')
-		).filter(
-			Q(member_count__lt=F('tournament_size')) & Q(isJoinable=True)
-		).values('tournament_id', 'tournament_name', 'tournament_size', 'member_count')
+		try:
+			joinable_tournaments = Tournament.objects.annotate(
+				member_count=Count('members')
+			).filter(
+				Q(member_count__lt=F('tournament_size')) & Q(isJoinable=True)
+			).values('tournament_id', 'tournament_name', 'tournament_size', 'member_count')
 
-		tournaments_list = list(joinable_tournaments)
-		return JsonResponse({'tournaments_list': tournaments_list, 'status': 'success'}, status=200)
+			tournaments_list = list(joinable_tournaments)
+			return JsonResponse({'tournaments_list': tournaments_list, 'status': 'success'}, status=200)
+		except Exception as e:
+			print(f'Error: {str(e)}')
+			return JsonResponse({"message": str(e)}, status=400)
 
 

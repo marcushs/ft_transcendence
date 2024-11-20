@@ -58,7 +58,6 @@ class UpdateJwtToken(View):
 
 
     def get(self, request):
-        print(f'!!!!!!!!!!!!!!!!!!!!!! UpdateJwtToken reached with request: {request}')
         if isinstance(request.user, AnonymousUser):
             return JsonResponse({'message': 'No token provided'}, status=401)
         return JsonResponse({'message': 'tokens updated'}, status=200)

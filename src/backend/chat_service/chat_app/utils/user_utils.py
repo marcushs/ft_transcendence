@@ -24,21 +24,19 @@ class DeleteUser(View):
 class add_new_user(View):
     def __init__(self):
         super().__init__
-    
-    def get(self, request):
-        return JsonResponse({"message": 'get request successfully reached'}, status=200)
+
     
     def post(self, request):
         try:
             data = json.loads(request.body.decode('utf-8'))
             if not all(key in data for key in ('username', 'user_id')):
-                raise Exception('chat: requestDataMissing')
-            if User.objects.filter(username=data['username']).exists():
-                raise Exception('chat: usernameAlreadyTaken')
+                raise Exception('requestDataMissing')
+            if User.objects.filter(username=str(data['username'])).exists():
+                raise Exception('usernameAlreadyTaken')
             if data['logged_in_with_oauth'] and data['logged_in_with_oauth'] is True:
                 User.objects.create_oauth_user(data)
             else:
-                User.objects.create_user(username=data['username'], user_id=data['user_id'])
+                User.objects.create_user(username=str(data['username']), user_id=str(data['user_id']))
             return JsonResponse({"message": 'user added with success', "status": "Success"}, status=200)
         except Exception as e:
             return JsonResponse({'message': str(e)}, status=400)
@@ -47,15 +45,16 @@ class add_new_user(View):
 class update_user(View):
     def __init__(self):
         super().__init__
-    
-    def get(self, request):
-        return JsonResponse({"message": 'get request successfully reached'}, status=200)
+
 
     def post(self, request):
-        if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'message': 'User not found'}, status=400)
-        data = json.loads(request.body.decode('utf-8'))
-        if 'username' in data:
-            setattr(request.user, 'username', data['username'])
-        request.user.save()
-        return JsonResponse({'message': 'User updated successfully'}, status=200)
+        try:
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'message': 'User not found'}, status=400)
+            data = json.loads(request.body.decode('utf-8'))
+            if 'username' in data:
+                setattr(request.user, 'username', str(data['username']))
+            request.user.save()
+            return JsonResponse({'message': 'User updated successfully'}, status=200)
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=400)

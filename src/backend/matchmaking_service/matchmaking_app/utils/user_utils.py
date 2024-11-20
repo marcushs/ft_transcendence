@@ -48,9 +48,6 @@ class DeleteUser(View):
 class AddNewUser(View):
     def __init__(self):
         super().__init__()
-    
-    async def get(self, request):
-        return JsonResponse({"message": 'get request successfully reached'}, status=200)
 
 
     async def post(self, request):
@@ -58,7 +55,7 @@ class AddNewUser(View):
             data = json.loads(request.body.decode('utf-8'))
             if not all(key in data for key in ('username', 'user_id')):
                 raise Exception('requestDataMissing')
-            await sync_to_async(User.objects.create_user)(username=data['username'], user_id=data['user_id'])
+            await sync_to_async(User.objects.create_user)(username=str(data['username']), user_id=str(data['user_id']))
             return JsonResponse({"message": 'user added with success'}, status=200)
         except Exception as e:
             return JsonResponse({"message": str(e)}, status=400)
@@ -67,18 +64,20 @@ class AddNewUser(View):
 class update_user(View):
     def __init__(self):
         super().__init__()
-        
-    def get(self, request):
-        return JsonResponse({"message": 'get request successfully reached'}, status=200)
+
     
     def post(self, request):
-        if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'message': 'User not found'}, status=400)
-        data = json.loads(request.body.decode('utf-8'))
-        if 'username' in data:
-            setattr(request.user, 'username', data['username'])
-        request.user.save()
-        return JsonResponse({'message': 'User updated successfully'}, status=200)
+        try:
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'message': 'User not found'}, status=400)
+            data = json.loads(request.body.decode('utf-8'))
+            if 'username' in data:
+                setattr(request.user, 'username', str(data['username']))
+            request.user.save()
+            return JsonResponse({'message': 'User updated successfully'}, status=200)
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
 
 
 async def send_request(request_type, url, request=None, payload=None):
@@ -130,7 +129,7 @@ class getUser(View):
     def get(self, request):
         try:
             username = request.GET.get('q', '')
-            user = User.objects.get(username=username) 
+            user = User.objects.get(username=str(username)) 
             users_data = {
                 'username': user.username,
                 'profile_image': user.profile_image,
@@ -139,3 +138,6 @@ class getUser(View):
             return JsonResponse({'status': 'success', 'message': users_data}, safe=False, status=200)   
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)

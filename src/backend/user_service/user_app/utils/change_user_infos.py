@@ -16,17 +16,29 @@ import re
 class ChangeUserInfosView(View):
     def __init__(self):
         super().__init__
+        
+        self.url_list = [
+            'http://auth:8000/api/auth',
+            'http://chat:8000/api/chat',
+            'http://friends:8000/api/friends',
+            'http://matchmaking:8000/api/matchmaking',
+            'http://notifications:8000/api/notifications',
+            'http://statistics:8000/api/statistics',
+            'http://tournament:8000/api/tournament',
+            'http://twofactor:8000/api/twofactor',
+        ]
+        self.sended_url_list = []
 
 
     async def post(self, request):
-        User = get_user_model()
-        response = {}
-
-        if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'error': 'User not found'}, status=201) 
-
         try:
-            await self.check_update_error(User, request)
+            User = get_user_model()
+            response = {}
+    
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'error': 'User not found'}, status=201) 
+
+            await self.check_update_error(User, request) 
             username = request.POST.get('username')
 
             if username and request.user.username != username:
@@ -81,7 +93,7 @@ class ChangeUserInfosView(View):
             error['error'] = 'emailAlreadyExists'
             raise ValidationError(error)
         if re.search(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', new_email) is None:
-            raise ValueError('invalidEmailFormat')
+            raise ValueError('invalidEmailFormat') 
 
 
     def check_profile_image_errors(self, new_profile_image):
@@ -107,28 +119,30 @@ class ChangeUserInfosView(View):
   
     async def change_username(self, User, request):
         try:
-            old_username = request.user.username
-            request.user.username = request.POST.get('username')
+            self.old_username = request.user.username
+            request.user.username = str(request.POST.get('username'))
             payload = {'username': request.user.username}
-            await send_request(request_type='POST', request=request, url='http://auth:8000/api/auth/update_user/', payload=payload) 
-            await send_request(request_type='POST', request=request, url='http://chat:8000/api/chat/update_user/', payload=payload)
-            await send_request(request_type='POST', request=request, url='http://friends:8000/api/friends/update_user/', payload=payload)
-            await send_request(request_type='POST', request=request, url='http://matchmaking:8000/api/matchmaking/update_user/', payload=payload)
-            await send_request(request_type='POST', request=request, url='http://notifications:8000/api/notifications/update_user/', payload=payload)
-            await send_request(request_type='POST', request=request, url='http://statistics:8000/api/statistics/update_user/', payload=payload)
-            await send_request(request_type='POST', request=request, url='http://tournament:8000/api/tournament/update_user/', payload=payload)
-            await send_request(request_type='POST', request=request, url='http://twofactor:8000/api/twofactor/update_user/', payload=payload)
-            await send_request(request_type='POST', request=request, url='http://notifications:8000/api/notifications/update_user/', payload=payload)
+            for url in self.url_list:
+                await send_request(request_type='POST', request=request, url=f'{url}/update_user/', payload=payload)
+                self.sended_url_list.append(url)
             await sync_to_async(request.user.save)()
-            await notify_user_info_display_change(request=request, change_info='username', old_value=old_username)
-
-            return {'username_message': 'usernameSuccessfullyChanged'}
+            await notify_user_info_display_change(request=request, change_info='username', old_value=self.old_username)
+            return {'username_message': 'usernameSuccessfullyChanged'} 
         except Exception as e:
+            await self.callback_username_update_error(request)
+            print(f'Error: ', str(e))
             return {'username_message': 'usernameFailedToChange'}
+
+    async def callback_username_update_error(self, request): 
+        payload = {'username': self.old_username}
+        for url in self.sended_url_list:
+            await send_request(request_type='POST', request=request, url=f'{url}/update_user/', payload=payload)
+        request.user.username = self.old_username
+        await sync_to_async(request.user.save)()
             
 
     async def change_email(self, User, request):
-        request.user.email = request.POST.get('email') 
+        request.user.email = str(request.POST.get('email'))
         payload = {'email': request.user.email}
         
         try:

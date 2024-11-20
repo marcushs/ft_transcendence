@@ -12,9 +12,13 @@ class AliasManager(View):
 
 
 	def get(self, request):
-		if isinstance(request.user, AnonymousUser):
-			return JsonResponse({'message': 'unknownUser'}, status=400)
-		return JsonResponse({'alias': str(request.user.alias)}, status=200)
+		try:
+			if isinstance(request.user, AnonymousUser): 
+				return JsonResponse({'message': 'unknownUser'}, status=400)
+			return JsonResponse({'alias': str(request.user.alias)}, status=200)
+		except Exception as e:
+			print(f'Error: {str(e)}')
+			return JsonResponse({"message": str(e)}, status=400)
 
 
 

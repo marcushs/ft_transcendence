@@ -26,12 +26,16 @@ class get42ImageView(View):
         super().__init__
 
     def get(self, request):
-        user_id = request.GET.get('user_id')
-        if User.objects.filter(id=user_id).exists():
-            user = User.objects.filter(id=user_id)
-            pp_link = user.profile_image_link
-            print(pp_link)
-            return JsonResponse({'message': 'pp_link', 'status': 'Success'}, status=200)
-        return JsonResponse({'message': 'User not found', 'status': 'Error'}, status=400)
+        try:
+            user_id = request.GET.get('user_id')
+            if User.objects.filter(id=str(user_id)).exists():
+                user = User.objects.filter(id=str(user_id))
+                pp_link = user.profile_image_link
+                print(pp_link)
+                return JsonResponse({'message': 'pp_link', 'status': 'Success'}, status=200)
+            return JsonResponse({'message': 'User not found', 'status': 'Error'}, status=400)
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
             
         

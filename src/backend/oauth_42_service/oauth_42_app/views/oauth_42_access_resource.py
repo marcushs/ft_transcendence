@@ -26,31 +26,34 @@ class oauth42AccessResourceView(View):
         super().__init__
     
     def get(self, request):
-        token = request.COOKIES.get('42_access_token') 
-        resource_url = 'https://api.intra.42.fr/v2/me'
-
-        headers = {
-            'Authorization': f'Bearer {token}'
-        }
-
-        response = requests.get(resource_url, headers=headers)
-
-        # Check if the response contains JSON data and handle errors
         try:
-            response_data = response.json()
-            if 'error' in response_data:
-                response = JsonResponse({'message': response_data['error'],
-                                     'status': 'Error'}, 
-                                     status=400)
+            token = request.COOKIES.get('42_access_token') 
+            resource_url = 'https://api.intra.42.fr/v2/me'
+
+            headers = {
+                'Authorization': f'Bearer {str(token)}'
+            }
+
+            response = requests.get(resource_url, headers=headers)
+
+            try:
+                response_data = response.json()
+                if 'error' in response_data:
+                    response = JsonResponse({'message': response_data['error'],
+                                        'status': 'Error'}, 
+                                        status=400)
+                    response.delete_cookie('42_access_token')
+                    return response
+                return self.create_or_login_user(request, response_data)
+            except ValueError:
+                response = JsonResponse({'message': 'Invalid JSON response',
+                                    'status': 'Error'}, 
+                                    status=400)
                 response.delete_cookie('42_access_token')
                 return response
-            return self.create_or_login_user(request, response_data)
-        except ValueError:
-            response = JsonResponse({'message': 'Invalid JSON response',
-                                 'status': 'Error'}, 
-                                 status=400)
-            response.delete_cookie('42_access_token')
-            return response
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
         
     def create_or_login_user(self, request, data):
         self.csrf_token = request.headers.get('X-CSRFToken')
