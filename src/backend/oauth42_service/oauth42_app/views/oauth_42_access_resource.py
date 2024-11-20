@@ -68,6 +68,11 @@ class oauth42AccessResourceView(View):
 
         try:
             user = User.objects.get(email=self.email)
+            if User.objects.filter(self.username).exists():
+                response = self.check_new_username_taken(self.username)
+                if response.status_code == 200:
+                    return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
+                    
             self.payload['user_id'] = str(user.id)
             return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
         except User.DoesNotExist:
@@ -118,3 +123,13 @@ class oauth42AccessResourceView(View):
             'logged_in_with_oauth': True,
             'profile_image_link': self.profile_image_link,
         }
+
+    def check_new_username_taken(self, username):
+        url = 'http://user:8000/api/user/check_username/'
+        try:
+            response = requests.get(url=url, params={"username": username})
+            response.raise_for_status()
+            return response
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
