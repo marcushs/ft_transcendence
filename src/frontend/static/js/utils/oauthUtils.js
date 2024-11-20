@@ -41,12 +41,12 @@ export async function oauthRedirectCallback() {
 		} else {
 			// handleOauthCallback error
 			status_text.textContent = `${getString("oauthUtils/error")}: ${data.message}`;
-			// throwRedirectionEvent('/login');
+			throwRedirectionEvent('/login');
 		}
 	} else {
 		// No query params, not from 42 oauth
 		status_text.textContent = getString("oauthUtils/invalidRequest");
-			// throwRedirectionEvent('/login');
+			throwRedirectionEvent('/login');
 	}
 }
 

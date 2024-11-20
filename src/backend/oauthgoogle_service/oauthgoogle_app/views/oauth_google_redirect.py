@@ -17,7 +17,7 @@ class oauthGoogleRedirectView(View):
             state = request.GET.get('state')
             code = request.GET.get('code')
             
-            cookie_state = request.COOKIES.get('oauth2_state')
+            cookie_state = request.COOKIES.get('oauthgoogle_state')
 
             if state != cookie_state:
                 return JsonResponse({'message': 'Invalid state parameter', 
@@ -40,7 +40,7 @@ class oauthGoogleRedirectView(View):
                                 httponly=True,
                                 secure=True,
                                 samesite='None')
-            response.delete_cookie('oauth2_state')
+            response.delete_cookie('oauthgoogle_state')
 
             return response
         except Exception as e:

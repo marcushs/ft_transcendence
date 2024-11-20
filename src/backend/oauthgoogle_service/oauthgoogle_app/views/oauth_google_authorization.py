@@ -33,7 +33,7 @@ class oauthGoogleAuthorizationView(View):
             
             state = self.state
             response.set_cookie(
-                'oauth2_state', 
+                'oauthgoogle_state', 
                 state,
                 httponly=True,
                 secure=True,
