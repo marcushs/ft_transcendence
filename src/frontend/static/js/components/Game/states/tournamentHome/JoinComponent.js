@@ -45,13 +45,6 @@ class JoinComponent extends HTMLElement {
 			let res = await sendRequest('GET', `/api/tournament/get_joinable_tournaments/`, null, false);
 
 			this.tournamentsList = res.tournaments_list;
-			if (this.tournamentsList.length === 0) {
-				const tournamentsList = this.querySelector('.tournaments-list');
-				const noJoinableP = document.createElement('p');
-
-				noJoinableP.innerText = "No Joinable Tournament";
-				tournamentsList.appendChild(noJoinableP);
-			}
 		} catch (error) {
 			console.log("Error getting joinable tournaments: ", error);
 		}

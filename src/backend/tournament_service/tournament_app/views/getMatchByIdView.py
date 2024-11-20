@@ -15,12 +15,13 @@ class getMatchByIdView(View):
 
 	def get(self, request):
 		try:
+			if isinstance(request.user, AnonymousUser):
+				return JsonResponse({'message': 'unknownUser'}, status=400)
 			match_id = request.GET.get('match_id')
-
-			match = TournamentMatch.objects.get(match_id=str(match_id))
+			match = TournamentMatch.objects.get(match_id=match_id)
 			return JsonResponse({'status': 'success', 'match': match.to_dict_sync()}, status=200)
 		except TournamentMatch.DoesNotExist:
-			return JsonResponse({'status': 'error', 'message': 'Match not found'}, status=400)   
+			return JsonResponse({'status': 'error', 'message': 'Match not found'}, status=400)
 		except Exception as e:
 			print(f'Error: {str(e)}')
 			return JsonResponse({"message": str(e)}, status=400)

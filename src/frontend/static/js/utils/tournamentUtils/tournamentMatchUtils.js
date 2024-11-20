@@ -10,15 +10,14 @@ export function redirectToTournamentMatch(tournamentBracket) {
 	if (location.pathname !== '/') {
 		throwRedirectionEvent('/');
 		document.addEventListener('gameComponentLoaded', () => {
-			redirect(tournamentBracket);
+			redirectMatch(tournamentBracket);
 		});
 	} else {
-		redirect(tournamentBracket)
+		redirectMatch(tournamentBracket)
 	}
 }
 
-
-function redirect(tournamentBracket) {
+function redirectMatch(tournamentBracket) {
 	const gameComponent = document.querySelector('game-component');
 	const tournamentMatchState = gameComponent.states['tournamentMatch'];
 	const tournamentMatch = new TournamentMatch(tournamentBracket);
@@ -31,31 +30,29 @@ function redirect(tournamentBracket) {
 export async function startTournamentMatchInstance() {
 	const userId = await getUserId();
 
+	if (!userId) return console.error('Cannot find userId');
 	gameWebsocket(userId);
 }
 
-export function proceedInTournament(gameId, userId) {
-	const payload = {
-		'type': 'proceed_tournament',
-		'user_id': userId,
-		'match_id': gameId
+export async function redirectToTournamentLostMatch(match) {
+	if (location.pathname !== '/') {
+		alert('wtf')
+		throwRedirectionEvent('/');
+		document.addEventListener('gameComponentLoaded', () => {
+			redirectLost(match);
+		});
+	} else {
+		redirectLost(match)
 	}
-	tournamentSocket.send(JSON.stringify(payload));
 }
 
-export async function redirectToTournamentLostMatch(matchId) {
-	try {
-		const res = await sendRequest('GET', `/api/tournament/get_match_by_id/?match_id=${matchId}`, null, false);
-	
-		const match = res.match;
-		const gameComponent = document.querySelector('game-component');
-		const tournamentLostState = gameComponent.states['tournamentLost'];
-		const tournamentLost = new TournamentLost(match);
-	
-		tournamentLostState['state'] = tournamentLost;
-		gameComponent.changeState(tournamentLostState.state, tournamentLostState.context);
-		gameComponent.currentState = "tournamentLost";
-	} catch (error) {
-		
-	}
+function redirectLost(match) {
+	// alert('redirect lost')
+	// const gameComponent = document.querySelector('game-component');
+	// const tournamentLostState = gameComponent.states['tournamentLost'];
+	// const tournamentLost = new TournamentLost(match);
+
+	// tournamentLostState['state'] = tournamentLost;
+	// gameComponent.changeState(tournamentLostState.state, tournamentLostState.context);
+	// gameComponent.currentState = "tournamentLost";
 }

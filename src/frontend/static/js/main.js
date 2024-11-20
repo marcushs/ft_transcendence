@@ -23,6 +23,7 @@ import { checkMatchmakingSearch } from "./utils/matchmaking/matchResearch.js";
 import disableButtonsInGameResearch from "./utils/disableButtonsInGameResearch.js";
 import {throwRedirectionEvent} from "./utils/throwRedirectionEvent.js";
 import TournamentMatch from "./components/Game/states/tournamentHome/TournamentMatch.js";
+import { sendRequest } from "./utils/sendRequest.js";
 
 let languageJson;
 
@@ -42,48 +43,52 @@ const routes = {
     "/oauth-username": { title: "OauthUsername", render: oauthUsername},
 };
 
+// localStorage.clear()
+
 function manageGameStates() {
     // if (localStorage.getItem("isSearchingPrivateMatch") || localStorage.getItem("isReadyToPlay") || localStorage.getItem("isInGuestState"))
-    if (localStorage.getItem("tournamentData")) {
+    const tournamentData = localStorage.getItem("tournamentData");
+    // console.log('tournamend data = ', tournamentData);
+    if (tournamentData) {
         disableButtonsInGameResearch();
         if (location.pathname !== '/') {
             throwRedirectionEvent('/');
-            document.addEventListener('gameComponentLoaded', () => {
-                throwChangeGameStateEvent();
-            });
+            console.log(document.querySelector('game-component'));
+            if (!document.querySelector('game-component')) {
+                document.addEventListener('gameComponentLoaded', () => {
+                    throwChangeGameStateEvent(tournamentData.state);
+                });
+            } else {
+                throwChangeGameStateEvent(tournamentData.state);
+            }
         } else {
-            throwChangeGameStateEvent();
+            throwChangeGameStateEvent(tournamentData.state);
         }
     }
+    // try {
+    //     let res = await sendRequest('GET', '/api/tournament/get_tournament_status/', null, false);
+
+    //     console.log('tournament status: ', res)
+    // } catch (error) {
+        
+    // }
     // else
     // } else if (fetch) {
         // fetch pour voir si c'est encore le cas, si oui, return
     // }
 }
 
-function throwChangeGameStateEvent() {
+function throwChangeGameStateEvent(state) {
     const event = new CustomEvent('changeGameStateEvent', {
         bubbles: true,
         detail: {
-            context: "tournamentHome",
+            context: state,
         }
     });
 
     document.dispatchEvent(event);
 }
-
-
-function redirect(tournamentBracket) {
-    const gameComponent = document.querySelector('game-component');
-    const tournamentMatchState = gameComponent.states['tournamentMatch'];
-    const tournamentMatch = new TournamentMatch(tournamentBracket);
-
-    tournamentMatchState['state'] = tournamentMatch;
-    gameComponent.changeState(tournamentMatchState.state, tournamentMatchState.context);
-    gameComponent.currentState = "tournamentMatch";
-}
-
-
+// localStorage.clear()
 async function setUserRender() {
     await generateCsrfToken();
     const isUserConnected = await checkAuthentication();

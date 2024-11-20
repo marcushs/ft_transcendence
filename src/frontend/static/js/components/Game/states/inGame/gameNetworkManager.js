@@ -80,7 +80,6 @@ class GameInactivityComponent extends HTMLElement {
 
     attachEventsListener() {
         this.reconnectChoice.addEventListener('click', async () => {
-            await handleGameReconnection(this.gameState.userId, this.gameState)
             this.removeInstance();
         })
         this.LeaveChoice.addEventListener('click', async () => {            

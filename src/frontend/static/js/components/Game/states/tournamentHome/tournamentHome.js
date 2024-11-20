@@ -4,6 +4,8 @@ import './CreateComponent.js'
 import {getString} from "../../../../utils/languageManagement.js";
 import TournamentWaitingRoom from "./TournamentWaitingRoom.js";
 import TournamentMatch from "./TournamentMatch.js";
+import TournamentLost from './TournamentLost.js';
+import TournamentWon from './TournamentWon.js';
 
 class tournamentHome {
 
@@ -24,6 +26,12 @@ class tournamentHome {
 		} else if (tournamentData && tournamentData.state === "matchState") {
 			console.log(tournamentData)
 			return this.generateMatchState(tournamentData);
+		} else if (tournamentData && tournamentData.state === "tournamentLost") {
+			console.log(tournamentData)
+			return this.generateTournamentLostState(tournamentData);
+		} else if (tournamentData && tournamentData.state === "tournamentWon") {
+			console.log(tournamentData)
+			return this.generateTournamentWonState(tournamentData.tournamentData);
 		} else {
 			return `
 				<div class="tournament-home-container">
@@ -40,10 +48,10 @@ class tournamentHome {
 	generateWaitingRoomState(tournamentData) {
 		const gameComponent = document.querySelector('game-component');
 		const tournamentWaitingRoom = new TournamentWaitingRoom(tournamentData.tournamentData);
-		const tournamentWaitingRoomState = gameComponent.states['tournamentWaitingRoom'];
+		const tournamentWaitingRoomState = gameComponent.states['waitingRoom'];
 
 		tournamentWaitingRoomState['state'] = tournamentWaitingRoom;
-		gameComponent.currentState = "tournamentWaitingRoom";
+		gameComponent.currentState = "waitingRoom";
 		return tournamentWaitingRoom.render();
 	}
 
@@ -55,6 +63,27 @@ class tournamentHome {
 		tournamentMatchState['state'] = tournamentMatch;
 		gameComponent.currentState = "tournamentMatch";
 		return tournamentMatch.render();
+	}
+
+	generateTournamentLostState(matchData) {
+		const gameComponent = document.querySelector('game-component');
+		const tournamentLostState = gameComponent.states['tournamentLost'];
+		const tournamentLost = new TournamentLost(matchData.matchData);
+
+		tournamentLostState['state'] = tournamentLost;
+		gameComponent.currentState = "tournamentLost";
+		return tournamentLost.render();
+	}
+
+	generateTournamentWonState(tournamentBracket) {
+		const gameComponent = document.querySelector('game-component');
+		const tournamentWonState = gameComponent.states['tournamentWon'];
+		const tournamentWon = new TournamentWon(tournamentBracket);
+	
+		tournamentWonState['state'] = tournamentWon;
+		gameComponent.changeState(tournamentWonState.state, tournamentWonState.context);
+		gameComponent.currentState = "tournamentWon";
+		return tournamentWon.render();
 	}
 }
 

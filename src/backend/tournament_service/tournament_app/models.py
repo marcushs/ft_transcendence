@@ -7,14 +7,18 @@ from asgiref.sync import sync_to_async
 from django.forms.models import model_to_dict
 from django.db.models import Prefetch
 
-def user_directory_path(instance, filename):
-    return f'profile_images/{instance.id}/{filename}'
-
 ROUND_CHOICES = [
     ('finals', 'Finals'),
     ('semi_finals', 'Semi-Finals'),
     ('quarter_finals', 'Quarter-Finals'),
     ('eighth_finals', 'Eighth-Finals'),
+]
+
+STATUS_CHOICES = [
+    ('joined_tournament', 'Joined Tournament'),
+    ('match', 'Match'),
+    ('lost_match', 'Lost Match'),
+    ('won_tournament', 'Won Tournament'),
 ]
 
 class UserManager(BaseUserManager):
@@ -39,6 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=12, unique=True, default='default')
     alias = models.CharField(max_length=12, unique=True, default='default')
+    status = models.CharField(max_length=17, choices=STATUS_CHOICES)
    
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -66,7 +71,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Tournament(models.Model):
     tournament_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    tournament_name = models.CharField(max_length=30, unique=True, editable=False)
+    tournament_name = models.CharField(max_length=30 , editable=False)
     creator = models.ForeignKey(User, related_name='created_tournaments', on_delete=models.CASCADE)
     tournament_size = models.IntegerField()
     members = models.ManyToManyField(User, related_name='joined_tournaments', blank=True)
@@ -138,7 +143,8 @@ class TournamentMatch(models.Model):
     date = models.DateTimeField(default=timezone.now)
     tournament_round = models.CharField(max_length=20, choices=ROUND_CHOICES)
     bracket_index = models.IntegerField(default=0)
-
+    isOver = models.BooleanField(default=False)
+ 
     async def to_dict(self):
         obj_dict = {
             'match_id': str(self.match_id),

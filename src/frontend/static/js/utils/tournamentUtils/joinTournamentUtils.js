@@ -17,18 +17,30 @@ export function putNewTournamentToDOM(tournament) {
 export function redirectToTournamentWaitingRoom(tournamentData) {
 	disableButtonsInGameResearch();
 	const gameComponent = document.querySelector('game-component');
-	const tournamentWaitingRoomState = gameComponent.states['tournamentWaitingRoom'];
+	const tournamentWaitingRoomState = gameComponent.states['waitingRoom'];
 	const tournamentWaitingRoom = new TournamentWaitingRoom(tournamentData);
 
 	tournamentWaitingRoomState['state'] = tournamentWaitingRoom;
 	gameComponent.changeState(tournamentWaitingRoomState.state, tournamentWaitingRoomState.context);
-	gameComponent.currentState = "tournamentWaitingRoom";
+	gameComponent.currentState = "waitingRoom";
 }
 
-export function redirectToWinnerPage(tournamentData) {
+export function redirectToWinnerPage(tournamentBracket) {
+	if (location.pathname !== '/') {
+		throwRedirectionEvent('/');
+		document.addEventListener('gameComponentLoaded', () => {
+			redirectWon(tournamentBracket);
+		});
+	} else {
+		console.log('got in else block in redirectToTournamentMatch')
+		redirectWon(tournamentBracket)
+	}
+}
+
+function redirectWon(tournamentBracket) {
 	const gameComponent = document.querySelector('game-component');
 	const tournamentWonState = gameComponent.states['tournamentWon'];
-	const tournamentWon = new TournamentWon(tournamentData);
+	const tournamentWon = new TournamentWon(tournamentBracket);
 
 	tournamentWonState['state'] = tournamentWon;
 	gameComponent.changeState(tournamentWonState.state, tournamentWonState.context);

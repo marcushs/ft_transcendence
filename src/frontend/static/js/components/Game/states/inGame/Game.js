@@ -12,7 +12,6 @@ import Intro from "./Intro.js";
 import Outro from "./Outro.js";
 import CircularList from "../../../../utils/CircularList.js";
 import RankOutro from "./RankOutro.js";
-import { proceedInTournament } from "../../../../utils/tournamentUtils/tournamentMatchUtils.js";
 import { redirectToTournamentLostMatch } from "../../../../utils/tournamentUtils/tournamentMatchUtils.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
@@ -442,19 +441,9 @@ export default class Game {
 // --------------------------------------- Game finished render -------------------------------------- //
 
 	gameFinished(isWin, data) {
-		localStorage.removeItem('inGameComponentState')
+		localStorage.removeItem("inGameComponentState");
 		this.throwLoadOutroAnimationEvent(isWin);
 		this.isOutroAnimationEnabled = true;
-
-		if (this.gameType === 'tournament') {
-			setTimeout(() => {
-				this.gameInProgress = false;
-				if (isWin) return proceedInTournament(this.gameId, this.userId);
-				disconnectGameWebSocket(this.userId, false);
-				redirectToTournamentLostMatch(this.gameId); //temporary redirection for loser
-			}, 7000);
-			return ;
-		}
 
 		if (this.gameType === "private_match") {
 			localStorage.removeItem("isSearchingPrivateMatch");
@@ -474,7 +463,8 @@ export default class Game {
 				setTimeout(() => {
 					this.gameInProgress = false;
 					disconnectGameWebSocket(this.userId, false);
-					throwRedirectionEvent('/');
+					if (this.gameType !== 'tournament')
+						throwRedirectionEvent('/');
 				}, 6000);
 			}
 		}, 7000);

@@ -1,5 +1,5 @@
 import { putNewTournamentToDOM, redirectToTournamentWaitingRoom, updateTournamentInfo, redirectToTournamentHome, redirectToWinnerPage } from './joinTournamentUtils.js';
-import { redirectToTournamentMatch, startTournamentMatchInstance } from './tournamentMatchUtils.js';
+import { redirectToTournamentLostMatch, redirectToTournamentMatch, startTournamentMatchInstance } from './tournamentMatchUtils.js';
 import getUserId from "../getUserId.js";
 
 export async function handleCreateTournament(data) {
@@ -35,17 +35,18 @@ export async function handleJoinTournament(data) {
 
         if (data.tournament.creator.id === userId) {
             updateTournamentInfo(data.tournament);
-            localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
+            // localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
             return;
         }
 
         for (let member of data.tournament.members) {
             if (member.id === userId) {
-                localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
+                // localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
                 updateTournamentInfo(data.tournament);
                 return;
             }
         }
+        // updateTournamentInfo(data.tournament);
     }
 }
 
@@ -72,7 +73,30 @@ export function handleLoadMatch(data) {
 
     localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
     console.log('test load match instance')
-    redirectToTournamentMatch(data.match);
+    console.log('lijqweorjblkjblk: ', data.fromMatch)
+    if (data.fromMatch) {
+        setTimeout(() => {
+            redirectToTournamentMatch(data.match);
+        }, 7000);
+        return;
+    }
+    redirectToTournamentMatch(data.match)
+}
+
+export function handleRedirectToTournamentLost(data) {
+    const tournamentDataObj = JSON.parse(localStorage.getItem("tournamentData"));
+
+    const tournamentData = {
+        state: 'tournamentLost',
+        tournamentData: tournamentDataObj.tournamentData,
+        matchData: data.match
+    }
+    console.log('data = ', data, ' and ', data.match);
+    localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
+    setTimeout(() => {
+        console.log('--------------------------=================>', tournamentData);
+        redirectToTournamentLostMatch(data.match);
+    }, 7000);
 }
 
 export function handleRedirectToTournamentHome() {
@@ -107,5 +131,14 @@ export function handleError(message) {
 }
 
 export function handleRedirectToWinnerPage(data) {
-    redirectToWinnerPage(data.tournament_bracket);
+    const tournamentData = {
+        state: 'tournamentWon',
+        tournamentData: data.tournament_bracket,
+        matchData: null
+    }
+    localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
+    console.log('in handleRedirectToWinnerPage tournamentData is: ', data.tourament_bracket)
+    setTimeout(() => {
+        redirectToWinnerPage(data.tournament_bracket);
+    }, 7000);
 }
