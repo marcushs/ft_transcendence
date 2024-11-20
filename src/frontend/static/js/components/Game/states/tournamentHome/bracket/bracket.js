@@ -98,6 +98,18 @@ class Bracket {
     // }
 
     render() {
+        setTimeout(() => {
+            let name = "bracket_model-4.svg";
+
+            if (this.nbOfPlayers === 8)
+                name = "bracket_model-8.svg"
+            if (this.nbOfPlayers === 16)
+                name = "bracket_model-16.svg"
+            console.log(this.bracketObj)
+            document.querySelector('.left-matches').style.backgroundImage = `url("../../../../../../assets/${name}")`;
+            document.querySelector('.right-matches').style.backgroundImage = `url("../../../../../../assets/${name}")`;
+        }, 0);
+
         return `
             ${this.generateBracket(this.bracketObj)}
 		`;

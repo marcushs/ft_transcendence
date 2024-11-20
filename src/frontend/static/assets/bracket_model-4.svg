@@ -1,0 +1,17 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 840" width="1320" height="840">
+	<title>bracket_model-svg</title>
+	<defs>
+		<image width="55" height="2" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAACAQMAAADGotYbAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAAA5JREFUeJxjZIAARigNAAAoAAOBZC9qAAAAAElFTkSuQmCC"/>
+		<image width="2" height="484" id="img2" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAHkAQMAAAAuEmxMAAAAAXNSR0IB2cksfwAAAANQTFRFjI+jvJGp6AAAABJJREFUeJxjZGAchaNwFA5xCACY6QHlYhpNDgAAAABJRU5ErkJggg=="/>
+	</defs>
+	<style>
+	</style>
+	<g id="Folder 1">
+		<g id="Left">
+			<use id="img10" href="#img1" transform="matrix(1,0,0,1,967,183)"/>
+			<use id="img11" href="#img1" transform="matrix(1,0,0,1,967,665)"/>
+			<use id="img15" href="#img2" transform="matrix(1,0,0,1,1022,183)"/>
+			<use id="img18" href="#img1" transform="matrix(1,0,0,1,1024,424)"/>
+		</g>
+	</g>
+</svg>
