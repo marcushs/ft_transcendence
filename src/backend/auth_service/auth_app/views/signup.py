@@ -19,45 +19,67 @@ class signup_view(View):
         super().__init__
         self.regexUsernameCheck = r'^[a-zA-Z0-9_-]+$'
         self.regexEmailCheck = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    
+        self.url_list = [
+            'http://chat:8000/api/chat',
+            'http://friends:8000/api/friends',
+            'http://matchmaking:8000/api/matchmaking',
+            'http://notifications:8000/api/notifications',
+            'http://statistics:8000/api/statistics',
+            'http://tournament:8000/api/tournament',
+            'http://twofactor:8000/api/twofactor',
+            'http://user:8000/api/user'
+        ]
+        self.sended_url_list = []
+
  
     def post(self, request):
-        data = json.loads(request.body.decode('utf-8'))
-        response = self._check_data(request, data)
-        if response is not None:
-            return response
-        user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
-        response = self._send_request(user=user, data=data, csrf_token=request.headers.get('X-CSRFToken'))
-        if not response:
-            user.delete()
-            return JsonResponse({'message': 'errorWhileSignup'}, status=400)
-        return JsonResponse({'message': 'accountCreated', 'redirect_url': 'login'}, status=200)
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            response = self._check_data(request, data)
+            if response is not None:
+                return response
+            user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
+            response = self._send_request(user=user, data=data, csrf_token=request.headers.get('X-CSRFToken'))
+            if not response:
+                user.delete()
+                return JsonResponse({'message': 'errorWhileSignup'}, status=400)
+            return JsonResponse({'message': 'accountCreated', 'redirect_url': 'login'}, status=200)
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=400)
 
     def _send_request(self, data, user, csrf_token):
-        language = 'en'
-        if data.get('language'):
-            language = data['language']
-        
-        payload = {
-                'user_id': str(user.id),
-                'username': user.username,
-                'email': user.email,
-                'logged_in_with_oauth': user.logged_in_with_oauth,
-                'language': language
-        }
         try:
-            send_request_without_token(request_type='POST', url='http://user:8000/api/user/add_user/', payload=payload, csrf_token=csrf_token)
-            send_request_without_token(request_type='POST', url='http://twofactor:8000/api/twofactor/add_user/', payload=payload, csrf_token=csrf_token)
-            send_request_without_token(request_type='POST', url='http://friends:8000/api/friends/add_user/', payload=payload, csrf_token=csrf_token)
-            send_request_without_token(request_type='POST', url='http://notifications:8000/api/notifications/add_user/', payload=payload, csrf_token=csrf_token)
-            send_request_without_token(request_type='POST', url='http://matchmaking:8000/api/matchmaking/add_user/', payload=payload, csrf_token=csrf_token)
-            send_request_without_token(request_type='POST', url='http://statistics:8000/api/statistics/add_user/', payload=payload, csrf_token=csrf_token)
-            send_request_without_token(request_type='POST', url='http://chat:8000/api/chat/add_user/', payload=payload, csrf_token=csrf_token)
-            send_request_without_token(request_type='POST', url='http://tournament:8000/api/tournament/add_user/', payload=payload, csrf_token=csrf_token)
+            language = 'en'
+            if data.get('language'):
+                language = data['language']
+
+            payload = {
+                    'user_id': str(user.id),
+                    'username': user.username,
+                    'email': user.email,
+                    'logged_in_with_oauth': user.logged_in_with_oauth,
+                    'language': language
+            }
+            for url in self.url_list:
+                send_request_without_token(request_type='POST', url=f'{url}/add_user/', payload=payload, csrf_token=csrf_token)
+                self.sended_url_list.append(url)
             return True
         except Exception as e:
+            print(f'Error: {str(e)}')
+            self._callback_signup_update_error(csrf_token, user)
             return False
- 
+
+
+    def _callback_signup_update_error(self, csrf_token, user):
+        try:
+            print(f'URL List in callback: {self.sended_url_list}')
+            for url in self.sended_url_list:
+                send_request_without_token(request_type='DELETE', url=f'{url}/delete_user/', csrf_token=csrf_token, payload={'user_id': str(user.id)})
+            print(f'URL List after callback: {self.sended_url_list}')
+        except Exception as e:
+            print(f'Error: callback: {str(e)}')
+
+
     def _check_data(self, request, data):
         if not data['username']:
             return JsonResponse({'message': 'noUsernameProvided'}, status=401)

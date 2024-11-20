@@ -30,7 +30,7 @@ class MatchmakingTournament(View):
             data = json.loads(request.body.decode('utf-8'))
             if not 'player1' in data or not 'player2' in data or not 'game_type' in data:
                 return JsonResponse({'status': 'error', 'message': 'Game cant start, invalid data sent'}, status=400)
-            players = await sync_to_async(self.get_players_data)(player_one_id=data['player1'], player_two_id=data['player2'])
+            players = await sync_to_async(self.get_players_data)(player_one_id=str(data['player1']), player_two_id=str(data['player2']))
             await sync_to_async(change_is_ingame_state)(value=True, user_instance=players[0]) 
             await sync_to_async(change_is_ingame_state)(value=True, user_instance=players[1])
             payload = {
@@ -45,7 +45,7 @@ class MatchmakingTournament(View):
             print(f'Error: {str(e)}') 
             await sync_to_async(change_is_ingame_state)(value=False, user_instance=players[0])
             await sync_to_async(change_is_ingame_state)(value=False, user_instance=players[1])
-            return JsonResponse({'status': 'error', 'message': 'An error occurred while starting the game'}, status=500)
+            return JsonResponse({'status': 'error', 'message': 'An error occurred while starting the game'}, status=400)
         
     def get_players_data(self, player_one_id, player_two_id):
         player_one = get_user_by_id(player_one_id)
@@ -64,18 +64,21 @@ class MatchmakingQueueManager(View):
     def post(self, request):
         from .PrivateMatch import is_player_in_private_lobby
         
-        if isinstance(request.user, AnonymousUser):  
-            return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400) 
-        data = json.loads(request.body.decode('utf-8'))
-        if not self.is_valid_matchmaking_type(data=data):
-            return JsonResponse({'status': 'error', 'message': 'Invalid matchmaking type'}, status=400)
-        is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
-        if is_waiting:
-            return JsonResponse({'status': 'error', 'message': 'User is already in matchmaking research'}, status=200)
-        if is_player_in_private_lobby(request.user):
-            return JsonResponse({'status': 'error', 'message': 'User is already in private match lobby'}, status=200)
-        self.start_matchmaking_by_type(data['type'], request) 
-        return JsonResponse({'status': 'success', 'message': f"User successfully added to {data['type']} queue"}, status=200) 
+        try:
+            if isinstance(request.user, AnonymousUser):  
+                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400) 
+            data = json.loads(request.body.decode('utf-8'))
+            if not self.is_valid_matchmaking_type(data=data):
+                return JsonResponse({'status': 'error', 'message': 'Invalid matchmaking type'}, status=400)
+            is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
+            if is_waiting:
+                return JsonResponse({'status': 'error', 'message': 'User is already in matchmaking research'}, status=200)
+            if is_player_in_private_lobby(request.user):
+                return JsonResponse({'status': 'error', 'message': 'User is already in private match lobby'}, status=200)
+            self.start_matchmaking_by_type(str(data['type']), request) 
+            return JsonResponse({'status': 'success', 'message': f"User successfully added to {data['type']} queue"}, status=200) 
+        except Exception as e:
+            return JsonResponse({"message": str(e)}, status=400)
 
 
     def is_valid_matchmaking_type(self, data):
@@ -112,12 +115,16 @@ class CheckUserInWaitingQueue(View):
 
 
     def get(self, request):
-        if isinstance(request.user, AnonymousUser):  
-            return JsonResponse({'message': 'No connected user'}, status=401)
-        is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
-        if is_waiting:
-            return JsonResponse({'waiting': True, 'match_type': match_type}, status=200) 
-        return JsonResponse({'waiting': False}, status=200)
+        try:
+            if isinstance(request.user, AnonymousUser):  
+                return JsonResponse({'message': 'No connected user'}, status=401)
+            is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
+            if is_waiting:
+                return JsonResponse({'waiting': True, 'match_type': match_type}, status=200) 
+            return JsonResponse({'waiting': False}, status=200)
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
 
 # -------->API: remove user from waiting list <-------------- #
 
@@ -127,16 +134,19 @@ class RemoveUserFromWaitingQueue(View):
 
 
     def post(self, request):
-        if isinstance(request.user, AnonymousUser):  
-            return JsonResponse({'message': 'No connected user'}, status=401) 
-        is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
-        if not is_waiting:
-            return JsonResponse({'message': 'cant remove user from matchmaking research cause he is not already present in it'}, status=401)
-        if match_type == 'unranked':
-            redis_instance.lrem('unranked_waiting_users', 0, str(request.user.id))
-        elif match_type == 'ranked':
-            redis_instance.lrem('ranked_waiting_users', 0, str(request.user.id)) 
-        return JsonResponse({'message': 'user removed from matchmaking research'}, status=200) 
+        try:
+            if isinstance(request.user, AnonymousUser):  
+                return JsonResponse({'message': 'No connected user'}, status=401) 
+            is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
+            if not is_waiting:
+                return JsonResponse({'message': 'cant remove user from matchmaking research cause he is not already present in it'}, status=401)
+            if match_type == 'unranked':
+                redis_instance.lrem('unranked_waiting_users', 0, str(request.user.id))
+            elif match_type == 'ranked':
+                redis_instance.lrem('ranked_waiting_users', 0, str(request.user.id)) 
+            return JsonResponse({'message': 'user removed from matchmaking research'}, status=200) 
+        except Exception as e:
+            return JsonResponse({"message": str(e)}, status=400)
     
 # -------->API - internal: change in_game state <-------------- #
 
@@ -150,11 +160,10 @@ class ChangeInGameUserStatus(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             self.check_data(data)
-            change_is_ingame_state(value=False, user_id=data['player_one_id'])
-            change_is_ingame_state(value=False, user_id=data['player_two_id'])
+            change_is_ingame_state(value=False, user_id=str(data['player_one_id']))
+            change_is_ingame_state(value=False, user_id=str(data['player_two_id']))
             return JsonResponse({}, status=200)        
         except Exception as e:
-            print(f'---------> ERROR: {str(e)}')
             return JsonResponse({'message': str(e)}, status=400) 
         
     def check_data(self, data):
@@ -166,11 +175,15 @@ class CheckUserInGame(View):
         super()
 
     async def get(self, request):
-        if isinstance(request.user, AnonymousUser):  
-            return JsonResponse({'message': 'No connected user'}, status=401)
-        if request.user.is_ingame:
-            return JsonResponse({'is_in_game': True, 'user_id': str(request.user.id)}, status=200)
-        return JsonResponse({'is_in_game': False, 'user_id': str(request.user.id)}, status=200)
+        try:
+            if isinstance(request.user, AnonymousUser):  
+                return JsonResponse({'message': 'No connected user'}, status=401)
+            if request.user.is_ingame:
+                return JsonResponse({'is_in_game': True, 'user_id': str(request.user.id)}, status=200)
+            return JsonResponse({'is_in_game': False, 'user_id': str(request.user.id)}, status=200)
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
 
  #//---------------------------------------> matchmaking utils <--------------------------------------\\#
 

@@ -442,6 +442,7 @@ export default class Game {
 // --------------------------------------- Game finished render -------------------------------------- //
 
 	gameFinished(isWin, data) {
+		localStorage.removeItem('inGameComponentState')
 		this.throwLoadOutroAnimationEvent(isWin);
 		this.isOutroAnimationEnabled = true;
 

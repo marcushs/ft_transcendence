@@ -21,6 +21,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'. 
 BASE_DIR = Path(__file__).resolve().parent.parent 
 
@@ -40,15 +41,15 @@ JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")
 
 # /-----> JWT token lifetime in seconds <-----\
 
-ACCESS_TOKEN_LIFETIME = 120 # 2 minutes
-REFRESH_TOKEN_LIFETIME = 86400 # 1 day
+ACCESS_TOKEN_LIFETIME = 120
+REFRESH_TOKEN_LIFETIME = 86400
 
 # /-----><-----\
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', os.environ.get('SERVER_IP'), 'friends']
 
 # Application definition
  
@@ -130,11 +131,12 @@ CORS_ALLOW_METHODS = [
 
 CORS_ALLOWED_ORIGINS = [
     'https://localhost:3000',
+    f"https://{os.environ.get('SERVER_IP')}:3000"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-	'https://localhost:3000',
-    'https://10.11.3.2:3000',
+    'https://localhost:3000',
+    f"https://{os.environ.get('SERVER_IP')}:3000"
 ]
 
 # Database

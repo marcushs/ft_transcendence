@@ -13,35 +13,39 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 class oauthGoogleRedirectView(View):
     def get(self, request):
-        state = request.GET.get('state')
-        code = request.GET.get('code')
-        
-        cookie_state = request.COOKIES.get('oauth2_state')
+        try:
+            state = request.GET.get('state')
+            code = request.GET.get('code')
+            
+            cookie_state = request.COOKIES.get('oauth2_state')
 
-        if state != cookie_state:
-            return JsonResponse({'message': 'Invalid state parameter', 
-                                 'status': 'Error'}, 
-                                 status=400)
-        token_data = self.exchange_code_for_token(code)
-        if 'error' in token_data:
-            return JsonResponse({'message': token_data['error'],
-                                 'status': 'Error'}, 
-                                 status=400)
-        access_token = token_data['access_token']
+            if state != cookie_state:
+                return JsonResponse({'message': 'Invalid state parameter', 
+                                    'status': 'Error'}, 
+                                    status=400)
+            token_data = self.exchange_code_for_token(code)
+            if 'error' in token_data:
+                return JsonResponse({'message': token_data['error'],
+                                    'status': 'Error'}, 
+                                    status=400)
+            access_token = token_data['access_token']
 
-        # Create a dictionary with the access token
-        response_data = {'message': 'Successfully exchange access token',
-                         'status': 'Success'} 
-        
-        response = JsonResponse(response_data, status=200)
-        response.set_cookie('google_access_token', 
-                            access_token,
-                            httponly=True,
-                            secure=True,
-                            samesite='None')
-        response.delete_cookie('oauth2_state')
+            # Create a dictionary with the access token
+            response_data = {'message': 'Successfully exchange access token',
+                            'status': 'Success'} 
+            
+            response = JsonResponse(response_data, status=200)
+            response.set_cookie('google_access_token', 
+                                access_token,
+                                httponly=True,
+                                secure=True,
+                                samesite='None')
+            response.delete_cookie('oauth2_state')
 
-        return response
+            return response
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
     
     def exchange_code_for_token(self, code):
         client_id = env("API_UID_GOOGLE") 

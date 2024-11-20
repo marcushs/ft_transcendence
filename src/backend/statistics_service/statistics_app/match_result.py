@@ -22,9 +22,6 @@ class MatchResultManager(View):
             'master': (10000, float('inf'))
         } 
 
-    def get(self, request):
-        return JsonResponse({'status': 'GET  match_resultview reached'}, status=200)
-
     def post(self, request):
         try:
             data = json.loads(request.body.decode('utf-8'))
@@ -51,7 +48,7 @@ class MatchResultManager(View):
                 return JsonResponse({'status': 'success', 'results': payload}, status=200)
             return JsonResponse({'status': 'success', 'message': 'match data updated'}, status=200)
         except Exception as e:
-            print(f'-> Error: {str(e)}')
+            print(f'Error: {str(e)}')
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 

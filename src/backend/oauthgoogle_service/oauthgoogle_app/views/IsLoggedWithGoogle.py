@@ -9,9 +9,15 @@ class IsLoggedWithGoogle(View):
         super().__init__
 
     def get(self, request):
-        user_id = request.GET.get('user_id', None)
-        if user_id is None:
-            return JsonResponse({'message': 'MissingUrlData'}, status=400)
-        if User.objects.filter(id=user_id).exists():
-            return JsonResponse({'message': 'logged with google', 'status': 'Success'}, status=200)
-        return JsonResponse({'message': 'Not logged with google', 'status': 'Error'}, status=200)
+        try:
+            user_id = request.GET.get('user_id', None)
+            if user_id is None:
+                return JsonResponse({'message': 'MissingUrlData'}, status=400)
+            if User.objects.filter(id=user_id).exists():
+                return JsonResponse({'message': 'logged with google', 'status': 'Success'}, status=200)
+            return JsonResponse({'message': 'Not logged with google', 'status': 'Error'}, status=200)
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({'message': str(e)}, status=400)
+
+

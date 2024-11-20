@@ -5,6 +5,7 @@ from . import views
 from .utils import user_utils, change_user_infos, language
 
 urlpatterns = [
+    path('delete_user/', user_utils.DeleteUser.as_view(), name='delete_user'), 
 	path('', views.index, name='index'),
     path('csrf/', csrf_utils.generate_csrf_token, name='csrf'),
     path('user_info/', views.get_information_view, name='user_info'),

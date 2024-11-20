@@ -26,31 +26,34 @@ class oauthGithubAccessResourceView(View):
         super().__init__
     
     def get(self, request):
-        token = request.COOKIES.get('github_access_token') 
-        resource_url = 'https://api.github.com/user'
-
-        headers = {
-            'Authorization': f'Bearer {token}'
-        }
-
-        response = requests.get(resource_url, headers=headers)
-
-        # Check if the response contains JSON data and handle errors
         try:
-            response_data = response.json()
-            if 'status' in response_data and response_data['status'] == '401':
-                response = JsonResponse({'message': response_data['message'],
-                                     'status': 'Error'}, 
-                                     status=401)
-                response.delete_cookie('github_access_token')
+            token = request.COOKIES.get('github_access_token') 
+            resource_url = 'https://api.github.com/user'
+
+            headers = {
+                'Authorization': f'Bearer {token}'
+            }
+
+            response = requests.get(resource_url, headers=headers)
+
+            try:
+                response_data = response.json()
+                if 'status' in response_data and response_data['status'] == '401':
+                    response = JsonResponse({'message': response_data['message'],
+                                        'status': 'Error'}, 
+                                        status=401)
+                    response.delete_cookie('github_access_token')
+                    return response
+                return self.create_or_login_user(request, response_data, token) 
+            except ValueError:
+                response = JsonResponse({'message': 'Invalid JSON response',
+                                    'status': 'Error'}, 
+                                    status=400)
+                response.delete_cookie('github_access_token')  
                 return response
-            return self.create_or_login_user(request, response_data, token) 
-        except ValueError:
-            response = JsonResponse({'message': 'Invalid JSON response',
-                                 'status': 'Error'}, 
-                                 status=500)
-            response.delete_cookie('github_access_token')  
-            return response
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
         
     def create_or_login_user(self, request, data, token): 
         self.csrf_token = request.headers.get('X-CSRFToken')

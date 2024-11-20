@@ -25,22 +25,26 @@ class oauth42AuthorizationView(View):
         super().__init__
     
     def get(self, request):
-        if request.COOKIES.get('jwt'):
-            return JsonResponse({'message': 'You are already logged in', 'url': '/home','status': 'Error'}, status=400)
-        url = self.authorization() 
-        response = JsonResponse({'url': url})
-        
-        # Set the state parameter as an HttpOnly cookie
-        state = self.state
-        response.set_cookie(
-            'oauth2_state', 
-            state,
-            httponly=True,
-            secure=True,
-            samesite='None'
-        )
-        
-        return response
+        try:
+            if request.COOKIES.get('jwt'):
+                return JsonResponse({'message': 'You are already logged in', 'url': '/home','status': 'Error'}, status=400)
+            url = self.authorization() 
+            response = JsonResponse({'url': url})
+            
+            # Set the state parameter as an HttpOnly cookie
+            state = self.state
+            response.set_cookie(
+                'oauth2_state', 
+                state,
+                httponly=True,
+                secure=True,
+                samesite='None'
+            )
+            
+            return response
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
     
     def authorization(self):
         client_id = env("API_UID_42")

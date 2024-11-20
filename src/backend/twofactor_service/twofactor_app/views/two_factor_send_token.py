@@ -20,7 +20,7 @@ class twofactor_send_token_view(View):
             data = json.loads(request.body.decode('utf-8'))
             self.check_data(data)
             self.request = request
-            self.user = self.get_user(data['username'])
+            self.user = self.get_user(str(data['username']))
             if self.user.two_factor_method == 'email':
                 return self._handle_email_method(data)
             elif self.user.two_factor_method == 'authenticator':

@@ -13,32 +13,35 @@ class friendshipManager(View):
         super()
 
     def post(self, request):
-        if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'message': 'You are not logged in'}, status=401)
-        if self.init(request) is False:
-            return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
-        match self.status:
-            case "accept":
-                return self.accept_friendship(request)
-            case "add":
-                return self.send_friendship()
-            case "cancel":
-                return self.cancel_friendship(request)
-            case "decline":
-                return self.decline_friendship(request)
-            case "remove":
-                return self.remove_friendship()
-            case _:
-                return JsonResponse({'message': 'Unknown friendship status request'}, status=400)
+        try:
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'message': 'You are not logged in'}, status=401)
+            if self.init(request) is False:
+                return JsonResponse({"message": 'Invalid request, missing some information'}, status=400)
+            match self.status:
+                case "accept":
+                    return self.accept_friendship(request)
+                case "add":
+                    return self.send_friendship()
+                case "cancel":
+                    return self.cancel_friendship(request)
+                case "decline":
+                    return self.decline_friendship(request)
+                case "remove":
+                    return self.remove_friendship()
+                case _:
+                    return JsonResponse({'message': 'Unknown friendship status request'}, status=400)
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=400)
   
     def init(self, request):
         data = json.loads(request.body.decode('utf-8'))
         if not all(key in data for key in ('status', 'target_username')):
             return False
         self.user = request.user
-        self.status = data['status']
+        self.status = str(data['status'])
         try:
-            self.target_user = User.objects.get(username=str(data['target_username']))
+            self.target_user = User.objects.get(username=str(str(data['target_username'])))
             self.friend_list = FriendList.objects.get(user=self.user)
         except User.DoesNotExist:
             return False

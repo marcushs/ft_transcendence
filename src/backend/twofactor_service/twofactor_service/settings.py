@@ -55,7 +55,7 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', env('SERVER_IP'), 'twofactor']
 
 # Application definition
 
@@ -131,11 +131,12 @@ CORS_ALLOW_METHODS = [
 
 CORS_ALLOWED_ORIGINS = [
     'https://localhost:3000',
+    f"https://{os.environ.get('SERVER_IP')}:3000"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-	'https://localhost:3000',
-    'https://10.11.3.2:3000',
+    'https://localhost:3000',
+    f"https://{os.environ.get('SERVER_IP')}:3000"
 ]
 
 # Database

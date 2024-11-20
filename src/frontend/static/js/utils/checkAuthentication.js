@@ -9,7 +9,7 @@ export default async function checkAuthentication() {
 		if (data.status === 'error')
 			return false;
 		return true;
-	} catch (error) {
+	} catch (error) {		
         console.error('Error: ' + error);
 	}
 }

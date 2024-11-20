@@ -14,10 +14,10 @@ class getChatroomLastMessageView(View):
 		super().__init__
 
 	def get(self, request):
-		chatroom_id = request.GET.get('chatroomId')
+		try:
+			chatroom_id = request.GET.get('chatroomId')
 
-		try: 
-			chatroom = get_object_or_404(ChatGroup, group_id=chatroom_id)
+			chatroom = get_object_or_404(ChatGroup, group_id=str(chatroom_id))
 			last_message = GroupMessage.objects.filter(group=chatroom).order_by('-created')[:1]
 			serialized_message = serialize('json', last_message)
 			return_message = json.loads(serialized_message)
@@ -25,3 +25,6 @@ class getChatroomLastMessageView(View):
 			return JsonResponse({'lastMessage': return_message, 'status': 'Success'}, status=200)
 		except Http404:
 			return JsonResponse({'message': 'Requested chatroom does not exist', 'status': 'Error'}, status=401)
+		except Exception as e:
+			print(f'Error: {str(e)}')
+			return JsonResponse({"message": str(e)}, status=400)

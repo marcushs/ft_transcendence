@@ -44,12 +44,16 @@ class GetUserGameData(View):
         super()
 
     async def get(self, request, user_id):
-        from .game_engine import PongGameEngine 
-        
-        game_data = PongGameEngine.get_user_game_data(str(user_id))
-        if game_data:
-            return JsonResponse({'status': 'success', 'game_data': json.dumps(game_data)}, status=200)
-        return JsonResponse({'status': 'error'}, status=200)  
+        from .game_engine import PongGameEngine
+
+        try:
+            game_data = PongGameEngine.get_user_game_data(str(user_id))
+            if game_data:
+                return JsonResponse({'status': 'success', 'game_data': json.dumps(game_data)}, status=200)
+            return JsonResponse({'status': 'error'}, status=200)  
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
 
 
 @method_decorator(jwt_required, name='dispatch') 
@@ -58,19 +62,23 @@ class CheckGameStillActive(View):
         super()
 
     async def get(self, request, user_id):
-        from .game_engine import PongGameEngine 
-        
-        game_id_string = request.GET.get('q', '')
-        
-        if not game_id_string:
-             return JsonResponse({'status': 'error', 'message': 'invalid_id'}, status=200) 
-        game_id = str(game_id_string)
-        game_instance = PongGameEngine.get_active_game(game_id)
-        if not game_instance:
-            return JsonResponse({'status': 'error', 'message': 'not_found'}, status=200)
-        if not game_instance.player_is_in_game(user_id):
-            return JsonResponse({'status': 'success', 'user_in': False}, status=200)
-        return JsonResponse({'status': 'success', 'user_in': True}, status=200)
+        from .game_engine import PongGameEngine
+
+        try:
+            game_id_string = request.GET.get('q', '')
+            
+            if not game_id_string:
+                return JsonResponse({'status': 'error', 'message': 'invalid_id'}, status=200) 
+            game_id = str(game_id_string)
+            game_instance = PongGameEngine.get_active_game(game_id)
+            if not game_instance:
+                return JsonResponse({'status': 'error', 'message': 'not_found'}, status=200)
+            if not game_instance.player_is_in_game(user_id):
+                return JsonResponse({'status': 'success', 'user_in': False}, status=200)
+            return JsonResponse({'status': 'success', 'user_in': True}, status=200)
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)
 
 #//---------------------------------------> get games instance Endpoint <--------------------------------------\\#
 
@@ -81,14 +89,18 @@ class GetGameList(View):
 
     async def get(self, request):
         from .game_engine import PongGameEngine
-        
-        games_data = [
-            {
-                'game_id': game.game_id,
-                'player_one_id': game.player_one_id,
-                'player_two_id': game.player_two_id,
-                'game_active': game.game_active,
-            }
-            for game in PongGameEngine.active_games 
-        ]
-        return JsonResponse({'games_instance': games_data}, status=200)
+
+        try:
+            games_data = [
+                {
+                    'game_id': game.game_id,
+                    'player_one_id': game.player_one_id,
+                    'player_two_id': game.player_two_id,
+                    'game_active': game.game_active,
+                }
+                for game in PongGameEngine.active_games 
+            ]
+            return JsonResponse({'games_instance': games_data}, status=200)
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)

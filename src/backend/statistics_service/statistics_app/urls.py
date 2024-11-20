@@ -6,6 +6,7 @@ from .utils import user_utils
 from django.urls import path
 
 urlpatterns = [
+    path('delete_user/', user_utils.DeleteUser.as_view(), name='delete_user'),
     path('update_user/', user_utils.UpdateUser.as_view(), name='update_user'),
     path('add_user/', user_utils.AddNewUser.as_view(), name='add_user'),
     path('match_result/', MatchResultManager.as_view(), name='match_result'),

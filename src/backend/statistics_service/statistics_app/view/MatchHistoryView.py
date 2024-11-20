@@ -11,7 +11,11 @@ class MatchHistoryView(View):
 
 
     def get(self, request):
-        if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'message': 'No connected user'}, status=401)
-        history = list(User.match_history(request.user).values())
-        return JsonResponse(history[:5], safe=False, status=200)
+        try:
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'message': 'No connected user'}, status=401)
+            history = list(User.match_history(request.user).values())
+            return JsonResponse(history[:5], safe=False, status=200)
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)

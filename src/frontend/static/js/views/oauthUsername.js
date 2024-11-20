@@ -1,6 +1,7 @@
 import { getCookie } from "../utils/cookie.js";
 import {getString} from "../utils/languageManagement.js";
 import rotatingGradient from "../anim/rotatingGradient.js";
+import { throwRedirectionEvent } from "../utils/throwRedirectionEvent.js";
 
 export default () => {
 	const html = `
@@ -68,7 +69,8 @@ async function postNewUsername() {
 	const urlParams = new URLSearchParams(window.location.search);
 	const oauthProvider = urlParams.get('oauth_provider');
 
-	if(!oauthProvider) return window.location.replace('/login');
+	if(!oauthProvider)
+		throwRedirectionEvent('/login');
 
 	feedbackElement.innerText = '';
 
@@ -88,8 +90,9 @@ async function postNewUsername() {
 
 		const data = await res.json();
 		if (data.status !== "Error")
-			window.location.replace(data.url);
+			throwRedirectionEvent(data.url)
 	} catch (error) {
-		console.error(error);
+		console.log('Error :', error);
+		throwRedirectionEvent('/login')
 	}
 }

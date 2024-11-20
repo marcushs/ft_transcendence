@@ -12,18 +12,22 @@ class findMatchingChatroomView(View):
 		super().__init__
 
 	def get(self, request):
-		author = request.user.id
-		target_user = request.GET.get('targetUserId')
+		try:
+			author = request.user.id
+			target_user = request.GET.get('targetUserId')
 
-		if isinstance(author, AnonymousUser):
-			return JsonResponse({'message': 'No user found', 'status': 'error'}, status=400)
-		try: 
-			chatroom = ChatGroup.objects.filter(
-				is_private=True,
-				members=author
-			).filter(
-				members=target_user
-			).get()
-			return JsonResponse({'chatroom_id': chatroom.group_id, 'status': 'Success'}, status=200)
-		except ChatGroup.DoesNotExist:
-			return JsonResponse({'message': 'No matching chatroom for these users', 'status': 'Success'}, status=200)
+			if isinstance(author, AnonymousUser):
+				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=400)
+			try: 
+				chatroom = ChatGroup.objects.filter(
+					is_private=True,
+					members=author
+				).filter(
+					members=str(target_user)
+				).get()
+				return JsonResponse({'chatroom_id': chatroom.group_id, 'status': 'Success'}, status=200)
+			except ChatGroup.DoesNotExist:
+				return JsonResponse({'message': 'No matching chatroom for these users', 'status': 'Success'}, status=200)
+		except Exception as e:
+			print(f'Error: {str(e)}')
+			return JsonResponse({"message": str(e)}, status=400)

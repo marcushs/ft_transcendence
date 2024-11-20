@@ -23,7 +23,7 @@ class twofactor_enable_view(View):
             if request.user.is_verified:
                 return JsonResponse({'message': 'twoFactorAlreadyActivated'}, status=403)
             data = json.loads(request.body.decode('utf-8'))
-            method = data.get('method')
+            method = str(data.get('method'))
             twofactor_code = data.get('twofactor')
             if twofactor_code is not None:
                 return self._verification_handler(request, twofactor_code, method)
@@ -35,7 +35,7 @@ class twofactor_enable_view(View):
                 case _:
                     return JsonResponse({'message': 'We\'ve encountered an issue with the selected authentication method.'}, status=400)
         except Exception as e:
-            print('Unexpected Error: ', str(e))
+            print('Error: ', str(e))
             return JsonResponse({'message': 'unknownError'}, status=400)
 
        

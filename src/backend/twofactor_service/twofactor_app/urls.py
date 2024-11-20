@@ -4,6 +4,7 @@ from .views import two_factor_enable, two_factor_disable, two_factor_send_token,
 from .utils import user_utils
 
 urlpatterns = [
+    path('delete_user/', user_utils.DeleteUser.as_view(), name='delete_user'),
     path('enable/', two_factor_enable.twofactor_enable_view.as_view(), name='enable2fa'),
     path('disable/', two_factor_disable.twofactor_disable_view.as_view(), name='disable2fa'),
     path('get_2fa_code/', two_factor_send_token.twofactor_send_token_view.as_view(), name='get2faCode'),

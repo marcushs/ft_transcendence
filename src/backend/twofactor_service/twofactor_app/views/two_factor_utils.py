@@ -66,9 +66,13 @@ class twofactor_get_status_view(View):
     
     
     def get(self, request):
-        if isinstance(request.user, AnonymousUser):
-            return JsonResponse({'message': 'You are not logged in'}, status=401) 
-        if request.user.is_verified == True:
-            return JsonResponse({'message': 'You have setup twofactor on your account', 'is_verified': True, 'method': request.user.two_factor_method}, status=200)
-        else:
-            return JsonResponse({'message': 'You dont have setup twofactor on your account', 'is_verified': False}, status=200)
+        try:
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'message': 'You are not logged in'}, status=401) 
+            if request.user.is_verified == True:
+                return JsonResponse({'message': 'You have setup twofactor on your account', 'is_verified': True, 'method': request.user.two_factor_method}, status=200)
+            else:
+                return JsonResponse({'message': 'You dont have setup twofactor on your account', 'is_verified': False}, status=200)
+        except Exception as e:
+            print(f'Error: {str(e)}')
+            return JsonResponse({"message": str(e)}, status=400)

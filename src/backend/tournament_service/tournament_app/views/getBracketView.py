@@ -14,21 +14,25 @@ class getBracketView(View):
 		super().__init__
 
 	def get(self, request):
-		user = request.user
+		try:
+			user = request.user
 
-		if isinstance(user, AnonymousUser):
-			return JsonResponse({'error': 'User not found'}, status=401)
+			if isinstance(user, AnonymousUser):
+				return JsonResponse({'error': 'User not found'}, status=401)
 
-		active_tournament = Tournament.objects.filter(
-			members=user,
-			isOver=False
-		).first()
+			active_tournament = Tournament.objects.filter(
+				members=user,
+				isOver=False
+			).first()
 
-		if active_tournament:
-			bracket = Bracket.objects.filter(tournament=active_tournament).prefetch_related(
-				'eighth_finals', 'quarter_finals', 'semi_finals', 'finals'
-			).first().to_dict_sync()
-			bracket['tournament_size'] = active_tournament.tournament_size
+			if active_tournament:
+				bracket = Bracket.objects.filter(tournament=active_tournament).prefetch_related(
+					'eighth_finals', 'quarter_finals', 'semi_finals', 'finals'
+				).first().to_dict_sync()
+				bracket['tournament_size'] = active_tournament.tournament_size
 
-			return JsonResponse({'bracket': bracket, 'status': 'success'}, status=200)
-		return JsonResponse({'message': 'Bracket not found', 'status': 'error'}, status=404)
+				return JsonResponse({'bracket': bracket, 'status': 'success'}, status=200)
+			return JsonResponse({'message': 'Bracket not found', 'status': 'error'}, status=404)
+		except Exception as e:
+			print(f'Error: {str(e)}')
+			return JsonResponse({"message": str(e)}, status=400)
