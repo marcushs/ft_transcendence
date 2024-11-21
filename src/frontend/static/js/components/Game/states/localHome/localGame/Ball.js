@@ -25,8 +25,21 @@ export default class Ball {
 		this.isTrailAvailable = false;
 		this.increaseBlue = false;
 		this.increasePink = false;
+		this.setRandomStartDirection();
 	}
 
+	setRandomStartDirection() {
+		const startAngleChoices = [
+			[0.01, 0.03],
+			[-0.03, -0.01]
+		];
+
+		const randomAngle = startAngleChoices[Math.floor(Math.random() * startAngleChoices.length)];
+		const angleRad = Math.PI * (Math.random() * (randomAngle[1] - randomAngle[0]) + randomAngle[0]);
+
+		this.ballDirectionY = this.ballDirectionX * Math.sin(angleRad);
+		console.log(this.ballDirectionY, randomAngle, angleRad)
+	}
 
 	resetBallInfos(isPositiveBallDirection) {
 		this.rotationSpeed = 0.01;
@@ -34,7 +47,7 @@ export default class Ball {
 		this.ballTextureColor = this.greyColor;
 		this.offsetTrailHeight = -12;
 		this.offsetTrailWidth = -10;
-		this.ballDirectionY = 0;
+		this.setRandomStartDirection();
 		this.x = this.canvas.width / 2;
 		this.y = this.canvas.height / 2;
 	}

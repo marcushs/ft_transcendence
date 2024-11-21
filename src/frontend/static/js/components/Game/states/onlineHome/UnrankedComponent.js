@@ -56,7 +56,7 @@ class UnrankedComponent extends HTMLElement {
 	}
 
 	async handleCancelButtonClick() {
-			this.throwCancelMatchmakingResearchEvent();
+		this.throwCancelMatchmakingResearchEvent();
 	}
 
 	throwCancelMatchmakingResearchEvent () {

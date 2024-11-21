@@ -5,6 +5,7 @@ import asyncio
 import json
 import time
 import math
+import random
 
 class PongGameEngine:
 
@@ -32,7 +33,7 @@ class PongGameEngine:
         self.player_one_score = 0
         self.player_two_score = 0
         self.game_active = False
-        self.is_paused = False
+        self.is_paused = False 
         self.is_round_started = True
         self.pause_time = 120
         self.pause_start_time = None
@@ -41,8 +42,10 @@ class PongGameEngine:
         self.ball_radius = 16
         self.ball_speed = 15
         self.speed_limit = 45
-        self.ball_direction_x = self.ball_speed
-        self.ball_direction_y = 0
+        self.ball_direction_x = random.choice([15, -15])
+        random_angle = random.choice([(0.01, 0.03), (-0.03, -0.01)])
+        angle_rad = (math.pi * random.uniform(random_angle[0], random_angle[1]))
+        self.ball_direction_y = self.ball_direction_x * math.sin(angle_rad)
         self.max_score = 10
         self.has_ball_hit_wall = False
         self.is_player_one_collide = False
@@ -232,12 +235,18 @@ class PongGameEngine:
         if self.state['ball_position']['x'] - self.ball_radius < 15 or self.state['ball_position']['x'] + self.ball_radius > self.map['width'] - 15:
             if self.state['ball_position']['x'] - self.ball_radius < 15:
                 self.player_one_score += 1
+                direction = -15
             if self.state['ball_position']['x'] + self.ball_radius > self.map['width'] - 15:
                 self.player_two_score += 1
+                direction = 15
 
             self.ball_speed = 15
-            self.ball_direction_x = self.ball_speed
             self.ball_direction_y = 0
+            
+            random_angle = random.choice([(0.01, 0.03), (-0.03, -0.01)])
+            angle_rad = (math.pi * random.uniform(random_angle[0], random_angle[1]))
+            self.ball_direction_x = direction *  math.cos(angle_rad)
+            self.ball_direction_y = direction * math.sin(angle_rad)
             update_state = 'reset'
             self.set_initial_game_state(player_one_score=self.player_one_score, player_two_score=self.player_two_score)
             self.is_round_started = True
