@@ -47,12 +47,11 @@ export async function redirectToTournamentLostMatch(match) {
 }
 
 function redirectLost(match) {
-	// alert('redirect lost')
-	// const gameComponent = document.querySelector('game-component');
-	// const tournamentLostState = gameComponent.states['tournamentLost'];
-	// const tournamentLost = new TournamentLost(match);
+	const gameComponent = document.querySelector('game-component');
+	const tournamentLostState = gameComponent.states['tournamentLost'];
+	const tournamentLost = new TournamentLost(match);
 
-	// tournamentLostState['state'] = tournamentLost;
-	// gameComponent.changeState(tournamentLostState.state, tournamentLostState.context);
-	// gameComponent.currentState = "tournamentLost";
+	tournamentLostState['state'] = tournamentLost;
+	gameComponent.changeState(tournamentLostState.state, tournamentLostState.context);
+	gameComponent.currentState = "tournamentLost";
 }
