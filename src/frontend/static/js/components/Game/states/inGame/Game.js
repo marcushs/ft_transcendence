@@ -1,10 +1,9 @@
 import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
 import { waitForStatesContainer } from "../../../../utils/game/gameConnection.js";
-import { gameSocket, websocketReconnection } from "./gameWebsocket.js";
+import { gameSocket } from "./gameWebsocket.js";
 import { disconnectGameWebSocket } from "./gameWebsocket.js";
 import getUserId from "../../../../utils/getUserId.js";
 import { resetGameInstance } from "./inGameComponent.js";
-import { gameWebsocket } from "./gameWebsocket.js";
 import Player from "./Player.js";
 import Spark from "./Spark.js";
 import Ball from "./Ball.js";
@@ -12,7 +11,6 @@ import Intro from "./Intro.js";
 import Outro from "./Outro.js";
 import CircularList from "../../../../utils/CircularList.js";
 import RankOutro from "./RankOutro.js";
-import { redirectToTournamentLostMatch } from "../../../../utils/tournamentUtils/tournamentMatchUtils.js";
 
 export async function startGame(gameId, initialGameState, map_dimension) {
 	localStorage.removeItem('isSearchingGame');
