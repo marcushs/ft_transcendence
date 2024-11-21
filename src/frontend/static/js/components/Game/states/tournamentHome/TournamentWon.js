@@ -67,8 +67,6 @@ class TournamentWonElement extends HTMLElement {
 		const leaveBtn = this.querySelector('.tournament-lost-leave-btn');
 
 		bracketBtn.addEventListener('click', () => {
-			console.log('clicked on bracket')
-			console.log('bracketObj', this.bracketObj);
 			this.redirectToBracket();
 		})
 		

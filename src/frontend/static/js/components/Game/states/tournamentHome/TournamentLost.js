@@ -28,7 +28,6 @@ class TournamentLostElement extends HTMLElement {
 		this.tournamentId = this.match.tournament_id;
 		this.tournamentName = this.match.tournament_name;
 		this.bracketObj = null;
-		console.log('asdfsfdsdfq4erwqerqwer ', this.match)
 		this.stage = this.match.tournament_round;
 	}
 	
@@ -72,11 +71,9 @@ class TournamentLostElement extends HTMLElement {
 		const leaveBtn = this.querySelector('.tournament-lost-leave-btn');
 
 		bracketBtn.addEventListener('click', async () => {
-			console.log('clicked on bracket')
 			try {
 				let res = await sendRequest('GET', '/api/tournament/get_bracket/', null, false);
 				this.bracketObj = BracketObj.create(res.bracket, res.bracket.tournament_size);
-				console.log('bracketObj', this.bracketObj);
 				this.redirectToBracket();
 			} catch (error) {
 				console.log('Error retrieving bracket')

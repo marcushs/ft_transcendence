@@ -32,7 +32,6 @@ export function redirectToWinnerPage(tournamentBracket) {
 			redirectWon(tournamentBracket);
 		});
 	} else {
-		console.log('got in else block in redirectToTournamentMatch')
 		redirectWon(tournamentBracket)
 	}
 }

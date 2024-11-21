@@ -19,7 +19,6 @@ export function sendPrivateMessage() {
 		'message': message,
 		'target_user': targetUserData.id,
 	}
-	console.log(data);
 	chatSocket.send(JSON.stringify(data));
 	chatroomMessageInput.value = '';
 }
@@ -57,7 +56,6 @@ export async function putMessageToChatroomConversation(messageData) {
 		const liElem = document.createElement('li');
 		const messageComponent = new ChatMessageComponent(messageData);
 
-		console.log('putMessageToChatroom: ', messageData);
 		const isSent = await isSentOrReceivedMessage(messageData.author);
 		messageComponent.classList.add(isSent);
 		liElem.appendChild(messageComponent);

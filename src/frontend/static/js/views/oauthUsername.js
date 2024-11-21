@@ -67,7 +67,6 @@ function manageInputValidity(inputElement, feedbackElement, button) {
 
 
 async function postNewUsername() {
-	console.log('clicked')
 	const feedbackElement = document.getElementById("feedbackElement");
 	const newUsername = document.getElementById('username').value;
 	const urlParams = new URLSearchParams(window.location.search);
