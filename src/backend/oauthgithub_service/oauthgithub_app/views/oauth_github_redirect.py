@@ -57,7 +57,7 @@ class oauthGithubRedirectView(View):
 
         data = client.prepare_request_body(
             code = code,
-            redirect_uri = f'https://{env('SERVER_IP')}:3000/oauth-redirect',
+            redirect_uri = 'https://localhost:3000/oauth-redirect',
             client_id = client_id,
             client_secret = env("API_SECRET_GITHUB")
         )
