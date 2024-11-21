@@ -35,7 +35,7 @@ class oauthGoogleUpdateUsernameView(View):
             response = self.check_new_username_taken(new_username)
             if response.status_code == 200:
                 try:
-                    user = User.objects.get(id=id)
+                    user = User.objects.get(id=str(id))
                     user.username = new_username
                     user.save()
                     self.init_payload(user)

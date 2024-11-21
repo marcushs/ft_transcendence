@@ -29,13 +29,13 @@ class oauthGithubUpdateUsernameView(View):
 
             if 'newUsername' not in data:
                 raise Exception('requestMissingData')
-            new_username = data['newUsername']
+            new_username = str(data['newUsername'])
             id = request.COOKIES.get('id')
             self.csrf_token = request.headers.get('X-CSRFToken')
             response = self.check_new_username_taken(new_username)
             if response.status_code == 200:
                 try:
-                    user = User.objects.get(id=id)
+                    user = User.objects.get(id=str(id))
                     user.username = new_username
                     user.save()
                     self.init_payload(user)

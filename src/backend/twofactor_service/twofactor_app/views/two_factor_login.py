@@ -16,7 +16,7 @@ class two_factor_login_check(View):
     def post(self, request):
         try:
             data = json.loads(request.body.decode('utf-8'))
-            user = User.objects.get(username=data['username'])
+            user = User.objects.get(username=str(data['username']))
             code = data.get('twofactor')
             if not code:
                     return JsonResponse({'message': 'emptyCode'}, status=400)

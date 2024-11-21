@@ -38,7 +38,7 @@ class signup_view(View):
             response = self._check_data(request, data)
             if response is not None:
                 return response
-            user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
+            user = User.objects.create_user(username=str(data['username']), email=str(data['email']), password=str(data['password']))
             response = self._send_request(user=user, data=data, csrf_token=request.headers.get('X-CSRFToken'))
             if not response:
                 user.delete()
@@ -87,7 +87,7 @@ class signup_view(View):
             return JsonResponse({'message': 'invalidCharInUsername'}, status=401)
         elif not data['email']:
             return JsonResponse({'message': 'noEmailProvided'}, status=401)
-        elif User.objects.filter(email=data['email']).exists():
+        elif User.objects.filter(email=str(data['email'])).exists():
             return JsonResponse({'message': 'accountHasAlreadyEmail'}, status=401)
         elif not re.match(self.regexEmailCheck, data['email']):
             return JsonResponse({'message': 'invalidEmail'}, status=401)

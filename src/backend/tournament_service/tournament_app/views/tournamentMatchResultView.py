@@ -22,9 +22,9 @@ class tournamentMatchResultView(View):
 		try:
 			data = json.loads(request.body.decode('utf-8'))
 
-			match = TournamentMatch.objects.get(match_id=data['game_id'])
-			winner = User.objects.get(id=data['winner']['id'])
-			loser = User.objects.get(id=data['loser']['id']) 
+			match = TournamentMatch.objects.get(match_id=str(data['game_id']))
+			winner = User.objects.get(id=str(data['winner']['id']))
+			loser = User.objects.get(id=str(data['loser']['id'])) 
 
 			match.winner = winner
 			match.winner_score = data['winner']['score']

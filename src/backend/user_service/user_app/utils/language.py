@@ -31,7 +31,7 @@ class language_view(View):
                 return JsonResponse({'message': 'Language setup failed'}, status=400)
             data = json.loads(request.body.decode('utf-8'))  
             if data['language'] == 'fr' or 'en' or 'zh': 
-                request.user.language = data['language']
+                request.user.language = str(data['language'])
             else:
                 request.user.language = 'en'
             request.user.save()
