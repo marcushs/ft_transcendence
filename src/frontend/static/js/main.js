@@ -58,8 +58,6 @@ function manageGameStates() {
                 document.addEventListener('gameComponentLoaded', () => {
                     throwChangeGameStateEvent(tournamentData.state);
                 });
-            } else {
-                throwChangeGameStateEvent(tournamentData.state);
             }
         } else {
             throwChangeGameStateEvent(tournamentData.state);

@@ -137,7 +137,7 @@ export function handleRedirectToWinnerPage(data) {
         matchData: null
     }
     localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
-    console.log('in handleRedirectToWinnerPage tournamentData is: ', data.tourament_bracket)
+    console.log('in handleRedirectToWinnerPage tournamentData is: ', data.tournament_bracket)
     setTimeout(() => {
         redirectToWinnerPage(data.tournament_bracket);
     }, 7000);

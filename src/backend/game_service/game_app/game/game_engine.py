@@ -369,7 +369,6 @@ class PongGameEngine:
             'loser': loser,
             'type': self.game_type
         }
-        # !!!!!!!!!! mettre un truc special pour tournois
         if self.game_type == 'tournament':
             result_response = await send_request(request_type='POST', url='http://tournament:8000/api/tournament/match_result/', payload=payload)
         result_response = await send_request(request_type='POST', url='http://statistics:8000/api/statistics/match_result/', payload=payload)

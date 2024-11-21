@@ -203,23 +203,17 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		if result == 'start game':
 			player_ids = await get_player_ids_for_match(match_id)
 			payload = {
-				"type": "launch.game",
 				'match_id': match_id,
 				'player1': str(player_ids[0]), 
 				'player2': str(player_ids[1])
 			}
-			await self.channel_layer.group_send(group_names[str(player_ids[0])], payload)
-			await self.channel_layer.group_send(group_names[str(player_ids[1])], payload)
+			await self.stop_match_countdown()
+			await self.send_game_instance_request(payload)
 			return
 		elif result == 'Match not found':
 			return await self.send_error_message(data['type'], result)
 		elif result == 'Player not in this match':
 			return await self.send_error_message(data['type'], result)
-
-	async def launch_game(self, event):
-		await self.stop_match_countdown()
-		await self.send_game_instance_request(event)
-
 
 # -------------------------------> Handle Proceed Tournament <---------------------------------
 
@@ -231,7 +225,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			last_match = data['match']
 			player = await aget_object_or_404(User, id=data['user_id'])
 			tournament = await aget_object_or_404(Tournament, tournament_id=last_match['tournament_id'])
-			# tournament = await sync_to_async(lambda: last_match.tournament)()
 			if tournament.isOver == True:
 				return async_to_sync(self.send_error_message)('next_round', 'Tournament is over')
 			tournament_bracket = await sync_to_async(lambda: Bracket.objects.filter(tournament=tournament).first())()  
@@ -251,12 +244,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		}
 		await self.channel_layer.group_send(group_names[event['player1']], {'type': 'start_game_instance', 'payload': payload})
 		await self.channel_layer.group_send(group_names[event['player2']], {'type': 'start_game_instance', 'payload': payload})
-		if str(self.user.id) == event['player1']:
-			await send_request_with_headers(request_type='POST', 
-							url='http://matchmaking:8000/api/matchmaking/matchmaking_tournament/', 
-							headers=self.headers, 
-							cookies=self.cookies, 
-							payload=payload)
+		await send_request_with_headers(request_type='POST', 
+						url='http://matchmaking:8000/api/matchmaking/matchmaking_tournament/', 
+						headers=self.headers, 
+						cookies=self.cookies, 
+						payload=payload)
 			
 	async def start_game_instance(self, event):
 		await self.send(text_data=json.dumps({ 
@@ -406,26 +398,27 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	async def start_match_countdown(self, match_id, player_ids, start):
 		if self.match_countdown_task:
-			self.match_countdown_task.cancel()
+			await self.stop_match_countdown()
 		if start:
-			await self.start_match_countdown_task(match_id, 60, player_ids)  # Default 60 seconds
-		if self.user.id == player_ids[0]:
-			await self.start_match_countdown_task(match_id, 60, player_ids)  # Default 60 seconds
+			await self.start_match_countdown_task(match_id, 60, player_ids)
 
 	async def start_match_countdown_task(self, match_id, duration, player_ids):
 		redis_instance.set(match_id, duration)
 		self.match_countdown_task = asyncio.create_task(self.run_match_countdown(match_id, player_ids))
 
 	async def stop_match_countdown(self):
-		if self.match_countdown_task:
+		if self.match_countdown_task and not self.match_countdown_task.done():
 			self.match_countdown_task.cancel()  # Request cancellation
 			try:
 				await self.match_countdown_task  # Await cancellation
-			except asyncio.CancelledError:
-				# Handle cancellation if needed (optional)
-				pass
+				print("Match countdown task cancelled successfully.")
+			except asyncio.CancelledError as e:
+				print(f"Error: countdown_task: {e}")
 			finally:
 				self.match_countdown_task = None
+		else:
+			print("No active match countdown task to stop.")
+      
 
 	async def run_match_countdown(self, match_id, player_ids):
 		while True:
@@ -433,13 +426,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			 
 			if countdown < 0:
 				payload = {
-					"type": "launch.game",
 					'match_id': match_id,
 					'player1': str(player_ids[0]), 
 					'player2': str(player_ids[1])
 				}
-				await self.channel_layer.group_send(group_names[str(player_ids[0])], payload)
-				await self.channel_layer.group_send(group_names[str(player_ids[1])], payload)
+				self.send_game_instance_request(payload)
 				await self.stop_match_countdown()
 				break
 			
@@ -449,7 +440,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			
 			redis_instance.decr(match_id)
 			await asyncio.sleep(1)
-
 
 
 	# Leave countdown
@@ -467,11 +457,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			countdown = int(redis_instance.get(str(self.user.id)) or 0)
 			
 			if countdown < 0:
-				print("-------do I get in here?") 
 				tournament = await sync_to_async(Tournament.objects.get)(tournament_id=tournament_id)
-				print("----before")
 				await self.exit_tournament(tournament)
-				print("----after")
 				await self.stop_leave_countdown() 
 				break
 			 
