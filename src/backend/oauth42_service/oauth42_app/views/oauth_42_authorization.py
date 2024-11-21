@@ -34,7 +34,7 @@ class oauth42AuthorizationView(View):
             # Set the state parameter as an HttpOnly cookie
             state = self.state
             response.set_cookie(
-                'oauth2_state', 
+                'oauth42_state', 
                 state,
                 httponly=True,
                 secure=True,
@@ -57,7 +57,7 @@ class oauth42AuthorizationView(View):
         # Prepare the authorization URL with the state parameter
         url = client.prepare_request_uri(
             authorization_url,
-            redirect_uri="https://localhost:3000/oauth-redirect", 
+            redirect_uri=f'https://{env('SERVER_IP')}:3000/oauth-redirect',
             scope=['public'],
             state=self.state
         )

@@ -21,7 +21,9 @@ def is_user_in_this_tournament(tournament, user):
 
 @database_sync_to_async
 def remove_user_from_tournament(tournament, user):
-	return tournament.members.remove(user)
+	tournament.members.remove(user)
+	if tournament.members.count() == 0:
+		tournament.delete()
 
 def is_user_in_any_tournament(user):
 	return Tournament.objects.filter(members=user, isOver=False).exists()

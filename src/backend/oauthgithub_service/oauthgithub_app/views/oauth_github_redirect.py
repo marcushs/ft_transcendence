@@ -17,7 +17,7 @@ class oauthGithubRedirectView(View):
             state = request.GET.get('state')
             code = request.GET.get('code')
             
-            cookie_state = request.COOKIES.get('oauth2_state')
+            cookie_state = request.COOKIES.get('oauthgithub_state')
 
             if state != cookie_state:
                 return JsonResponse({'message': 'Invalid state parameter', 
@@ -40,7 +40,7 @@ class oauthGithubRedirectView(View):
                                 httponly=True,
                                 secure=True,
                                 samesite='None')
-            response.delete_cookie('oauth2_state')
+            response.delete_cookie('oauthgithub_state')
 
             return response
         except Exception as e:
@@ -57,7 +57,7 @@ class oauthGithubRedirectView(View):
 
         data = client.prepare_request_body(
             code = code,
-            redirect_uri = "https://localhost:3000/oauth-redirect",
+            redirect_uri = f'https://{env('SERVER_IP')}:3000/oauth-redirect',
             client_id = client_id,
             client_secret = env("API_SECRET_GITHUB")
         )

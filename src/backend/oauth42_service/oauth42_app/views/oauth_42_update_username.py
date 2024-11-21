@@ -24,6 +24,7 @@ class oauth42UpdateUsernameView(View):
         super().__init__
         
     def post(self, request):
+        print("---------------------at least it reached-----------------")
         try:
             data = json.loads(request.body.decode('utf-8'))
 
@@ -31,22 +32,20 @@ class oauth42UpdateUsernameView(View):
                 raise Exception('requestMissingData')
             new_username = str(data['newUsername'])
             id = request.COOKIES.get('id')
-            self.csrf_token = request.headers.get('X-CSRFToken')
+            self.csrf_token = request.headers.get('X-CSRFToken') 
             response = self.check_new_username_taken(new_username)
             if response.status_code == 200:
                 try:
                     user = User.objects.get(id=id)
                     user.username = new_username
                     user.save()
-                    response = JsonResponse({"message": "Set username succesfully", "status": "Success"}, status=200)
-                    response.delete_cookie("id")
                     self.init_payload(user)
-                    self.send_create_user_request_to_endpoints()
+                    self.send_create_user_request_to_endpoints() 
                     return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
                 except User.DoesNotExist:
                     return JsonResponse({"message": "User not found", "url":"/login", "status": "Error"}, status=404)
-            return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
-        except Exception as e:
+            return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error", "url": '/oauth-username?oauth_provider=oauth42'}, status=409)
+        except Exception as e: 
             print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=400)
          
