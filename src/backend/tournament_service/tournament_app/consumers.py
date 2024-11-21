@@ -167,10 +167,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		try:
 			tournament = await aget_object_or_404(Tournament, tournament_id=data['tournament_id']) 
 			if await is_user_in_this_tournament(tournament, self.user):
-				await self.exit_tournament(tournament)
 				if data['from_match'] == False:
 					payload = {'type': 'leave.tournament', 'tournament': await tournament.to_dict()}
 					await self.broadcast_message(payload=payload)
+				await self.exit_tournament(tournament)
 			else:
 				await self.send_error_message(data['type'], 'You are not in this tournament')
 		except Http404:
@@ -186,8 +186,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_send(group_names[str(self.user.id)], {'type': 'redirect_to_tournament_home'})
 		await remove_user_from_tournament(tournament, self.user)
 		member_count = await get_members_count(tournament)
-		if member_count == 0:
-			return await set_tournament_not_joinable(tournament)
+		if member_count == 0 and tournament.isOver == False:
+			return await delete_tournament_when_empty(tournament)
+			# return await set_tournament_not_joinable(tournament)
 		await self.stop_leave_countdown()
 
 
