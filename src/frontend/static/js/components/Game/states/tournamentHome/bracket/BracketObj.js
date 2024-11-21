@@ -4,6 +4,7 @@ export default class BracketObj {
     #bracketObj;
 
     constructor(tournamentBracket, tournamentSize) {
+	    console.log("tournamentbracket is ==============>", tournamentBracket)
         this.#tournamentBracket = tournamentBracket;
         this.#bracketObj = {
             nbOfPlayers: tournamentSize,

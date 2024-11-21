@@ -6,6 +6,7 @@ class Bracket {
         this.redirectState = "bracket";
         this.class = "bracket";
         this.bracketObj = bracketObj;
+        console.log('bracket obj ====>>', bracketObj)
     }
 
     generateBracket(bracketObj) {
@@ -22,7 +23,7 @@ class Bracket {
             semiFinal: bracketObj.semiFinal.rightMatches,
         }
 
-
+        console.log(bracketObj.quarterFinal)
         return `
             ${this.generateBracketSide(leftBracket,  'left','left-matches')}
             ${this.generateBracketSide(rightBracket, 'right', 'right-matches')}
@@ -34,22 +35,19 @@ class Bracket {
     generateFinal(finalObj) {
         const playerLeft = finalObj[0][1];
         const playerRight = finalObj[0][0];
-        console.log("---------> Final === ", finalObj);
 
+        console.log("player 1 ========= >>>> ", playerLeft)
+        console.log("player 2 ========= >>>> ", playerRight)
         return `
             <div class="final-matches">
-                ${(playerLeft) ?
-                `<player-in-bracket name="${(playerLeft.name) ? playerLeft.name : ""}" 
-                    score="${(playerLeft.score) ? playerLeft.score : ""}" 
+            <player-in-bracket name="${(playerLeft && playerLeft.name) ? playerLeft.name : ". . ."}" 
+                    score="${(playerLeft && playerLeft.score) ? playerLeft.score : "-"}" 
                     id="final-player1" 
-                    class="${(playerLeft.score === '10') ? 'player-in-bracket-tournament-win' :  'player-in-bracket-basic'}"></player-in-bracket>` :
-            `<player-in-bracket name="" score="" id="final-player1" class="no-player-in-bracket"></player-in-bracket>`}
-                ${(playerRight) ? 
-                `<player-in-bracket name="${(playerRight.name) ? playerRight.name : ""}" 
-                    score="${(playerRight.score) ? playerRight.score : ""}" 
+                    class="${(playerLeft && playerLeft.score === '10') ? 'player-in-bracket-tournament-win' :  'player-in-bracket-basic'}"></player-in-bracket>
+            <player-in-bracket name="${(playerRight && playerRight.name) ? playerRight.name : ". . ."}" 
+                    score="${(playerRight && playerRight.score) ? playerRight.score : "-"}" 
                     id="final-player2" 
-                    class="${(playerRight.score === '10') ? 'player-in-bracket-tournament-win' :  'player-in-bracket-basic'}"></player-in-bracket>` : 
-                `<player-in-bracket name="" score="" id="final-player2" class="no-player-in-bracket"></player-in-bracket>`}
+                    class="${(playerRight && playerRight.score === '10') ? 'player-in-bracket-tournament-win' :  'player-in-bracket-basic'}"></player-in-bracket>
             </div>
         `;
     }
