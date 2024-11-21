@@ -73,6 +73,7 @@ class TournamentWonElement extends HTMLElement {
 		})
 		
 		leaveBtn.addEventListener('click', () => {
+			localStorage.removeItem("tournamentData")
 			const payload = {
 				'type': 'leave_tournament',
 				'tournament_id': this.tournamentId,
