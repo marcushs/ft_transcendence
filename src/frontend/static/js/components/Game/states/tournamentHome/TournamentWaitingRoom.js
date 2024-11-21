@@ -26,6 +26,8 @@ class TournamentWaitingRoomElement extends HTMLElement {
 		this.tournamentName = tournamentData.tournament_name;
 		this.tournamentSize = tournamentData.tournament_size;
 		this.tournamentCreator = tournamentData.creator.alias;
+		console.log('alias is: ', this.tournamentCreator)
+		console.log(tournamentData)
 		this.tournamentMemberCount = tournamentData.member_count;
 	}
 

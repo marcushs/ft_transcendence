@@ -1,6 +1,5 @@
 import { putNewTournamentToDOM, redirectToTournamentWaitingRoom, updateTournamentInfo, redirectToTournamentHome, redirectToWinnerPage } from './joinTournamentUtils.js';
 import { redirectToTournamentLostMatch, redirectToTournamentMatch, startTournamentMatchInstance } from './tournamentMatchUtils.js';
-import getUserId from "../getUserId.js";
 
 export async function handleCreateTournament(data) {
     if (data.status === 'success') {
@@ -26,27 +25,7 @@ export async function handleJoinTournament(data) {
     if (data.status === 'error') {
         handleError(data.message);
     } else {
-        const userId = await getUserId();
-        const tournamentData = {
-            state: 'waitingRoom',
-            tournamentData: data.tournament,
-            matchData: null
-        }
-
-        if (data.tournament.creator.id === userId) {
-            updateTournamentInfo(data.tournament);
-            // localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
-            return;
-        }
-
-        for (let member of data.tournament.members) {
-            if (member.id === userId) {
-                // localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
-                updateTournamentInfo(data.tournament);
-                return;
-            }
-        }
-        // updateTournamentInfo(data.tournament);
+        updateTournamentInfo(data.tournament);
     }
 }
 
@@ -105,7 +84,6 @@ export function handleRedirectToTournamentHome() {
 }
 
 export function handleLeaveTournament(data) {
-    alert("handleLeaveTournament")
     updateTournamentInfo(data.tournament);
 }
 

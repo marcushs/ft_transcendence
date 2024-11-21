@@ -182,12 +182,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		}))
 
 	async def exit_tournament(self, tournament):
-		print('******entered exit')
 		await self.channel_layer.group_send(group_names[str(self.user.id)], {'type': 'redirect_to_tournament_home'})
 		await remove_user_from_tournament(tournament, self.user)
 		member_count = await get_members_count(tournament)
 		if member_count == 0:
-			await delete_tournament_when_empty(tournament)
+			return await set_tournament_not_joinable(tournament)
 		await self.stop_leave_countdown()
 
 
