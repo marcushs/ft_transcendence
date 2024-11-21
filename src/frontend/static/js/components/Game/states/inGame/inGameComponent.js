@@ -87,6 +87,20 @@ class InGameComponent extends HTMLElement {
 			throwGameInactivityEvent();
 		}
 	}
+
+	async getTournamentAlias() {
+		if (this.gameState.gameType === 'tournament') {
+			console.log('got in??????')
+			const player1_alias = await sendRequest('GET', `/api/tournament/get_alias_by_id/player_id=${this.gameState.player_one.id}`, null, false);
+			const player2_alias = await sendRequest('GET', `/api/tournament/get_alias_by_id/player_id=${this.gameState.player_two.id}`, null, false);
+			console.log('player1 alias: ', player1_alias.alias)
+			console.log('player2 alias: ', player2_alias.alias)
+			if ('alias' in player1_alias) this.gameState.player_one.user_infos.username = player1_alias.alias;
+			if ('alias' in player2_alias) this.gameState.player_two.user_infos.username = player2_alias.alias;
+			console.log('gameState.player_one.user_infos.username: ', this.gameState.player_one.user_infos.username)
+			console.log('gameState.player_two.user_infos.username: ', this.gameState.player_two.user_infos.username)
+		}
+	}
 }
 
 customElements.define('in-game-component', InGameComponent);

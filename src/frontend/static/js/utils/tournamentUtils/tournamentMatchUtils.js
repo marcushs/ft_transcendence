@@ -55,3 +55,13 @@ function redirectLost(match) {
 	gameComponent.changeState(tournamentLostState.state, tournamentLostState.context);
 	gameComponent.currentState = "tournamentLost";
 }
+
+export async function setTournamentAlias(gameState) {
+	if (gameState.game_type === 'tournament') {
+		const player1_alias = await sendRequest('GET', `/api/tournament/get_alias_by_id/?player_id=${gameState.player_one.id}`, null, false);
+		const player2_alias = await sendRequest('GET', `/api/tournament/get_alias_by_id/?player_id=${gameState.player_two.id}`, null, false);
+		
+		if ('alias' in player1_alias) gameState.player_one.user_infos.username = player1_alias.alias;
+		if ('alias' in player2_alias) gameState.player_two.user_infos.username = player2_alias.alias;
+	}
+}

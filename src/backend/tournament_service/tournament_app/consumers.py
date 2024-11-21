@@ -33,7 +33,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		self.leave_countdown_task = None
 
 	async def connect(self):
-		self.user = self.scope['user']
+		self.user = self.scope['user'] 
 		try: 
 			self.headers = {
 					'Accept': 'application/json',
@@ -68,6 +68,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		except Exception as e:
 			return await self.send_error_message(message_type, str(e))
 	
+		await self.get_updated_user()
 		if message_type == 'create_tournament': 
 			await self.handle_create_tournament(data=data)
 		elif message_type == 'join_tournament':
@@ -89,7 +90,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.broadcast_message(payload=payload)
 
 	async def new_tournament(self, event):
-		await self.send(text_data=json.dumps({
+		await self.send(text_data=json.dumps({ 
 			'type': 'new_tournament',
 			'tournament': event['tournament']
 		}))
@@ -158,10 +159,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		try:
 			tournament = await aget_object_or_404(Tournament, tournament_id=data['tournament_id']) 
 			if await is_user_in_this_tournament(tournament, self.user):
-				await self.exit_tournament(tournament)
 				if data['from_match'] == False:
 					payload = {'type': 'leave.tournament', 'tournament': await tournament.to_dict()}
 					await self.broadcast_message(payload=payload)
+				await self.exit_tournament(tournament)
 			else:
 				await self.send_error_message(data['type'], 'You are not in this tournament')
 		except Http404:
@@ -177,8 +178,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_send(group_names[str(self.user.id)], {'type': 'redirect_to_tournament_home'})
 		await remove_user_from_tournament(tournament, self.user)
 		member_count = await get_members_count(tournament)
-		if member_count == 0:
-			return await set_tournament_not_joinable(tournament)
+		if member_count == 0 and tournament.isOver == False:
+			return await delete_tournament_when_empty(tournament)
+			# return await set_tournament_not_joinable(tournament)
 		await self.stop_leave_countdown()
 
 
@@ -517,3 +519,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'message': message,
 			'tournament': await tournament.to_dict()
 		}))
+
+	@database_sync_to_async
+	def get_updated_user(self):
+		updated_user = User.objects.get(id=self.user.id)
+		self.user = updated_user

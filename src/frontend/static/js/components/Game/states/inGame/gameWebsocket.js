@@ -1,6 +1,7 @@
 import { gameInstance, resetGameInstance } from "./inGameComponent.js";
 import { GameStillActive } from "./gameNetworkManager.js";
 import { startGame } from "./Game.js";
+import { setTournamentAlias } from "../../../../utils/tournamentUtils/tournamentMatchUtils.js";
 
 export let gameSocket = null;
 let reconnectTimeout;
@@ -21,7 +22,9 @@ export async function gameWebsocket(userId) {
 	gameSocket.onmessage = (event) => {
 		const data = JSON.parse(event.data)
 		const actions = {
-			'game_ready_to_start': (data) => {
+			'game_ready_to_start': async (data) => {
+				await setTournamentAlias(data.game_state);
+				console.log(data.game_state)
 				startGame(data.game_id, data.game_state, data.map_dimension);
 			},
 			'data_update': (data) => {
