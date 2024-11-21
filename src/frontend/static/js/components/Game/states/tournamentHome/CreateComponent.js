@@ -1,5 +1,5 @@
 import {getString} from "../../../../utils/languageManagement.js";
-import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
+import { tournamentSocket, loadTournamentWebSocket } from "../../../../views/websocket/loadWebSocket.js";
 
 class CreateComponent extends HTMLElement {
 	constructor() {
@@ -55,7 +55,7 @@ class CreateComponent extends HTMLElement {
 		}
 	}
 
-	async handleCreateButtonClick() {
+	handleCreateButtonClick() {
 		this.tournamentName = this.querySelector('input').value.trim();
 
 		if (this.tournamentName === '' && !this.querySelector('.create-tournament-error')) {
@@ -70,27 +70,9 @@ class CreateComponent extends HTMLElement {
 				'tournament_name': this.tournamentName,
 				'tournament_size': this.numberOfPlayers,
 			};
-
+			if (!tournamentSocket || tournamentSocket.readyState !== WebSocket.OPEN)
+				loadTournamentWebSocket()
 			tournamentSocket.send(JSON.stringify(payload));
-			// localStorage.setItem('isSearchingGame', JSON.stringify({
-			// 	type: 'tournament',
-			// 	status: 'searching'
-			// }));
-
-
-
-			// try {
-			// 	let res = await sendRequest('POST', '/api/tournament/create_tournament/', payload, false);
-
-			// 	console.log(res)
-			// 	if (res.status === 'error') console.log(res.message);
-
-			// } catch (error) {
-				
-			// }
-			// Fetch request
-			// Maybe check error of tournament len in backend ?
-			// How to manage whitespaces ?
 		}
 	}
 

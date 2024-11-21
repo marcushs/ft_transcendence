@@ -20,19 +20,16 @@ import redis
 
 User = get_user_model()
 
-connections = {}
-connections_lock = threading.Lock()
 group_names = {}
+match_countdown_tasks = {}
+lock = asyncio.Lock()
+
 
 redis_instance = redis.Redis(host='redis', port=6379, db=0)
-
-def get_connections():
-    return connections
 
 class TournamentConsumer(AsyncWebsocketConsumer):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		self.match_countdown_task = None 
 		self.leave_countdown_task = None
 
 	async def connect(self):
@@ -55,15 +52,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				group_names[str(self.user.id)] = self.group_name
 				await self.channel_layer.group_add(self.group_name, self.channel_name) 
 				await self.accept()
-				with connections_lock:
-					connections[str(self.user.id)] = self
 		except Exception as e:  
 			print('Error: ', e)
 
 	async def disconnect(self, close_code):
-		with connections_lock:
-			if str(self.user.id) in connections:
-				del connections[str(self.user.id)]
 		if hasattr(self, 'group_name'):
 			await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
@@ -141,10 +133,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def add_players_to_match_group(self, event):
 		match_id = await find_player_match(event, self.user)
 		player_ids = await get_player_ids_for_match(match_id)
-		await self.start_match_countdown(match_id=match_id, player_ids=player_ids, start=False)
+		await self.start_match_countdown(match_id=match_id, player_ids=player_ids)
 		match = await sync_to_async(TournamentMatch.objects.get)(match_id=match_id)
 		payload = {'type': 'load_match', 'match': await match.to_dict(), 'from_match': False}
-		await self.channel_layer.group_send(group_names[str(player_ids[0])], payload)
+		await self.channel_layer.group_send(group_names[str(player_ids[0])], payload) 
 		await self.channel_layer.group_send(group_names[str(player_ids[1])], payload)
 		
 	async def load_match(self, event):
@@ -207,7 +199,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				'player1': str(player_ids[0]), 
 				'player2': str(player_ids[1])
 			}
-			await self.stop_match_countdown()
+			await self.stop_match_countdown(match_id)
 			await self.send_game_instance_request(payload)
 			return
 		elif result == 'Match not found':
@@ -240,7 +232,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'game_type': 'tournament',
 			'match_id': event['match_id'], 
 			'player1': event['player1'],  
-			'player2': event['player2'] 
+			'player2': event['player2']
 		}
 		await self.channel_layer.group_send(group_names[event['player1']], {'type': 'start_game_instance', 'payload': payload})
 		await self.channel_layer.group_send(group_names[event['player2']], {'type': 'start_game_instance', 'payload': payload})
@@ -321,7 +313,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						payload = {'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True}
 						async_to_sync(self.channel_layer.group_send)(group_names[str(player_ids[0])], payload)
 						async_to_sync(self.channel_layer.group_send)(group_names[str(player_ids[1])], payload)
-						async_to_sync(self.start_match_countdown)(match_id=str(final_match.match_id), player_ids=player_ids, start=True) 
+						async_to_sync(self.start_match_countdown)(match_id=str(final_match.match_id), player_ids=player_ids)
 						return final_match
 				else:
 					# Handle the case where the match is already full
@@ -362,7 +354,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					payload = {'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True}
 					async_to_sync(self.channel_layer.group_send)(group_names[str(player_ids[0])], payload)
 					async_to_sync(self.channel_layer.group_send)(group_names[str(player_ids[1])], payload)
-					async_to_sync(self.start_match_countdown)(match_id=str(next_match.match_id), player_ids=player_ids, start=True) 
+					async_to_sync(self.start_match_countdown)(match_id=str(next_match.match_id), player_ids=player_ids) 
 					return next_match
 			else:
 				# Handle the case where the match is already full
@@ -396,54 +388,68 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	# -------------------------------> Countdown functions <---------------------------------
 
-	async def start_match_countdown(self, match_id, player_ids, start):
-		if self.match_countdown_task:
-			await self.stop_match_countdown()
-		if start:
-			await self.start_match_countdown_task(match_id, 60, player_ids)
-
-	async def start_match_countdown_task(self, match_id, duration, player_ids):
-		redis_instance.set(match_id, duration)
-		self.match_countdown_task = asyncio.create_task(self.run_match_countdown(match_id, player_ids))
-
-	async def stop_match_countdown(self):
-		if self.match_countdown_task and not self.match_countdown_task.done():
-			self.match_countdown_task.cancel()  # Request cancellation
-			try:
-				await self.match_countdown_task  # Await cancellation
-				print("Match countdown task cancelled successfully.")
-			except asyncio.CancelledError as e:
-				print(f"Error: countdown_task: {e}")
-			finally:
-				self.match_countdown_task = None
-		else:
-			print("No active match countdown task to stop.")
-      
+	async def start_match_countdown(self, match_id, player_ids):
+		async with lock: 
+			if match_id in match_countdown_tasks:
+				task = match_countdown_tasks[match_id]
+				if task.done():
+					del match_countdown_tasks[match_id]
+				else:
+					return
+			print('----> match_countdown_tasks: ', match_countdown_tasks, ' match_id: ', match_id)
+			match_countdown_tasks[match_id] = asyncio.create_task(self.run_match_countdown(match_id, player_ids))
+			print(f"Curmatch_countdown_tasks: {match_countdown_tasks}")
 
 	async def run_match_countdown(self, match_id, player_ids):
-		while True:
-			countdown = int(redis_instance.get(match_id) or 0)
-			 
-			if countdown < 0:
-				payload = {
-					'match_id': match_id,
-					'player1': str(player_ids[0]), 
-					'player2': str(player_ids[1])
-				}
-				self.send_game_instance_request(payload)
-				await self.stop_match_countdown()
-				break
-			
-			payload = {'type': 'countdown_update', 'time': countdown, 'sent_from': group_names[str(self.user.id)]}
-			await self.channel_layer.group_send(group_names[str(player_ids[0])], payload)
-			await self.channel_layer.group_send(group_names[str(player_ids[1])], payload)
-			
-			redis_instance.decr(match_id)
-			await asyncio.sleep(1)
+		print(f'Curmatch_countdown_tasks: {match_countdown_tasks}')  
+		try:
+			countdown = 60
+			while True:
+				if countdown < 0:
+					payload = {
+						'match_id': match_id,
+						'player1': str(player_ids[0]),  
+						'player2': str(player_ids[1])
+					}
+					await self.send_game_instance_request(payload)
+					await self.stop_match_countdown(match_id)
+					break
+				payload = {'type': 'countdown_update', 'time': countdown, 'sent_from': group_names[str(self.user.id)]}
+				await self.channel_layer.group_send(group_names[str(player_ids[0])], payload)
+				await self.channel_layer.group_send(group_names[str(player_ids[1])], payload)
+
+				countdown -= 1
+				await asyncio.sleep(1)
+		except Exception as e:
+			print(f'Error in start countdown: {str(e)}') 
+		finally:
+			async with lock:
+				if match_id in match_countdown_tasks:
+					del match_countdown_tasks[match_id]
+   
+
+	async def stop_match_countdown(self, match_id):
+		try:
+			task = match_countdown_tasks.get(match_id) 
+			if task:
+				task.cancel()
+				try:
+					await task
+					print(f"Match {match_id} countdown task cancelled successfully.") 
+				except asyncio.CancelledError:
+					print(f"Countdown task for match {match_id} was cancelled.")
+		except Exception as e:
+			print(f"Error while stopping match countdown: {str(e)}")
+		finally:
+			async with lock:
+				if match_id in match_countdown_tasks:
+					del match_countdown_tasks[match_id] 
+      
+
 
 
 	# Leave countdown
-	async def start_leave_countdown(self, tournament_id):
+	async def start_leave_countdown(self, tournament_id): 
 		if self.leave_countdown_task:
 			self.leave_countdown_task.cancel()
 		await self.start_leave_countdown_task(tournament_id, 67)
@@ -464,7 +470,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			 
 			payload = {'type': 'countdown_update', 'time': countdown, 'sent_from': group_names[str(self.user.id)]}
 
-			await self.channel_layer.group_send(group_names[str(self.user.id)], payload)
+			await self.channel_layer.group_send(group_names[str(self.user.id)], payload) 
 			
 			redis_instance.decr(str(self.user.id))
 			await asyncio.sleep(1)
@@ -478,7 +484,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'type': 'countdown_update',
 			'time': event['time'],
 			'sent_from': event['sent_from']
-		}))
+		})) 
 
 
 	# -------------------------------> Utils methods <---------------------------------
