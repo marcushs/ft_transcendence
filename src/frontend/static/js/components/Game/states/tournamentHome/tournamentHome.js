@@ -22,16 +22,45 @@ class tournamentHome {
 		} catch {}
 
 		if (tournamentData && tournamentData.state === "waitingRoom") {
-			return this.generateWaitingRoomState(tournamentData);
+			return `
+				<div class="tournament-home-container">
+					<h3>${getString('gameComponent/tournaments')}</h3>
+					<div class="tournament-components-container">
+						${this.generateWaitingRoomState(tournamentData)}
+					</div>
+				</div>
+			`;
+			// return this.generateWaitingRoomState(tournamentData);
 		} else if (tournamentData && tournamentData.state === "matchState") {
-			console.log(tournamentData)
-			return this.generateMatchState(tournamentData);
+			return `
+				<div class="tournament-home-container">
+					<h3>${getString('gameComponent/tournaments')}</h3>
+					<div class="tournament-components-container">
+						${this.generateMatchState(tournamentData)}
+					</div>
+				</div>
+			`;
+			// return this.generateMatchState(tournamentData);
 		} else if (tournamentData && tournamentData.state === "tournamentLost") {
-			console.log(tournamentData)
-			return this.generateTournamentLostState(tournamentData);
+			return `
+				<div class="tournament-home-container">
+					<h3>${getString('gameComponent/tournaments')}</h3>
+					<div class="tournament-components-container">
+						${this.generateTournamentLostState(tournamentData)}
+					</div>
+				</div>
+			`;
+			// return this.generateTournamentLostState(tournamentData);
 		} else if (tournamentData && tournamentData.state === "tournamentWon") {
-			console.log(tournamentData)
-			return this.generateTournamentWonState(tournamentData.tournamentData);
+			return `
+				<div class="tournament-home-container">
+					<h3>${getString('gameComponent/tournaments')}</h3>
+					<div class="tournament-components-container">
+						${this.generateTournamentWonState(tournamentData.tournamentData)}
+					</div>
+				</div>
+			`;
+			// return this.generateTournamentWonState(tournamentData.tournamentData);
 		} else {
 			return `
 				<div class="tournament-home-container">
@@ -47,42 +76,51 @@ class tournamentHome {
 
 	generateWaitingRoomState(tournamentData) {
 		const gameComponent = document.querySelector('game-component');
+		const tournamentWaitingRoomState = (gameComponent) ? gameComponent.states['waitingRoom'] : "";
 		const tournamentWaitingRoom = new TournamentWaitingRoom(tournamentData.tournamentData);
-		const tournamentWaitingRoomState = gameComponent.states['waitingRoom'];
 
-		tournamentWaitingRoomState['state'] = tournamentWaitingRoom;
-		gameComponent.currentState = "waitingRoom";
+		if (tournamentWaitingRoomState)
+			tournamentWaitingRoomState['state'] = tournamentWaitingRoom;
+		if (gameComponent)
+			gameComponent.currentState = "waitingRoom";
 		return tournamentWaitingRoom.render();
 	}
 
 	generateMatchState(matchData) {
 		const gameComponent = document.querySelector('game-component');
-		const tournamentMatchState = gameComponent.states['tournamentMatch'];
+		const tournamentMatchState = (gameComponent) ? gameComponent.states['tournamentMatch'] : "";
 		const tournamentMatch = new TournamentMatch(matchData.matchData);
 
-		tournamentMatchState['state'] = tournamentMatch;
-		gameComponent.currentState = "tournamentMatch";
+		if (tournamentMatchState)
+			tournamentMatchState['state'] = tournamentMatch;
+		if (gameComponent)
+			gameComponent.currentState = "tournamentMatch";
 		return tournamentMatch.render();
 	}
 
 	generateTournamentLostState(matchData) {
 		const gameComponent = document.querySelector('game-component');
-		const tournamentLostState = gameComponent.states['tournamentLost'];
+		const tournamentLostState = (gameComponent) ? gameComponent.states['tournamentLost'] : "";
 		const tournamentLost = new TournamentLost(matchData.matchData);
 
-		tournamentLostState['state'] = tournamentLost;
-		gameComponent.currentState = "tournamentLost";
+		if (tournamentLostState)
+			tournamentLostState['state'] = tournamentLost;
+		if (gameComponent)
+			gameComponent.currentState = "tournamentLost";
 		return tournamentLost.render();
 	}
 
 	generateTournamentWonState(tournamentBracket) {
 		const gameComponent = document.querySelector('game-component');
-		const tournamentWonState = gameComponent.states['tournamentWon'];
+		const tournamentWonState = (gameComponent) ? gameComponent.states['tournamentWon'] : "";
 		const tournamentWon = new TournamentWon(tournamentBracket);
-	
-		tournamentWonState['state'] = tournamentWon;
-		gameComponent.changeState(tournamentWonState.state, tournamentWonState.context);
-		gameComponent.currentState = "tournamentWon";
+
+		if (tournamentWonState)
+			tournamentWonState['state'] = tournamentWon;
+		if (gameComponent) {
+			gameComponent.changeState(tournamentWonState.state, tournamentWonState.context);
+			gameComponent.currentState = "tournamentWon";
+		}
 		return tournamentWon.render();
 	}
 }

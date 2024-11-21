@@ -6,7 +6,6 @@ class Bracket {
         this.redirectState = "bracket";
         this.class = "bracket";
         this.bracketObj = bracketObj;
-        console.log('bracket obj ====>>', bracketObj)
     }
 
     generateBracket(bracketObj) {

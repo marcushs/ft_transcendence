@@ -20,8 +20,8 @@
 	top: 55%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	width: 60%;
-	height: 60%;
+	width: 60rem;
+	height: 40rem;
 	border-radius: 5px;
 	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
 	padding: 1px;

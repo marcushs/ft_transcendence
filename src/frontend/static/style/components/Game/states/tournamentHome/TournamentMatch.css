@@ -24,8 +24,6 @@
 	transform: translate(-50%, -50%);
 	width: 60rem;
 	height: 40rem;
-	/*width: 60%;*/
-	/*height: 60%;*/
 	border-radius: 5px;
 	background: linear-gradient(0, var(--neon-pink), var(--neon-blue));
 	padding: 1px;

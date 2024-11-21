@@ -72,6 +72,7 @@ function manageGameStates() {
     if (tournamentData) {
         disableButtonsInGameResearch();
         throwChangeGameStateEvent("tournamentHome");
+        document.querySelector('.states-container').classList.remove('matchmaking-choice');
     }
 }
 
