@@ -42,11 +42,11 @@ class Bracket {
             <player-in-bracket name="${(playerLeft && playerLeft.name) ? playerLeft.name : ". . ."}" 
                     score="${(playerLeft && playerLeft.score) ? playerLeft.score : "-"}" 
                     id="final-player1" 
-                    class="${(playerLeft && playerLeft.score === '10') ? 'player-in-bracket-tournament-win' :  'player-in-bracket-basic'}"></player-in-bracket>
+                    class="${(playerLeft && playerLeft.isWinner === true) ? 'player-in-bracket-tournament-win' :  'player-in-bracket-basic'}"></player-in-bracket>
             <player-in-bracket name="${(playerRight && playerRight.name) ? playerRight.name : ". . ."}" 
                     score="${(playerRight && playerRight.score) ? playerRight.score : "-"}" 
                     id="final-player2" 
-                    class="${(playerRight && playerRight.score === '10') ? 'player-in-bracket-tournament-win' :  'player-in-bracket-basic'}"></player-in-bracket>
+                    class="${(playerRight && playerRight.isWinner === true) ? 'player-in-bracket-tournament-win' :  'player-in-bracket-basic'}"></player-in-bracket>
             </div>
         `;
     }
@@ -71,7 +71,7 @@ class Bracket {
         for (const match of matches) {
             match.forEach(player => {
                 if (player)
-                    matchesRes += this.createPlayer(player,`${idPrefix}${index}`, (player.score === '10') ? `player-in-bracket-game-win` :  `player-in-bracket-basic`);
+                    matchesRes += this.createPlayer(player,`${idPrefix}${index}`, (player.isWinner === true) ? `player-in-bracket-game-win` :  `player-in-bracket-basic`);
                 else
                     matchesRes += this.createPlayer(player,`${idPrefix}${index}`, `no-player-in-bracket`);
                 index++;

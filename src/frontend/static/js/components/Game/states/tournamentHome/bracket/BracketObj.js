@@ -4,7 +4,6 @@ export default class BracketObj {
     #bracketObj;
 
     constructor(tournamentBracket, tournamentSize) {
-	    console.log("tournamentbracket is ==============>", tournamentBracket)
         this.#tournamentBracket = tournamentBracket;
         this.#bracketObj = {
             nbOfPlayers: tournamentSize,
@@ -115,11 +114,12 @@ export default class BracketObj {
 			}
 
 			if (match.players[0].player_number === 0) {
-				match_pair[0] = {name: match.players[0].alias, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`};
-				match_pair[1] = {name: match.players[1].alias, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`};
+				console.error('----------------->', match.players[1].id, match.winner.id)
+				match_pair[0] = {name: match.players[0].alias, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`, isWinner: (match.players[0].id === match.winner.id) ? true : false};
+				match_pair[1] = {name: match.players[1].alias, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`, isWinner: (match.players[1].id === match.winner.id) ? true : false};
 			} else {
-				match_pair[0] = {name: match.players[1].alias, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`};
-				match_pair[1] = {name: match.players[0].alias, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`};
+				match_pair[0] = {name: match.players[1].alias, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`, isWinner: (match.players[1].id === match.winner.id) ? true : false};
+				match_pair[1] = {name: match.players[0].alias, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`, isWinner: (match.players[0].id === match.winner.id) ? true : false};
 			}
 			return match_pair;
 		}
@@ -149,11 +149,11 @@ export default class BracketObj {
 		}
 
 		if (match.players[0].player_number === 0) {
-			match_pair[1] = {name: match.players[0].alias, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`};
-			match_pair[0] = {name: match.players[1].alias, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`};
+			match_pair[1] = {name: match.players[0].alias, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`, isWinner: (match.players[0].id === match.winner.id) ? true : false};
+			match_pair[0] = {name: match.players[1].alias, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`, isWinner: (match.players[1].id === match.winner.id) ? true : false};
 		} else {
-			match_pair[1] = {name: match.players[1].alias, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`};
-			match_pair[0] = {name: match.players[0].alias, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`};
+			match_pair[1] = {name: match.players[1].alias, score: `${match.players[1].id === match.winner.id ? match.winner_score : match.loser_score}`, isWinner: (match.players[1].id === match.winner.id) ? true : false};
+			match_pair[0] = {name: match.players[0].alias, score: `${match.players[0].id === match.winner.id ? match.winner_score : match.loser_score}`, isWinner: (match.players[0].id === match.winner.id) ? true : false};
 		}
 		return match_pair;
 	}
