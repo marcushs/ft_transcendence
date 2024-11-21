@@ -28,15 +28,15 @@ redis_instance = redis.Redis(host='redis', port=6379, db=0)
 
 def get_connections():
     return connections
-
+ 
 class TournamentConsumer(AsyncWebsocketConsumer):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		self.match_countdown_task = None 
+		self.match_countdown_task = None  
 		self.leave_countdown_task = None
 
 	async def connect(self):
-		self.user = self.scope['user']
+		self.user = self.scope['user'] 
 		try: 
 			self.headers = {
 					'Accept': 'application/json',
@@ -76,6 +76,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		except Exception as e:
 			return await self.send_error_message(message_type, str(e))
 	
+		await self.get_updated_user()
 		if message_type == 'create_tournament': 
 			await self.handle_create_tournament(data=data)
 		elif message_type == 'join_tournament':
@@ -97,7 +98,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.broadcast_message(payload=payload)
 
 	async def new_tournament(self, event):
-		await self.send(text_data=json.dumps({
+		await self.send(text_data=json.dumps({ 
 			'type': 'new_tournament',
 			'tournament': event['tournament']
 		}))
@@ -524,3 +525,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'message': message,
 			'tournament': await tournament.to_dict()
 		}))
+
+	@database_sync_to_async
+	def get_updated_user(self):
+		updated_user = User.objects.get(id=self.user.id)
+		self.user = updated_user
