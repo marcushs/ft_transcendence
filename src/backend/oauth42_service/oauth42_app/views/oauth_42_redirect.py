@@ -14,7 +14,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 class oauth42RedirectView(View):
     def get(self, request):
         try:
-            state = request.GET.get('state')
+            state = str(request.GET.get('state'))
             code = request.GET.get('code')
             
             cookie_state = request.COOKIES.get('oauth42_state')

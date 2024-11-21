@@ -63,6 +63,8 @@ export function handleLoadMatch(data) {
 }
 
 export function handleRedirectToTournamentLost(data) {
+    console.log('Websocket for game Lost Reached !!!');
+    
     const tournamentDataObj = JSON.parse(localStorage.getItem("tournamentData"));
 
     const tournamentData = {
@@ -72,11 +74,15 @@ export function handleRedirectToTournamentLost(data) {
     }
     console.log('data = ', data, ' and ', data.match);
     localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
-    setTimeout(() => {
-        console.log('--------------------------=================>', tournamentData);
+    const gameComponent = document.querySelector('in-game-component');
+    if (gameComponent) {
+        setTimeout(() => {
+            console.log('--------------------------=================>', tournamentData);
+            redirectToTournamentLostMatch(data.match);
+        }, 7000);
+    } else
         redirectToTournamentLostMatch(data.match);
-    }, 7000);
-}
+    }
 
 export function handleRedirectToTournamentHome() {
     localStorage.removeItem('tournamentData');
@@ -116,7 +122,11 @@ export function handleRedirectToWinnerPage(data) {
     }
     localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
     console.log('in handleRedirectToWinnerPage tournamentData is: ', data.tournament_bracket)
-    setTimeout(() => {
+    const gameComponent = document.querySelector('in-game-component');
+    if (gameComponent) {
+        setTimeout(() => {
+            redirectToWinnerPage(data.tournament_bracket);
+        }, 7000);
+    } else
         redirectToWinnerPage(data.tournament_bracket);
-    }, 7000);
 }

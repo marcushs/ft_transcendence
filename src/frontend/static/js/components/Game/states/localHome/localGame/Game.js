@@ -168,7 +168,7 @@ export default class Game {
 
 			collidePoint = collidePoint / (player.height / 2);
 
-			let angleRad = collidePoint * (Math.PI / 4);
+			let angleRad = collidePoint * (Math.PI / 5);
 
 			let direction = (this.ball.x < this.canvas.width / 2) ? 1 : -1;
 

@@ -81,7 +81,7 @@ class DeleteUser(View):
             user.delete()
             return JsonResponse({'message': 'User updated successfully'}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)} -- data: {data}')
+            print(f'Error: {str(e)}')
             return JsonResponse({'message': str(e)}, status=400)
 
 
@@ -106,7 +106,7 @@ class AddNewUser(View):
             if data['logged_in_with_oauth'] and data['logged_in_with_oauth'] is True:
                 User.objects.create_oauth_user(data)
             else:
-                User.objects.create_user(email=data['email'], username=data['username'], user_id=data['user_id'], language=data['language'])
+                User.objects.create_user(email=str(data['email']), username=str(data['username']), user_id=str(data['user_id']), language=str(data['language']))
             return JsonResponse({"message": 'user added with success', "status": "Success"}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')

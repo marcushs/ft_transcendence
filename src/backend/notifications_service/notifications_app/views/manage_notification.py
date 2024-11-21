@@ -76,8 +76,8 @@ class manage_notification_view(View):
                 match data['type']:
                     case 'canceled_friend_request_notification':
                         notifications = await sync_to_async(Notification.objects.filter)(type='friend-request-pending',
-                        sender=await get_user_id_by_username(data['sender']),
-                        receiver=await get_user_id_by_username(data['receiver']))
+                        sender=await get_user_id_by_username(str(data['sender'])),
+                        receiver=await get_user_id_by_username(str(data['receiver'])))
                         async for notification in notifications:
                             await self.send_delete_notification_to_channel(notification, data)
                             await sync_to_async(notification.delete)()
@@ -90,7 +90,7 @@ class manage_notification_view(View):
             if check_response != 'Success':
                 return JsonResponse({'status': 'error', 'message': check_response}, status=200)
             try:
-                notification = await sync_to_async(Notification.objects.get)(uuid=data['uuid'])
+                notification = await sync_to_async(Notification.objects.get)(uuid=str(data['uuid']))
                 await sync_to_async(notification.delete)()
             except Exception as e:
                 pass
@@ -179,7 +179,7 @@ class manage_notification_view(View):
         
     async def send_notifications_changed_to_websocket(self, data):
         channel_layer = get_channel_layer()
-        username = await sync_to_async(User.objects.get)(id=data['sender_id'])
+        username = await sync_to_async(User.objects.get)(id=str(data['sender_id']))
         notifications = await sync_to_async(list)(Notification.objects.filter(sender=username))
 
         for notification in notifications:

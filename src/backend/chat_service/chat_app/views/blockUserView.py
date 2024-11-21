@@ -25,7 +25,7 @@ class blockUserView(View):
 				if blocked_user == user:
 					return JsonResponse({'message': 'User and blocked user are identical', 'status': 'Error'}, status=401)
 				user.block_user(blocked_user)
-				return JsonResponse({'message': f'User {blocked_user_id} has been blocked', 'status': 'Success'}, status=200)
+				return JsonResponse({'message': f'User {str(blocked_user_id)} has been blocked', 'status': 'Success'}, status=200)
 			except Http404:
 				return JsonResponse({'message': 'Target User Not Found', 'status': 'Success'}, status=404)
 		except Exception as e:
@@ -48,7 +48,7 @@ class unblockUserView(View):
 				if blocked_user == user:
 					return JsonResponse({'message': 'User and blocked user are identical', 'status': 'Error'}, status=401)
 				user.unblock_user(blocked_user_id)
-				return JsonResponse({'message': f'User {blocked_user_id} has been unblocked', 'status': 'Success'}, status=200)
+				return JsonResponse({'message': f'User {str(blocked_user_id)} has been unblocked', 'status': 'Success'}, status=200)
 			except Http404:
 				return JsonResponse({'message': 'Target User Not Found', 'status': 'Success'}, status=404)
 		except Exception as e:

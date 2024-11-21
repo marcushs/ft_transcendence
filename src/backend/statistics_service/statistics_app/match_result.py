@@ -80,13 +80,10 @@ class MatchResultManager(View):
         if data['type'] == 'ranked':
             self.save_old_ranks_value(data=data)
             self.manage_ranked_result(data=data)
-        self.winner.goals_scored += data['winner']['score']
-        self.winner.goals_conceded += data['loser']['score']
-        self.loser.goals_scored += data['loser']['score']
-        self.loser.goals_conceded += data['winner']['score']
-        if data['type'] == 'unranked':
-            self.winner.rankPoints = 9990
-            self.loser.rankPoints = 9990
+        self.winner.goals_scored += int(data['winner']['score'])
+        self.winner.goals_conceded += int(data['loser']['score'])
+        self.loser.goals_scored += int(data['loser']['score'])
+        self.loser.goals_conceded += int(data['winner']['score'])
         self.create_new_match_history(data=data, winner_instance=self.winner, loser_instance=self.loser)
         self.winner.save()
         self.loser.save()
@@ -94,8 +91,8 @@ class MatchResultManager(View):
         
 
     def get_users_from_result(self, data):
-        self.winner = User.objects.get(id=data['winner']['id']) 
-        self.loser = User.objects.get(id=data['loser']['id'])
+        self.winner = User.objects.get(id=str(data['winner']['id'])) 
+        self.loser = User.objects.get(id=str(data['loser']['id']))
 
 
     def change_user_games_count(self, is_game_win, user): 

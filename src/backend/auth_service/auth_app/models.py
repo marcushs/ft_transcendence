@@ -22,9 +22,9 @@ class UserManager(BaseUserManager):
         return user
     
     def create_oauth_user(self, data):
-        id = data['user_id']
-        email = data['email']
-        username = data['username']
+        id = str(data['user_id'])
+        email = str(data['email'])
+        username = str(data['username'])
         user = self.model(id=id, email=email, username=username, logged_in_with_oauth=True)
         user.save(using=self._db)
         return user

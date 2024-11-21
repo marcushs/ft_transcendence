@@ -34,7 +34,7 @@ class GetFriendShipStatus(View):
         if not self.target_username:
             return {'status': 400, 'message': 'No target username provided'}
         try:
-            self.target_user = self.User.objects.get(username=self.target_username)
+            self.target_user = self.User.objects.get(username=str(self.target_username))
         except self.User.DoesNotExist:
             return {'status': 404, 'message': 'Target user does not exist'}
         if user != self.target_user:

@@ -41,6 +41,13 @@ def set_tournament_not_joinable(tournament):
 		tournament.isJoinable = False
 		tournament.save()
 
+@database_sync_to_async
+def delete_tournament_when_empty(tournament):
+    with tournament_delete_lock:
+        # Double-check that the tournament is still empty
+        if tournament.members.count() == 0:
+            tournament.delete()
+
 def set_tournament_is_over(tournament):
 	with transaction.atomic():
 		tournament.isOver = True
