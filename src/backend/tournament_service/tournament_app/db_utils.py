@@ -2,6 +2,7 @@ from channels.db import database_sync_to_async
 from django.db import transaction
 from .models import *
 from django.core.exceptions import ObjectDoesNotExist
+import asyncio
 
 @database_sync_to_async
 def add_user_to_tournament(tournament, user):
@@ -21,8 +22,13 @@ def is_user_in_this_tournament(tournament, user):
 
 @database_sync_to_async
 def remove_user_from_tournament(tournament, user):
+	user.status = 'not_in_tournament'
+	user.save()
 	tournament.members.remove(user)
-	if tournament.members.count() == 0:
+
+@database_sync_to_async
+def delete_tournament_when_empty(tournament):
+	with asyncio.Lock:
 		tournament.delete()
 
 def is_user_in_any_tournament(user):

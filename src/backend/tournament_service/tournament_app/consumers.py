@@ -187,7 +187,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await remove_user_from_tournament(tournament, self.user)
 		member_count = await get_members_count(tournament)
 		if member_count == 0:
-			await sync_to_async(set_tournament_is_over)(tournament)
+			await delete_tournament_when_empty(tournament)
 		await self.stop_leave_countdown()
 
 

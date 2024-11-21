@@ -229,3 +229,10 @@ window.addEventListener('redirection', e => {
 // Update router
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
+
+// async function testEndpoint() {
+//     let res = await sendRequest('GET', '/api/tournament/get_tournament_state/', null, false);
+//     console.log("------------------------", res)
+// }
+
+// testEndpoint();

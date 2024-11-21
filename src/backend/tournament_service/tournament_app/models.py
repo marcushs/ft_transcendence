@@ -15,8 +15,10 @@ ROUND_CHOICES = [
 ]
 
 STATUS_CHOICES = [
+    ('not_in_tournament', 'Not In Tournament'),
     ('joined_tournament', 'Joined Tournament'),
     ('match', 'Match'),
+    ('in_game', 'In Game'),
     ('lost_match', 'Lost Match'),
     ('won_tournament', 'Won Tournament'),
 ]
@@ -43,7 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=12, unique=True, default='default')
     alias = models.CharField(max_length=12, unique=True, default='default')
-    status = models.CharField(max_length=17, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=17, choices=STATUS_CHOICES, default='not_in_tournament')
    
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []

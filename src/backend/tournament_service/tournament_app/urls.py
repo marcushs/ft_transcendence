@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .utils.user_utils import add_new_user, update_user, DeleteUser
-from .views import createTournamentView, getJoinableTournamentsView, tournamentMatchResultView, getBracketView, getMatchByIdView, aliasManager
+from .views import createTournamentView, getJoinableTournamentsView, tournamentMatchResultView, getBracketView, getMatchByIdView, aliasManager, getUserTournamentState
 
 urlpatterns = [
     path('delete_user/', DeleteUser.as_view(), name='delete_user'),
@@ -13,4 +13,5 @@ urlpatterns = [
 	path('get_bracket/', getBracketView.getBracketView.as_view(), name='get_bracket'),
 	path('get_match_by_id/', getMatchByIdView.getMatchByIdView.as_view(), name='get_match_by_id'),
 	path('alias/', aliasManager.AliasManager.as_view(), name='alias'),
+	path('get_tournament_state/', getUserTournamentState.getUserTournamentState.as_view(), name='get_tournament_state'),
 ]
