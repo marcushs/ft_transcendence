@@ -70,6 +70,15 @@ class oauthGithubAccessResourceView(View):
 
         try:
             user = User.objects.get(email=self.email)
+            response = self.check_new_username_taken(user.username)
+
+            if response.status_code == 409:
+                response_data = json.loads(response.content.decode('utf-8'))
+                if 'user_id' in response_data and response_data['user_id'] != str(user.id):
+                    response = JsonResponse({"message": "Username already taken! Try another one.", "status": "Error", "url": '/oauth-username?oauth_provider=oauthgithub'}, status=409)
+                    response.set_cookie('id', str(user.id))
+                    return response 
+                     
             self.payload['user_id'] = str(user.id)
             return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
         except User.DoesNotExist:
@@ -90,7 +99,7 @@ class oauthGithubAccessResourceView(View):
                     response = JsonResponse(response_data, status=400)
                 elif response_data['message'] == "Username already taken! Try another one.":
                     response_data['url'] = '/oauth-username?oauth_provider=oauthgithub'
-                    response = JsonResponse(response_data, status=400)
+                    response = JsonResponse(response_data, status=409)
                     response.set_cookie('id', self.id, httponly=True)
                 response.delete_cookie('github_access_token')
                 return response
@@ -140,5 +149,19 @@ class oauthGithubAccessResourceView(View):
         names = fullname.split(' ') 
         self.first_name = names[0]
         self.last_name = names[-1]
+
+    def check_new_username_taken(self, username):
+        url = 'http://user:8000/api/user/check_username/'
+        try:
+            response = requests.get(url=url, params={"username": username})
+            if response.status_code == 409:
+                return response
+            response.raise_for_status()
+            return response 
+        except Exception as e:
+
+            print(f'Error: {str(e)}')
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
 
         

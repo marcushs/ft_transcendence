@@ -30,7 +30,7 @@ class oauth42AccessResourceView(View):
             token = request.COOKIES.get('42_access_token')
             resource_url = 'https://api.intra.42.fr/v2/me'
 
-            headers = {
+            headers = { 
                 'Authorization': f'Bearer {str(token)}'
             }
 
@@ -68,11 +68,15 @@ class oauth42AccessResourceView(View):
 
         try:
             user = User.objects.get(email=self.email)
-            if User.objects.filter(self.username).exists():
-                response = self.check_new_username_taken(self.username)
-                if response.status_code == 200:
-                    return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
-                    
+            response = self.check_new_username_taken(user.username)
+
+            if response.status_code == 409:
+                response_data = json.loads(response.content.decode('utf-8'))
+                if 'user_id' in response_data and response_data['user_id'] != str(user.id):
+                    response = JsonResponse({"message": "Username already taken! Try another one.", "status": "Error", "url": '/oauth-username?oauth_provider=oauth42'}, status=409)
+                    response.set_cookie('id', str(user.id))
+                    return response 
+                     
             self.payload['user_id'] = str(user.id)
             return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
         except User.DoesNotExist:
@@ -80,8 +84,8 @@ class oauth42AccessResourceView(View):
                                             username=self.username,
                                             email=self.email,
                                             first_name=self.first_name,
-                                            last_name=self.last_name,
-                                            profile_image_link=self.profile_image_link)
+                                            last_name=self.last_name, 
+                                            profile_image_link=self.profile_image_link) 
             self.id = str(user.id)
             self.payload['user_id'] = self.id 
             response = self.send_create_user_request_to_endpoints()
@@ -92,8 +96,9 @@ class oauth42AccessResourceView(View):
                     response_data['url'] = '/login'
                     response = JsonResponse(response_data, status=400)
                 elif response_data['message'] == "Username already taken! Try another one.":
+                    print('why here?')
                     response_data['url'] = '/oauth-username?oauth_provider=oauth42'
-                    response = JsonResponse(response_data, status=400)
+                    response = JsonResponse(response_data, status=409)
                     response.set_cookie('id', self.id, httponly=True)
                 response.delete_cookie('42_access_token')
                 return response
@@ -128,8 +133,10 @@ class oauth42AccessResourceView(View):
         url = 'http://user:8000/api/user/check_username/'
         try:
             response = requests.get(url=url, params={"username": username})
+            if response.status_code == 409:
+                return response
             response.raise_for_status()
-            return response
-        except Exception as e:
+            return response 
+        except Exception as e: 
             print(f'Error: {str(e)}')
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)

@@ -26,7 +26,10 @@ export default () => {
 		attachEventListeners();
 		const btn = document.getElementById('btn');
 
-		btn.addEventListener("click", postNewUsername);
+		btn.addEventListener("click", event => {
+			event.preventDefault();
+			postNewUsername()
+		});
 		rotatingGradient('.oauth-username-container-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.oauth-username-container', '#FF16C6', '#00D0FF');
 		rotatingGradient('.oauth-username-content', '#1c0015', '#001519');
@@ -34,17 +37,17 @@ export default () => {
 	return html;
 }
 
-
 function attachEventListeners() {
 	const inputElement = document.querySelector('.oauth-username-content input');
 	const feedbackElement = document.querySelector('.oauth-username-content #feedbackElement');
 	const button = document.querySelector('.oauth-username-content button-component');
 
-	inputElement.addEventListener("input", event => manageInputValidity(inputElement, feedbackElement, button));
+	inputElement.addEventListener("input", event => manageInputValidity(inputElement, feedbackElement, button)); 
 }
 
 
 function manageInputValidity(inputElement, feedbackElement, button) {
+
 	if (inputElement.value === '') {
 		button.className = 'generic-btn-disabled';
 		feedbackElement.innerText = '';
@@ -64,13 +67,14 @@ function manageInputValidity(inputElement, feedbackElement, button) {
 
 
 async function postNewUsername() {
+	console.log('clicked')
 	const feedbackElement = document.getElementById("feedbackElement");
 	const newUsername = document.getElementById('username').value;
 	const urlParams = new URLSearchParams(window.location.search);
 	const oauthProvider = urlParams.get('oauth_provider');
 
-	if(!oauthProvider)
-		throwRedirectionEvent('/login');
+	if(!oauthProvider || (oauthProvider !== 'oauth42' && oauthProvider !== 'oauthgoogle' && oauthProvider !== 'oauthgithub'))
+		return throwRedirectionEvent('/login');
 
 	feedbackElement.innerText = '';
 
@@ -79,7 +83,7 @@ async function postNewUsername() {
 		headers: {
 			'Accept': 'application/json',
 			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken')
+			'X-CSRFToken': getCookie('csrftoken') 
 		},
 		credentials: 'include',
 		body: JSON.stringify({newUsername: newUsername}),
@@ -87,10 +91,12 @@ async function postNewUsername() {
 
 	try {
 		const res = await fetch(`/api/${oauthProvider}/update_username/`, config);
-
+		if (res.status === 409 || res.status === 404) {
+			return throwRedirectionEvent(await res.json().url);
+		}
 		const data = await res.json();
 		if (data.status !== "Error")
-			throwRedirectionEvent(data.url)
+			throwRedirectionEvent('/')
 	} catch (error) {
 		console.log('Error :', error);
 		throwRedirectionEvent('/login')

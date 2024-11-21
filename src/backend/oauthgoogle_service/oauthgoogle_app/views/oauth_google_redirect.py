@@ -56,7 +56,7 @@ class oauthGoogleRedirectView(View):
             "code": code,
             "client_secret": env("API_SECRET_GOOGLE"),
             "client_id": env("API_UID_GOOGLE"),
-            "redirect_uri": "https://localhost:3000/oauth-redirect",
+            "redirect_uri": f'https://{env('SERVER_IP')}:3000/oauth-redirect',
             "grant_type": "authorization_code",
         }
         token_response = requests.post(token_url, data=token_args)

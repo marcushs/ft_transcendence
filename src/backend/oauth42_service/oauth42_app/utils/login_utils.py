@@ -29,11 +29,13 @@ def login(user, request, payload, csrf_token):
 		if user.is_verified is True:
 			response = JsonResponse({'message': '2FA activated on this account, need to verify before log', 'is_verified': user.is_verified}, status=200)
 			response.delete_cookie('42_access_token')
+			response.delete_cookie('id')
 			return response
 		response = _create_user_session(user=user, request=request)
 	except User.DoesNotExist:
 		response = JsonResponse({'message': 'Invalid username, please try again'}, status=400)
-	response.delete_cookie('42_access_token')
+		response.delete_cookie('42_access_token')
+		response.delete_cookie('id')
 	return response
 
 def _create_user_session(user, request):
@@ -44,6 +46,7 @@ def _create_user_session(user, request):
 	response.set_cookie('jwt', token, httponly=True, max_age=settings.ACCESS_TOKEN_LIFETIME)
 	response.set_cookie('jwt_refresh', refresh_token, httponly=True, max_age=settings.REFRESH_TOKEN_LIFETIME)
 	response.delete_cookie('42_access_token')
+	response.delete_cookie('id')
 	request.jwt = token
 	request.jwt_refresh = refresh_token
 	payload = {

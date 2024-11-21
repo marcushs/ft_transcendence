@@ -38,14 +38,12 @@ class oauthGoogleUpdateUsernameView(View):
                     user = User.objects.get(id=id)
                     user.username = new_username
                     user.save()
-                    response = JsonResponse({"message": "Set username succesfully", "url": "/home", "status": "Success"}, status=200)
-                    response.delete_cookie("id")
                     self.init_payload(user)
                     self.send_create_user_request_to_endpoints()
                     return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
                 except User.DoesNotExist:
                     return JsonResponse({"message": "User not found", "url":"/login", "status": "Error"}, status=404)
-            return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
+            return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error", "url": '/oauth-username?oauth_provider=oauthgoogle'}, status=409)
         except Exception as e:
             print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=400)

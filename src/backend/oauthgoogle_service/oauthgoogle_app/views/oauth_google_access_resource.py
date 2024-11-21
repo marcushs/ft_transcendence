@@ -67,6 +67,15 @@ class oauthGoogleAccessResourceView(View):
 
         try:
             user = User.objects.get(email=self.email)
+            response = self.check_new_username_taken(user.username)
+
+            if response.status_code == 409:
+                response_data = json.loads(response.content.decode('utf-8'))
+                if 'user_id' in response_data and response_data['user_id'] != str(user.id):
+                    response = JsonResponse({"message": "Username already taken! Try another one.", "status": "Error", "url": '/oauth-username?oauth_provider=oauthgoogle'}, status=409)
+                    response.set_cookie('id', str(user.id))
+                    return response 
+                     
             self.payload['user_id'] = str(user.id)
             return login(user=user, request=request, payload=self.payload, csrf_token=self.csrf_token)
         except User.DoesNotExist:
@@ -81,7 +90,7 @@ class oauthGoogleAccessResourceView(View):
                 self.payload['user_id'] = self.id
                 response = JsonResponse({'message': "Username already taken! Try another one.",
                                          'status': 'Error',
-                                         'url': '/oauth-username?oauth_provider=oauthgoogle'}, status=400)
+                                         'url': '/oauth-username?oauth_provider=oauthgoogle'}, status=409)
                 response.set_cookie('id', str(user.id), httponly=True)
                 return response
             user = User.objects.create_user(id=uuid.uuid4(),
@@ -101,7 +110,7 @@ class oauthGoogleAccessResourceView(View):
                     response = JsonResponse(response_data, status=400)
                 elif response_data['message'] == "Username already taken! Try another one.":
                     response_data['url'] = '/oauth-username?oauth_provider=oauthgoogle'
-                    response = JsonResponse(response_data, status=400)
+                    response = JsonResponse(response_data, status=409)
                     response.set_cookie('id', self.id, httponly=True)
                 response.delete_cookie('google_access_token')
                 return response
@@ -131,3 +140,16 @@ class oauthGoogleAccessResourceView(View):
             'logged_in_with_oauth': True,
             'profile_image_link': self.profile_image_link,
         }
+
+    def check_new_username_taken(self, username):
+        url = 'http://user:8000/api/user/check_username/'
+        try:
+            response = requests.get(url=url, params={"username": username})
+            if response.status_code == 409:
+                return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error", "url": '/oauth-username?oauth_provider=oauthgoogle'}, status=409)
+            response.raise_for_status()
+            return response 
+        except Exception as e:
+
+            print(f'Error: {str(e)}')
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)

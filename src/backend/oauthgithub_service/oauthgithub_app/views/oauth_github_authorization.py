@@ -57,7 +57,7 @@ class oauthGithubAuthorizationView(View):
         # Prepare the authorization URL with the state parameter
         url = client.prepare_request_uri(
             authorization_url,
-            redirect_uri="https://localhost:3000/oauth-redirect", 
+            redirect_uri=f'https://{env('SERVER_IP')}:3000/oauth-redirect', 
             scope=['user:email'],
             state=self.state
         )

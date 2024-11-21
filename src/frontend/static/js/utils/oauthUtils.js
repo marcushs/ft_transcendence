@@ -1,6 +1,7 @@
 import { getCookie } from "./cookie.js";
 import { throwRedirectionEvent } from "./throwRedirectionEvent.js";
 import {getString} from "./languageManagement.js";
+import oauthUsername from "../views/oauthUsername.js";
 
 const config = {
 		headers: {
@@ -30,7 +31,8 @@ export async function oauthRedirectCallback() {
 				status_text.textContent = `${getString("oauthUtils/error")}: ${login_res ? login_res.message : getString("oauthUtils/fetchFailed")}`;
 
 				if (login_res && login_res.url)
-					return setTimeout(() => window.location.href = login_res.url, 2000);
+					return setTimeout(() => throwRedirectionEvent(login_res.url), 2000);
+					// return setTimeout(() => window.location.href = login_res.url, 2000);
 				setTimeout(() => throwRedirectionEvent('/login'), 2000);
 				return ;
 			}
@@ -56,6 +58,7 @@ export async function redirectToOauth(oauthProvider) {
 		const res = await fetch(`/api/${oauthProvider}/auth/`, config);
 		const data = await res.json();
 
+		console.log('redirectToOauth data.url ', data.url)
 		window.location.replace(data.url);
 	} catch (error) {
 		console.log(error);

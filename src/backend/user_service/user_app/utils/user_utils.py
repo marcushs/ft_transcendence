@@ -150,12 +150,15 @@ class check_username(View):
         try:
             username = request.GET.get('username')
             if User.objects.filter(username=str(username)).exists():
-                return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error"}, status=400)
+                user = User.objects.get(username=str(username))
+                return JsonResponse({"message": "Username already taken! Try another one.", 
+                                     "status": "Error", 
+                                     "user_id": str(user.id)}, status=409)
             return JsonResponse({"message": "Username is free", "status": "Success"}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=400)
-
+ 
 async def send_request(request_type, url, request=None, payload=None):
     if request:
         headers, cookies = set_headers_cookies_request(request=request)
