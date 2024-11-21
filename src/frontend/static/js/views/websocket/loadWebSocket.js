@@ -169,7 +169,7 @@ function loadChatWebSocket() {
 	};
 }
 
-function loadTournamentWebSocket() {
+export function loadTournamentWebSocket() {
 	if (tournamentSocket && tournamentSocket.readyState === WebSocket.OPEN) {
 		console.log('already connected to tournament Websocket');
 		return;

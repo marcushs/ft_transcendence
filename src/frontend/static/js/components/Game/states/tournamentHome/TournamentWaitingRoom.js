@@ -10,6 +10,7 @@ export default class TournamentWaitingRoom {
 										.replace(/"/g, '&quot;')
 										.replace(/</g, '&lt;')
 										.replace(/>/g, '&gt;');
+	
 	}
 
 	render() {

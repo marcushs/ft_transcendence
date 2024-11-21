@@ -33,7 +33,7 @@ class oauthGoogleAuthorizationView(View):
             
             state = self.state
             response.set_cookie(
-                'oauth42_state', 
+                'oauthgoogle_state',
                 state,
                 httponly=True,
                 secure=True,
@@ -56,7 +56,7 @@ class oauthGoogleAuthorizationView(View):
         # Prepare the authorization URL with the state parameter
         url = client.prepare_request_uri(
             authorization_url,
-            redirect_uri=f'https://{env('SERVER_IP')}:3000/oauth-redirect', 
+            redirect_uri=f'https://{env('SERVER_IP')}:3000/oauth-redirect',
             scope=['https://www.googleapis.com/auth/userinfo.profile',
                    'https://www.googleapis.com/auth/userinfo.email'],
             state=self.state,

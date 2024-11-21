@@ -45,27 +45,6 @@ const routes = {
 
 // localStorage.clear()
 
-// function manageGameStates() {
-//     const tournamentData = localStorage.getItem("tournamentData");
-//
-//     if (tournamentData) {
-//         disableButtonsInGameResearch();
-//         if (location.pathname !== '/') {
-//             throwRedirectionEvent('/');
-//             console.log(document.querySelector('game-component'));
-//             if (!document.querySelector('game-component')) {
-//                 document.addEventListener('gameComponentLoaded', () => {
-//                     throwChangeGameStateEvent(tournamentData.state);
-//                 });
-//             } else {
-//                 throwChangeGameStateEvent(tournamentData.state);
-//             }
-//         } else {
-//             throwChangeGameStateEvent("tournamentHome");
-//         }
-//     }
-// }
-
 function manageGameStates() {
     const tournamentData = localStorage.getItem("tournamentData");
 
@@ -76,11 +55,16 @@ function manageGameStates() {
     }
 }
 
-
-// manageGameStates();
+    //     console.log('tournament status: ', res)
+    // } catch (error) {
+        
+    // }
+    // else
+    // } else if (fetch) {
+        // fetch pour voir si c'est encore le cas, si oui, return
+    // }
 
 function throwChangeGameStateEvent(state) {
-    console.log('the state is ===========>', state)
     const event = new CustomEvent('changeGameStateEvent', {
         bubbles: true,
         detail: {
@@ -229,10 +213,3 @@ window.addEventListener('redirection', e => {
 // Update router
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
-
-// async function testEndpoint() {
-//     let res = await sendRequest('GET', '/api/tournament/get_tournament_state/', null, false);
-//     console.log("------------------------", res)
-// }
-
-// testEndpoint();
