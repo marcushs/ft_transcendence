@@ -41,6 +41,7 @@ match-history-component .unlogged-sentence {
 }
 
 .history-list-container li {
+    position: relative;
     width: 90%;
     height: 19%;
     display: flex;
@@ -49,6 +50,13 @@ match-history-component .unlogged-sentence {
     list-style-type: none;
     border-radius: 7px;
     margin-bottom: 0.9rem;
+}
+
+match-history-component .date {
+    position: absolute;
+    font-size: 1.5rem !important;
+    bottom: 0.5rem;
+    left: 4.3rem;
 }
 
 .history-list-container .win {

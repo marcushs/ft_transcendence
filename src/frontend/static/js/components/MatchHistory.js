@@ -101,6 +101,11 @@ class MatchHistory extends HTMLElement {
         const opponent_id = (isWin) ? matchInfos.loser_id : matchInfos.winner_id;
         const opponent_name = await getUsernameById(opponent_id);
         const score = (isWin) ? `${matchInfos.winner_score} - ${matchInfos.loser_score}` : `${matchInfos.loser_score} - ${matchInfos.winner_score}`
+        const date = new Date(matchInfos.date);
+        let localDate = localStorage.getItem("userLanguage");
+
+        if (!localDate)
+            localDate = 'en';
 
         return `
             <li class="${(isWin) ? "win" : "lose"}">
@@ -113,6 +118,7 @@ class MatchHistory extends HTMLElement {
                     <p class="name">${opponent_name}</p>
                     <p class="score">${score}</p>
                 </div>
+                <p class="date">${date.toLocaleDateString(localDate)}</p>
             </li>
         `;
     }
@@ -123,6 +129,11 @@ class MatchHistory extends HTMLElement {
         const opponent_id = (isWin) ? matchInfos.loser_id : matchInfos.winner_id;
         const opponent_name = await getUsernameById(opponent_id);
         const score = (isWin) ? `${matchInfos.winner_score} - ${matchInfos.loser_score}` : `${matchInfos.loser_score} - ${matchInfos.winner_score}`
+        const date = new Date(matchInfos.date);
+        let localDate = localStorage.getItem("userLanguage");
+
+        if (!localDate)
+            localDate = 'en';
 
         return `
             <li class="${(isWin) ? "win" : "lose"}">
@@ -135,6 +146,7 @@ class MatchHistory extends HTMLElement {
                     <p class="name">${opponent_name}</p>
                     <p class="score">${score}</p>
                 </div>
+                <p class="date">${date.toLocaleDateString(localDate)}</p>
             </li>
         `;
     }
@@ -145,6 +157,11 @@ class MatchHistory extends HTMLElement {
         const opponent_id = (isWin) ? matchInfos.loser_id : matchInfos.winner_id;
         const opponent_name = await getUsernameById(opponent_id);
         const score = (isWin) ? `${matchInfos.winner_score} - ${matchInfos.loser_score}` : `${matchInfos.loser_score} - ${matchInfos.winner_score}`
+        const date = new Date(matchInfos.date);
+        let localDate = localStorage.getItem("userLanguage");
+
+        if (!localDate)
+            localDate = 'en';
 
         return `
             <li class="${(isWin) ? "win" : "lose"}">
@@ -157,6 +174,7 @@ class MatchHistory extends HTMLElement {
                     <p class="name">${opponent_name}</p>
                     <p class="score">${score}</p>
                 </div>
+                <p class="date">${date.toLocaleDateString(localDate)}</p>
             </li>
         `;
     }
@@ -167,6 +185,11 @@ class MatchHistory extends HTMLElement {
         const opponent_id = (isWin) ? matchInfos.loser_id : matchInfos.winner_id;
         const opponent_name = await getUsernameById(opponent_id);
         const score = (isWin) ? `${matchInfos.winner_score} - ${matchInfos.loser_score}` : `${matchInfos.loser_score} - ${matchInfos.winner_score}`
+        const date = new Date(matchInfos.date);
+        let localDate = localStorage.getItem("userLanguage");
+
+        if (!localDate)
+            localDate = 'en';
 
         return `
             <li class="${(isWin) ? "win" : "lose"}">
@@ -179,6 +202,7 @@ class MatchHistory extends HTMLElement {
                     <p class="name">${opponent_name}</p>
                     <p class="score">${score}</p>
                 </div>
+                <p class="date">${date.toLocaleDateString(localDate)}</p>
             </li>
         `;
     }
