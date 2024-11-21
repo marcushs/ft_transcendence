@@ -10,13 +10,13 @@ export default () => {
 			<div class="oauth-username-container">
 				<div class="oauth-username-content">
 					<h1>${getString("oauthUsernameView/title")}</h1>
-					<form>
+					<form id="username-form">
 						<input type="text" placeholder="${getString("oauthUsernameView/username")}" name="newUsername" id="username" maxlength="12"/>
 						<div class="feedback-container">
 							<span id="feedbackElement"></span>
 						</div>
 					</form>
-					<button-component label="change" id="btn" class="generic-btn-disabled"></button-component>
+					<button-component label="${getString("buttonComponent/change")}" id="btn" class="generic-btn-disabled"></button-component>
 				</div>
 			</div>
 		</section>
@@ -26,10 +26,10 @@ export default () => {
 		attachEventListeners();
 		const btn = document.getElementById('btn');
 
-		btn.addEventListener("click", event => {
-			event.preventDefault();
-			postNewUsername()
-		});
+		btn.addEventListener("click", postNewUsername);
+		document.getElementById('username-form').addEventListener('submit', event => event.preventDefault());
+		document.addEventListener('keydown', (event) => {if (event.key === 'Enter') postNewUsername()});
+
 		rotatingGradient('.oauth-username-container-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.oauth-username-container', '#FF16C6', '#00D0FF');
 		rotatingGradient('.oauth-username-content', '#1c0015', '#001519');
@@ -92,7 +92,12 @@ async function postNewUsername() {
 	try {
 		const res = await fetch(`/api/${oauthProvider}/update_username/`, config);
 		if (res.status === 409 || res.status === 404) {
-			return throwRedirectionEvent(await res.json().url);
+			const data = await res.json();
+			feedbackElement.innerText = data.message;
+			setTimeout(() => {
+				throwRedirectionEvent(data.url);
+			}, 1500);
+			return ;
 		}
 		const data = await res.json();
 		if (data.status !== "Error")

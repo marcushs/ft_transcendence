@@ -32,7 +32,6 @@ export async function oauthRedirectCallback() {
 
 				if (login_res && login_res.url)
 					return setTimeout(() => throwRedirectionEvent(login_res.url), 2000);
-					// return setTimeout(() => window.location.href = login_res.url, 2000);
 				setTimeout(() => throwRedirectionEvent('/login'), 2000);
 				return ;
 			}

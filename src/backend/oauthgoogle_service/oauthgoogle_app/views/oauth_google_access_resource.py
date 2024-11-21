@@ -62,7 +62,6 @@ class oauthGoogleAccessResourceView(View):
         if len(self.username) > 12:
             self.username = data['login'][:12]
         self.email = data['email']
-        self.profile_image_link = data['picture']
         self.init_payload()
 
         try:
@@ -84,8 +83,7 @@ class oauthGoogleAccessResourceView(View):
                                                 username='temp_user',
                                                 email=self.email,
                                                 first_name=self.first_name,
-                                                last_name=self.last_name,
-                                                profile_image_link=self.profile_image_link)
+                                                last_name=self.last_name)
                 self.id = str(user.id)
                 self.payload['user_id'] = self.id
                 response = JsonResponse({'message': "Username already taken! Try another one.",
