@@ -194,7 +194,7 @@ def change_is_ingame_state(value: bool, user_instance=None, user_id=None):
                 user_id = str(user_id)
             user = User.objects.get(id=user_id)
         except Exception as e:
-            print(f'Error : {e}')
+            print(f'Error : {str(e)}')
             return
     else:
         user = user_instance

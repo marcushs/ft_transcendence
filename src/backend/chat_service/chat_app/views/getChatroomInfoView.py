@@ -32,7 +32,7 @@ class getChatroomInfoView(View):
 					}
 					members.append(user_dict)
 				except Exception as e:
-					print(e)
+					print(f'Error: {str(e)}')
 					return JsonResponse({'message': 'Error getting user info'}, status=400)
 			chatroom_dict = {
 				'id': chatroom.group_id,

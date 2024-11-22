@@ -68,7 +68,8 @@ async def starting_game_instance(data):
         await send_client_game_init(game_data=game_users_data, game_instance=game_instance)
         await running_game_instance(instance=game_instance, data=game_users_data)
     except Exception as e:
-        print(f'-> async_tasks: error: {str(e)}')
+        print(f'Error: {str(e)}')
+
 
 
 async def check_connections(data):
@@ -107,7 +108,8 @@ async def ending_game_instance(data):
         }
         await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)
     except Exception as e:
-        print(f'-> async_tasks: {e}')
+        print(f'Error: {str(e)}')
+
 
 #//---------------------------------------> surrend games instance Endpoint <--------------------------------------\\#
 

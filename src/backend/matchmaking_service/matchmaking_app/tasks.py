@@ -24,7 +24,7 @@ def periodic_check_ingame_status():
                 user.save()
             sleep(60)
         except Exception as e:
-            print(f'Error: {e}')
+            print(f'Error: {str(e)}')
             sleep(30) 
 
 

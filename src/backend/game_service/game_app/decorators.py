@@ -14,10 +14,10 @@ def jwt_required(initial_function):
             response = await initial_function(request, user_id)
             return update_jwt_cookies(request=request, response=response)
         except ValueError as e:
-            print(f'ValueError: jwt: {str(e)}')
+            print(f'Error: {str(e)}')
             return JsonResponse({'message': str(e)}, status=401)
         except Exception as e:
-            print(f'ExceptionError: jwt: {str(e)}') 
+            print(f'Error: {str(e)}')
             return send_jwt_failed_response()
     return wrapper
 

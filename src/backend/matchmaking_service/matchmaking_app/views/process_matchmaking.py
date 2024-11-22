@@ -20,7 +20,7 @@ def proccess_matchmaking(game_type):
         send_websocket_game_found(player_id=str(players[1].id), payload={'type': 'game_found'})
         send_start_game(game_type=game_type, player_one_id=str(players[0].id), player_two_id=str(players[1].id))
     except Exception as e:
-        print(f'Error: thread: {str(e)}')
+        print(f'Error: {str(e)}')
     
     if redis_instance.llen('{game_type}_waiting_users') > 1:
         proccess_matchmaking(game_type)

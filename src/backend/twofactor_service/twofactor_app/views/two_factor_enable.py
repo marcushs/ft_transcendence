@@ -103,7 +103,7 @@ class twofactor_enable_view(View):
             totp = pyotp.TOTP(request.user.authenticator_secret)
             otpauth_url =  totp.provisioning_uri(request.user.email, issuer_name='KingPong')
         except Exception as error:
-            print(f'Error: authenticator: {str(error)}')
+            print(f'Error : {str(error)}')
             return JsonResponse({'message': 'authenticatorError'}, status=400)
         return JsonResponse({'qrcode': otpauth_url, 'qrcode_token': request.user.authenticator_secret}, status=200)
     
@@ -126,7 +126,7 @@ class twofactor_enable_view(View):
             send_mail(subject, message, email_from, recipient_list)
             return None
         except Exception as error:
-            print(f'An error occurred with email sending : {str(error)}')
+            print(f'Error : {str(error)}')
             return 'emailError'
         
     def _generate_6_digits_code(self):

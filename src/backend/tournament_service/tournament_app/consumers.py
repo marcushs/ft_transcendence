@@ -53,7 +53,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				await self.channel_layer.group_add(self.group_name, self.channel_name) 
 				await self.accept()
 		except Exception as e:  
-			print('Error: ', str(e))
+			print(f'Error : {str(e)}')
 
 	async def disconnect(self, close_code):
 		if hasattr(self, 'group_name'):
@@ -178,7 +178,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_send(group_names[str(self.user.id)], {'type': 'redirect_to_tournament_home'})
 		await remove_user_from_tournament(tournament, self.user)
 		member_count = await get_members_count(tournament)
-		print(f'Tournament members remaining: {member_count} -- tounament status: {tournament.isOver}')
 		if member_count == 0 and tournament.isOver == False:
 			return await delete_tournament_when_empty(tournament)
 			# return await set_tournament_not_joinable(tournament)
@@ -319,7 +318,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						return final_match
 				else:
 					# Handle the case where the match is already full
-					print("Match is already full") 
 					return None
 			return final_match
  
@@ -360,7 +358,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					return next_match
 			else:
 				# Handle the case where the match is already full
-				print(f"Match {next_match.id} is already full")
 				return None
 		return next_match
 	
@@ -435,7 +432,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				try:
 					await task
 				except asyncio.CancelledError:
-					print(f"Countdown task for match {match_id} was cancelled !")
+					pass
 		except Exception as e:
 			print(f"Error: {str(e)}")
 		finally:

@@ -12,7 +12,8 @@ class ContactsConsumer(AsyncWebsocketConsumer):
                 await self.channel_layer.group_add(self.group_name, self.channel_name)
                 await self.accept()
         except Exception as e:
-            print('Error while connecting contacts websockets ', e)
+            print(f'Error: {str(e)}')
+
 
 
     async def disconnect(self, close_code):

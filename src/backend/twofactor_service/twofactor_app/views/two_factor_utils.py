@@ -18,7 +18,7 @@ def send_update_request(request):
         send_request(request_type='POST', request=request, url='http://auth:8000/api/auth/update_user/', payload=payload)
         return None
     except Exception as e:
-        print('Error with updating is_verified value: ', str(e))
+        print(f'Error : {str(e)}')
         return JsonResponse({'message': 'unknownUser'}, status=400)
  
 def send_request(request_type, request, url, payload=None):

@@ -60,7 +60,7 @@ class PrivateMatchInit(View):
             }
             notifications_response = async_to_sync(send_request)(request_type='POST', url='http://notifications:8000/api/notifications/manage_notifications/', request=request, payload=payload)
             if notifications_response.json().get('status') == 'error':
-                print(f"Error: {str(notifications_response.json().get('message'))}")
+                print(f'Error: {str(e)}')
                 raise Exception('notificationsRequestFailed')
             return JsonResponse({'message': 'lobbyCreated'}, status=200)
         except ObjectDoesNotExist:
