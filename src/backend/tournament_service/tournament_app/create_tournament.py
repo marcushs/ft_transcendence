@@ -7,7 +7,6 @@ import math
 @database_sync_to_async
 def createTournamentInDB(data, user):
 	creator = user
-	print('--------- creator.alias: ', creator.alias) 
 	tournament_name = data['tournament_name']
 	tournament_size = data['tournament_size']
 

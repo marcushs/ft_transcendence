@@ -31,5 +31,5 @@ def find_player_match(event, user):
             return None
 
     except Exception as e:
-        print(f"Error in find_player_match: {str(e)}") 
+        print(f"Error: {str(e)}") 
         return None

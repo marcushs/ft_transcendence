@@ -45,7 +45,6 @@ def get_user_from_jwt(token):
         user = User.objects.get(id=payload['user_id'])
         return user
     except jwt.ExpiredSignatureError:
-        print('EXPIRED !!!')
         return 'expired'
     except Exception:
         return None
