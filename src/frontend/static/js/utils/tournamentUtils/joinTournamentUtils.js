@@ -40,7 +40,6 @@ function redirectWon(tournamentBracket) {
 	const gameComponent = document.querySelector('game-component');
 	const tournamentWonState = gameComponent.states['tournamentWon'];
 	const tournamentWon = new TournamentWon(tournamentBracket);
-
 	tournamentWonState['state'] = tournamentWon;
 	gameComponent.changeState(tournamentWonState.state, tournamentWonState.context);
 	gameComponent.currentState = "tournamentWon";

@@ -213,3 +213,45 @@ window.addEventListener('redirection', e => {
 // Update router
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
+
+async function resetLocalStorage() {
+    const isConnected = await checkAuthentication();
+    const tournamentData = localStorage.getItem('tournamentData');
+
+    if (localStorage.getItem('tournamentData'))
+        await resetTournamentLocalStorage(tournamentData);
+    // resetIsSearchingPrivateMatch();
+    // resetInGameComponentState();
+    // resetIsSearchingGame();
+    // resetIsInGuestState();
+}
+
+async function resetTournamentLocalStorage(localStorageData) {
+    try {
+        const tournamentData = await sendRequest("GET", "/api/tournament/get_tournament_state/", null);
+
+        const newData = JSON.parse(localStorageData);
+
+        newData.state = tournamentData.state;
+        if (!tournamentData.isInTournament)
+            localStorage.removeItem('tournamentData');
+        else if (!localStorageData.state !== tournamentData.state) {
+            const newData = JSON.parse(localStorageData);
+
+            newData.state = tournamentData.state;
+            localStorage.setItem('tournamentData', JSON.stringify(newData));
+        }
+    } catch (e) {
+        localStorage.removeItem('tournamentData');
+    }
+}
+
+// resetIsSearchingPrivateMatch();
+// resetInGameComponentState();
+// resetIsSearchingGame();
+// resetIsInGuestState();
+
+(async () => {
+    // await resetLocalStorage();
+    //
+})();

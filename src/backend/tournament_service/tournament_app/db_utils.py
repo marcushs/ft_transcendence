@@ -44,6 +44,7 @@ def set_tournament_not_joinable(tournament):
 @database_sync_to_async
 def delete_tournament_when_empty(tournament):
     with tournament_delete_lock:
+        print('Proceed tournament delete...')
         # Double-check that the tournament is still empty
         if tournament.members.count() == 0:
             tournament.delete()

@@ -53,7 +53,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				await self.channel_layer.group_add(self.group_name, self.channel_name) 
 				await self.accept()
 		except Exception as e:  
-			print('Error: ', e)
+			print('Error: ', str(e))
 
 	async def disconnect(self, close_code):
 		if hasattr(self, 'group_name'):
@@ -178,6 +178,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_send(group_names[str(self.user.id)], {'type': 'redirect_to_tournament_home'})
 		await remove_user_from_tournament(tournament, self.user)
 		member_count = await get_members_count(tournament)
+		print(f'Tournament members remaining: {member_count} -- tounament status: {tournament.isOver}')
 		if member_count == 0 and tournament.isOver == False:
 			return await delete_tournament_when_empty(tournament)
 			# return await set_tournament_not_joinable(tournament)
@@ -348,11 +349,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						player=user,
 						player_number=TournamentMatchPlayer.PlayerNumber.ONE if last_match_index % 2 == 0 else TournamentMatchPlayer.PlayerNumber.TWO
 					)
-				payload = {'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True}
+				payload = {'type': 'load_match', 'match': next_match.to_dict_sync(), 'from_match': True}
 				async_to_sync(self.channel_layer.group_send)(group_names[str(user.id)], payload)
 				if TournamentMatchPlayer.objects.filter(match=next_match).count() == 2:
 					player_ids = list(TournamentMatchPlayer.objects.filter(match_id=next_match.match_id).values_list('player_id', flat=True))
-					payload = {'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True}
+					payload = {'type': 'load_match', 'match': next_match.to_dict_sync(), 'from_match': True}
 					async_to_sync(self.channel_layer.group_send)(group_names[str(player_ids[0])], payload)
 					async_to_sync(self.channel_layer.group_send)(group_names[str(player_ids[1])], payload)
 					async_to_sync(self.start_match_countdown)(match_id=str(next_match.match_id), player_ids=player_ids) 
@@ -397,12 +398,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					del match_countdown_tasks[match_id]
 				else:
 					return
-			print('----> match_countdown_tasks: ', match_countdown_tasks, ' match_id: ', match_id)
 			match_countdown_tasks[match_id] = asyncio.create_task(self.run_match_countdown(match_id, player_ids))
-			print(f"Curmatch_countdown_tasks: {match_countdown_tasks}")
 
 	async def run_match_countdown(self, match_id, player_ids):
-		print(f'Curmatch_countdown_tasks: {match_countdown_tasks}')  
 		try:
 			countdown = 60
 			while True:
@@ -422,7 +420,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				countdown -= 1
 				await asyncio.sleep(1)
 		except Exception as e:
-			print(f'Error in start countdown: {str(e)}') 
+			print(f'Error: {str(e)}') 
 		finally:
 			async with lock:
 				if match_id in match_countdown_tasks:
@@ -436,11 +434,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				task.cancel()
 				try:
 					await task
-					print(f"Match {match_id} countdown task cancelled successfully.") 
 				except asyncio.CancelledError:
-					print(f"Countdown task for match {match_id} was cancelled.")
+					print(f"Countdown task for match {match_id} was cancelled !")
 		except Exception as e:
-			print(f"Error while stopping match countdown: {str(e)}")
+			print(f"Error: {str(e)}")
 		finally:
 			async with lock:
 				if match_id in match_countdown_tasks:

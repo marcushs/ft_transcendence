@@ -167,7 +167,6 @@ class TournamentMatch(models.Model):
         obj_dict['tournament_name'] = tournament.tournament_name
         players = await sync_to_async(lambda: list(TournamentMatchPlayer.objects.filter(match=self).select_related('player')))()
         # match = await sync_to_async(lambda: list(TournamentMatchPlayer.objects.filter(match=self)))()
-        print(f'self.winner ==========>>>>>>>>>>>> {self.winner}')
         obj_dict['players'] = [{'id': str(player.player.id), 
                                 'username': player.player.username, 
                                 'alias': player.player.alias, 
