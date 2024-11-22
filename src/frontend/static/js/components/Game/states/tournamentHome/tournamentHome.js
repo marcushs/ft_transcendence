@@ -20,7 +20,7 @@ class tournamentHome {
 		try {
 			tournamentData = JSON.parse(tournamentData);
 		} catch {}
-
+		
 		if (tournamentData && tournamentData.state === "waitingRoom") {
 			return `
 				<div class="tournament-home-container">

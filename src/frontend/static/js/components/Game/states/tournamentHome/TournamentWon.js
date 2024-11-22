@@ -17,7 +17,7 @@ export default class TournamentWon {
 	}
 
 	render() {
-		return `<tournament-wonz data-tournament-bracket="${this.tournamentBracket}"></tournament-wonz>`;
+		return `<tournament-won data-tournament-bracket="${this.tournamentBracket}"></tournament-won>`;
 	}
 }
 
@@ -42,15 +42,15 @@ class TournamentWonElement extends HTMLElement {
 	async render() {
 		this.innerHTML = `
 			<div class="tournament-won" data-tournament="${this.tournamentId}">
-				<h3 class="tournament-won-title">Winner!</h3>
+				<h3 class="tournament-won-title">Winner !</h3>
 				<div class="tournament-won-background">
 					<div class="tournament-match-content">
 						<div class="bracket-btn">
 							<img id="bracket-icon" src="../../../../assets/bracket_icon.svg" alt="bracket_icon">
 						</div>
 						<h4 class="tournament-name">${this.tournamentName}</h4>
-						<p>Congratulations <span>${this.alias}</span>!</p>
-						<p>You won the tournament <span>${this.tournamentName}</span>!</p>
+						<p>Congratulations <span>${this.alias}</span></p>
+						<p>You won the tournament <span>${this.tournamentName}</span></p>
 						<img id="trophy" src="../../../../assets/trophy.svg" alt="trophy"">
 						<div class="countdown-container">
 							<button type="button" class="tournament-lost-leave-btn">Leave</button>
