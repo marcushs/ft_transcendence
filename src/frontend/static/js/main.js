@@ -30,17 +30,17 @@ let languageJson;
 localStorage.setItem('lastAuthorizedPage', '/');
 
 const routes = {
-    "/": { title: "Home", render: home },
-    "/login": { title: "Login", render: login },
-    "/signup": { title: "Signup", render: signup },
-    "/logout": { title: "Logout", render: logout },
-    "/change-password": { title: "Change password", render: changePassword },
-    "/profile": { title: "Profile", render: profile },
-    "/two-factor-app": { title: "TwoFactorApp", render: twoFactorApp },
-    "/two-factor-email": { title: "TwoFactorEmail", render: twoFactorEmail },
-    "/two-factor-deactivation": { title: "TwoFactorDeactivate", render: twoFactorDeactivation },
-    "/oauth-redirect": { title: "OauthRedirect", render: oauthRedirect },
-    "/oauth-username": { title: "OauthUsername", render: oauthUsername},
+    "/": { render: home },
+    "/login": { render: login },
+    "/signup": { render: signup },
+    "/logout": { render: logout },
+    "/change-password": { render: changePassword },
+    "/profile": { render: profile },
+    "/two-factor-app": { render: twoFactorApp },
+    "/two-factor-email": { render: twoFactorEmail },
+    "/two-factor-deactivation": { render: twoFactorDeactivation },
+    "/oauth-redirect": { render: oauthRedirect },
+    "/oauth-username": { render: oauthUsername},
 };
 
 // localStorage.clear()
@@ -51,7 +51,11 @@ function manageGameStates() {
     if (tournamentData) {
         disableButtonsInGameResearch();
         throwChangeGameStateEvent("tournamentHome");
-        document.querySelector('.states-container').classList.remove('matchmaking-choice');
+
+        const stateContainer = document.querySelector('.states-container');
+
+        if (stateContainer)
+            stateContainer.classList.remove('matchmaking-choice');
     }
 }
 
@@ -122,7 +126,6 @@ async function router() {
         }
     }
 
-    document.title = view.title;
     app.innerHTML = await view.render();
     await checkInactiveGame();
     await checkMatchmakingSearch();
@@ -135,7 +138,6 @@ function handleDynamicURL() {
     if (segments.length > 2 && segments[1] === 'users') {
 	    const username = segments[2];
 	    localStorage.setItem('users-profile-target-username', username);
-	    document.title = username + '-profile';
 	    app.innerHTML = userProfile();
         localStorage.setItem('lastAuthorizedPage', location.pathname);
 	    return true;
@@ -205,7 +207,7 @@ window.addEventListener('redirection', e => {
     if (location.pathname !== e.detail.route)
         history.pushState("", "", e.detail.route);
     else
-        history.replaceState("", "", e.detail.route); // To reload components without reload the whole page
+        history.replaceState("", "", e.detail.route);
     router();
 });
 
@@ -216,42 +218,47 @@ window.addEventListener("DOMContentLoaded", router);
 
 async function resetLocalStorage() {
     const isConnected = await checkAuthentication();
-    const tournamentData = localStorage.getItem('tournamentData');
 
-    if (localStorage.getItem('tournamentData'))
-        await resetTournamentLocalStorage(tournamentData);
-    // resetIsSearchingPrivateMatch();
+    await resetTournamentData();
+    await resetPrivateMatch();
     // resetInGameComponentState();
-    // resetIsSearchingGame();
     // resetIsInGuestState();
 }
 
-async function resetTournamentLocalStorage(localStorageData) {
+async function resetTournamentData() {
+    const tournamentData = localStorage.getItem('tournamentData');
+
     try {
-        const tournamentData = await sendRequest("GET", "/api/tournament/get_tournament_state/", null);
+        const data = await sendRequest("GET", "/api/tournament/get_tournament_state/", null);
 
-        const newData = JSON.parse(localStorageData);
-
-        newData.state = tournamentData.state;
-        if (!tournamentData.isInTournament)
+        if (tournamentData && !data.isInTournament)
             localStorage.removeItem('tournamentData');
-        else if (!localStorageData.state !== tournamentData.state) {
-            const newData = JSON.parse(localStorageData);
-
-            newData.state = tournamentData.state;
-            localStorage.setItem('tournamentData', JSON.stringify(newData));
-        }
     } catch (e) {
         localStorage.removeItem('tournamentData');
     }
 }
 
-// resetIsSearchingPrivateMatch();
-// resetInGameComponentState();
-// resetIsSearchingGame();
-// resetIsInGuestState();
+
+async function resetPrivateMatch() {
+    const isSearchingPrivateMatch = localStorage.getItem("isSearchingPrivateMatch");
+    const isInGuestState = localStorage.getItem('IsInGuestState');
+    const isReadyToPlay = localStorage.getItem("isReadyToPlay");
+
+    try {
+        const data = await sendRequest("GET", "/api/matchmaking/check_private_match/", null);
+
+        if ((isSearchingPrivateMatch || isInGuestState || isReadyToPlay) && !data.in_private_lobby) {
+            localStorage.removeItem('isSearchingPrivateMatch');
+            localStorage.removeItem('IsInGuestState');
+            localStorage.removeItem('isReadyToPlay');
+        }
+    } catch (e) {
+        localStorage.removeItem('isSearchingPrivateMatch');
+        localStorage.removeItem('IsInGuestState');
+        localStorage.removeItem('isReadyToPlay');
+    }
+}
 
 (async () => {
-    // await resetLocalStorage();
-    //
+    await resetLocalStorage();
 })();

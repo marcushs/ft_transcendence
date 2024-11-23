@@ -86,7 +86,7 @@ class PrivateMatchInit(View):
         self.is_already_playing()
 
 
-    def get_invited_user(self, data): 
+    def get_invited_user(self, data):
         if 'invitedUsername' not in data:
             raise Exception('usernameMissing')
         invited_user = User.objects.get(username=str(data['invitedUsername'])) 
