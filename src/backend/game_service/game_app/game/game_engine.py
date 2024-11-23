@@ -261,8 +261,8 @@ class PongGameEngine:
         is_draw = False
         if not await self.set_winner_and_loser():
             is_draw = True
-            self.winner_id = self.player_one_id
-            self.loser_id = self.player_two_id
+            self.winner_id = random.choice(self.player_one_id, self.player_two_id)
+            self.loser_id = self.player_two_id if self.winner_id == self.player_one_id else self.player_two_id
         self.game_active = False
         PongGameEngine.active_games.remove(self)
         await self.manage_end_update(is_surrend=False, is_draw=is_draw, is_canceled=is_canceled)
