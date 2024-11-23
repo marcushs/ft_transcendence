@@ -2,6 +2,7 @@ import { gameInstance, resetGameInstance } from "./inGameComponent.js";
 import { GameStillActive } from "./gameNetworkManager.js";
 import { startGame } from "./Game.js";
 import { setTournamentAlias } from "../../../../utils/tournamentUtils/tournamentMatchUtils.js";
+import { handleGameConnectionTimeOut } from "../../../../utils/game/gameConnection.js";
 
 export let gameSocket = null;
 let reconnectTimeout;

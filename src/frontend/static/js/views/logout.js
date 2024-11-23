@@ -4,6 +4,7 @@ import rotatingGradient from "../anim/rotatingGradient.js";
 import "../components/ButtonComponent.js";
 import {sendRequest} from "../utils/sendRequest.js";
 import { contactSocket, chatSocket } from "./websocket/loadWebSocket.js";
+import { tournamentSocket } from "./websocket/loadWebSocket.js";
 import { notificationSocket } from "./websocket/loadWebSocket.js";
 import { gameSocket } from "../components/Game/states/inGame/gameWebsocket.js";
 import { matchmakingSocket } from "../utils/matchmaking/matchmakingWebsocket.js";
@@ -66,4 +67,6 @@ async function closeAllWebsocket() {
 		notificationSocket.close();
 	if (chatSocket && chatSocket.readyState !== WebSocket.CLOSED)
 		chatSocket.close();
+	if (tournamentSocket && tournamentSocket.readyState !== WebSocket.CLOSED)
+		tournamentSocket.close();
 }
