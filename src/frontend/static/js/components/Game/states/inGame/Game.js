@@ -38,18 +38,6 @@ export async function startGame(gameId, initialGameState, map_dimension) {
 	inGameComponent.gameState = initialGameState;
 	inGameComponent.map_dimension = map_dimension;
 	inGameComponent.userId = userId;
-	console.log('inGameComponent.gameState: ', inGameComponent.gamestate)
-	if (inGameComponent.gameState.gameType === 'tournament') {
-		console.log('got in??????')
-		const player1_alias = await sendRequest('GET', `/api/tournament/get_alias_by_id/player_id=${gameState.player_one.id}`, null, false);
-		const player2_alias = await sendRequest('GET', `/api/tournament/get_alias_by_id/player_id=${gameState.player_two.id}`, null, false);
-		console.log('player1 alias: ', player1_alias.alias)
-		console.log('player2 alias: ', player2_alias.alias)
-		if ('alias' in player1_alias) gameState.player_one.user_infos.username = player1_alias.alias;
-		if ('alias' in player2_alias) gameState.player_two.user_infos.username = player2_alias.alias;
-		console.log('gameState.player_one.user_infos.username: ', gameState.player_one.user_infos.username)
-		console.log('gameState.player_two.user_infos.username: ', gameState.player_two.user_infos.username)
-	}
 	statesContainerDiv.appendChild(inGameComponent);
 }
 

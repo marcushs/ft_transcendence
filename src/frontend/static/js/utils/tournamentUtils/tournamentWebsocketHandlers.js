@@ -52,7 +52,6 @@ export function handleLoadMatch(data) {
 
     localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
     console.log('test load match instance')
-    console.log('lijqweorjblkjblk: ', data.fromMatch)
     if (data.fromMatch) {
         setTimeout(() => {
             redirectToTournamentMatch(data.match);
@@ -63,8 +62,6 @@ export function handleLoadMatch(data) {
 }
 
 export function handleRedirectToTournamentLost(data) {
-    console.log('Websocket for game Lost Reached !!!');
-    
     const tournamentDataObj = JSON.parse(localStorage.getItem("tournamentData"));
 
     const tournamentData = {
@@ -72,12 +69,10 @@ export function handleRedirectToTournamentLost(data) {
         tournamentData: tournamentDataObj.tournamentData,
         matchData: data.match
     }
-    console.log('data = ', data, ' and ', data.match);
     localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
     const gameComponent = document.querySelector('in-game-component');
     if (gameComponent) {
         setTimeout(() => {
-            console.log('--------------------------=================>', tournamentData);
             redirectToTournamentLostMatch(data.match);
         }, 7000);
     } else

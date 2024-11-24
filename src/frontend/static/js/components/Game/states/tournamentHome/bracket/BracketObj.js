@@ -48,11 +48,8 @@ export default class BracketObj {
 		let target = this.#stageMapping[stage].target;
 	
 		if (stage === 'finals') {
-			console.log(stageMatches[0])
-			console.log('target is', target)
 			let finalMatch = this.makeMatch(stageMatches[0], 'left');
 			target.push(finalMatch)
-			// target.push(this.makeMatch(stageMatches[0]));
 			return ;
 		}
 
@@ -60,7 +57,6 @@ export default class BracketObj {
 		target['rightMatches'] = [];
 
 		stageMatches.forEach((match, idx) => {
-			console.log('BracketObj: ', match.bracket_index);
 			(match.bracket_index < stageMatches.length / 2) ? 
 			target.leftMatches.push(this.makeMatch(match, 'left')) :
 			target.rightMatches.push(this.makeMatch(match, 'right'));
@@ -84,11 +80,9 @@ export default class BracketObj {
 	}
 
 	makeMatch(match, side) {
-		console.log('called make match')
 		let match_pair = new Array(2);
 
 		if (side === 'left') {
-			console.log('match is ', match)
 			if (!match.winner && !match.loser) {
 				if (match.players.length < 1) return [null, null];
 

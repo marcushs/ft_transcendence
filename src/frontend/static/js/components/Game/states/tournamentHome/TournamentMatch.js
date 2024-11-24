@@ -88,11 +88,9 @@ class TournamentMatchElement extends HTMLElement {
 		const readyBtn = this.querySelector('.tournament-match-ready-btn');
 
 		bracketBtn.addEventListener('click', async () => {
-			console.log('clicked on bracket')
 			try {
 				let res = await sendRequest('GET', '/api/tournament/get_bracket/', null, false);
 				this.bracketObj = BracketObj.create(res.bracket, res.bracket.tournament_size);
-				console.log('bracketObj', this.bracketObj);
 				this.redirectToBracket();
 			} catch (error) {
 				console.log('Error retrieving bracket')
@@ -101,7 +99,6 @@ class TournamentMatchElement extends HTMLElement {
 
 		readyBtn.addEventListener('click', () => {
 			console.log('ready clicked');
-			console.log('userId: ', this.userId);
 			readyBtn.disabled = true;
 			readyBtn.classList.add('clicked')
 			const payload = {

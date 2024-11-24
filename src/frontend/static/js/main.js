@@ -20,6 +20,10 @@ import { loadWebSocket } from "./views/websocket/loadWebSocket.js";
 import oauthRedirect from './views/oauthRedirect.js';
 import oauthUsername from "./views/oauthUsername.js";
 import { checkMatchmakingSearch } from "./utils/matchmaking/matchResearch.js";
+import disableButtonsInGameResearch from "./utils/disableButtonsInGameResearch.js";
+import {throwRedirectionEvent} from "./utils/throwRedirectionEvent.js";
+import TournamentMatch from "./components/Game/states/tournamentHome/TournamentMatch.js";
+import { sendRequest } from "./utils/sendRequest.js";
 import {manageGameStates} from "./utils/manageGameStates.js";
 import {resetLocalStorage} from "./utils/resetLocalStorage.js";
 
@@ -176,3 +180,13 @@ async function setTwoFactorUserData() {
         localStorage.removeItem('twoFactorMethod');
     }
 }
+
+
+(async() => {
+    try {
+        let res = await sendRequest('GET', '/api/tournament/get_tournament_state/', null);
+        console.log('in arrow function get tournament state: ', res);
+    } catch (error) {
+        console.error(error.toString());
+    }
+})()
