@@ -191,7 +191,8 @@
 	  "invalidEmail": "Invalid email address",
 	  "tournamentAlias": "Tournament alias",
 	  "aliasChanged": "Alias successfully changed",
-	  "aliasError": "Error while changing alias"
+	  "aliasError": "Error while changing alias",
+	  "aliasAlreadyExists": "This alias already exists"
 	},
 	"profileNavBarComponent": {
 	  "personalInformation": "Personal information",
@@ -506,7 +507,8 @@
 	  "invalidEmail": "Adresse email invalide",
 	  "tournamentAlias": "Alias de tournois",
 	  "aliasChanged": "L'alias a été modifié avec succès",
-	  "aliasError": "Erreur lors du changement d'alias"
+	  "aliasError": "Erreur lors du changement d'alias",
+	  "aliasAlreadyExists": "Cet alias existe déjà"
 	},
 	"profileNavBarComponent": {
 	  "personalInformation": "Informations personnelles",

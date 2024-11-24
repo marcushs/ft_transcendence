@@ -186,9 +186,9 @@ class UserInfosComponent extends HTMLElement {
 			if (this.newProfileImageLink)
 				newUserData.append('profile_image_link', this.newProfileImageLink);
 
-			await postNewUserInfos(newUserData);
 			if (this.initailAlias !== this.aliasInput.value)
-				await postNewAlias(this.aliasInput.value);
+				if (!await postNewAlias(this.aliasInput.value)) return;
+			await postNewUserInfos(newUserData);
 		}
 	}
 
@@ -515,7 +515,9 @@ async function postNewAlias(newAlias) {
 		const data = await sendRequest('PUT', url, {new_alias: newAlias});
 
 		localStorage.setItem('userUpdateResponse', JSON.stringify(data));
+		return true;
 	} catch (error) {
-		document.querySelector('.error-feedback').innerHTML = getString(`profileComponent/${error.message}`);
+		document.querySelector('.error-feedback').innerHTML = getString(`profileComponent/${error.toString().slice(7, error.toString().length)}`);
+		return false;
 	}
 }
