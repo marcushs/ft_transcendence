@@ -1,23 +1,24 @@
+from ..utils.weboscket_utils import send_websocket_info
+from .tournament_proceed import tournament_proceed_manager
+from .tournament_leave import tournament_lost_manager
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views import View
-from django.http import JsonResponse
 from django.contrib.auth import get_user_model
-from ..models import *
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import AnonymousUser
-from ..utils.weboscket_utils import send_websocket_info
 from asgiref.sync import async_to_sync
+from django.http import JsonResponse
+from django.views import View
+from ..models import *
 import json
 
 User = get_user_model()
  
 @method_decorator(csrf_exempt, name='dispatch') 
 class tournamentMatchResultView(View): 
-	def __init__(self):
+	async def __init__(self):
 		super().__init__
 
-	def post(self, request):
+	async def post(self, request):
 
 		try:
 			data = json.loads(request.body.decode('utf-8'))
@@ -45,9 +46,9 @@ class tournamentMatchResultView(View):
 				'match': match.to_dict_sync()
 			}
 
-			async_to_sync(send_websocket_info)(player_id=winner.id, payload=payload_winner)
-			async_to_sync(send_websocket_info)(player_id=loser.id, payload=payload_loser)
-
+			await tournament_proceed_manager(payload_winner)
+			await tournament_lost_manager(payload_loser)
+   
 			return JsonResponse({'status': 'success'}, status=200) 
 		except ObjectDoesNotExist:
 			return JsonResponse({'status': 'error', 'message': 'Match not found'}, status=400)
