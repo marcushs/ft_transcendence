@@ -1,4 +1,3 @@
-from ..utils.weboscket_utils import send_websocket_info
 from .send_game_request import send_game_instance_request
 
 import asyncio
@@ -20,6 +19,8 @@ async def start_match_countdown(match_id, player_ids):
   
 # Background async task running match countdown
 async def run_match_countdown(match_id, player_ids):
+	from ..utils.weboscket_utils import send_websocket_info  
+    
 	try:
 		countdown = 60
 		while True:

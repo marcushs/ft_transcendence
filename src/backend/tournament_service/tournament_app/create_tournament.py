@@ -13,8 +13,8 @@ def createTournamentInDB(data, user):
 	if isinstance(creator, AnonymousUser): 
 		return None, 'No user found'
 	if is_user_in_any_tournament(user):
-		return None, 'User already in tournament'
-	if tournament_name is None or is_valid_name(tournament_name) is False:
+		return None, 'User already in tournament' 
+	if tournament_name is None or is_valid_name(tournament_name) is False: 
 		return None, 'Invalid tournament name'
 	if tournament_size is None or is_valid_size(int(tournament_size)) is False:
 		return None, 'Invalid tournament size' 

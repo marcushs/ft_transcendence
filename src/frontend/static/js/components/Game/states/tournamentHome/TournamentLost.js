@@ -35,7 +35,6 @@ class TournamentLostElement extends HTMLElement {
 	async connectedCallback() {
 		await this.render();
 		this.addEventListeners();
-		this.sendStartCountdown();
 	}
 
 	async render() {
@@ -104,15 +103,6 @@ class TournamentLostElement extends HTMLElement {
 		bracketState['state'] = bracket;
 		gameComponent.changeState(bracketState.state, "/tournamentLost/bracket");
 		gameComponent.currentState = "bracket";
-	}
-
-	sendStartCountdown() {
-		const payload = {
-			'type': 'start_leave_countdown',
-			'tournament_id': this.tournamentId
-		};
-
-		tournamentSocket.send(JSON.stringify(payload))
 	}
 
 	updateCountdownSeconds(time) {

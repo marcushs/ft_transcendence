@@ -1,4 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
+from .views.match_countdown import start_match_countdown, stop_match_countdown
+from .views.send_game_request import send_game_instance_request
 from django.contrib.auth.models import AnonymousUser
 from .utils.request import send_request_with_headers
 from .create_tournament import createTournamentInDB
@@ -48,7 +50,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				await self.accept()
 				async with connections_lock:
 					connections[str(self.user.id)] = self
-					print(f'user: {self.user.id} added to connections list...')
+					print(f'user: {self.user.id} added to connections list...') 
 		except Exception as e:  
 			print(f'Error : {str(e)}')
 
@@ -138,7 +140,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def add_players_to_match_group(self, event):
 		match_id = await find_player_match(event, self.user)
 		player_ids = await get_player_ids_for_match(match_id)
-		await self.start_match_countdown(match_id=match_id, player_ids=player_ids)
+		await start_match_countdown(match_id=match_id, player_ids=player_ids)
 		match = await sync_to_async(TournamentMatch.objects.get)(match_id=match_id)
 		payload = {'type': 'load_match', 'match': await match.to_dict(), 'from_match': False}
 		await self.channel_layer.group_send(group_names[str(player_ids[0])], payload) 
@@ -147,13 +149,15 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 # -------------------------------> Handle Leave Tournament <---------------------------------
 
 	async def handle_leave_tournament(self, data):
+		from .views.tournament_leave import exit_tournament
+     
 		try:
 			tournament = await aget_object_or_404(Tournament, tournament_id=data['tournament_id']) 
 			if await is_user_in_this_tournament(tournament, self.user):
 				if data['from_match'] == False:
 					payload = {'type': 'leave.tournament', 'tournament': await tournament.to_dict()}
 					await self.broadcast_message(payload=payload)
-				await self.exit_tournament(tournament)
+				await exit_tournament(tournament=tournament, user_id=str(self.user.id))
 			else:
 				await self.send_error_message(data['type'], 'You are not in this tournament')
 		except Http404:
@@ -185,8 +189,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				'player1': str(player_ids[0]), 
 				'player2': str(player_ids[1])
 			}
-			await self.stop_match_countdown(match_id)
-			await self.send_game_instance_request(payload)
+			await stop_match_countdown(match_id)
+			await send_game_instance_request(payload)
 			return
 		elif result == 'Match not found':
 			return await self.send_error_message(data['type'], result)
@@ -265,6 +269,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		}))
 
 	# -------------------------------> Utils methods <---------------------------------
+
+	async def get_cookies_and_headers(self):
+		return self.cookies, self.headers
+
 
 	async def broadcast_message(self, payload):
 		for group_name in group_names.values():

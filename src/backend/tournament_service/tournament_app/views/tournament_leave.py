@@ -2,6 +2,7 @@ from ..db_utils import remove_user_from_tournament, get_members_count, delete_to
 from ..utils.weboscket_utils import send_websocket_info
 from asgiref.sync import sync_to_async, async_to_sync
 from ..consumers import connections, connections_lock
+from django.shortcuts import aget_object_or_404
 from ..models import Tournament, User
 import json
 import asyncio
@@ -9,14 +10,14 @@ import asyncio
 leave_countdown_tasks = {}
 leave_lock = asyncio.Lock()
 
-async def exit_tournament(tournament, user_id):
-	user = sync_to_async(User.objects.get)(id=str(user_id))
+async def exit_tournament(tournament, user_id): 
+	user = await sync_to_async(User.objects.get)(id=str(user_id))
 	await send_websocket_info(player_id=str(user_id), payload={'type': 'redirect_to_tournament_home'})
 	await remove_user_from_tournament(tournament=tournament, user=user)
 	member_count = await get_members_count(tournament)
 	print(f'user: {str(user_id)} removed from tournament members ... remaining members: {member_count}')
 	if member_count == 0:
-		return await delete_tournament_when_empty(tournament)  
+		return await delete_tournament_when_empty(tournament)   
 	await stop_leave_countdown(user_id)
 
 
@@ -27,10 +28,11 @@ async def tournament_lost_manager(data):
 			await send_websocket_info(player_id=str(data['user_id']), payload={'type': data['type'], 'match': data['match']})
 			await start_leave_countdown(user_id=str(data['user_id']), tournament_id=data['match']['tournament_id'])
 		else:
-			await exit_tournament(tournament=data['match'])
+			tournament = await aget_object_or_404(Tournament, tournament_id=data['match']['tournament_id'])
+			await exit_tournament(tournament=tournament, user_id=str(data['user_id']))
  
 
-async def start_leave_countdown(user_id, tournament_id):
+async def start_leave_countdown(user_id, tournament_id): 
 		async with leave_lock: 
 			if user_id in leave_countdown_tasks:
 				task = leave_countdown_tasks[user_id]
@@ -47,8 +49,8 @@ async def run_leave_countdown(user_id, tournament_id):
 		
 		if countdown < 0:
 			tournament = await sync_to_async(Tournament.objects.get)(tournament_id=tournament_id)
-			await exit_tournament(tournament)
-			await stop_leave_countdown(user_id)
+			await exit_tournament(tournament=tournament, user_id=user_id)
+			await stop_leave_countdown(user_id) 
 			break
 		 
 		payload = {'type': 'countdown_update', 'time': countdown}

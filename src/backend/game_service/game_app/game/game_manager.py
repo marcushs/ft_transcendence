@@ -57,15 +57,10 @@ async def starting_game_instance(data):
                 }
             },
         }
-        game_instance = PongGameEngine(game_users_data)
+        game_instance = PongGameEngine(game_users_data) 
         if not await check_connections(game_users_data):
-            payload = {
-                'player_one_id': game_users_data['player_one']['id'],
-                'player_two_id': game_users_data['player_two']['id']
-            }
-            await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)
-            return
-        asyncio.sleep(0.5)
+            return await ending_game_instance(game_users_data)
+
         await send_client_game_init(game_data=game_users_data, game_instance=game_instance)
         await running_game_instance(instance=game_instance, data=game_users_data)
     except Exception as e:

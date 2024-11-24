@@ -13,12 +13,12 @@ import json
 
 User = get_user_model()
  
-@method_decorator(csrf_exempt, name='dispatch') 
+@method_decorator(csrf_exempt, name='dispatch')  
 class tournamentMatchResultView(View): 
-	async def __init__(self):
+	def __init__(self):
 		super().__init__
 
-	async def post(self, request):
+	def post(self, request):
 
 		try:
 			data = json.loads(request.body.decode('utf-8'))
@@ -46,14 +46,14 @@ class tournamentMatchResultView(View):
 				'match': match.to_dict_sync()
 			}
 
-			await tournament_proceed_manager(payload_winner)
-			await tournament_lost_manager(payload_loser)
+			async_to_sync(tournament_proceed_manager)(payload_winner)
+			async_to_sync(tournament_lost_manager)(payload_loser)
    
 			return JsonResponse({'status': 'success'}, status=200) 
 		except ObjectDoesNotExist:
 			return JsonResponse({'status': 'error', 'message': 'Match not found'}, status=400)
-		except Exception as e:
-			print(f'Error: {str(e)}')
-			return JsonResponse({"message": str(e)}, status=400)
+		# except Exception as e:
+		# 	print(f'Error: {str(e)}')
+		# 	return JsonResponse({"message": str(e)}, status=400)
 
 
