@@ -347,6 +347,12 @@
 		"bracketNotFound": "Bracket not found",
 		"errorFindingMatchOrUser": "Error in finding last match or user",
 		"invalidTournamentId": "Invalid tournament Id"
+	},
+	"inactiveGamePopUp": {
+		"gameInProgress": "You have a game in progress",
+		"reconnectOrLeave": "reconnect or leave?",
+		"reconnectChoice": "Reconnect",
+		"leaveChoice": "Leave"
 	}
   },
 
@@ -695,6 +701,12 @@
 		"bracketNotFound": "Bracket non trouvé",
 		"errorFindingMatchOrUser": "Partie ou utilisateur non trouvé",
 		"invalidTournamentId": "ID du tournoi invalide"
+	},
+	"inactiveGamePopUp": {
+		"gameInProgress": "Vous avez une partie en cours",
+		"reconnectOrLeave": "voulez-vous reconnecter ou quitter?",
+		"reconnectChoice": "Reconnecter",
+		"leaveChoice": "Quitter"
 	}
   },
 
@@ -926,6 +938,12 @@
 		"bracketNotFound": "找不到锦标赛",
 		"errorFindingMatchOrUser": "找不到比赛或者玩家",
 		"invalidTournamentId": "锦标赛号码不正确"
+	},
+	"inactiveGamePopUp": {
+		"gameInProgress": "你有一场进行中的比赛",
+		"reconnectOrLeave": "请选择 “重新连接” 或者 “离开”",
+		"reconnectChoice": "重新连接",
+		"leaveChoice": "离开"
 	}
   }
 }
