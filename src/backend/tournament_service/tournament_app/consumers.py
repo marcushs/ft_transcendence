@@ -1,36 +1,37 @@
-import json
-from django.contrib.auth.models import AnonymousUser
-from django.shortcuts import aget_object_or_404
-from django.http import Http404
 from channels.generic.websocket import AsyncWebsocketConsumer
-from django.contrib.auth import get_user_model
-from .models import *
-import asyncio
-from django.db import transaction
-from channels.db import database_sync_to_async
-from .utils.request import send_request_with_headers
 from asgiref.sync import sync_to_async, async_to_sync
-import threading
-from django.core.cache import cache
+from django.contrib.auth.models import AnonymousUser
+from .utils.request import send_request_with_headers
 from .create_tournament import createTournamentInDB
-from .init_bracket import init_bracket
-from .db_utils import *
 from .find_player_match import find_player_match
-import redis
+from django.shortcuts import aget_object_or_404
+from django.contrib.auth import get_user_model
+from channels.db import database_sync_to_async
+from .init_bracket import init_bracket
+from django.db import transaction
+from django.http import Http404
+from .db_utils import *
+from .models import *
+
+import json
+import asyncio
 
 User = get_user_model()
 
-group_names = {}
+connections = {}
+connections_lock = asyncio.Lock()
+
 match_countdown_tasks = {}
 lock = asyncio.Lock()
 
+leave_countdown_tasks = {}
+leave_lock = asyncio.Lock()
 
-redis_instance = redis.Redis(host='redis', port=6379, db=0)
+group_names = {}
 
 class TournamentConsumer(AsyncWebsocketConsumer):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		self.leave_countdown_task = None
 
 	async def connect(self):
 		self.user = self.scope['user'] 
@@ -52,10 +53,17 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				group_names[str(self.user.id)] = self.group_name
 				await self.channel_layer.group_add(self.group_name, self.channel_name) 
 				await self.accept()
+				async with connections_lock:
+					connections[str(self.user.id)] = self
+					print(f'user: {self.user.id} added to connections list...')
 		except Exception as e:  
 			print(f'Error : {str(e)}')
 
 	async def disconnect(self, close_code):
+		async with connections_lock:
+			if str(self.user.id) in connections:
+				print(f'user: {self.user.id} deleted from connections list...')
+				del connections[str(self.user.id)]
 		if hasattr(self, 'group_name'):
 			await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
@@ -178,9 +186,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_send(group_names[str(self.user.id)], {'type': 'redirect_to_tournament_home'})
 		await remove_user_from_tournament(tournament, self.user)
 		member_count = await get_members_count(tournament)
-		if member_count == 0 and tournament.isOver == False:
-			return await delete_tournament_when_empty(tournament)
-			# return await set_tournament_not_joinable(tournament)
+		print(f'user: {self.user.id} removed from tournament members ... remaining members: {member_count}')
+		if member_count == 0:
+			return await delete_tournament_when_empty(tournament)  
 		await self.stop_leave_countdown()
 
 
@@ -366,11 +374,18 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'type': 'redirect_to_winner_page',
 			'tournament_bracket': event['tournament_bracket']  
 		}))
-		await self.start_leave_countdown(event['tournament_bracket']['tournament']['tournament_id']) 
+		async with connections_lock:
+			if str(self.user.id) in connections:
+				print(f'user: {self.user.id} active in connections list, starting leave_countdown')
+				await self.start_leave_countdown(event['tournament_bracket']['tournament']['tournament_id']) 
+			else:
+				print(f'user: {self.user.id} not active in connections list, exiting tournament')
+				tournament = await sync_to_async(Tournament.objects.get)(tournament_id=event['match']['tournament_id'])
+				await self.exit_tournament(tournament)
 
 
 
-	# -------------------------------> Handle Start Leave Countdown <---------------------------------
+	# -------------------------------> Handle Start Leave Countdown <--------------------------------- 
 	async def handle_start_leave_countdown(self, data):
 		exists = await sync_to_async(Tournament.objects.filter(tournament_id=data['tournament_id'], isOver=False).exists)()
 		if exists:
@@ -382,8 +397,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps({
 			'type': 'redirect_to_tournament_lost', 
 			'match': event['match']
-		})) 
-		await self.start_leave_countdown(event['match']['tournament_id']) 
+		}))
+		async with connections_lock:
+			if str(self.user.id) in connections:
+				print(f'user: {self.user.id} active in connections list, starting leave_countdown')
+				await self.start_leave_countdown(event['match']['tournament_id'])
+			else:
+				print(f'user: {self.user.id} not active in connections list, exiting tournament')
+				tournament = await sync_to_async(Tournament.objects.get)(tournament_id=event['match']['tournament_id'])
+				await self.exit_tournament(tournament)
+       
 
 	# -------------------------------> Countdown functions <---------------------------------
 
@@ -444,35 +467,49 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 
 	# Leave countdown
-	async def start_leave_countdown(self, tournament_id): 
-		if self.leave_countdown_task:
-			self.leave_countdown_task.cancel()
-		await self.start_leave_countdown_task(tournament_id, 67)
-
-	async def start_leave_countdown_task(self, tournament_id, duration):
-		redis_instance.set(str(self.user.id), duration)
-		self.leave_countdown_task = asyncio.create_task(self.run_leave_countdown(tournament_id)) 
+	async def start_leave_countdown(self, tournament_id):
+		async with leave_lock: 
+			if self.user.id in leave_countdown_tasks:
+				task = leave_countdown_tasks[self.user.id]
+				if task.done():
+					del leave_countdown_tasks[self.user.id]
+				else:
+					return
+			leave_countdown_tasks[self.user.id] = asyncio.create_task(self.run_leave_countdown(tournament_id)) 
+		
 
 	async def run_leave_countdown(self, tournament_id):
+		countdown = 67
 		while True:
-			countdown = int(redis_instance.get(str(self.user.id)) or 0)
 			
 			if countdown < 0:
 				tournament = await sync_to_async(Tournament.objects.get)(tournament_id=tournament_id)
 				await self.exit_tournament(tournament)
-				await self.stop_leave_countdown() 
+				await self.stop_leave_countdown()
 				break
 			 
 			payload = {'type': 'countdown_update', 'time': countdown, 'sent_from': group_names[str(self.user.id)]}
 
 			await self.channel_layer.group_send(group_names[str(self.user.id)], payload) 
 			
-			redis_instance.decr(str(self.user.id))
+			countdown -= 1
 			await asyncio.sleep(1)
 
 	async def stop_leave_countdown(self):
-		if self.leave_countdown_task:
-			self.leave_countdown_task.cancel() 
+		try:
+			task = leave_countdown_tasks.get(self.user.id) 
+			if task:
+				task.cancel()
+				try:
+					await task
+				except asyncio.CancelledError:
+					pass
+		except Exception as e:
+			print(f"Error: {str(e)}")
+		finally:
+			async with leave_lock:
+				if self.user.id in leave_countdown_tasks:
+					del leave_countdown_tasks[self.user.id] 
 
 	async def countdown_update(self, event):
 		await self.send(text_data=json.dumps({

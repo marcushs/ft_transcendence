@@ -40,7 +40,7 @@ class tournamentMatchResultView(View):
 				'match': match.to_dict_sync()
 			}
 			payload_loser = {
-				'type': 'redirect_to_tournament_lost',
+				'type': 'redirect_to_tournament_lost', 
 				'user_id': str(loser.id),
 				'match': match.to_dict_sync()
 			}

@@ -1,5 +1,5 @@
 import { getString } from "../../../../utils/languageManagement.js";
-import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
+import { loadTournamentWebSocket, tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
 
 export class TournamentComponent extends HTMLElement {
 	constructor(tournamentData) {
@@ -34,7 +34,8 @@ export class TournamentComponent extends HTMLElement {
 				'type': 'join_tournament',
 				'tournament_id': this.tournamentId,
 			};
-
+			if (!tournamentSocket || tournamentSocket.readyState !== WebSocket.OPEN)
+				loadTournamentWebSocket()
 			tournamentSocket.send(JSON.stringify(payload))
 		});
 	}

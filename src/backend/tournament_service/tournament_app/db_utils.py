@@ -46,6 +46,7 @@ def delete_tournament_when_empty(tournament):
     with tournament_delete_lock:
         if tournament.members.count() == 0:
             tournament.delete()
+    print('Tournament deleted !')
 
 def set_tournament_is_over(tournament):
 	with transaction.atomic():

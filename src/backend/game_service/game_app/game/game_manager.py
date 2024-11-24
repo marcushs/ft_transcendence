@@ -102,7 +102,7 @@ async def check_connections(data):
         await asyncio.sleep(1)
     return True
 
-async def send_timeout_result_to_tournament(data, winner_id, loser_id):
+async def send_timeout_result_to_tournament(data, winner_id, loser_id): 
     winner = {
         'id': winner_id,
         'score': 0
