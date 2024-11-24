@@ -647,7 +647,7 @@
 	  "loginProcessing": "Traitement de la connexion..."
 	},
 	"oauthUtils": {
-	  "successfullyLogin": "Successfully logged in",
+	  "successfullyLogin": "Connexion réussite",
 	  "playInvite": "Inviter à jouer"
 	},
 	"localGame": {
@@ -944,6 +944,24 @@
 		"reconnectOrLeave": "请选择 “重新连接” 或者 “离开”",
 		"reconnectChoice": "重新连接",
 		"leaveChoice": "离开"
+	},
+	"logoutView": {
+		"logoutSentence": "您真的要登出?",
+		"yes": "登出",
+		"cancel": "取消"
+	},
+	"oauthUsernameView": {
+		"title": "用户名已被取用, 请选择新的用户名",
+		"usernameFormatError": "用户名只可以包括字母, 数字 “_” 或者 “-”",
+		"username": "用户名"
+	  },
+	"oauthRedirect": {
+		"redirect": "正在转到...",
+		"loginProcessing": "正在登录..."
+	},
+	"oauthUtils": {
+		"successfullyLogin": "登录成功",
+		"playInvite": "邀请游戏"
 	}
   }
 }
