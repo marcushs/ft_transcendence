@@ -246,11 +246,6 @@ async function resetTournamentLocalStorage(localStorageData) {
     }
 }
 
-
-(async() => {
-    let res = await sendRequest('GET', '/api/tournament/get_tournament_state/', null, false);
-    console.log('in arrow function get tournament state: ', res);
-})()
 // resetIsSearchingPrivateMatch();
 // resetInGameComponentState();
 // resetIsSearchingGame();

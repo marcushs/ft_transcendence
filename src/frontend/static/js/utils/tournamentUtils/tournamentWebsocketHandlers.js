@@ -1,3 +1,4 @@
+import { getString } from '../languageManagement.js';
 import { putNewTournamentToDOM, redirectToTournamentWaitingRoom, updateTournamentInfo, redirectToTournamentHome, redirectToWinnerPage } from './joinTournamentUtils.js';
 import { redirectToTournamentLostMatch, redirectToTournamentMatch, startTournamentMatchInstance } from './tournamentMatchUtils.js';
 
@@ -105,7 +106,14 @@ export async function handleStartGameInstance(data) {
 }
 
 export function handleError(message) {
-    // implement error message in frontend
+    const feedback = document.querySelector('.tournament-feedback');
+
+    if (!feedback) return ;
+    feedback.innerText = '';
+    feedback.innerText = getString(`tournament/${message}`);
+    setTimeout(() => {
+        feedback.innerText = '';
+    }, 1500);
     console.log(message);
 }
 

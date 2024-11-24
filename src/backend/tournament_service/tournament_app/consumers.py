@@ -103,10 +103,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			try:
 				tournament = await aget_object_or_404(Tournament, tournament_id=data['tournament_id'])
 				if tournament.isOver == True:
-					return await self.send_error_message(data['type'], 'Tournament is already over')
+					return await self.send_error_message(data['type'], 'tournamentAlreadyOver')
 				if await get_members_count(tournament) < tournament.tournament_size:
 					if await add_user_to_tournament(tournament, self.user) == 'User already in tournament':
-						return await self.send_error_message(data['type'], 'User already in tournament')
+						return await self.send_error_message(data['type'], 'userAlreadyInTournament')
 					payload = {'type': 'redirect_to_waiting_room', 'tournament': await tournament.to_dict()}
 					await self.channel_layer.group_send(group_names[str(self.user.id)], payload)
 					payload = {'type': 'join.tournament', 'tournament': await tournament.to_dict()}
@@ -121,9 +121,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 																'tournament_bracket': await tournament_bracket.to_dict()
 																})
 				else:
-					await self.send_error_message(data['type'], 'Tournament is full')
+					await self.send_error_message(data['type'], 'tournamentIsFull')
 			except Http404:
-				await self.send_error_message(data['type'], 'Cannot find requested tournament') 
+				await self.send_error_message(data['type'], 'tournamentNotFound') 
 
 	async def join_tournament(self, event):
 		await self.send(text_data=json.dumps({  
@@ -164,9 +164,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					await self.broadcast_message(payload=payload)
 				await self.exit_tournament(tournament)
 			else:
-				await self.send_error_message(data['type'], 'You are not in this tournament')
+				await self.send_error_message(data['type'], 'notInTournament')
 		except Http404:
-			await self.send_error_message(data['type'], 'Cannot find requested tournament')
+			await self.send_error_message(data['type'], 'tournamentNotFound')
 
 	async def leave_tournament(self, event):
 		await self.send(text_data=json.dumps({
@@ -205,9 +205,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await self.send_game_instance_request(payload)
 			return
 		elif result == 'Match not found':
-			return await self.send_error_message(data['type'], result)
+			return await self.send_error_message(data['type'], 'matchNotFound')
 		elif result == 'Player not in this match':
-			return await self.send_error_message(data['type'], result)
+			return await self.send_error_message(data['type'], 'playerNotInMatch')
 
 # -------------------------------> Handle Proceed Tournament <---------------------------------
 
@@ -220,13 +220,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			player = await aget_object_or_404(User, id=data['user_id'])
 			tournament = await aget_object_or_404(Tournament, tournament_id=last_match['tournament_id'])
 			if tournament.isOver == True:
-				return async_to_sync(self.send_error_message)('next_round', 'Tournament is over')
+				return async_to_sync(self.send_error_message)('next_round', 'tournamentAlreadyOver')
 			tournament_bracket = await sync_to_async(lambda: Bracket.objects.filter(tournament=tournament).first())()  
 			if tournament_bracket is None:
-				return async_to_sync(self.send_error_message)('next_round', 'Bracket not found')
+				return async_to_sync(self.send_error_message)('next_round', 'bracketNotFound')
 			await self.match_in_next_round(player, last_match, tournament_bracket)
 		except Http404:
-			await self.send_error_message(data['type'], 'Error in finding last match or user')
+			await self.send_error_message(data['type'], 'errorFindingMatchOrUser')
 
 
 	async def send_game_instance_request(self,event):
@@ -380,7 +380,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		exists = await sync_to_async(Tournament.objects.filter(tournament_id=data['tournament_id'], isOver=False).exists)()
 		if exists:
 			return await self.start_leave_countdown(data['tournament_id'])
-		await self.send_error_message(data['type'], 'Invalid tournament Id')
+		await self.send_error_message(data['type'], 'invalidTournamentId')
 
 
 	async def redirect_to_tournament_lost(self, event):

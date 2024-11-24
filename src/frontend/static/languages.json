@@ -115,7 +115,8 @@
 	  "verify": "Verify",
 	  "leave": "Leave",
 	  "cancel": "Cancel",
-	  "invite": "Invite"
+	  "invite": "Invite",
+	  "ready": "Ready"
 	},
 	"navBarComponent": {
 	  "home": "Home"
@@ -307,7 +308,46 @@
 		"unranked": "unranked",
 		"ranked": "ranked",
 		"game": "game"
-	  }
+	},
+	"tournament": {
+		"lost": "Defeat",
+		"win": "Winner",
+		"youFinished": "You finished in",
+		"Eighth-finals": "Round of sixteen",
+		"Quarter-finals": "Quarter-finals",
+		"Semi-finals": "Semi-finals",
+		"Finals": "Finals",
+		"betterLuck": "Better luck next time",
+		"autoLeave": "Leaving automatically in",
+		"second": "s",
+		"congrat": "Congratulations",
+		"youWon": "You won the tournament",
+		"waitingRoom": "Waiting Room",
+		"creator": "Creator",
+		"joinedPlayers": "Joined players",
+		"stage": "Stage",
+		"opponent": "Opponent",
+		"toBeDeter": "To Be Determined...",
+		"matchStart": "Match starts in",
+		"alreadyInGameResearch": "Already searching for game",
+		"alreadyInGame": "Already in game",
+		"alreadyInPrivateLobby": "Already in private lobby",
+		"unknownUser": "Unknown user",
+		"alreadyInTournament": "User already in tournament",
+		"invalidTournamentName": "Invalid tournament name",
+		"invalidTournamentSize": "Invalid tournament size",
+		"tournamentAlreadyExist": "Tournament already exists",
+		"tournamentAlreadyOver": "Tournament is already over",
+		"userAlreadyInTournament": "User already in tournament",
+		"tournamentIsFull": "Tournament is full",
+		"tournamentNotFound": "Cannot find requested tournament",
+		"notInTournament": "You are not in this tournament",
+		"matchNotFound": "Match not found",
+		"playerNotInMatch": "Player not in match",
+		"bracketNotFound": "Bracket not found",
+		"errorFindingMatchOrUser": "Error in finding last match or user",
+		"invalidTournamentId": "Invalid tournament Id"
+	}
   },
 
   "fr": {
@@ -428,7 +468,8 @@
 	  "verify": "Vérifier",
 	  "cancel": "Annuler",
 	  "leave": "Quitter",
-	  "invite": "Inviter"
+	  "invite": "Inviter",
+	  "ready": "Prêt"
 	},
 	"navBarComponent": {
 	  "home": "Accueil"
@@ -615,7 +656,46 @@
 		"unranked": "partie non classée",
 		"ranked": "partie classée",
 		"game": ""
-	  }
+	},
+	"tournament": {
+		"lost": "Défaite",
+		"win": "Vainqueur",
+		"youFinished": "Vous avez terminé en",
+		"Eighth-finals": "Huitième de finale",
+		"Quarter-finals": "Quart de finale",
+		"Semi-finals": "Demi-finale",
+		"Finals": "Finale",
+		"betterLuck": "Bonne chance pour la prochaine fois",
+		"autoLeave": "Quitter automatiquement dans",
+		"second": "s",
+		"congrat": "Félicitations",
+		"youWon": "Vous avez gagné le tournoi",
+		"waitingRoom": "Salle d'attente",
+		"creator": "Créateur",
+		"joinedPlayers": "Joueurs",
+		"stage": "Tour",
+		"opponent": "Adversaire",
+		"toBeDeter": "En attente d'adversaire...",
+		"matchStart": "La partie commence dans",
+		"alreadyInGameResearch": "Déjà en recherche de partie",
+		"alreadyInGame": "Déjà en partie",
+		"alreadyInPrivateLobby": "Déjà en attente de partie privée",
+		"unknownUser": "Utilisateur inconnu",
+		"alreadyInTournament": "Déjà en tournoi",
+		"invalidTournamentName": "Nom de tournoi invalide",
+		"invalidTournamentSize": "Nombre de joueurs invalide",
+		"tournamentAlreadyExist": "Tournoi déjà créé",
+		"tournamentAlreadyOver": "Tournoi déjà terminé",
+		"userAlreadyInTournament": "Utilisateur déjà en tournoi",
+		"tournamentIsFull": "Tournoi est déjà complet",
+		"tournamentNotFound": "Tournoi non trouvé",
+		"notInTournament": "Utilisateur ne fait pas partie de ce tournoi",
+		"matchNotFound": "Partie non trouvée",
+		"playerNotInMatch": "Jouer n'est pas dans cette partie",
+		"bracketNotFound": "Bracket non trouvé",
+		"errorFindingMatchOrUser": "Partie ou utilisateur non trouvé",
+		"invalidTournamentId": "ID du tournoi invalide"
+	}
   },
 
   "zh": {
@@ -692,7 +772,10 @@
 	  "change": "更改",
 	  "save": "保存",
 	  "verify": "验证",
-	  "cancel": "取消"
+	  "cancel": "取消",
+	  "ready": "准备",
+	  "invite": "邀请",
+	  "leave": "离开"
 	},
 	"navBarComponent": {
 	  "home": "主页"
@@ -778,6 +861,46 @@
 	"accountInfosComponent": {
 	  "profile": "资料",
 	  "logout": "退出登录"
+	},
+	"tournament": {
+		"lost": "败北",
+		"win": "胜利",
+		"youFinished": "您止步在",
+		"Eighth-finals": "十六强",
+		"Quarter-finals": "八强",
+		"Semi-finals": "准决赛",
+		"Finals": "决赛",
+		"betterLuck": "下次加油努力",
+		"autoLeave": "自动离开前剩余",
+		"second": "秒",
+		"congrat": "恭喜",
+		"youWon": "您胜出锦标赛",
+		"waitingRoom": "等候室",
+		"creator": "创室人",
+		"joinedPlayers": "玩家",
+		"stage": "回合",
+		"opponent": "对手",
+		"toBeDeter": "等候对手...",
+		"matchStart": "比赛自动开始前剩余",
+		"alreadyInGameResearch": "正在寻找游戏",
+		"alreadyInGame": "正在比赛",
+		"alreadyInPrivateLobby": "已在私人比赛等候室",
+		"unknownUser": "不明用家",
+		"alreadyInTournament": "已在锦标赛",
+		"invalidTournamentName": "锦标赛名不正确",
+		"invalidTournamentSize": "玩家数目不正确",
+		"tournamentAlreadyExist": "锦标赛已经存在",
+		"tournamentAlreadyOver": "锦标赛已经完结",
+		"userAlreadyInTournament": "玩家已在锦标赛",
+		"tournamentIsFull": "锦标赛人数已满",
+		"tournamentNotFound": "找不到锦标赛",
+		"notInTournament": "玩家不在这锦标赛",
+		"matchNotFound": "找不到比赛",
+		"playerNotInMatch": "玩家不在比赛",
+		"bracketNotFound": "找不到锦标赛",
+		"errorFindingMatchOrUser": "找不到比赛或者玩家",
+		"invalidTournamentId": "锦标赛号码不正确"
 	}
   }
 }
+

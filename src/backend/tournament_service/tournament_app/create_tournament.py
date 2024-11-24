@@ -11,15 +11,15 @@ def createTournamentInDB(data, user):
 	tournament_size = data['tournament_size']
 
 	if isinstance(creator, AnonymousUser): 
-		return None, 'No user found'
+		return None, 'unknownUser'
 	if is_user_in_any_tournament(user):
-		return None, 'User already in tournament'
+		return None, 'alreadyInTournament'
 	if tournament_name is None or is_valid_name(tournament_name) is False:
-		return None, 'Invalid tournament name'
+		return None, 'invalidTournamentName'
 	if tournament_size is None or is_valid_size(int(tournament_size)) is False:
-		return None, 'Invalid tournament size' 
+		return None, 'invalidTournamentSize' 
 	if Tournament.objects.filter(tournament_name=tournament_name).filter(isOver=False).exists():
-		return None, 'Tournament already exists'
+		return None, 'tournamentAlreadyExist'
 	
 	round_str = ['finals', 'semi_finals', 'quarter_finals', 'eighth-finals']
 	round_str_idx = int(math.log2(int(tournament_size))) - 1

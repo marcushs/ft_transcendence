@@ -1,3 +1,4 @@
+import { getString } from "../../../../utils/languageManagement.js";
 import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
 
 export default class TournamentWaitingRoom {
@@ -40,13 +41,13 @@ class TournamentWaitingRoomElement extends HTMLElement {
 	render() {
 		this.innerHTML = `
 			<div class="waiting-room" data-tournament="${this.tournamentId}">
-				<h3 class="waiting-room-title">Waiting Room</h3>
+				<h3 class="waiting-room-title">${getString('tournament/waitingRoom')}</h3>
 				<div class="waiting-room-background">
 					<div class="waiting-room-content">
 						<h4 class="tournament-name">${this.tournamentName}</h4>
-						<p>Creator: <span>${this.tournamentCreator}</span></p>
-						<p>Joined players: <span id="tournament-waiting-room-joined-players">${this.tournamentMemberCount} / ${this.tournamentSize}</span></p>
-						<button type="button" class="leave-tournament-button">Leave</button>
+						<p>${getString('tournament/creator')}: <span>${this.tournamentCreator}</span></p>
+						<p>${getString('tournament/joinedPlayers')}: <span id="tournament-waiting-room-joined-players">${this.tournamentMemberCount} / ${this.tournamentSize}</span></p>
+						<button type="button" class="leave-tournament-button">${getString('buttonComponent/leave')}</button>
 					</div>
 				</div>
 			</div>
