@@ -862,6 +862,32 @@
 	  "profile": "资料",
 	  "logout": "退出登录"
 	},
+	"matchHistoryComponent" : {
+	  "matchHistory": "比赛记录",
+	  "ranked": "排名赛",
+	  "unranked": "正常比赛",
+	  "tournament": "锦标赛",
+	  "unloggedSentence": "请先登入或设立帐户",
+	  "private_match": "私人比赛"
+	},
+	"chatComponent": {
+	  "contacted": "对话",
+	  "contact": "联络人",
+	  "noRecentMessage": "没有对话记录",
+	  "tournamentBot": "锦标赛机器人",
+	  "noContacts": "没有联络人",
+	  "playInvite": "游戏邀请",
+	  "yesterday": "昨天",
+	  "block": "封锁",
+	  "unblock": "解封",
+	  "searchContacts": "搜寻联络",
+	  "finals": "决赛",
+	  "semi_finals": "准决赛",
+	  "quarter_finals": "八强",
+	  "eighth_finals": "十六强",
+	  "tournamentBotSentencePrefix": ": 面对 ",
+	  "tournamentBotSentenceSuffix": "的比赛即将开始!\n\t\t\t预备好的话请按 “准备” 按钮! 祝你好运!"
+	},
 	"tournament": {
 		"lost": "败北",
 		"win": "胜利",
