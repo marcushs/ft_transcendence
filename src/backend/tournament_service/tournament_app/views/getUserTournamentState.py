@@ -5,6 +5,7 @@ from ..models import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
 from ..db_utils import *
+from django.db.models import Q
 
 User = get_user_model()
 
@@ -33,6 +34,7 @@ class getUserTournamentState(View):
 									'matchData': None}, status=200)
 			
 			if user.status == 'match':
+				print('got in match condition')
 				user_match = TournamentMatch.objects.get(players=user, isOver=False)
 				return JsonResponse({'isInTournament': True, 
 						 			'state': 'tournamentMatch',
@@ -40,10 +42,15 @@ class getUserTournamentState(View):
 									'matchData': user_match.to_dict_sync()}, status=200)
 			
 			if user.status == 'lost_match':
-				lost_match = TournamentMatch.objects.filter(loser=user).order_by('-date').first()
+				print('got in lost_match condition')
+				lost_match = TournamentMatch.objects.filter(
+								players=user,
+								isOver=True,
+								loser=user
+							).order_by('-date').first()  
 				return JsonResponse({'isInTournament': True, 
 						 			'state': 'tournamentLost',
-									'tournamentData': user_tournament.to_dict_sync(),
+									'tournamentData': user_tournament.to_dict_sync(), 
 									'matchData': lost_match.to_dict_sync()}, status=200)
 			
 			if user.status == 'won_tournament':
@@ -56,6 +63,6 @@ class getUserTournamentState(View):
 			return JsonResponse({'message': 'tournamentNotFound'}, status=400)
 		except TournamentMatch.DoesNotExist:
 			return JsonResponse({'message': 'tournamentMatchNotFound'}, status=400)
-		except Exception as e:
+		except Exception as e: 
 			print(f'Error: {str(e)}')
 			return JsonResponse({"message": str(e)}, status=400)

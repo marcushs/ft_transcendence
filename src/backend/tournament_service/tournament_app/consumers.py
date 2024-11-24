@@ -308,6 +308,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						player=user,
 						player_number=TournamentMatchPlayer.PlayerNumber.ONE if last_match_index % 2 == 0 else TournamentMatchPlayer.PlayerNumber.TWO
 					)
+					final_match.players.add(user)
 					payload = {'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True}
 					async_to_sync(self.channel_layer.group_send)(group_names[str(user.id)], payload)
 					if TournamentMatchPlayer.objects.filter(match=final_match).count() == 2:
@@ -349,6 +350,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						player=user,
 						player_number=TournamentMatchPlayer.PlayerNumber.ONE if last_match_index % 2 == 0 else TournamentMatchPlayer.PlayerNumber.TWO
 					)
+				next_match.players.add(user)
 				payload = {'type': 'load_match', 'match': next_match.to_dict_sync(), 'from_match': True}
 				async_to_sync(self.channel_layer.group_send)(group_names[str(user.id)], payload)
 				if TournamentMatchPlayer.objects.filter(match=next_match).count() == 2:

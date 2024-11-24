@@ -39,3 +39,8 @@
 .tournament-home-container .tournament-components-container > * {
 	margin: 10rem 6rem;
 }
+
+.tournament-feedback {
+	color: red;
+	font-size: 2rem;
+}

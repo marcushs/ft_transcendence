@@ -28,9 +28,9 @@ class tournamentHome {
 					<div class="tournament-components-container">
 						${this.generateWaitingRoomState(tournamentData)}
 					</div>
+
 				</div>
 			`;
-			// return this.generateWaitingRoomState(tournamentData);
 		} else if (tournamentData && tournamentData.state === "matchState") {
 			return `
 				<div class="tournament-home-container">
@@ -40,7 +40,6 @@ class tournamentHome {
 					</div>
 				</div>
 			`;
-			// return this.generateMatchState(tournamentData);
 		} else if (tournamentData && tournamentData.state === "tournamentLost") {
 			return `
 				<div class="tournament-home-container">
@@ -50,7 +49,6 @@ class tournamentHome {
 					</div>
 				</div>
 			`;
-			// return this.generateTournamentLostState(tournamentData);
 		} else if (tournamentData && tournamentData.state === "tournamentWon") {
 			return `
 				<div class="tournament-home-container">
@@ -60,7 +58,6 @@ class tournamentHome {
 					</div>
 				</div>
 			`;
-			// return this.generateTournamentWonState(tournamentData.tournamentData);
 		} else {
 			return `
 				<div class="tournament-home-container">
@@ -68,7 +65,8 @@ class tournamentHome {
 					<div class="tournament-components-container">
 						<create-component></create-component>
 						<join-component></join-component>
-					</div>
+						</div>
+					<p class='tournament-feedback'></p>
 				</div>
 			`;
 		}
