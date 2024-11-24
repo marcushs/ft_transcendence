@@ -133,6 +133,8 @@
 	  "tournamentName" : "Tournament name",
 	  "numberOfPlayers": "Number of players",
 	  "privateMatch": "Private match",
+	  "invitedUserAlreadySearchGame": "This user is already searching game",
+	  "invitedUserAlreadyInGame": "This user is already in game",
 	  "cantInviteYourself": "You can't invite yourself",
 	  "unknownUser": "Unknown player",
 	  "lobbyAlreadyExist": "",
@@ -442,9 +444,12 @@
 	  "tournaments": "Tournois",
 	  "online": "En ligne",
 	  "local": "Local",
+	  "create": "Créer",
 	  "tournamentName" : "Nom du tournoi",
 	  "numberOfPlayers": "Nombre de joueurs",
 	  "privateMatch": "Match privé",
+	  "invitedUserAlreadySearchGame": "Cet utilisateur est déjà en recherche de jeu",
+	  "invitedUserAlreadyInGame": "Cet utilisateur est déjà en jeu",
 	  "waitingSentence": "En attente du lancement de partie",
 	  "cantInviteYourself": "Vous ne pouvez pas vous inviter vous-même",
 	  "unknownUser": "Joueur inconnu",
@@ -453,7 +458,8 @@
 	  "unranked": "Non classé",
 	  "scoreToWin": "Score pour gagner",
 	  "paddleSpeed": "Vitesse de la palette",
-	  "ballSpeed": "Vitesse de la balle"
+	  "ballSpeed": "Vitesse de la balle",
+	  "lobbyAlreadyExist": ""
 	},
 	"gameTopBar": {
 	  "back": "Retour"

@@ -20,10 +20,8 @@ import { loadWebSocket } from "./views/websocket/loadWebSocket.js";
 import oauthRedirect from './views/oauthRedirect.js';
 import oauthUsername from "./views/oauthUsername.js";
 import { checkMatchmakingSearch } from "./utils/matchmaking/matchResearch.js";
-import disableButtonsInGameResearch from "./utils/disableButtonsInGameResearch.js";
-import {throwRedirectionEvent} from "./utils/throwRedirectionEvent.js";
-import TournamentMatch from "./components/Game/states/tournamentHome/TournamentMatch.js";
-import { sendRequest } from "./utils/sendRequest.js";
+import {manageGameStates} from "./utils/manageGameStates.js";
+import {resetLocalStorage} from "./utils/resetLocalStorage.js";
 
 let languageJson;
 
@@ -43,69 +41,12 @@ const routes = {
     "/oauth-username": { render: oauthUsername},
 };
 
-// localStorage.clear()
-
-function manageGameStates() {
-    const tournamentData = localStorage.getItem("tournamentData");
-
-    if (tournamentData) {
-        disableButtonsInGameResearch();
-        throwChangeGameStateEvent("tournamentHome");
-
-        const stateContainer = document.querySelector('.states-container');
-
-        if (stateContainer)
-            stateContainer.classList.remove('matchmaking-choice');
-    }
-}
-
-    //     console.log('tournament status: ', res)
-    // } catch (error) {
-        
-    // }
-    // else
-    // } else if (fetch) {
-        // fetch pour voir si c'est encore le cas, si oui, return
-    // }
-
-function throwChangeGameStateEvent(state) {
-    const event = new CustomEvent('changeGameStateEvent', {
-        bubbles: true,
-        detail: {
-            context: state,
-        }
-    });
-
-    document.dispatchEvent(event);
-}
-// localStorage.clear()
-async function setUserRender() {
-    await generateCsrfToken();
-    const isUserConnected = await checkAuthentication();
-    
-    if (isUserConnected) {
-        console.log('User session');
-        await loadWebSocket();
-        await setTwoFactorUserData();
-        new PingStatus();
-    } else
-        console.log('Guest session');
-}
-
 setUserRender();
 
-// set twoFactor needed data
-async function setTwoFactorUserData() {
-    if (await isTwoFactorActivated()) {
-        localStorage.setItem('isTwoFactorActivated', 'true');
-        localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
-    } else {
-        localStorage.setItem('isTwoFactorActivated', 'false');
-        localStorage.removeItem('twoFactorMethod');
-    }
-}
 
 async function router() {
+    await resetLocalStorage();
+
     if (!languageJson)
         languageJson = await loadLanguagesJson();
 
@@ -116,14 +57,10 @@ async function router() {
 
     if (!view || !await isViewAccessible(location.pathname)) {
         const lastAuthorizedPage = localStorage.getItem('lastAuthorizedPage');
+        const newView = isViewAccessible(lastAuthorizedPage) ? lastAuthorizedPage : "/";
 
-        if (isViewAccessible(lastAuthorizedPage)) {
-            history.replaceState("", "", lastAuthorizedPage);
-            view = routes[lastAuthorizedPage];
-        } else {
-            history.replaceState("", "", '/');
-            view = routes['/'];
-        }
+        history.replaceState("", "", newView);
+        view = routes[newView];
     }
 
     app.innerHTML = await view.render();
@@ -216,49 +153,26 @@ window.addEventListener('redirection', e => {
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
 
-async function resetLocalStorage() {
-    const isConnected = await checkAuthentication();
+async function setUserRender() {
+    await generateCsrfToken();
+    const isUserConnected = await checkAuthentication();
 
-    await resetTournamentData();
-    await resetPrivateMatch();
-    // resetInGameComponentState();
-    // resetIsInGuestState();
+    if (isUserConnected) {
+        console.log('User session');
+        await loadWebSocket();
+        await setTwoFactorUserData();
+        new PingStatus();
+    } else
+        console.log('Guest session');
 }
 
-async function resetTournamentData() {
-    const tournamentData = localStorage.getItem('tournamentData');
-
-    try {
-        const data = await sendRequest("GET", "/api/tournament/get_tournament_state/", null);
-
-        if (tournamentData && !data.isInTournament)
-            localStorage.removeItem('tournamentData');
-    } catch (e) {
-        localStorage.removeItem('tournamentData');
+// set twoFactor needed data
+async function setTwoFactorUserData() {
+    if (await isTwoFactorActivated()) {
+        localStorage.setItem('isTwoFactorActivated', 'true');
+        localStorage.setItem('twoFactorMethod', await getTwoFactorMethod());
+    } else {
+        localStorage.setItem('isTwoFactorActivated', 'false');
+        localStorage.removeItem('twoFactorMethod');
     }
 }
-
-
-async function resetPrivateMatch() {
-    const isSearchingPrivateMatch = localStorage.getItem("isSearchingPrivateMatch");
-    const isInGuestState = localStorage.getItem('IsInGuestState');
-    const isReadyToPlay = localStorage.getItem("isReadyToPlay");
-
-    try {
-        const data = await sendRequest("GET", "/api/matchmaking/check_private_match/", null);
-
-        if ((isSearchingPrivateMatch || isInGuestState || isReadyToPlay) && !data.in_private_lobby) {
-            localStorage.removeItem('isSearchingPrivateMatch');
-            localStorage.removeItem('IsInGuestState');
-            localStorage.removeItem('isReadyToPlay');
-        }
-    } catch (e) {
-        localStorage.removeItem('isSearchingPrivateMatch');
-        localStorage.removeItem('IsInGuestState');
-        localStorage.removeItem('isReadyToPlay');
-    }
-}
-
-(async () => {
-    await resetLocalStorage();
-})();

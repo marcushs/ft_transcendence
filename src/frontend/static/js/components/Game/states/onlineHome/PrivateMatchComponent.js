@@ -130,7 +130,6 @@ class PrivateMatchComponent extends HTMLElement {
 			this.displayWaitingState();
 			this.state = "waiting";
 			localStorage.setItem("isSearchingPrivateMatch", username);
-			disableButtonsInGameResearch();
 		} catch (error) {
 			this.querySelector('.feedback-error').style.visibility = "visible";
 			this.querySelector('.feedback-error').textContent = getString(`gameComponent/${error.message}`);

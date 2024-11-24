@@ -34,18 +34,7 @@ class MatchHistory extends HTMLElement {
         this.innerHTML = `
             <div class="match-history-container">
                 <h1>${getString("matchHistoryComponent/matchHistory")}</h1>
-                <ul class="history-list-container">
-<!--                    <li class="win">-->
-<!--                        <div class="type">-->
-<!--                            <p>Tournament</p>-->
-<!--                            <div class="line"></div>-->
-<!--                        </div>-->
-<!--                        <div class="content">-->
-<!--                            <p class="tournament-name">Sowoo's tournamentttdfokghnfdoihgjdfh</p>-->
-<!--                            <p class="score">12-16th</p>-->
-<!--                        </div>-->
-<!--                    </li>-->
-                </ul>
+                <ul class="history-list-container"></ul>
             </div>
         `;
     }
@@ -155,11 +144,12 @@ class MatchHistory extends HTMLElement {
     async generateTournamentItem(matchInfos) {
         const isWin = matchInfos.winner_id === this.userId;
         const opponent_id = (isWin) ? matchInfos.loser_id : matchInfos.winner_id;
-        const opponent_name = await getUsernameById(opponent_id);
+        const opponent_name = await this.getAlias(opponent_id);
         const score = (isWin) ? `${matchInfos.winner_score} - ${matchInfos.loser_score}` : `${matchInfos.loser_score} - ${matchInfos.winner_score}`
         const date = new Date(matchInfos.date);
         let localDate = localStorage.getItem("userLanguage");
 
+        console.log('test ===================', opponent_name)
         if (!localDate)
             localDate = 'en';
 
@@ -205,6 +195,19 @@ class MatchHistory extends HTMLElement {
                 <p class="date">${date.toLocaleDateString(localDate)}</p>
             </li>
         `;
+    }
+
+    async getAlias(id) {
+        const url = `/api/tournament/get_alias_by_id/?player_id=${id}`;
+
+        try {
+            const data = await sendRequest('GET', url, null);
+
+            return data.alias;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
     }
 }
 
