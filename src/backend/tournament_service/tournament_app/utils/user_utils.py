@@ -1,8 +1,8 @@
-from django.http import JsonResponse
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import AnonymousUser
+from django.http import JsonResponse
 from django.views import View
 from ..models import User
+
 import json
 
 

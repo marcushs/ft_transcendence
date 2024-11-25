@@ -26,7 +26,8 @@ class GameConsumer(AsyncWebsocketConsumer):
 					connections[self.user_id] = self
 				await self.accept()
 		except Exception as e:
-			print('Error: ', e)
+			print(f'Error: {str(e)}')
+
 
  #//---------------------------------------> Disconnector <--------------------------------------\\#
 

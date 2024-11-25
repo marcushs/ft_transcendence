@@ -46,7 +46,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
             else:
                 request.user = AnonymousUser()
         except Exception as e:
-            print(f'-> Error while requesting: {str(e)} <-')
+            print(f'Error : {str(e)}')
             request.jwt_failed = True
             request.user = AnonymousUser() 
     

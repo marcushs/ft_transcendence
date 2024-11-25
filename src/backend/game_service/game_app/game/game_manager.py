@@ -11,6 +11,7 @@ from django.views import View
 import asyncio
 import json
 import uuid
+import random
 
 #//---------------------------------------> start game instance Endpoint <--------------------------------------\\#
 
@@ -56,19 +57,15 @@ async def starting_game_instance(data):
                 }
             },
         }
-        game_instance = PongGameEngine(game_users_data)
+        game_instance = PongGameEngine(game_users_data) 
         if not await check_connections(game_users_data):
-            payload = {
-                'player_one_id': game_users_data['player_one']['id'],
-                'player_two_id': game_users_data['player_two']['id']
-            }
-            await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)
-            return
-        asyncio.sleep(0.5)
+            return await ending_game_instance(game_users_data)
+
         await send_client_game_init(game_data=game_users_data, game_instance=game_instance)
         await running_game_instance(instance=game_instance, data=game_users_data)
     except Exception as e:
-        print(f'-> async_tasks: error: {str(e)}')
+        print(f'Error: {str(e)}')
+
 
 
 async def check_connections(data):
@@ -86,10 +83,39 @@ async def check_connections(data):
                 await send_websocket_info(player_id=player_one_id, payload={'type': 'connections_time_out'})
             if player_two_id in connections:
                 await send_websocket_info(player_id=player_two_id, payload={'type': 'connections_time_out'})
+            if data['game_type'] == 'tournament':
+                if player_one_id in connections:
+                    await send_timeout_result_to_tournament(data=data, winner_id=player_one_id, loser_id=player_two_id)
+                elif player_two_id in connections:
+                    await send_timeout_result_to_tournament(data=data, winner_id=player_two_id, loser_id=player_one_id)
+                else:
+                    winner_id = random.choice(player_one_id, player_two_id)
+                    loser_id = player_two_id if player_one_id == winner_id else player_one_id
+                    await send_timeout_result_to_tournament(data=data, winner_id=winner_id, loser_id=loser_id)
             return False
         count += 1
         await asyncio.sleep(1)
     return True
+
+async def send_timeout_result_to_tournament(data, winner_id, loser_id): 
+    winner = {
+        'id': winner_id,
+        'score': 0
+    }
+    loser = {
+        'id': loser_id,
+        'score': 0
+    }
+    payload = {
+       'game_id': data['game'],
+       'is_draw': True,
+       'is_surrend': False,
+       'is_canceled': True,
+       'winner': winner,
+       'loser': loser,
+       'type': data['game_type']
+    }
+    await send_request(request_type='POST', url='http://tournament:8000/api/tournament/match_result/', payload=payload)
 
 
 async def running_game_instance(instance, data):
@@ -107,7 +133,8 @@ async def ending_game_instance(data):
         }
         await send_request(request_type='POST', url='http://matchmaking:8000/api/matchmaking/change_game_status/', payload=payload)
     except Exception as e:
-        print(f'-> async_tasks: {e}')
+        print(f'Error: {str(e)}')
+
 
 #//---------------------------------------> surrend games instance Endpoint <--------------------------------------\\#
 

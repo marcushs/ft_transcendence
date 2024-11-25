@@ -24,7 +24,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                     connections[str(self.user.id)] = self
                 await handle_waiting_messages(str(self.user.id))
         except Exception as e: 
-            print('Error: ', e)
+            print(f'Error: {str(e)}')
+
 
     async def disconnect(self, close_code):
         with connections_lock:

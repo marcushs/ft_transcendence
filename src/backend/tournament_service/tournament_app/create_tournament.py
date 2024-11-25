@@ -17,7 +17,7 @@ def createTournamentInDB(data, user):
 	if tournament_name is None or is_valid_name(tournament_name) is False:
 		return None, 'invalidTournamentName'
 	if tournament_size is None or is_valid_size(int(tournament_size)) is False:
-		return None, 'invalidTournamentSize' 
+		return None, 'invalidTournamentSize'
 	if Tournament.objects.filter(tournament_name=tournament_name).filter(isOver=False).exists():
 		return None, 'tournamentAlreadyExist'
 	

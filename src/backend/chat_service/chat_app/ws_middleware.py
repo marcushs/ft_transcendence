@@ -29,7 +29,6 @@ class JWTAuthMiddleware(BaseMiddleware):
 			else:
 				scope['user'] = AnonymousUser 
 		else:
-			print('here??') 
 			scope['user'] = AnonymousUser() 
 		return await super().__call__(scope, receive, send)
 	

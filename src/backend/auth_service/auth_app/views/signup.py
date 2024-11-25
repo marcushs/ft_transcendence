@@ -72,12 +72,10 @@ class signup_view(View):
 
     def _callback_signup_update_error(self, csrf_token, user):
         try:
-            print(f'URL List in callback: {self.sended_url_list}')
             for url in self.sended_url_list:
                 send_request_without_token(request_type='DELETE', url=f'{url}/delete_user/', csrf_token=csrf_token, payload={'user_id': str(user.id)})
-            print(f'URL List after callback: {self.sended_url_list}')
         except Exception as e:
-            print(f'Error: callback: {str(e)}')
+            print(f'Error: {str(e)}')
 
 
     def _check_data(self, request, data):

@@ -20,7 +20,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
         if token:
             jwt_user = await get_user_from_jwt(token) 
             if jwt_user == 'expired':
-                await self.send_new_token_request(request=request, jwt_user=jwt_user)
+                await self.send_new_token_request(request=request, jwt_user=jwt_user) 
             elif jwt_user == None:
                 request.jwt_failed = True
                 request.user = AnonymousUser()
@@ -51,7 +51,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
             else:
                 request.user = AnonymousUser()
         except Exception as e:
-            print(f'-> Error while requesting: {str(e)} <-')
+            print(f'Error : {str(e)}')
             request.jwt_failed = True
             request.user = AnonymousUser() 
     

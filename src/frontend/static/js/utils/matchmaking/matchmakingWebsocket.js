@@ -31,6 +31,7 @@ export async function matchmakingWebsocket() {
 			const matchmakingPopUp = document.querySelector('matchmaking-research-component');
 			if (matchmakingPopUp)
 				matchmakingPopUp.setFoundGameRender();
+			console.log('HERE WE START GAME SOCKET');
 			await gameWebsocket(data.player_id);
 			matchmakingSocket.close();
 		}

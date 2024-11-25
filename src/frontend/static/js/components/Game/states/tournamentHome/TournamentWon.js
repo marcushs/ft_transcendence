@@ -37,7 +37,6 @@ class TournamentWonElement extends HTMLElement {
 	async connectedCallback() {
 		await this.render();
 		this.addEventListeners();
-		// this.sendStartCountdown();
 	}
 
 	async render() {
@@ -93,15 +92,6 @@ class TournamentWonElement extends HTMLElement {
 		gameComponent.changeState(bracketState.state, "/tournamentWon/bracket");
 		gameComponent.currentState = "bracket";
 	}
-
-	// sendStartCountdown() {
-	// 	const payload = {
-	// 		'type': 'start_leave_countdown',
-	// 		'tournament_id': this.tournamentId
-	// 	};
-
-	// 	tournamentSocket.send(JSON.stringify(payload))
-	// }
 
 	updateCountdownSeconds(time) {
 		const secondsSpan = this.querySelector('.tournament-lost-countdown span');

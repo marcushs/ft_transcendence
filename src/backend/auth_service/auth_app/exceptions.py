@@ -3,4 +3,4 @@ class ExpectedException(Exception):
         super().__init__(message)
 
     def __str__(self):
-        return super().__str__()
+        return super().__str__() 

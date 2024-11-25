@@ -96,7 +96,6 @@ class oauth42AccessResourceView(View):
                     response_data['url'] = '/login'
                     response = JsonResponse(response_data, status=400)
                 elif response_data['message'] == "Username already taken! Try another one.":
-                    print('why here?')
                     response_data['url'] = '/oauth-username?oauth_provider=oauth42'
                     response = JsonResponse(response_data, status=409)
                     response.set_cookie('id', self.id, httponly=True)

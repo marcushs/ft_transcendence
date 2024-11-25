@@ -13,14 +13,8 @@ def send_post_request(url, payload, csrf_token):
     try:
         response_data = response.json()
         if response.status_code == 200:
-            print('status 200')
             return JsonResponse(response_data)
         else:
-            print('status != 200')
-            # response_data = json.loads(response.text) 
-
-            # message = response_data.get('message')
-            # return JsonResponse({'message': message}, status=400)
             return response
     except requests.JSONDecodeError:
         return JsonResponse({'message': "Json decode error"}, status=400)

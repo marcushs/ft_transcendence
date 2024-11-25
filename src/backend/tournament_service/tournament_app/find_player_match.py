@@ -23,13 +23,10 @@ def find_player_match(event, user):
             )
             .first()
         )
-
         if match:
             return str(match.match_id)
         else:
-            print(f"No active match found for user {user.id} in stage {tournament_stage}")
             return None
-
     except Exception as e:
         print(f"Error: {str(e)}") 
         return None

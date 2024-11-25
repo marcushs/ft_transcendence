@@ -24,9 +24,7 @@ async def async_get_user_by_id(user_id):
     try:
         user = await sync_to_async(User.objects.get)(id=user_id)
     except Exception as e:
-        print(f'--> Error: {str(e)}')
-    print(f'user: {user}')
-    
+        print(f'Error: {str(e)}')
     return user
 
 

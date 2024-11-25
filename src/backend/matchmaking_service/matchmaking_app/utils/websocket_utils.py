@@ -34,4 +34,4 @@ async def send_websocket_info(player_id, payload):
             payload
         )
     except Exception as e:
-        print(f'---------------->> Error sending websocket info: {e}')
+        print(f'Error: {str(e)}')
