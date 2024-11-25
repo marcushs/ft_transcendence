@@ -32,5 +32,4 @@ class findMatchingChatroomView(View):
 		except ObjectDoesNotExist as e:
 			return JsonResponse({"message": str(e)}, status=404)
 		except Exception as e:
-			print(f'Error: {str(e)}')
 			return JsonResponse({"message": str(e)}, status=500)

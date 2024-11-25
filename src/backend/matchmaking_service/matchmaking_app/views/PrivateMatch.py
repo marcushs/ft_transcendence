@@ -61,8 +61,10 @@ class PrivateMatchInit(View):
             notifications_response = async_to_sync(send_request)(request_type='POST', url='http://notifications:8000/api/notifications/manage_notifications/', request=request, payload=payload)
             if notifications_response.json().get('status') == 'error':
                 print(f'Error: {str(e)}')
-                raise Exception('notificationsRequestFailed')
+                raise ValidationError('notificationsRequestFailed')
             return JsonResponse({'message': 'lobbyCreated'}, status=200)
+        except ValidationError as e:
+            return JsonResponse({'message': str(e)}, status=400)
         except ObjectDoesNotExist:
             return JsonResponse({'message': f'unknownUser'}, status=404)
         except LobbyAlreadyExistError:
@@ -76,11 +78,11 @@ class PrivateMatchInit(View):
         self.invited_user = self.get_invited_user(data)
         self.user = request.user
         if is_player_in_private_lobby(self.user):
-            raise Exception('alreadyInLobby')
+            raise ValidationError('alreadyInLobby')
         if is_player_in_private_lobby(self.invited_user):
-            raise Exception('contactAlreadyInLobby')
+            raise ValidationError('contactAlreadyInLobby')
         if self.invited_user.id == self.user.id:
-            raise Exception('cantInviteYourself')
+            raise ValidationError('cantInviteYourself')
         if is_player_in_private_lobby(self.user):
             raise LobbyAlreadyExistError('lobbyAlreadyExist')
         self.is_already_playing()
@@ -88,7 +90,7 @@ class PrivateMatchInit(View):
 
     def get_invited_user(self, data):
         if 'invitedUsername' not in data:
-            raise Exception('usernameMissing')
+            raise ValidationError('usernameMissing')
         invited_user = User.objects.get(username=str(data['invitedUsername'])) 
         return invited_user
     
@@ -96,14 +98,14 @@ class PrivateMatchInit(View):
     def is_already_playing(self):
         is_waiting, match_type = is_already_in_waiting_list(str(self.user.id))
         if is_waiting:
-            raise Exception('userAlreadySearchGame')
+            raise ValidationError('userAlreadySearchGame')
         is_waiting, match_type = is_already_in_waiting_list(str(self.invited_user.id))
         if is_waiting:
-            raise Exception('invitedUserAlreadySearchGame')
+            raise ValidationError('invitedUserAlreadySearchGame')
         if self.user.is_ingame == True:
-            raise Exception('userAlreadyInGame')
+            raise ValidationError('userAlreadyInGame')
         if self.invited_user.is_ingame == True:
-            raise Exception('invitedUserAlreadyInGame')
+            raise ValidationError('invitedUserAlreadyInGame')
 
 #//---------------------------------------> private match cancel endpoint <--------------------------------------\\#
 

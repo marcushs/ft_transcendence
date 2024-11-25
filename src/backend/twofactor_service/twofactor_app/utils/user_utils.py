@@ -36,13 +36,15 @@ class AddNewUser(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             if not all(key in data for key in ('email', 'username', 'user_id')):
-                raise Exception('requestMissingData')
+                raise ValidationError('requestMissingData')
             if User.objects.filter(username=str(data['username'])).exists():
-                raise Exception('usernameAlreadyTaken')
+                raise ValidationError('usernameAlreadyTaken')
             if User.objects.filter(email=str(data['email'])).exists():
-                raise Exception('emailAlreadyTaken')
+                raise ValidationError('emailAlreadyTaken')
             User.objects.create_user(email=str(data['email']), username=str(data['username']), user_id=str(data['user_id']), logged_in_with_oauth=bool(data['logged_in_with_oauth']))
             return JsonResponse({"message": 'user added with success', "status": "Success"}, status=200)
+        except ValidationError as e:
+            return JsonResponse({'message': str(e)}, status=400)
         except ObjectDoesNotExist as e:
             return JsonResponse({'message': str(e)}, status=404)
         except Exception as e:

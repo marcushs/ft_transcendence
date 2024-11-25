@@ -32,5 +32,4 @@ class getChatroomUnreadMessagesCountView(View):
 		except Http404 as e:
 			return JsonResponse({'message': str(e), 'status': 'Error'}, status=404)
 		except Exception as e:
-			print(f'Error: {str(e)}')
 			return JsonResponse({"message": str(e)}, status=500)

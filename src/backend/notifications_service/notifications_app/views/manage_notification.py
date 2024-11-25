@@ -119,7 +119,6 @@ class manage_notification_view(View):
 
             return JsonResponse({'status': 'error', 'message': 'unknown notification type'}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 

@@ -54,7 +54,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
                 request.user = AnonymousUser()
         except Exception as e:
             request.jwt_failed = True
-            request.user = AnonymousUser() 
+            request.user = AnonymousUser()
     
     async def process_response(self, request, response):  
         if hasattr(request, 'jwt_failed'):

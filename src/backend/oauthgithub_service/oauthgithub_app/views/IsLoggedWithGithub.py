@@ -17,6 +17,5 @@ class IsLoggedWithGithub(View):
                 return JsonResponse({'message': 'logged with github', 'status': 'Success'}, status=200)
             return JsonResponse({'message': 'Not logged with github', 'status': 'Error'}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({'message': str(e)}, status=500)
 

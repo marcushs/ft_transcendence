@@ -123,7 +123,6 @@ class CheckUserInWaitingQueue(View):
                 return JsonResponse({'waiting': True, 'match_type': match_type}, status=200) 
             return JsonResponse({'waiting': False}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 # -------->API: remove user from waiting list <-------------- #
@@ -184,7 +183,6 @@ class CheckUserInGame(View):
                 return JsonResponse({'is_in_game': True, 'user_id': str(request.user.id)}, status=200)
             return JsonResponse({'is_in_game': False, 'user_id': str(request.user.id)}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
  #//---------------------------------------> matchmaking utils <--------------------------------------\\#

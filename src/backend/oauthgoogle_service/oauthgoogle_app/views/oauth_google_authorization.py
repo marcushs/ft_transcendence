@@ -42,7 +42,6 @@ class oauthGoogleAuthorizationView(View):
             
             return response
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
     
     def authorization(self):

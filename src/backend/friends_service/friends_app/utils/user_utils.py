@@ -98,8 +98,6 @@ def send_sync_request(request_type, request, url, payload=None):
             response = requests.delete(url=url, headers=headers, cookies=cookies, data=json.dumps(payload))
         elif request_type is 'POST':
             response = requests.post(url=url, headers=headers, cookies=cookies, data=json.dumps(payload))
-        else:
-            raise Exception('unrecognized request type')
         if response.status_code == 200:
             return response
         else:

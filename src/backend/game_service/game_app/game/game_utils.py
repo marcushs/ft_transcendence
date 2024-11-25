@@ -53,7 +53,6 @@ class GetUserGameData(View):
                 return JsonResponse({'status': 'success', 'game_data': json.dumps(game_data)}, status=200)
             return JsonResponse({'status': 'error'}, status=200)  
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 
@@ -78,7 +77,6 @@ class CheckGameStillActive(View):
                 return JsonResponse({'status': 'success', 'user_in': False}, status=200)
             return JsonResponse({'status': 'success', 'user_in': True}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 #//---------------------------------------> get games instance Endpoint <--------------------------------------\\#
@@ -103,5 +101,4 @@ class GetGameList(View):
             ]
             return JsonResponse({'games_instance': games_data}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)

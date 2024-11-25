@@ -251,7 +251,6 @@ class getUserId(View):
                 return JsonResponse({'message': 'User not found'}, status=401)
             return JsonResponse({'status': 'success', 'id': request.user.id}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 @method_decorator(csrf_exempt, name='dispatch') 
@@ -293,7 +292,6 @@ class getUserInfos(View):
         except ObjectDoesNotExist as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=404)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 class getUserInfoById(View):
@@ -315,8 +313,7 @@ class getUserInfoById(View):
         except ObjectDoesNotExist as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=404)
         except Exception as e:
-            print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=500)
+            return JsonResponse({"message": str(e)}, )
 
 class getUsersInfo(View):
     def __init__(self):
@@ -365,7 +362,6 @@ class getUsernameById(View):
         except ObjectDoesNotExist as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=404)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 

@@ -3,6 +3,7 @@ from django.views import View
 from django.http import JsonResponse
 from ..models import User
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.conf import settings
 
 # --- UTILS --- #
@@ -28,7 +29,7 @@ class oauthGoogleUpdateUsernameView(View):
             data = json.loads(request.body.decode('utf-8'))
 
             if 'newUsername' not in data:
-                raise Exception('requestMissingData')
+                raise ValidationError('requestMissingData')
             new_username = str(data['newUsername'])
             id = request.COOKIES.get('id')
             self.csrf_token = request.headers.get('X-CSRFToken')
@@ -44,8 +45,9 @@ class oauthGoogleUpdateUsernameView(View):
                 except User.DoesNotExist:
                     return JsonResponse({"message": "User not found", "url":"/login", "status": "Error"}, status=404)
             return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error", "url": '/oauth-username?oauth_provider=oauthgoogle'}, status=409)
+        except ValidationError as e:
+            return JsonResponse({"message": str(e)}, status=400)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=502)
          
     def check_new_username_taken(self, username):
