@@ -106,10 +106,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		try:
 			tournament = await aget_object_or_404(Tournament, tournament_id=data['tournament_id'])
 			if tournament.isOver == True:
-				return await self.send_error_message(data['type'], 'Tournament is already over')
+				return await self.send_error_message(data['type'], 'tournamentAlreadyOver')
 			if await get_members_count(tournament) < tournament.tournament_size:
 				if await add_user_to_tournament(tournament, self.user) == 'User already in tournament':
-					return await self.send_error_message(data['type'], 'User already in tournament')
+					return await self.send_error_message(data['type'], 'userAlreadyInTournament')
 				payload = {'type': 'redirect_to_waiting_room', 'tournament': await tournament.to_dict()}
 				await self.channel_layer.group_send(group_names[str(self.user.id)], payload)
 				payload = {'type': 'join.tournament', 'tournament': await tournament.to_dict()}
@@ -127,9 +127,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 							}
        					)
 			else:
-				await self.send_error_message(data['type'], 'Tournament is full')
+				await self.send_error_message(data['type'], 'tournamentIsFull')
 		except Http404:
-			await self.send_error_message(data['type'], 'Cannot find requested tournament') 
+			await self.send_error_message(data['type'], 'tournamentNotFound') 
 
 	async def join_tournament(self, event):
 		await self.send(text_data=json.dumps({  
@@ -159,15 +159,15 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					await self.broadcast_message(payload=payload)
 				await exit_tournament(tournament=tournament, user_id=str(self.user.id))
 			else:
-				await self.send_error_message(data['type'], 'You are not in this tournament')
+				await self.send_error_message(data['type'], 'notInTournament')
 		except Http404:
-			await self.send_error_message(data['type'], 'Cannot find requested tournament')
+			await self.send_error_message(data['type'], 'tournamentNotFound')
 
 	async def leave_tournament(self, event):
 		await self.send(text_data=json.dumps({
 			'type': 'leave_tournament',
 			'tournament': event['tournament'], 
-		}))
+		})) 
 
 
 	async def redirect_to_tournament_home(self, event):
@@ -193,9 +193,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await send_game_instance_request(payload)
 			return
 		elif result == 'Match not found':
-			return await self.send_error_message(data['type'], result)
+			return await self.send_error_message(data['type'], 'matchNotFound')
 		elif result == 'Player not in this match':
-			return await self.send_error_message(data['type'], result)
+			return await self.send_error_message(data['type'], 'playerNotInMatch')
 
 # -------------------------------> websocket Sender <---------------------------------
 
@@ -211,12 +211,12 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps({
 			'type': 'redirect_to_waiting_room',
 			'tournament': event['tournament']
-		}))
+		})) 
 
 	
 	async def start_game_instance(self, event):
 		await self.send(text_data=json.dumps({ 
-			'type': 'start_game_instance', 
+			'type': 'start_game_instance',  
 			'payload': event['payload']
 		})) 
 
@@ -275,7 +275,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 
 	async def broadcast_message(self, payload):
-		for group_name in group_names.values():
+		for group_name in group_names.values(): 
 			await self.channel_layer.group_send(group_name, payload)
 
 
@@ -291,7 +291,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			raise Exception('alreadyInPrivateLobby')
 
 
-	@database_sync_to_async
+	@database_sync_to_async 
 	def get_updated_user(self):
 		updated_user = User.objects.get(id=self.user.id)
 		self.user = updated_user

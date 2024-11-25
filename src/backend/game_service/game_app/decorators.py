@@ -8,7 +8,7 @@ import jwt
 
 def jwt_required(initial_function):
     @wraps(initial_function)
-    async def wrapper(request, *args, **kwargs):
+    async def wrapper(request, *args, **kwargs): 
         try:
             user_id = await decode_jwt_token(request)
             response = await initial_function(request, user_id)

@@ -48,9 +48,9 @@ async def run_leave_countdown(user_id, tournament_id):
 	while True:
 		
 		if countdown < 0:
-			tournament = await sync_to_async(Tournament.objects.get)(tournament_id=tournament_id)
-			await exit_tournament(tournament=tournament, user_id=user_id)
+			tournament = await sync_to_async(Tournament.objects.get)(tournament_id=tournament_id) 
 			await stop_leave_countdown(user_id) 
+			await exit_tournament(tournament=tournament, user_id=user_id)
 			break
 		 
 		payload = {'type': 'countdown_update', 'time': countdown}

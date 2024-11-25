@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .utils.user_utils import add_new_user, update_user, DeleteUser
-from .views import getJoinableTournamentsView, tournamentMatchResultView, getBracketView,aliasManager, getUserTournamentState, getAliasById
+from .views import getJoinableTournamentsView, tournamentMatchResultView, getBracketView, aliasManager, getUserTournamentState, getAliasById
 
 urlpatterns = [
     path('delete_user/', DeleteUser.as_view(), name='delete_user'),

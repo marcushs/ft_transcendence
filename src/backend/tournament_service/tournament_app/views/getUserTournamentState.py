@@ -34,7 +34,6 @@ class getUserTournamentState(View):
 									'matchData': None}, status=200)
 			
 			if user.status == 'match':
-				print('got in match condition')
 				user_match = TournamentMatch.objects.get(players=user, isOver=False)
 				return JsonResponse({'isInTournament': True, 
 						 			'state': 'matchState',
@@ -42,7 +41,6 @@ class getUserTournamentState(View):
 									'matchData': user_match.to_dict_sync()}, status=200)
 			
 			if user.status == 'lost_match':
-				print('got in lost_match condition')
 				lost_match = TournamentMatch.objects.filter(
 								players=user,
 								isOver=True,
@@ -54,10 +52,13 @@ class getUserTournamentState(View):
 									'matchData': lost_match.to_dict_sync()}, status=200)
 			
 			if user.status == 'won_tournament':
+				bracket = Bracket.objects.get(tournament=user_tournament)
+				bracket_dict = bracket.to_dict_sync()
+				bracket_dict['alias'] = user.alias
 				return JsonResponse({'isInTournament': True, 
 					'state': 'tournamentWon',
-					'tournamentData': user_tournament.to_dict_sync(),
-					'matchData': None}, status=200)
+					'tournamentData': bracket_dict,
+					'matchData': None}, status=200) 
 
 		except Tournament.DoesNotExist:
 			return JsonResponse({'message': 'tournamentNotFound'}, status=404)
