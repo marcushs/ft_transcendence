@@ -16,6 +16,6 @@ class getGoogleImageView(View):
             user = User.objects.get(id=str(user_id))
             pp_link = user.profile_image_link
             return JsonResponse({'message': {'profile_picture': pp_link}, 'status': 'Success'}, status=200)
-        return JsonResponse({'message': 'User not found', 'status': 'Error'}, status=400)
+        return JsonResponse({'message': 'User not found', 'status': 'Error'}, status=404)
             
         

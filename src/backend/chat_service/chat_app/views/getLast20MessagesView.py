@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.core.serializers import serialize
 import json
 from django.utils import timezone
+from django.http import Http404
 from django.contrib.auth.models import AnonymousUser
 
 User = get_user_model()
@@ -24,12 +25,14 @@ class getLast20MessagesView(View):
 					return JsonResponse({'message': 'chatroomId is required', 'status': 'Error'}, status=400)
 			
 			if isinstance(user, AnonymousUser):
-				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=400)
+				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=401)
 
 			try:
 				chatroom = get_object_or_404(ChatGroup, group_id=str(chatroom_id))
-			except ValidationError:
-				return JsonResponse({'message': 'Invalid chatroomId', 'status': 'Error'}, status=400)
+			except ValidationError as e:
+				return JsonResponse({'message': str(e), 'status': 'Error'}, status=400)
+			except Http404 as e:
+				return JsonResponse({'message': str(e), 'status': 'Error'}, status=404)
 			
 			# Get blocked users and their block times
 			blocks = Block.objects.filter(blocker=user)

@@ -2,6 +2,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse 
 from django.views import View
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -33,18 +34,19 @@ class GetUserStatistics(View):
                 'total_game_played': self.user.gamesWin + self.user.gamesLoose
             }
             return JsonResponse({'status': 'success', 'user_statistics': payload}, status=200)
-        except Exception as e:
-            print(f'Error : {str(e)}')
+        except ValidationError as e:
             return JsonResponse({'message': str(e)}, status=400)
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=500)
 
 
     def check_data(self, request):
         user_id = request.GET.get('q', '')
         if not user_id:
-            raise Exception('No user id provided')
+            raise ValidationError('No user id provided')
         self.user = User.objects.get(id=str(user_id))
         if not self.user:
-            raise Exception('User not found')
+            raise ValidationError('User not found')
         
     def get_rank(self, points):
         for rank, (min, max) in self.ranks.items():

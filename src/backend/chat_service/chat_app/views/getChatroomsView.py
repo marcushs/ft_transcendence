@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from ..models import *
 from django.contrib.auth.models import AnonymousUser
 from ..utils.request import send_request_with_token
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -16,12 +17,14 @@ class getChatroomsView(View):
 			user = request.user
 
 			if isinstance(user, AnonymousUser):
-				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=400)
+				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=401)
 			chatrooms = user.chat_groups.all()
 			chatrooms_data = []
 			for chatroom in chatrooms:
 				members_list = list(chatroom.members.all())
 				members = []
+				if not 'profile_image' in user_data or not 'profile_image_link':
+					raise ValidationError('missingData')
 				for member in members_list:
 					try:
 						response = send_request_with_token(request_type='GET', request=request, url=f'http://user:8000/api/user/get_user_by_id/?q={member.id}')
@@ -35,13 +38,15 @@ class getChatroomsView(View):
 						members.append(user_dict)
 					except Exception as e:
 						print(f'Error: {str(e)}')
-						return JsonResponse({'message': 'Error getting user info'}, status=400)
+						return JsonResponse({'message': 'Error getting user info'}, status=502)
 				chatroom_dict = {
 					'id': chatroom.group_id,
 					'members': members  # Adjust fields as needed
 				}
 				chatrooms_data.append(chatroom_dict)
 			return JsonResponse({'message': 'Successfully fetch all chatrooms', 'chatrooms': chatrooms_data, 'status': 'Success'}, status=200, safe=False)
+		except ValidationError as e:
+			return JsonResponse({'message': str(e)}, status=400)
 		except Exception as e:
 			print(f'Error: {str(e)}')
 			return JsonResponse({"message": str(e)}, status=500)

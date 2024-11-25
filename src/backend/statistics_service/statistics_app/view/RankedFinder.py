@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.views import View
 from ..models import User
 import redis
+from django.core.exceptions import ValidationError
 
 
 @method_decorator(csrf_exempt, name='dispatch') 
@@ -27,9 +28,10 @@ class GetMatchableRankedPlayers(View):
             if matchable_players:
                 return JsonResponse({'status': 'success', 'players': matchable_players}, status=200)
             return JsonResponse({'status': 'error'}, status=200)
-        except Exception as e: 
-            print(f'Error : {str(e)}')
+        except ValidationError as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
     def get_ranked_waiting_list(self):
@@ -61,7 +63,7 @@ class GetMatchableRankedPlayers(View):
         player_one_rank = self.get_rank(player_one.rankPoints)
         player_two_rank = self.get_rank(player_two.rankPoints)
         if player_one_rank is None or player_two_rank is None:
-            raise Exception('Bad user rank point')
+            raise ValidationError('Bad user rank point')
         if player_one_rank == player_two_rank: 
             return True
         ranks_order = list(self.ranks.keys())

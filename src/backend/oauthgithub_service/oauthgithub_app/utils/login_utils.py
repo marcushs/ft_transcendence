@@ -51,8 +51,8 @@ def _create_user_session(user, request):
 	try:
 		send_request_with_token(request_type='POST', request=request, url='http://user:8000/api/user/update_user/', jwt_token=token, jwt_refresh_token=refresh_token, payload=payload)
 		return response 
-	except Exception as e: 
-		return JsonResponse({'message': 'An error occured while logging in'}, status=400) 
+	except Exception as e:
+		return JsonResponse({'message': 'An error occured while logging in'}, status=502)
 
 def _send_twofactor_request(user, payload, csrf_token, request):
 	try:

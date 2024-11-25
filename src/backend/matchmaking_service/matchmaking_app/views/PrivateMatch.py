@@ -1,6 +1,6 @@
 from ..utils.websocket_utils import send_websocket_info, send_websocket_game_found
 from .matchmaking import change_is_ingame_state, is_already_in_waiting_list
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.auth.models import AnonymousUser
 from .process_matchmaking import send_start_game
 from ..models import PrivateMatchLobby, User
@@ -50,7 +50,7 @@ class PrivateMatchInit(View):
     def post(self, request):
         try:
             if isinstance(request.user, AnonymousUser):  
-                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400)
+                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=401)
             data = json.loads(request.body.decode('utf-8'))
             self.init(request=request, data=data)
             PrivateMatchLobby.objects.create(sender=self.user, receiver=self.invited_user)
@@ -64,12 +64,12 @@ class PrivateMatchInit(View):
                 raise Exception('notificationsRequestFailed')
             return JsonResponse({'message': 'lobbyCreated'}, status=200)
         except ObjectDoesNotExist:
-            return JsonResponse({'message': f'unknownUser'}, status=400)
+            return JsonResponse({'message': f'unknownUser'}, status=404)
         except LobbyAlreadyExistError:
             return JsonResponse({'message': f'lobbyAlreadyExist'}, status=400)
         except Exception as e:
             print(f'Error: {str(e)}')  
-            return JsonResponse({'message': str(e)}, status=400)
+            return JsonResponse({'message': str(e)}, status=502)
 
 
     def init(self, request, data):
@@ -107,21 +107,22 @@ class PrivateMatchInit(View):
 
 #//---------------------------------------> private match cancel endpoint <--------------------------------------\\#
 
-class CancelPrivateMatch(View):  
+class CancelPrivateMatch(View):
     def __init__(self):
         super()
 
-    def post(self, request):        
+    def post(self, request):
         try:
-            if isinstance(request.user, AnonymousUser):  
-                return JsonResponse({'message': 'notConnected'}, status=400)
+            if isinstance(request.user, AnonymousUser):
+                return JsonResponse({'message': 'notConnected'}, status=401)
             self.init(request=request)
             async_to_sync(send_websocket_info)(player_id=str(self.opponent.id), payload= {'type': 'private_match_canceled'})
             self.lobby.delete_lobby()
             return JsonResponse({'status': 'success', 'message': 'deletedLobby'}, status=200)
+        except ObjectDoesNotExist as e: 
+            return JsonResponse({'message': str(e)}, status=404)
         except Exception as e: 
-            print(f'Error: {str(e)}') 
-            return JsonResponse({'message': str(e)}, status=400)
+            return JsonResponse({'message': str(e)}, status=500)
 
 
     def init(self, request):
@@ -133,7 +134,7 @@ class CancelPrivateMatch(View):
         lobby = PrivateMatchLobby.objects.filter(Q(sender=self.user) | Q(receiver=self.user)).first()
         
         if not lobby:
-            raise Exception('lobbyNotFound')
+            raise ObjectDoesNotExist('lobbyNotFound')
         
         return lobby
 
@@ -146,13 +147,16 @@ class PrivateMatchManager(View):
     def post(self, request): 
         try:
             if isinstance(request.user, AnonymousUser):  
-                return JsonResponse({'message': 'notConnected'}, status=400)
+                return JsonResponse({'message': 'notConnected'}, status=401)
             data = json.loads(request.body.decode('utf-8'))
             self.init(data=data, request=request)
             return self.process_choice()
-        except Exception as e: 
-            print(f'Error: {str(e)}') 
+        except ValidationError as e: 
             return JsonResponse({'message': str(e)}, status=400)
+        except ObjectDoesNotExist as e: 
+            return JsonResponse({'message': str(e)}, status=404)
+        except Exception as e: 
+            return JsonResponse({'message': str(e)}, status=500)
 
 
     def init(self, data, request):
@@ -165,11 +169,11 @@ class PrivateMatchManager(View):
     
     def check_data(self, data):
         if 'sender_username' not in data:
-            raise Exception('noUsernameProvided')
+            raise ValidationError('noUsernameProvided')
         if 'choice' not in data:
-            raise Exception('noChoiceProvided')
+            raise ValidationError('noChoiceProvided')
         if data['choice'] != 'accepted' and data['choice'] != 'refused':
-            raise Exception('invalidChoiceProvided')
+            raise ValidationError('invalidChoiceProvided')
             
     
     def get_sender_username(self, data):
@@ -182,7 +186,7 @@ class PrivateMatchManager(View):
         lobby = PrivateMatchLobby.objects.filter(sender=self.sender_user, receiver=self.user).first()
         
         if not lobby:
-            raise Exception('lobbyNotFound')
+            raise ObjectDoesNotExist('lobbyNotFound')
         
         return lobby
     
@@ -213,7 +217,7 @@ class StartPrivateMatch(View):
     def post(self, request): 
         try:            
             if isinstance(request.user, AnonymousUser):  
-                return JsonResponse({'status':'error', 'message': 'notConnected'}, status=400)
+                return JsonResponse({'status':'error', 'message': 'notConnected'}, status=401)
             self.init(request=request)
             change_is_ingame_state(value=True, user_instance=self.user)
             change_is_ingame_state(value=True, user_instance=self.opponent)
@@ -221,9 +225,12 @@ class StartPrivateMatch(View):
             self.lobby.delete_lobby()
             send_start_game(game_type='private_match', player_one_id=str(self.user.id), player_two_id=str(self.opponent.id))
             return JsonResponse({'status': 'success', 'message': 'privateMatchStarted'}, status=200)
-        except Exception as e: 
-            print(f'Error: {str(e)}') 
+        except ValueError as e: 
             return JsonResponse({'message': str(e)}, status=400)
+        except ObjectDoesNotExist as e: 
+            return JsonResponse({'message': str(e)}, status=404)
+        except Exception as e: 
+            return JsonResponse({'message': str(e)}, status=502)
 
 
     def init(self, request):
@@ -236,7 +243,7 @@ class StartPrivateMatch(View):
         lobby = PrivateMatchLobby.objects.filter(Q(sender=self.user) | Q(receiver=self.user)).first()
         
         if not lobby:
-            raise Exception('lobbyNotFound')
+            raise ObjectDoesNotExist('lobbyNotFound')
         if lobby.receiver_state != 'ready':
-            raise Exception('invitedUserNotReady')
+            raise ValueError('invitedUserNotReady')
         return lobby

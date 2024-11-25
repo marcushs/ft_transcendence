@@ -15,4 +15,4 @@ class logout_view(View):
             response.delete_cookie('jwt_refresh')
             return response
         except Exception as e:
-            return JsonResponse({'message': str(e)}, status=400)
+            return JsonResponse({'message': str(e)}, status=502)

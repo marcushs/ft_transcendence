@@ -1,6 +1,6 @@
 from .websocket_utils import notify_user_info_display_change
 from django.contrib.auth.models import AnonymousUser
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from .user_utils import get_user_id_by_username
 from django.contrib.auth import get_user_model
 from asgiref.sync import sync_to_async
@@ -36,7 +36,7 @@ class ChangeUserInfosView(View):
             response = {}
     
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'error': 'User not found'}, status=201) 
+                return JsonResponse({'error': 'User not found'}, status=401) 
 
             await self.check_update_error(User, request) 
             username = request.POST.get('username')
@@ -50,9 +50,11 @@ class ChangeUserInfosView(View):
                 response.update(await self.change_profile_image(request))
             elif request.POST.get('profile_image_link'):
                 response.update(await self.change_profile_image_link(request))
-            return JsonResponse(response, status=201)
+            return JsonResponse(response, status=200)
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'message': str(e)}, status=404)  
         except ValidationError as e:
-            return JsonResponse({'message': e.message_dict['error']}, status=409)        
+            return JsonResponse({'message': e.message_dict['error']}, status=409)      
         except Exception as e:
             return JsonResponse({'message': str(e)}, status=400)
 
@@ -109,7 +111,7 @@ class ChangeUserInfosView(View):
 
     def check_profile_image_link_errors(self, new_profile_image_link):
         try:
-            response = requests.get(new_profile_image_link, stream=True) # stream=True to don't download the body, just the header
+            response = requests.get(new_profile_image_link, stream=True)
             if response.status_code == 200 and 'image' in response.headers.get('Content-type', '').lower():
                 return True
             return False
@@ -128,9 +130,8 @@ class ChangeUserInfosView(View):
             await sync_to_async(request.user.save)()
             await notify_user_info_display_change(request=request, change_info='username', old_value=self.old_username)
             return {'username_message': 'usernameSuccessfullyChanged'} 
-        except Exception as e:
+        except Exception:
             await self.callback_username_update_error(request)
-            print(f'Error: ', str(e))
             return {'username_message': 'usernameFailedToChange'}
 
     async def callback_username_update_error(self, request): 

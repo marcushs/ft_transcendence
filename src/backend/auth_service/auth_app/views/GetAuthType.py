@@ -11,7 +11,7 @@ class GetAuthType(View):
     def get(self, request):
         try:
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'unknownUser'}, status=400)
+                return JsonResponse({'message': 'unknownUser'}, status=401)
             oauth_type = self.get_oauth_type(request)
             if oauth_type is None:
                 return JsonResponse({'oauth_log': False, 'oauth_type': None}, status=200)

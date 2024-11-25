@@ -57,7 +57,7 @@ def _create_user_session(user, request):
 		return response 
 	except Exception as e:  
 		print(f'Error: {str(e)}')
-		return JsonResponse({'message': 'An error occured while logging in'}, status=400) 
+		return JsonResponse({'message': 'An error occured while logging in'}, status=502) 
 
 def _send_twofactor_request(user, payload, csrf_token, request):
 	try:

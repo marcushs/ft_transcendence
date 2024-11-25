@@ -21,7 +21,7 @@ class handle_friend_info_change(View):
                 data = json.loads(request.body.decode('utf-8'))
                 if isinstance(request.user, AnonymousUser):
                     user = User.objects.get(id=str(data['user_id']))
-                else :
+                else:
                     user = request.user
                 contacts_id_list = get_friends_and_pending_id_list(user)
             except Exception as e:

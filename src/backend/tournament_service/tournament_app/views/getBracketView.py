@@ -33,5 +33,4 @@ class getBracketView(View):
 				return JsonResponse({'bracket': bracket, 'status': 'success'}, status=200)
 			return JsonResponse({'message': 'Bracket not found', 'status': 'error'}, status=404)
 		except Exception as e:
-			print(f'Error: {str(e)}')
 			return JsonResponse({"message": str(e)}, status=500)

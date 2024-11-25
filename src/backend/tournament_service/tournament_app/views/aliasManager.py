@@ -1,4 +1,4 @@
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
 from django.views import View
@@ -13,7 +13,7 @@ class AliasManager(View):
 
 	def get(self, request):
 		if isinstance(request.user, AnonymousUser): 
-			return JsonResponse({'message': 'unknownUser'}, status=400)
+			return JsonResponse({'message': 'unknownUser'}, status=401)
 		return JsonResponse({'alias': str(request.user.alias)}, status=200)
 
 
@@ -21,26 +21,27 @@ class AliasManager(View):
 	def put(self, request):
 		try:
 			if isinstance(request.user, AnonymousUser):
-				return JsonResponse({'message': 'unknownUser'}, status=400)
+				return JsonResponse({'message': 'unknownUser'}, status=401)
 			data = json.loads(request.body.decode('utf-8'))	
 			self.check_new_alias(data, request.user)
 			request.user.alias = str(data['new_alias'])
 			request.user.save()
 			return JsonResponse({'alias_message': 'aliasChanged'}, status=200)
+		except ValidationError as e:
+			return JsonResponse({'message': str(e)}, status=400)
 		except Exception as e:
-			print(f'Error: {str(e)}')
-			return JsonResponse({'message': str(e)}, status=400) 
+			return JsonResponse({'message': str(e)}, status=500)
 
 
 	def check_new_alias(self, data, user):
 		if not 'new_alias' in data:
-			raise Exception('aliasNotProvided')
+			raise ValidationError('aliasNotProvided')
 		new_alias = data['new_alias']
 		if new_alias == user.alias:
-			raise Exception("aliasAlreadyYours")
+			raise ValidationError("aliasAlreadyYours")
 		if User.objects.filter(alias=new_alias).exists():
-			raise Exception("aliasAlreadyExists")
+			raise ValidationError("aliasAlreadyExists")
 		if len(new_alias) > 12:
-			raise Exception("aliasLenError")
+			raise ValidationError("aliasLenError")
 		if re.search(r"^[a-zA-Z0-9_-]+$", new_alias) is None:
-			raise Exception("aliasFormatError")
+			raise ValidationError("aliasFormatError")

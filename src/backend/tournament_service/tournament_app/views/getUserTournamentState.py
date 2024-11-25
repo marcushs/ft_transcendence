@@ -60,9 +60,8 @@ class getUserTournamentState(View):
 					'matchData': None}, status=200)
 
 		except Tournament.DoesNotExist:
-			return JsonResponse({'message': 'tournamentNotFound'}, status=400)
+			return JsonResponse({'message': 'tournamentNotFound'}, status=404)
 		except TournamentMatch.DoesNotExist:
-			return JsonResponse({'message': 'tournamentMatchNotFound'}, status=400)
-		except Exception as e: 
-			print(f'Error: {str(e)}')
+			return JsonResponse({'message': 'tournamentMatchNotFound'}, status=404)
+		except Exception as e:
 			return JsonResponse({"message": str(e)}, status=500)

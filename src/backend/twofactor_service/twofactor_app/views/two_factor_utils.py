@@ -17,9 +17,8 @@ def send_update_request(request):
         send_request(request_type='POST', request=request, url='http://user:8000/api/user/update_user/', payload=payload)
         send_request(request_type='POST', request=request, url='http://auth:8000/api/auth/update_user/', payload=payload)
         return None
-    except Exception as e:
-        print(f'Error : {str(e)}')
-        return JsonResponse({'message': 'unknownUser'}, status=400)
+    except Exception:
+        return JsonResponse({'message': 'unknownUser'}, status=502)
  
 def send_request(request_type, request, url, payload=None):
         headers = {
@@ -68,11 +67,10 @@ class twofactor_get_status_view(View):
     def get(self, request):
         try:
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'You are not logged in'}, status=401) 
+                return JsonResponse({'message': 'You are not logged in'}, status=401)
             if request.user.is_verified == True:
                 return JsonResponse({'message': 'You have setup twofactor on your account', 'is_verified': True, 'method': request.user.two_factor_method}, status=200)
             else:
                 return JsonResponse({'message': 'You dont have setup twofactor on your account', 'is_verified': False}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)

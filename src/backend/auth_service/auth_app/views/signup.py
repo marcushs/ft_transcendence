@@ -42,7 +42,7 @@ class signup_view(View):
             response = self._send_request(user=user, data=data, csrf_token=request.headers.get('X-CSRFToken'))
             if not response:
                 user.delete()
-                return JsonResponse({'message': 'errorWhileSignup'}, status=400)
+                return JsonResponse({'message': 'errorWhileSignup'}, status=502)
             return JsonResponse({'message': 'accountCreated', 'redirect_url': 'login'}, status=200)
         except Exception as e:
             return JsonResponse({'message': str(e)}, status=500)
@@ -80,28 +80,28 @@ class signup_view(View):
 
     def _check_data(self, request, data):
         if not data['username']:
-            return JsonResponse({'message': 'noUsernameProvided'}, status=401)
+            return JsonResponse({'message': 'noUsernameProvided'}, status=400)
         elif not re.match(self.regexUsernameCheck, data['username']):
-            return JsonResponse({'message': 'invalidCharInUsername'}, status=401)
+            return JsonResponse({'message': 'invalidCharInUsername'}, status=400)
         elif not data['email']:
-            return JsonResponse({'message': 'noEmailProvided'}, status=401)
+            return JsonResponse({'message': 'noEmailProvided'}, status=400)
         elif User.objects.filter(email=str(data['email'])).exists():
-            return JsonResponse({'message': 'accountHasAlreadyEmail'}, status=401)
+            return JsonResponse({'message': 'accountHasAlreadyEmail'}, status=400)
         elif not re.match(self.regexEmailCheck, data['email']):
-            return JsonResponse({'message': 'invalidEmail'}, status=401)
+            return JsonResponse({'message': 'invalidEmail'}, status=400)
         elif not data['password']:
-            return JsonResponse({'message': 'noPasswordProvided'}, status=401)
+            return JsonResponse({'message': 'noPasswordProvided'}, status=400)
         username = data['username']
         if len(data['username']) > 12:
-            return JsonResponse({'message': 'tooLongUsername'}, status=401)
+            return JsonResponse({'message': 'tooLongUsername'}, status=400)
         if User.objects.filter(username=username).exists():
-            return JsonResponse({'message': 'usernameAlreadyExists'}, status=401)
+            return JsonResponse({'message': 'usernameAlreadyExists'}, status=400)
         try:
             validate_password(data['password'])
         except ValidationError as error:
-            return JsonResponse({'message': str(error.messages[0])}, status=401)
+            return JsonResponse({'message': str(error.messages[0])}, status=400)
         if data['password'] != data['confirm_password']:
-            return JsonResponse({'message': 'passwordDidNotMatch'}, status=401)
+            return JsonResponse({'message': 'passwordDidNotMatch'}, status=400)
         return None
     
     

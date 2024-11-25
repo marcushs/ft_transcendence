@@ -56,7 +56,7 @@ class oauthGithubUpdateUsernameView(View):
             return response
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=502)
 
     def send_create_user_request_to_endpoints(self):
         urls = ['http://auth:8000/api/auth/add_oauth_user/',

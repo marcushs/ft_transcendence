@@ -4,6 +4,8 @@ from django.http import JsonResponse
 from ..models import User
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.core.exceptions import ValidationError
+
 
 # --- UTILS --- #
 import json
@@ -28,7 +30,7 @@ class oauth42UpdateUsernameView(View):
             data = json.loads(request.body.decode('utf-8'))
 
             if 'newUsername' not in data:
-                raise Exception('requestMissingData')
+                raise ValidationError('requestMissingData')
             new_username = str(data['newUsername'])
             id = request.COOKIES.get('id')
             self.csrf_token = request.headers.get('X-CSRFToken') 
@@ -44,8 +46,9 @@ class oauth42UpdateUsernameView(View):
                 except User.DoesNotExist:
                     return JsonResponse({"message": "User not found", "url":"/login", "status": "Error"}, status=404)
             return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error", "url": '/oauth-username?oauth_provider=oauth42'}, status=409)
+        except ValidationError as e:
+            return JsonResponse({"message": str(e)}, status=400)
         except Exception as e: 
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
          
     def check_new_username_taken(self, username):
@@ -56,7 +59,7 @@ class oauth42UpdateUsernameView(View):
             return response
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=502)
 
     def send_create_user_request_to_endpoints(self):
         urls = ['http://auth:8000/api/auth/add_oauth_user/',

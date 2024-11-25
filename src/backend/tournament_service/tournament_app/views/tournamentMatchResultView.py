@@ -50,10 +50,9 @@ class tournamentMatchResultView(View):
             async_to_sync(tournament_lost_manager)(payload_loser)
 
             return JsonResponse({'status': 'success'}, status=200) 
-        except ObjectDoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Match not found'}, status=400)
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=404)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 

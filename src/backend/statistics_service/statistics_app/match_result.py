@@ -1,5 +1,6 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from .models import MatchHistory, User
 from django.http import JsonResponse
 from django.views import View
@@ -47,28 +48,31 @@ class MatchResultManager(View):
                 }
                 return JsonResponse({'status': 'success', 'results': payload}, status=200)
             return JsonResponse({'status': 'success', 'message': 'match data updated'}, status=200)
-        except Exception as e:
-            print(f'Error: {str(e)}')
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=404)        
+        except ValidationError as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
     def is_valid_data(self, data):
         if 'winner' not in data or 'loser' not in data:
-            raise Exception('Missing user in data')
+            raise ValidationError('Missing user in data')
         winner = data['winner']
         loser = data['loser']
         if not (isinstance(winner, dict) and 'id' in winner and 'score' in winner):
-            raise Exception('Missing data in winner object')
+            raise ValidationError('Missing data in winner object')
         if not (isinstance(loser, dict) and 'id' in loser and 'score' in loser):
-            raise Exception('Missing data in loser object')
+            raise ValidationError('Missing data in loser object')
         if not 'type' in data:
-            raise Exception('Missing match type in data')
+            raise ValidationError('Missing match type in data')
         if 'is_draw' not in data or 'is_surrend' not in data or 'is_canceled' not in data:
-            raise Exception('Missing data')
+            raise ValidationError('Missing data')
         for field in ['unranked', 'ranked', 'tournament', 'private_match']:
             if field == data['type']:
                 return
-        raise Exception('Invalid data') 
+        raise ValidationError('Invalid data') 
 
 
     def update_match_result_data(self, data):

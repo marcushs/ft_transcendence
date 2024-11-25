@@ -23,8 +23,8 @@ class getChatroomLastMessageView(View):
 			return_message = json.loads(serialized_message)
 
 			return JsonResponse({'lastMessage': return_message, 'status': 'Success'}, status=200)
-		except Http404:
-			return JsonResponse({'message': 'Requested chatroom does not exist', 'status': 'Error'}, status=401)
+		except Http404 as e:
+			return JsonResponse({'message': str(e), 'status': 'Error'}, status=404)
 		except Exception as e:
 			print(f'Error: {str(e)}')
 			return JsonResponse({"message": str(e)}, status=500)

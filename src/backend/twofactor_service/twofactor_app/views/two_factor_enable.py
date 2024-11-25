@@ -19,9 +19,9 @@ class twofactor_enable_view(View):
     def post(self, request):
         try:
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'notConnected'}, status=403)
+                return JsonResponse({'message': 'notConnected'}, status=401)
             if request.user.is_verified:
-                return JsonResponse({'message': 'twoFactorAlreadyActivated'}, status=403)
+                return JsonResponse({'message': 'twoFactorAlreadyActivated'}, status=400)
             data = json.loads(request.body.decode('utf-8'))
             method = str(data.get('method'))
             twofactor_code = data.get('twofactor')
@@ -35,8 +35,7 @@ class twofactor_enable_view(View):
                 case _:
                     return JsonResponse({'message': 'We\'ve encountered an issue with the selected authentication method.'}, status=400)
         except Exception as e:
-            print('Error: ', str(e))
-            return JsonResponse({'message': 'unknownError'}, status=400)
+            return JsonResponse({'message': str(e)}, status=500)
 
        
     def _email_handler(self, request):
@@ -125,8 +124,7 @@ class twofactor_enable_view(View):
         try:
             send_mail(subject, message, email_from, recipient_list)
             return None
-        except Exception as error:
-            print(f'Error : {str(error)}')
+        except Exception:
             return 'emailError'
         
     def _generate_6_digits_code(self):

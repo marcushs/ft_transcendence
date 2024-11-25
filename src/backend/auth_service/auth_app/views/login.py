@@ -79,7 +79,7 @@ class login_view(View):
             return response 
         except Exception as e: 
             print(f'Error: {str(e)}')
-            return JsonResponse({'message': 'errorWhileLogin'}, status=400)
+            return JsonResponse({'message': 'errorWhileLogin'}, status=502)
 
     def _send_twofactor_request(self, data, csrf_token, request):   
         try:
@@ -91,4 +91,4 @@ class login_view(View):
         except ExpectedException as e:
             return JsonResponse({'message': str(e)}, status=400)
         except Exception as e:
-            return JsonResponse({'message': 'unknownError'}, status=400)
+            return JsonResponse({'message': 'unknownError'}, status=500)

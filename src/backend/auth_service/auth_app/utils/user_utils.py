@@ -12,7 +12,7 @@ class update_user(View):
     def post(self, request):
         try:
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'User not found'}, status=400)
+                return JsonResponse({'message': 'User not found'}, status=401)
             data = json.loads(request.body.decode('utf-8'))
             for field in ['username', 'email', 'is_verified', 'two_factor_method']:
                 if field in data:

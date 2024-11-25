@@ -53,7 +53,7 @@ class oauth42AccessResourceView(View):
                 return response
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=500)
+            return JsonResponse({"message": str(e)}, status=502)
         
     def create_or_login_user(self, request, data):
         self.csrf_token = request.headers.get('X-CSRFToken')
@@ -135,7 +135,6 @@ class oauth42AccessResourceView(View):
             if response.status_code == 409:
                 return response
             response.raise_for_status()
-            return response 
+            return response
         except Exception as e: 
-            print(f'Error: {str(e)}')
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=502)

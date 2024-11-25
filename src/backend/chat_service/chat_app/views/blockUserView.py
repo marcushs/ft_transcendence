@@ -19,7 +19,7 @@ class blockUserView(View):
 			blocked_user_id = request.GET.get('blockedUserId')
 
 			if isinstance(user, AnonymousUser):
-				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=404)
+				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=401)
 			try:
 				blocked_user = get_object_or_404(User, id=str(blocked_user_id))
 				if blocked_user == user:
@@ -42,11 +42,11 @@ class unblockUserView(View):
 			blocked_user_id = request.GET.get('blockedUserId')
 
 			if isinstance(user, AnonymousUser):
-				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=404)
+				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=401)
 			try:
 				blocked_user = get_object_or_404(User, id=str(blocked_user_id))
 				if blocked_user == user:
-					return JsonResponse({'message': 'User and blocked user are identical', 'status': 'Error'}, status=401)
+					return JsonResponse({'message': 'User and blocked user are identical', 'status': 'Error'}, status=400)
 				user.unblock_user(blocked_user_id)
 				return JsonResponse({'message': f'User {str(blocked_user_id)} has been unblocked', 'status': 'Success'}, status=200)
 			except Http404:
@@ -65,7 +65,7 @@ class isUserBlockedView(View):
 			target_user_id = request.GET.get('targetUserId')
 
 			if isinstance(user, AnonymousUser):
-				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=404)
+				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=401)
 			
 			try:
 				target_user = get_object_or_404(User, id=str(target_user_id))

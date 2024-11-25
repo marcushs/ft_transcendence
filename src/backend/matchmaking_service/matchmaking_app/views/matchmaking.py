@@ -1,4 +1,5 @@
 from ..utils.user_utils import get_user_by_id, send_request
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AnonymousUser
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -44,7 +45,7 @@ class MatchmakingTournament(View):
             print(f'Error: {str(e)}') 
             await sync_to_async(change_is_ingame_state)(value=False, user_instance=players[0])
             await sync_to_async(change_is_ingame_state)(value=False, user_instance=players[1])
-            return JsonResponse({'status': 'error', 'message': 'An error occurred while starting the game'}, status=400)
+            return JsonResponse({'status': 'error', 'message': 'An error occurred while starting the game'}, status=502)
         
     def get_players_data(self, player_one_id, player_two_id):
         player_one = get_user_by_id(player_one_id)
@@ -65,7 +66,7 @@ class MatchmakingQueueManager(View):
         
         try:
             if isinstance(request.user, AnonymousUser):  
-                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=400) 
+                return JsonResponse({'status':'error', 'message': 'User not connected'}, status=401) 
             data = json.loads(request.body.decode('utf-8'))
             if not self.is_valid_matchmaking_type(data=data):
                 return JsonResponse({'status': 'error', 'message': 'Invalid matchmaking type'}, status=400)
@@ -138,7 +139,7 @@ class RemoveUserFromWaitingQueue(View):
                 return JsonResponse({'message': 'No connected user'}, status=401) 
             is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
             if not is_waiting:
-                return JsonResponse({'message': 'cant remove user from matchmaking research cause he is not already present in it'}, status=401)
+                return JsonResponse({'message': 'cant remove user from matchmaking research cause he is not already present in it'}, status=404)
             if match_type == 'unranked':
                 redis_instance.lrem('unranked_waiting_users', 0, str(request.user.id))
             elif match_type == 'ranked':
@@ -162,12 +163,14 @@ class ChangeInGameUserStatus(View):
             change_is_ingame_state(value=False, user_id=str(data['player_one_id']))
             change_is_ingame_state(value=False, user_id=str(data['player_two_id']))
             return JsonResponse({}, status=200)        
-        except Exception as e:
+        except ValidationError as e:
             return JsonResponse({'message': str(e)}, status=400) 
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=500) 
         
     def check_data(self, data):
         if not 'player_one_id' in data or not 'player_two_id' in data:
-            raise Exception('Missing user_id in data') 
+            raise ValidationError('Missing user_id in data') 
 
 class CheckUserInGame(View): 
     def __init__(self):

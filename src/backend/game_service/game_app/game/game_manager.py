@@ -28,7 +28,7 @@ class startGameEngine(View):
             asyncio.create_task(starting_game_instance(data))
             return JsonResponse({'status': 'success', 'message': 'Game instance started'}, status=200)
         except Exception as e: 
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
  #//---------------------------------------> game instance <--------------------------------------\\#
@@ -153,7 +153,7 @@ class SurrendGame(View):
         except ExpectedException as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=200)
         except Exception as e:
-            return JsonResponse({'message': str(e)}, status=400)
+            return JsonResponse({'message': str(e)}, status=500)
 
 
     def check_data(self, data, user_id):

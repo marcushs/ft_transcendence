@@ -5,6 +5,7 @@ from asgiref.sync import async_to_sync
 from django.http import JsonResponse
 from django.conf import settings
 from django.views import View
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 import secrets
 import json
 
@@ -27,30 +28,34 @@ class twofactor_send_token_view(View):
                 return JsonResponse({'method': self.user.two_factor_method}, status=200)
             else:
                 return JsonResponse({'message': 'We\'ve encountered an issue with the verification method.'}, status=400)
+        except ValidationError as e:
+            return JsonResponse({'message': str(e)}, status=400)
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'message': str(e)}, status=404)
         except Exception as e:
-            return JsonResponse({'message': f'An error occured with email sending: {str(e)}'}, status=400)
+            return JsonResponse({'message': str(e)}, status=500)
 
 
     def check_data(self, data):
         if not data['username']:
-            raise Exception({'message': 'User not found'}, status=401)
+            raise ValidationError({'message': 'User not found'}, status=401)
 
 
     def get_user(self, username):
         user = User.objects.get(username=username)
         if user.is_verified == False:
-            raise Exception({'message': 'two-factor authentication is not activated on your account'})
+            raise ValidationError({'message': 'two-factor authentication is not activated on your account'})
         return user
 
 
     def _handle_email_method(self, data):
         try:
             if not data['email_type']:
-                raise Exception({'message': 'Unknown email type'})
+                raise ValidationError({'message': 'Unknown email type'})
             self.verification_code = self._generate_6_digits_code()
             email_message, email_subject = self.get_message_type_preset(data['email_type'])
             if email_message is None:
-                raise Exception({'message': 'Unknown email type'})
+                raise ValidationError({'message': 'Unknown email type'})
             email_from = settings.EMAIL_HOST_USER
             recipient_list = [self.user.email, ]
             send_mail(email_subject, email_message, email_from, recipient_list)
@@ -124,7 +129,7 @@ class twofactor_send_token_view(View):
                 """
                 return message, subject
             case _:
-                raise Exception({'message': 'Unknown language'}) 
+                raise ValidationError({'message': 'Unknown language'}) 
             
     def get_deactivation_message_by_language(self):
             language = async_to_sync(get_user_language)(self.request, self.user.username)
@@ -176,4 +181,4 @@ class twofactor_send_token_view(View):
                     """
                     return message, subject
                 case _:
-                    raise Exception({'message': 'Unknown language'})
+                    raise ValidationError({'message': 'Unknown language'})

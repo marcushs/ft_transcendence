@@ -40,5 +40,4 @@ class twofactor_disable_view(View):
             request.user.save()
             return JsonResponse({'message': 'twoFactorDisabled'}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)

@@ -45,7 +45,7 @@ class oauthGoogleRedirectView(View):
             return response
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=500)
+            return JsonResponse({"message": str(e)}, status=502)
     
     def exchange_code_for_token(self, code):
         client_id = env("API_UID_GOOGLE") 

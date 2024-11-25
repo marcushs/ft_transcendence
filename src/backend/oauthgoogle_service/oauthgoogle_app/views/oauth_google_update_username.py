@@ -46,7 +46,7 @@ class oauthGoogleUpdateUsernameView(View):
             return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error", "url": '/oauth-username?oauth_provider=oauthgoogle'}, status=409)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=500)
+            return JsonResponse({"message": str(e)}, status=502)
          
     def check_new_username_taken(self, username):
         url = 'http://user:8000/api/user/check_username/'
@@ -56,7 +56,7 @@ class oauthGoogleUpdateUsernameView(View):
             return response
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=502)
 
     def send_create_user_request_to_endpoints(self):
         urls = ['http://auth:8000/api/auth/add_oauth_user/', 

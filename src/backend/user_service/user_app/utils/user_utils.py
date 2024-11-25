@@ -1,4 +1,4 @@
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from asgiref.sync import async_to_sync, sync_to_async
 from django.contrib.auth.models import AnonymousUser
 from django.utils.decorators import method_decorator
@@ -30,7 +30,7 @@ class set_offline_user(View):
         
         try:
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'User not found'}, status=400)
+                return JsonResponse({'message': 'User not found'}, status=401)
             request.user.last_active = timezone.now()
             if request.user.status == 'online' or request.user.status == 'away':
                 old_status = request.user.status
@@ -42,7 +42,7 @@ class set_offline_user(View):
             return JsonResponse(status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=500)
+            return JsonResponse({"message": str(e)}, status=502)
  
 class ping_status_user(View):
     def __init__(self):
@@ -65,7 +65,7 @@ class ping_status_user(View):
             return JsonResponse({'status': 'success', "message": 'pong'}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=500)
+            return JsonResponse({"message": str(e)}, status=502)
 
 
 class DeleteUser(View):
@@ -76,13 +76,16 @@ class DeleteUser(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             if not 'user_id' in data:
-                raise Exception('missingID')
+                raise ValidationError('missingID')
             user = User.objects.get(id=str(data['user_id']))
             user.delete()
             return JsonResponse({'message': 'User updated successfully'}, status=200)
-        except Exception as e:
-            print(f'Error: {str(e)}')
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'message': str(e)}, status=404)
+        except ValidationError as e:
             return JsonResponse({'message': str(e)}, status=400)
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=500)
 
 
 class AddNewUser(View):
@@ -98,19 +101,20 @@ class AddNewUser(View):
                 data['language'] = 'en'
 
             if not all(key in data for key in ('email', 'username', 'user_id')):
-                raise Exception('requestMissingData')
+                raise ValidationError('requestMissingData')
             if User.objects.filter(username=str(data['username'])).exists():
-                raise Exception('usernameAlreadyTaken')
+                raise ValidationError('usernameAlreadyTaken')
             if User.objects.filter(email=str(data['email'])).exists():
-                return JsonResponse({'message': 'Email address already registered! Try logging in.', "status": "Error"}, status=400)
+                return JsonResponse({'message': 'Email address already registered! Try logging in.', "status": "Error"}, status=409)
             if data['logged_in_with_oauth'] and data['logged_in_with_oauth'] is True:
                 User.objects.create_oauth_user(data)
             else:
                 User.objects.create_user(email=str(data['email']), username=str(data['username']), user_id=str(data['user_id']), language=str(data['language']))
             return JsonResponse({"message": 'user added with success', "status": "Success"}, status=200)
-        except Exception as e:
-            print(f'Error: {str(e)}')
+        except ValidationError as e:
             return JsonResponse({"message": str(e)}, status=400)
+        except Exception as e:
+            return JsonResponse({"message": str(e)}, status=500)
 
     
 class update_user(View):
@@ -122,7 +126,7 @@ class update_user(View):
         from .websocket_utils import notify_user_info_display_change
         try:
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'User not found'}, status=400)
+                return JsonResponse({'message': 'User not found'}, status=401)
             data = json.loads(request.body.decode('utf-8'))
             old_status = None
             for field in ['username', 'email', 'is_verified', 'two_factor_method', 'status', 'last_active']:
@@ -139,7 +143,6 @@ class update_user(View):
                 async_to_sync(notify_user_info_display_change)(request=request, change_info='status', old_value=old_status)
             return JsonResponse({'message': 'User updated successfully'}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 class check_username(View):
@@ -155,8 +158,9 @@ class check_username(View):
                                      "status": "Error", 
                                      "user_id": str(user.id)}, status=409)
             return JsonResponse({"message": "Username is free", "status": "Success"}, status=200)
+        except ObjectDoesNotExist as e:
+            return JsonResponse({"message": str(e)}, status=404)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
  
 async def send_request(request_type, url, request=None, payload=None):
@@ -221,7 +225,6 @@ class searchUsers(View):
             else:
                 return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
         
 
@@ -232,10 +235,9 @@ class getClientUsername(View):
     def get(self, request):
         try:
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'User not found'}, status=400)
+                return JsonResponse({'message': 'User not found'}, status=401)
             return JsonResponse({'status': 'success', 'username': request.user.username}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 
@@ -246,7 +248,7 @@ class getUserId(View):
     def get(self, request):
         try:
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'User not found'}, status=400)
+                return JsonResponse({'message': 'User not found'}, status=401)
             return JsonResponse({'status': 'success', 'id': request.user.id}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
@@ -267,10 +269,9 @@ class getUserGameInfo(View):
                 'profile_image_link': user.profile_image_link,
             }
             return JsonResponse({'status': 'success', 'message': users_data}, safe=False, status=200)   
-        except ObjectDoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=404)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 class getUserInfos(View):
@@ -289,8 +290,8 @@ class getUserInfos(View):
                 'status': users.status
             }
             return JsonResponse({'status': 'success', 'message': users_data}, safe=False, status=200)
-        except ObjectDoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=404)
         except Exception as e:
             print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
@@ -311,8 +312,8 @@ class getUserInfoById(View):
                 'status': user.status
             }
             return JsonResponse({'status': 'success', 'user_data': user_data}, safe=False, status=200)
-        except ObjectDoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=404)
         except Exception as e:
             print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
@@ -324,7 +325,7 @@ class getUsersInfo(View):
     def get(self, request):
         try:
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'User not found'}, status=400)
+                return JsonResponse({'message': 'User not found'}, status=401)
             users_target = json.loads(request.GET.get('q', ''))
             users_list = []
             for user in users_target:
@@ -339,10 +340,9 @@ class getUsersInfo(View):
                 }
                 users_list.append(users_info)
             return JsonResponse({'status': 'success', 'message': users_list}, safe=False, status=200)
-        except ObjectDoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=404)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 
@@ -353,7 +353,7 @@ class getUsernameById(View):
     def get(self, request):
         try:
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'User not found'}, status=400)
+                return JsonResponse({'message': 'User not found'}, status=401)
 
             target_id = request.GET.get('q', '')
 
@@ -362,8 +362,8 @@ class getUsernameById(View):
 
             user = User.objects.get(id=str(target_id))
             return JsonResponse({'status': 'success', 'username': user.username}, status=200)
-        except User.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'No user id found'}, status=200)
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=404)
         except Exception as e:
             print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
@@ -378,8 +378,7 @@ class getUserStatus(View):
             user_id = request.GET.get('userId')
             user = User.objects.get(id=str(user_id))
             return JsonResponse({'status': 'success', 'user_status': user.status}, safe=False, status=200)
-        except ObjectDoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=404)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)

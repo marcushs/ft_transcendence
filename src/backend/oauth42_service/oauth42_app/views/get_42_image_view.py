@@ -3,6 +3,8 @@ from django.views import View
 from django.http import JsonResponse
 from ..models import User
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
+
 
 User = get_user_model()
 
@@ -16,6 +18,4 @@ class get42ImageView(View):
             user = User.objects.get(id=str(user_id))
             pp_link = user.profile_image_link
             return JsonResponse({'message': {'profile_picture': pp_link}, 'status': 'Success'}, status=200)
-        return JsonResponse({'message': 'User not found', 'status': 'Error'}, status=400)
-            
-        
+        return JsonResponse({'message': 'User not found', 'status': 'Error'}, status=404)

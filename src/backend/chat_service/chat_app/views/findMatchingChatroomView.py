@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from ..models import *
 from django.contrib.auth.models import AnonymousUser
 from django.db.models import Count, Q
+from django.core.exceptions import ObjectDoesNotExist
 
 User = get_user_model()
 
@@ -17,7 +18,7 @@ class findMatchingChatroomView(View):
 			target_user = request.GET.get('targetUserId')
 
 			if isinstance(author, AnonymousUser):
-				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=400)
+				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=401)
 			try: 
 				chatroom = ChatGroup.objects.filter(
 					is_private=True,
@@ -28,6 +29,8 @@ class findMatchingChatroomView(View):
 				return JsonResponse({'chatroom_id': chatroom.group_id, 'status': 'Success'}, status=200)
 			except ChatGroup.DoesNotExist:
 				return JsonResponse({'message': 'No matching chatroom for these users', 'status': 'Success'}, status=200)
+		except ObjectDoesNotExist as e:
+			return JsonResponse({"message": str(e)}, status=404)
 		except Exception as e:
 			print(f'Error: {str(e)}')
 			return JsonResponse({"message": str(e)}, status=500)

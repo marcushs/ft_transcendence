@@ -16,7 +16,7 @@ class getJoinableTournamentsView(View):
     def get(self, request):
         try:
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'unknownUser'}, status=400)
+                return JsonResponse({'message': 'unknownUser'}, status=401)
 
             joinable_tournaments = Tournament.objects.annotate(
                 member_count=Count('members')
@@ -27,5 +27,4 @@ class getJoinableTournamentsView(View):
             tournaments_list = list(joinable_tournaments)
             return JsonResponse({'tournaments_list': tournaments_list, 'status': 'success'}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)

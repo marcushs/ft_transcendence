@@ -30,7 +30,7 @@ class friendshipManager(View):
                 case "remove":
                     return self.remove_friendship()
                 case _:
-                    return JsonResponse({'message': 'Unknown friendship status request'}, status=400)
+                    return JsonResponse({'message': 'Unknown friendship status request'}, status=404)
         except Exception as e:
             return JsonResponse({'message': str(e)}, status=500)
   

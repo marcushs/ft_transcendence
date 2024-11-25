@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.http import JsonResponse
 from ..models import Notification
 from django.contrib.auth import get_user_model
@@ -26,7 +27,6 @@ class manage_notification_view(View):
             notifications_dict = await sync_to_async(self.get_notification_dict)(notifications=own_notifications)
             return JsonResponse({"status": "success", 'message': notifications_dict}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 
@@ -51,7 +51,6 @@ class manage_notification_view(View):
                 await self.send_notifications_changed_to_websocket(data=data)
             return JsonResponse({"status": "success"}, status=200)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
         
 
@@ -95,8 +94,9 @@ class manage_notification_view(View):
             except Exception as e:
                 pass
             return JsonResponse({"status": "success"}, status=200)
+        except ObjectDoesNotExist as e:
+            return JsonResponse({"message": str(e)}, status=404)
         except Exception as e:
-            print(f'Error: {str(e)}')
             return JsonResponse({"message": str(e)}, status=500)
 
 
