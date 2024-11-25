@@ -180,7 +180,7 @@ class PongGameEngine:
         if ball_y_next - self.ball_radius < player_y + player_height_half + self.ball_radius / 2 and ball_y_next + self.ball_radius > player_y - player_height_half - self.ball_radius / 2:
             if self.calculate_x_position(isPlayerOne):
                 collide_point = (ball['y'] - player_y) / player_height_half
-                angle_rad = collide_point * (math.pi * 0.25)
+                angle_rad = collide_point * (math.pi * 0.2)
                 direction = 1 if isPlayerOne else -1
                 if self.ball_speed < self.speed_limit:
                     self.ball_speed += 0.5

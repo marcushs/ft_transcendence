@@ -14,13 +14,13 @@ async function resetTournamentData() {
 	try {
 		const data = await sendRequest("GET", "/api/tournament/get_tournament_state/", null);
 
-		console.log('-------------------->>>>>', JSON.parse(tournamentData), data);
 		if (tournamentData && !data.isInTournament)
 			localStorage.removeItem('tournamentData');
 		if (!tournamentData && data.isInTournament)
 			localStorage.setItem('tournamentData', JSON.stringify(data));
-		if (tournamentData && data.state !== tournamentData.state)
+		if (tournamentData && data.isInTournament && data.state !== tournamentData.state)
 			localStorage.setItem('tournamentData', JSON.stringify(data));
+		// if (!data.isInTournament && tournamentData)
 		// // if (tournamentData && tournamentData.)
 	} catch (e) {
 		localStorage.removeItem('tournamentData');
