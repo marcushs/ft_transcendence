@@ -798,7 +798,7 @@
 	  "disableExplication": "要禁用双重验证，请输入您收到的验证码",
 	  "disableEmail": "到以下邮箱：",
 	  "disableAuthenticator": "在您的身份验证应用程序上。",
-	  "twoFactorDisabled": "双重验证已成功禁用",
+	  "twoFactorDisabled": "双重验证已成功禁用"
 	},
 	"twoFactorVerifyView": {
 	  "emailTitle": "验证邮件双重验证",
