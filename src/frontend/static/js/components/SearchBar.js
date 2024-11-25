@@ -47,11 +47,10 @@ class SearchBarComponent extends HTMLDivElement {
             if (data.status === 'success') {
                 return data.message;
             } else {
-                console.log(data.message);
                 return null
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return null;
         }
     }

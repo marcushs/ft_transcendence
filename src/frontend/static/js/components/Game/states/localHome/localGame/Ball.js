@@ -38,7 +38,6 @@ export default class Ball {
 		const angleRad = Math.PI * (Math.random() * (randomAngle[1] - randomAngle[0]) + randomAngle[0]);
 
 		this.ballDirectionY = this.ballDirectionX * Math.sin(angleRad);
-		console.log(this.ballDirectionY, randomAngle, angleRad)
 	}
 
 	resetBallInfos(isPositiveBallDirection) {

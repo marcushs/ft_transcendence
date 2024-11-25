@@ -12,7 +12,6 @@ class QuitTournamentComponent extends HTMLElement {
         const savedState = localStorage.getItem('tournamentData');
         this.tournamentState = savedState ? JSON.parse(savedState) : null;
         this.isGameRendered = document.querySelector('in-game-component');
-        console.log(this.tournamentState);
     }
 
     connectedCallback() {

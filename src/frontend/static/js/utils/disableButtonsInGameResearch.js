@@ -8,7 +8,6 @@ export default function disableButtonsInGameResearch() {
 	let playButtons = [];
 
 	buttons.forEach((button) => {
-		console.log(button)
 		if (button.className === "generic-btn" && button.querySelector('button').innerHTML === `${getString('buttonComponent/play')}`)
 			playButtons.push(button);
 	});
@@ -21,7 +20,6 @@ export default function disableButtonsInGameResearch() {
 		player.classList.add('contact-action-disabled');
 	});
 
-	console.log('test = ', playInvitationButtonDisabled)
 	playInvitationButtonDisabled.forEach(button => {
 		button.className = "play-invitation-button-disabled";
 	});

@@ -2,6 +2,7 @@ import { sendRequest } from "../../../../utils/sendRequest.js";
 import { throwGameInactivityEvent } from "../../../../utils/throwGameInactivityEvent.js"
 import { surrenderHandler, handleGameReconnection } from "../../../../utils/game/gameConnection.js";
 import checkAuthentication from "../../../../utils/checkAuthentication.js";
+import { getString } from "../../../../utils/languageManagement.js";
 
 export async function checkInactiveGame() {
     const isConnected = await checkAuthentication();
@@ -17,7 +18,7 @@ export async function checkInactiveGame() {
             else
                 localStorage.removeItem('inGameComponentState');
         } catch (error) {
-            console.log(error.message);
+            console.error(error.message);
             return;
         }
     }
@@ -64,11 +65,11 @@ class GameInactivityComponent extends HTMLElement {
         <div class="inactive-game-pop-up-background">
             <div class="background-overlay"></div>
             <div class="inactive-game-pop-up">
-                <p>you have a game in progress</p>
-                <p>reconnect or leave?</p>
+                <p>${getString('inactiveGamePopUp/gameInProgress')}</p>
+                <p>${getString('inactiveGamePopUp/reconnectOrLeave')}</p>
                 <div class="inactive-game-choice-icon">
-                    <p class="inactive-game-choice-reconnect">Reconnect</p>
-                    <p class="inactive-game-choice-leave">Leave</p>
+                    <p class="inactive-game-choice-reconnect">${getString('inactiveGamePopUp/reconnectChoice')}</p>
+                    <p class="inactive-game-choice-leave">${getString('inactiveGamePopUp/leaveChoice')}</p>
                 </div>
             </div>
         </div>

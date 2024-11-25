@@ -46,7 +46,7 @@ class JoinComponent extends HTMLElement {
 
 			this.tournamentsList = res.tournaments_list;
 		} catch (error) {
-			console.log("Error getting joinable tournaments: ", error);
+			console.error(error);
 		}
 	}
 
@@ -55,7 +55,6 @@ class JoinComponent extends HTMLElement {
 
 		await this.getTournamentList(); 
 
-		console.log(this.tournamentsList)
 		this.tournamentsList.forEach(tournament => {
 			const tournamentEl = new TournamentComponent(tournament);
 

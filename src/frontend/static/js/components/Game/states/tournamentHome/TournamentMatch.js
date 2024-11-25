@@ -9,7 +9,6 @@ import {getString} from "../../../../utils/languageManagement.js";
 
 export default class TournamentMatch {
 	constructor(match) {
-		console.log('THIS MATCH = ', match);
 		this.redirectState = "tournament-match";
 		this.class = "tournament-match";
 		let jsonString = JSON.stringify(match);
@@ -34,6 +33,7 @@ class TournamentMatchElement extends HTMLElement {
 		this.bracketObj = null;
 		this.stage = this.match.tournament_round;
 		this.userId = null;
+		this.toBeDeter = false;
 	}
 
 	async connectedCallback() {
@@ -47,18 +47,18 @@ class TournamentMatchElement extends HTMLElement {
 		const opponent = await this.getOpponent();
 		this.innerHTML = `
 			<div class="tournament-match" data-tournament="${this.tournamentId}">
-				<h3 class="tournament-match-title">Waiting Room</h3>
+				<h3 class="tournament-match-title">${getString('tournament/waitingRoom')}</h3>
 				<div class="tournament-match-background">
 					<div class="tournament-match-content">
 						<div class="bracket-btn">
 							<img id="bracket-icon" src="../../../../assets/bracket_icon.svg" alt="bracket_icon">
 						</div>
 						<h4 class="tournament-name">${this.tournamentName}</h4>
-						<p>Stage: <span>${this.formatCurrentStage(this.stage)}</span></p>
-						<p>Opponent: <span id='opponent-span'>${opponent}</span></p>
+						<p>${getString('tournament/stage')}: <span>${this.formatCurrentStage(this.stage)}</span></p>
+						<p>${getString('tournament/opponent')}: <span id='opponent-span'>${opponent}</span></p>
 						<div class="countdown-container">
-							<button type="button" class="tournament-match-ready-btn ${opponent === 'To Be Determined...' ? 'clicked' : ''}">Ready</button>
-							<p class="match-countdown">Match starts in <span>60</span>s</p>
+							<button type="button" class="tournament-match-ready-btn ${this.toBeDeter ? 'clicked' : ''}">${getString('buttonComponent/ready')}</button>
+							<p class="match-countdown">${getString('tournament/matchStart')} <span></span>${getString('tournament/second')}</p>
 						</div>
 					</div>
 				</div>
@@ -67,10 +67,11 @@ class TournamentMatchElement extends HTMLElement {
 	}
 
 	formatCurrentStage(round) {
-		if (round === 'eighth_finals') return "Round of sixteen";
+		if (round === 'eighth_finals') return getString('tournament/Eighth-finals');
 
 		round = round.replace('_', '-');
-		return round[0].toUpperCase() + round.slice(1);
+		round = round[0].toUpperCase() + round.slice(1);
+		return getString(`tournament/${round}`)
 	}
 
 	async getOpponent() {
@@ -80,7 +81,8 @@ class TournamentMatchElement extends HTMLElement {
 
 		if (this.match.players.length === 2)
 			return this.match.players[0].id === this.userId ? this.match.players[1].alias : this.match.players[0].alias;
-		return 'To Be Determined...';
+		this.toBeDeter = true;
+		return getString('tournament/toBeDeter');
 	}
 
 	addEventListeners() {
@@ -93,12 +95,11 @@ class TournamentMatchElement extends HTMLElement {
 				this.bracketObj = BracketObj.create(res.bracket, res.bracket.tournament_size);
 				this.redirectToBracket();
 			} catch (error) {
-				console.log('Error retrieving bracket')
+				console.error('Error retrieving bracket')
 			}
 		})
 
 		readyBtn.addEventListener('click', () => {
-			console.log('ready clicked');
 			readyBtn.disabled = true;
 			readyBtn.classList.add('clicked')
 			const payload = {

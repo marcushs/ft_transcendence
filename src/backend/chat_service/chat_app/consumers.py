@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.http import Http404
 from django.db.models import Count, Q
 from django.core.serializers.json import DjangoJSONEncoder
-from asgiref.sync import sync_to_async
+from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import *
@@ -19,10 +19,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.close()
         else:
             await self.accept()
+            self.groups = set()
             await self.channel_layer.group_add('chatgroup_updates', self.channel_name)
+            self.groups.add('chatgroup_updates')
 
     async def disconnect(self, close_code):
-        pass
+        for group in self.groups:
+            async_to_sync(self.channel_layer.group_discard)(
+                group,
+                self.channel_name
+            )
 
     # Receive message from WebSocket
     async def receive(self, text_data):
@@ -79,9 +85,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 })
 
     async def join_room(self, chatroom):
+        self.groups.add(chatroom)
         await self.channel_layer.group_add(chatroom, self.channel_name)
 
     async def leave_room(self, chatroom):
+        self.groups.discard(chatroom)
         await self.channel_layer.group_discard(chatroom, self.channel_name)
 
     async def chat_message(self, event):

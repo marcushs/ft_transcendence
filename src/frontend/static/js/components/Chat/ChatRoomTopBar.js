@@ -119,7 +119,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 				this.throwWaitingStateEvent(this.userData.username)
 			}, 50);
 		} catch (error) {
-			console.log(error)
+			console.error(error)
 		}
 	}
 
@@ -131,7 +131,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 			if (res.message === "True") return true;
 			return false;
 		} catch (error) {
-			console.log("Error occured when sending request: ", error.message);
+			console.error(error.message);
 		}
 	}
 
@@ -140,7 +140,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 			let res = await sendRequest('GET', `/api/chat/block_user/?blockedUserId=${this.userData.id}`, null, false);
 
 		} catch (error) {
-			console.log("Error occured when blocking user", error.message);
+			console.error(error.message);
 		}
 	} 
 
@@ -149,7 +149,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 			let res = await sendRequest('GET', `/api/chat/unblock_user/?blockedUserId=${this.userData.id}`, null, false);
 
 		} catch (error) {
-			console.log("Error occured when unblocking user: ", error.message);
+			console.error(error.message);
 		}
 	}
 

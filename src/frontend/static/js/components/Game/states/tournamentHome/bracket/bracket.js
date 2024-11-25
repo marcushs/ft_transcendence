@@ -22,7 +22,6 @@ class Bracket {
             semiFinal: bracketObj.semiFinal.rightMatches,
         }
 
-        console.log(bracketObj.quarterFinal)
         return `
             ${this.generateBracketSide(leftBracket,  'left','left-matches')}
             ${this.generateBracketSide(rightBracket, 'right', 'right-matches')}
@@ -35,8 +34,6 @@ class Bracket {
         const playerLeft = finalObj[0][1];
         const playerRight = finalObj[0][0];
 
-        console.log("player 1 ========= >>>> ", playerLeft)
-        console.log("player 2 ========= >>>> ", playerRight)
         return `
             <div class="final-matches">
             <player-in-bracket name="${(playerLeft && playerLeft.name) ? playerLeft.name : ". . ."}" 

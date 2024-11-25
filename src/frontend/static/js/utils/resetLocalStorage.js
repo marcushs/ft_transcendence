@@ -4,8 +4,15 @@ import {sendRequest} from "./sendRequest.js";
 export async function resetLocalStorage() {
 	const isConnected = await checkAuthentication();
 
-	await resetTournamentData();
-	await resetPrivateMatch();
+	if (isConnected) {
+		await resetTournamentData();
+		await resetPrivateMatch();
+	} else {
+		localStorage.removeItem('tournamentData');
+		localStorage.removeItem('isSearchingPrivateMatch');
+		localStorage.removeItem('IsInGuestState');
+		localStorage.removeItem('isReadyToPlay');
+	}
 }
 
 async function resetTournamentData() {

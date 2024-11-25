@@ -216,7 +216,7 @@ class ContactComponent extends HTMLElement {
             contactActionContainer.style.display = 'none';
         } catch (error) {
             contactActionContainer.style.display = 'none';
-            console.log(error)
+            console.error(error)
         }
     }
  

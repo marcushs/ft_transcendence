@@ -9,22 +9,18 @@ let reconnectTimeout;
 
 export async function gameWebsocket(userId) {
 	if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
-		console.log('already connected to game Websocket');
 		return;
 	}
 
 	gameSocket = new WebSocket(`/ws/game/?user_id=${userId}`);
 
-	gameSocket.onopen = () => {
-		console.log('Connected to game websocket');
-	}
+	gameSocket.onopen = () => { }
 
 	gameSocket.onmessage = (event) => {
 		const data = JSON.parse(event.data)
 		const actions = {
 			'game_ready_to_start': async (data) => {
 				await setTournamentAlias(data.game_state);
-				console.log(data.game_state)
 				startGame(data.game_id, data.game_state, data.map_dimension);
 			},
 			'data_update': (data) => {
@@ -54,7 +50,7 @@ export async function gameWebsocket(userId) {
 			'connections_time_out': (data) => {
 				handleGameConnectionTimeOut(data.message);
 			},
-			'error_log': (data) => console.log(data.message)
+			'error_log': (data) => console.error(data.message)
 			
 		}
 		if (data.type in actions)
@@ -102,11 +98,10 @@ export async function websocketReconnection(userId) {
 	const savedState = localStorage.getItem('inGameComponentState');
 	const gameState = savedState ? JSON.parse(savedState) : null;
 	try {
-		console.log("reconnecting to the game...");
 		await attemptReconnect(userId, gameState);
 		return true;
 	} catch (error) {
-		console.log(`Error: reconnecting: ${error.message}`);
+		console.error(error.message);
 		if (gameState)
 			localStorage.removeItem('inGameComponentState');
 		if (gameInstance)
@@ -127,7 +122,7 @@ async function attemptReconnect(userId, gameState, count = 0, maxRetries = 12, r
 				return true;
 			}
 		} catch (error)  {
-			console.log('failed...');
+			console.error(error);
 		}
 		count++;
 		reconnectTimeout = setTimeout(() => attemptReconnect(userId, gameState, count, maxRetries, reconnectionInterval));
@@ -181,7 +176,6 @@ export function disconnectGameWebSocket(userId, sendMessage) {
 		}
 		gameSocket.onclose = () => {};
 		gameSocket.close();
-		console.log('Game connection closed');
 	}
 }
 

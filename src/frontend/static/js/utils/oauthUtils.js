@@ -57,10 +57,9 @@ export async function redirectToOauth(oauthProvider) {
 		const res = await fetch(`/api/${oauthProvider}/auth/`, config);
 		const data = await res.json();
 
-		console.log('redirectToOauth data.url ', data.url)
 		window.location.replace(data.url);
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 }
 
@@ -70,7 +69,7 @@ async function handleOauthCallback(oauthProvider, code, state) {
 		const data = await res.json();
 		return data;
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		return null;
 	}
 }
@@ -81,7 +80,7 @@ async function accessResource(oauthProvider) {
 		const data = await res.json();
 		return data;
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		return null;
 	}
 }

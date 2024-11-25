@@ -57,13 +57,12 @@ class FriendshipButtonComponent extends HTMLElement {
             if (data.status === 'success') {
                 const username = document.querySelector('.users-profile-page .user-info .username');
 
-                console.log(this.buttonStatus)
                 if (username && this.buttonStatus === "not_friend")
                     await this.sendNotification(username.innerHTML, 'friend-request-pending');
                 this.setAttribute('button-status', data.friendship_status);
             }
         } catch (error) {
-            console.error('catch: ', error);
+            console.error(error);
         }
     }
 

@@ -3,6 +3,7 @@ import { tournamentSocket } from "../../../../views/websocket/loadWebSocket.js";
 import { sendRequest } from "../../../../utils/sendRequest.js";
 import BracketObj from "./bracket/BracketObj.js";
 import { redirectToTournamentHome } from "../../../../utils/tournamentUtils/joinTournamentUtils.js";
+import { getString } from "../../../../utils/languageManagement.js";
 
 export default class TournamentLost {
 	constructor(match) {
@@ -34,24 +35,24 @@ class TournamentLostElement extends HTMLElement {
 	async connectedCallback() {
 		await this.render();
 		this.addEventListeners();
-		this.sendStartCountdown();
+		// this.sendStartCountdown();
 	}
 
 	async render() {
 		this.innerHTML = `
 			<div class="tournament-lost" data-tournament="${this.tournamentId}">
-				<h3 class="tournament-lost-title">Lost</h3>
+				<h3 class="tournament-lost-title">${getString('tournament/lost')}</h3>
 				<div class="tournament-lost-background">
 					<div class="tournament-match-content">
 						<div class="bracket-btn">
 							<img id="bracket-icon" src="../../../../assets/bracket_icon.svg" alt="bracket_icon">
 						</div>
 						<h4 class="tournament-name">${this.tournamentName}</h4>
-						<p>You finished in<span>${this.formatCurrentStage(this.stage)}</span> stage!</p>
-						<p>Better luck next time!</p>
+						<p>${getString('tournament/youFinished')} <span>${this.formatCurrentStage(this.stage)}</span>!</p>
+						<p>${getString('tournament/betterLuck')}!</p>
 						<div class="countdown-container">
-							<button type="button" class="tournament-lost-leave-btn">Leave</button>
-							<p class="tournament-lost-countdown">Leaving automatically in <span>59</span>s</p>
+							<button type="button" class="tournament-lost-leave-btn">${getString('buttonComponent/leave')}</button>
+							<p class="tournament-lost-countdown">${getString('tournament/autoLeave')} <span></span>${getString('tournament/second')}</p>
 						</div>
 					</div>
 				</div>
@@ -60,10 +61,11 @@ class TournamentLostElement extends HTMLElement {
 	}
 
 	formatCurrentStage(round) {
-		if (round === 'eighth_finals') return "Round of sixteen";
+		if (round === 'eighth_finals') return getString('tournament/Eighth-finals');
 
 		round = round.replace('_', '-');
-		return round[0].toUpperCase() + round.slice(1);
+		round = round[0].toUpperCase() + round.slice(1);
+		return getString(`tournament/${round}`)
 	}
 
 	addEventListeners() {
@@ -76,7 +78,7 @@ class TournamentLostElement extends HTMLElement {
 				this.bracketObj = BracketObj.create(res.bracket, res.bracket.tournament_size);
 				this.redirectToBracket();
 			} catch (error) {
-				console.log('Error retrieving bracket')
+				console.error(error)
 			}
 		})
 		
@@ -103,14 +105,14 @@ class TournamentLostElement extends HTMLElement {
 		gameComponent.currentState = "bracket";
 	}
 
-	sendStartCountdown() {
-		const payload = {
-			'type': 'start_leave_countdown',
-			'tournament_id': this.tournamentId
-		};
+	// sendStartCountdown() {
+	// 	const payload = {
+	// 		'type': 'start_leave_countdown',
+	// 		'tournament_id': this.tournamentId
+	// 	};
 
-		tournamentSocket.send(JSON.stringify(payload))
-	}
+	// 	tournamentSocket.send(JSON.stringify(payload))
+	// }
 
 	updateCountdownSeconds(time) {
 		const secondsSpan = this.querySelector('.tournament-lost-countdown span');

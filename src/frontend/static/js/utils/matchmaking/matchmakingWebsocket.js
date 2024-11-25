@@ -10,18 +10,13 @@ export let matchmakingSocket = null;
 
 export async function matchmakingWebsocket() {
 	if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN) {
-		console.log('already connected to matchmaking Websocket');
 		return;
 	}
 	matchmakingSocket = new WebSocket(`/ws/matchmaking/`);
 
-	matchmakingSocket.onopen = () => {
-		console.log('matchmaking websocket connected');
-	}
+	matchmakingSocket.onopen = () => { }
 
 	matchmakingSocket.onmessage = async (event) => {
-
-		console.log("received socket = ", event.data);
 
 		const data = JSON.parse(event.data);
 		if (data.type === 'already_in_game') {
@@ -51,7 +46,6 @@ export async function matchmakingWebsocket() {
 			throwPlayerJoinedMatchEvent();
 		}
 		if (data.type === 'player_refused_private_match') {
-			console.log('player_refused_private_match reached');
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
 			localStorage.removeItem("isSearchingPrivateMatch");
@@ -69,7 +63,6 @@ export async function matchmakingWebsocket() {
 			resetButtonsOnMatchmakingCanceled();
 		}
 		if (data.type === 'private_match_started') {
-			console.log('private_match_started: data.player_id: ', data.player_id);
 			if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
 				matchmakingSocket.close();
 			await gameWebsocket(await getUserId());
@@ -77,12 +70,10 @@ export async function matchmakingWebsocket() {
 		}
 	}
 
-	matchmakingSocket.onclose = async () => {
-		console.log('matchmaking socket closed');
-	}
+	matchmakingSocket.onclose = async () => { }
 
     matchmakingSocket.onerror = function(event) {
-        console.log("Websocket error: ", event);
+        console.error(event);
     };
 }
 

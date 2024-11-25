@@ -19,7 +19,6 @@ class PrivateMatchInvitationNotificationComponent extends HTMLElement {
 	initializeComponent() {
 		this.notificationCreateAt = new Date(this.notificationObj.created_at);
 
-		console.log(this.notificationObj)
 		this.innerHTML = `
 			<li>			
 				<p><span>${this.notificationObj.sender}</span> ${getString('notificationsComponent/privateMatchInvitationSuffix')}</p>

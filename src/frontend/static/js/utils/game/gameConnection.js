@@ -51,12 +51,11 @@ export async function surrenderHandler() {
         const response = await sendRequest('POST', '/api/game/surrend_game/', payload);
 		localStorage.removeItem('inGameComponentState');
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 }
 
 export function handleGameConnectionTimeOut(message) {
-	console.log(message);
     if (document.querySelector('matchmaking-research-component'))
         document.querySelector('matchmaking-research-component').remove();
     if (document.querySelector('in-game-component'))

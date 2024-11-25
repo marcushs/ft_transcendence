@@ -162,12 +162,10 @@ async function setUserRender() {
     const isUserConnected = await checkAuthentication();
 
     if (isUserConnected) {
-        console.log('User session');
         await loadWebSocket();
         await setTwoFactorUserData();
         new PingStatus();
-    } else
-        console.log('Guest session');
+    }
 }
 
 // set twoFactor needed data
@@ -180,13 +178,3 @@ async function setTwoFactorUserData() {
         localStorage.removeItem('twoFactorMethod');
     }
 }
-
-
-(async() => {
-    try {
-        let res = await sendRequest('GET', '/api/tournament/get_tournament_state/', null);
-        console.log('in arrow function get tournament state: ', res);
-    } catch (error) {
-        console.error(error.toString());
-    }
-})()

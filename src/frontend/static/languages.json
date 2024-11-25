@@ -66,6 +66,7 @@
 	"twoFactorAppView": {
 	  "title": "Enable 2fa by authenticator",
 	  "paragraph": "To enable 2fa, please use your smartphone to scan the QR code below, or enter the key in your authentication application. For example, use Google Authenticator or Authy.",
+	  "invalidCode": "The 2FA code is invalid",
 	  "twoFactorSuccess": "Two factor authentication by app successfully enabled",
 	  "key": "Key"
 	},
@@ -115,7 +116,8 @@
 	  "verify": "Verify",
 	  "leave": "Leave",
 	  "cancel": "Cancel",
-	  "invite": "Invite"
+	  "invite": "Invite",
+	  "ready": "Ready"
 	},
 	"navBarComponent": {
 	  "home": "Home"
@@ -137,7 +139,7 @@
 	  "invitedUserAlreadyInGame": "This user is already in game",
 	  "cantInviteYourself": "You can't invite yourself",
 	  "unknownUser": "Unknown player",
-	  "lobbyAlreadyExist": "",
+	  "lobbyAlreadyExist": "Lobby already exists",
 	  "waitingSentence": "Waiting for the game to launch",
 	  "playerName": "Player name",
 	  "ranked": "Ranked",
@@ -200,28 +202,28 @@
 	  "statistics": "Statistics"
 	},
 	"contactMenuComponent": {
-		"searchContactPlaceHolder": "Search contacts",
-		"contactsTitle": "Contacts",
-		"pendingContactsTitle": "Contacts Requests",
-		"noContacts": "No contacts found...",
-		"noContactsRequest": "No contacts request..."
+	  "searchContactPlaceHolder": "Search contacts",
+	  "contactsTitle": "Contacts",
+	  "pendingContactsTitle": "Contacts Requests",
+	  "noContacts": "No contacts found...",
+	  "noContactsRequest": "No contacts request..."
 	},
 	"contactComponent": {
-		"onlineStatus": "online",
-		"awayStatus": "away",
-		"offlineStatus": "offline",
-		"inGameStatus": "in game",
-		"sendMessageAction": "Send Message",
-		"inviteToPlayAction": "Invite to play",
-		"removeContactsAction": "Remove contact",
-		"seeProfileAction": "See profile"
+	  "onlineStatus": "online",
+	  "awayStatus": "away",
+	  "offlineStatus": "offline",
+	  "inGameStatus": "in game",
+	  "sendMessageAction": "Send Message",
+	  "inviteToPlayAction": "Invite to play",
+	  "removeContactsAction": "Remove contact",
+	  "seeProfileAction": "See profile"
 	},
 	"popUpComponent": {
-		"pasteImageLink": "Paste link to an image",
-		"addNewContact": "Add new contact",
-		"searchContactPlaceHolder": "Search contacts",
-		"noContacts": "No contacts found...",
-		"add": "Add"
+	  "pasteImageLink": "Paste link to an image",
+	  "addNewContact": "Add new contact",
+	  "searchContactPlaceHolder": "Search contacts",
+	  "noContacts": "No contacts found...",
+	  "add": "Add"
 	},
 	"notificationsComponent": {
 	  "acceptedNotificationSuffix": "has accepted your friend request",
@@ -305,12 +307,57 @@
 	  "playerTwoWon": "Player 2 won"
 	},
 	"matchmakingResearch": {
-		"searching": "Searching",
-		"joining": "Joining",
-		"unranked": "unranked",
-		"ranked": "ranked",
-		"game": "game"
-	  }
+	  "searching": "Searching",
+	  "joining": "Joining",
+	  "unranked": "unranked",
+	  "ranked": "ranked",
+	  "game": "game"
+	},
+	"tournament": {
+	  "lost": "Defeat",
+	  "win": "Winner",
+	  "youFinished": "You finished in",
+	  "Eighth-finals": "Round of sixteen",
+	  "Quarter-finals": "Quarter-finals",
+	  "Semi-finals": "Semi-finals",
+	  "Finals": "Finals",
+	  "betterLuck": "Better luck next time",
+	  "autoLeave": "Leaving automatically in",
+	  "second": "s",
+	  "congrat": "Congratulations",
+	  "youWon": "You won the tournament",
+	  "waitingRoom": "Waiting Room",
+	  "creator": "Creator",
+	  "joinedPlayers": "Joined players",
+	  "stage": "Stage",
+	  "opponent": "Opponent",
+	  "toBeDeter": "To Be Determined...",
+	  "matchStart": "Match starts in",
+	  "alreadyInGameResearch": "Already searching for game",
+	  "alreadyInGame": "Already in game",
+	  "alreadyInPrivateLobby": "Already in private lobby",
+	  "unknownUser": "Unknown user",
+	  "alreadyInTournament": "User already in tournament",
+	  "invalidTournamentName": "Invalid tournament name",
+	  "invalidTournamentSize": "Invalid tournament size",
+	  "tournamentAlreadyExist": "Tournament already exists",
+	  "tournamentAlreadyOver": "Tournament is already over",
+	  "userAlreadyInTournament": "User already in tournament",
+	  "tournamentIsFull": "Tournament is full",
+	  "tournamentNotFound": "Cannot find requested tournament",
+	  "notInTournament": "You are not in this tournament",
+	  "matchNotFound": "Match not found",
+	  "playerNotInMatch": "Player not in match",
+	  "bracketNotFound": "Bracket not found",
+	  "errorFindingMatchOrUser": "Error in finding last match or user",
+	  "invalidTournamentId": "Invalid tournament Id"
+	},
+	"inactiveGamePopUp": {
+	  "gameInProgress": "You have a game in progress",
+	  "reconnectOrLeave": "reconnect or leave?",
+	  "reconnectChoice": "Reconnect",
+	  "leaveChoice": "Leave"
+	}
   },
 
   "fr": {
@@ -338,7 +385,6 @@
 	  "validPreviewPassword": "Le mot de passe est valide ✓",
 	  "passwordMatch": "Le mot de passe correpond",
 	  "passwordNotMatch": "Le mot de passe ne correspond pas"
-
 	},
 	"signupView": {
 	  "signupTitle": "Inscription",
@@ -431,7 +477,8 @@
 	  "verify": "Vérifier",
 	  "cancel": "Annuler",
 	  "leave": "Quitter",
-	  "invite": "Inviter"
+	  "invite": "Inviter",
+	  "ready": "Prêt"
 	},
 	"navBarComponent": {
 	  "home": "Accueil"
@@ -445,7 +492,6 @@
 	  "tournaments": "Tournois",
 	  "online": "En ligne",
 	  "local": "Local",
-	  "create": "Créer",
 	  "tournamentName" : "Nom du tournoi",
 	  "numberOfPlayers": "Nombre de joueurs",
 	  "privateMatch": "Match privé",
@@ -454,13 +500,14 @@
 	  "waitingSentence": "En attente du lancement de partie",
 	  "cantInviteYourself": "Vous ne pouvez pas vous inviter vous-même",
 	  "unknownUser": "Joueur inconnu",
+	  "lobbyAlreadyExist": "La partie existe déjà",
 	  "playerName": "Nom du joueur",
 	  "ranked": "Classé",
 	  "unranked": "Non classé",
 	  "scoreToWin": "Score pour gagner",
 	  "paddleSpeed": "Vitesse de la palette",
 	  "ballSpeed": "Vitesse de la balle",
-	  "lobbyAlreadyExist": ""
+	  "create": "Créer"
 	},
 	"gameTopBar": {
 	  "back": "Retour"
@@ -516,28 +563,28 @@
 	  "statistics": "Statistiques"
 	},
 	"contactMenuComponent": {
-		"searchContactPlaceHolder": "Rechercher des contacts",
-		"contactsTitle": "Contacts",
-		"pendingContactsTitle": "Demandes de contact",
-		"noContacts": "Aucun contact trouvé...",
-		"noContactsRequest": "Aucune demande de contact..."
+	  "searchContactPlaceHolder": "Rechercher des contacts",
+	  "contactsTitle": "Contacts",
+	  "pendingContactsTitle": "Demandes de contact",
+	  "noContacts": "Aucun contact trouvé...",
+	  "noContactsRequest": "Aucune demande de contact..."
 	},
 	"contactComponent": {
-		"onlineStatus": "en ligne",
-		"awayStatus": "absent",
-		"offlineStatus": "hors ligne",
-		"inGameStatus": "en jeu",
-		"sendMessageAction": "Envoyer un message",
-		"inviteToPlayAction": "Inviter à jouer",
-		"removeContactsAction": "Supprimer le contact",
-		"seeProfileAction": "Voir le profil"
+	  "onlineStatus": "en ligne",
+	  "awayStatus": "absent",
+	  "offlineStatus": "hors ligne",
+	  "inGameStatus": "en jeu",
+	  "sendMessageAction": "Envoyer un message",
+	  "inviteToPlayAction": "Inviter à jouer",
+	  "removeContactsAction": "Supprimer le contact",
+	  "seeProfileAction": "Voir le profil"
 	},
 	"popUpComponent": {
-		"pasteImageLink": "Coller un lien vers une image",
-		"addNewContact": "Ajouter un nouveau contact",
-		"searchContactPlaceHolder": "Rechercher des contacts",
-		"noContacts": "Aucun contact trouvé...",
-		"add": "Ajouter"
+	  "pasteImageLink": "Coller un lien vers une image",
+	  "addNewContact": "Ajouter un nouveau contact",
+	  "searchContactPlaceHolder": "Rechercher des contacts",
+	  "noContacts": "Aucun contact trouvé...",
+	  "add": "Ajouter"
 	},
 	"notificationsComponent": {
 	  "acceptedNotificationSuffix": "a accepté votre demande d'ami",
@@ -608,8 +655,9 @@
 	  "loginProcessing": "Traitement de la connexion..."
 	},
 	"oauthUtils": {
-	  "successfullyLogin": "Successfully logged in",
-	  "playInvite": "Inviter à jouer"
+	  "successfullyLogin": "Connexion réussite",
+	  "playInvite": "Inviter à jouer",
+	  "error": "Erreur"
 	},
 	"localGame": {
 	  "playerOne": "Joueur 1",
@@ -618,12 +666,57 @@
 	  "playerTwoWon": "Le joueur 2 a gagné"
 	},
 	"matchmakingResearch": {
-		"searching": "Recherche d'une",
-		"joining": "Connection à la",
-		"unranked": "partie non classée",
-		"ranked": "partie classée",
-		"game": ""
-	  }
+	  "searching": "Recherche d'une",
+	  "joining": "Connection à la",
+	  "unranked": "Partie non classée",
+	  "ranked": "Partie classée",
+	  "game": "Partie"
+	},
+	"tournament": {
+	  "lost": "Défaite",
+	  "win": "Vainqueur",
+	  "youFinished": "Vous avez terminé en",
+	  "Eighth-finals": "Huitième de finale",
+	  "Quarter-finals": "Quart de finale",
+	  "Semi-finals": "Demi-finale",
+	  "Finals": "Finale",
+	  "betterLuck": "Bonne chance pour la prochaine fois",
+	  "autoLeave": "Quitter automatiquement dans",
+	  "second": "s",
+	  "congrat": "Félicitations",
+	  "youWon": "Vous avez gagné le tournoi",
+	  "waitingRoom": "Salle d'attente",
+	  "creator": "Créateur",
+	  "joinedPlayers": "Joueurs",
+	  "stage": "Tour",
+	  "opponent": "Adversaire",
+	  "toBeDeter": "En attente d'adversaire...",
+	  "matchStart": "La partie commence dans",
+	  "alreadyInGameResearch": "Déjà en recherche de partie",
+	  "alreadyInGame": "Déjà en partie",
+	  "alreadyInPrivateLobby": "Déjà en attente de partie privée",
+	  "unknownUser": "Utilisateur inconnu",
+	  "alreadyInTournament": "Déjà en tournoi",
+	  "invalidTournamentName": "Nom de tournoi invalide",
+	  "invalidTournamentSize": "Nombre de joueurs invalide",
+	  "tournamentAlreadyExist": "Tournoi déjà créé",
+	  "tournamentAlreadyOver": "Tournoi déjà terminé",
+	  "userAlreadyInTournament": "Utilisateur déjà en tournoi",
+	  "tournamentIsFull": "Tournoi est déjà complet",
+	  "tournamentNotFound": "Tournoi non trouvé",
+	  "notInTournament": "Utilisateur ne fait pas partie de ce tournoi",
+	  "matchNotFound": "Partie non trouvée",
+	  "playerNotInMatch": "Jouer n'est pas dans cette partie",
+	  "bracketNotFound": "Bracket non trouvé",
+	  "errorFindingMatchOrUser": "Partie ou utilisateur non trouvé",
+	  "invalidTournamentId": "ID du tournoi invalide"
+	},
+	"inactiveGamePopUp": {
+	  "gameInProgress": "Vous avez une partie en cours",
+	  "reconnectOrLeave": "voulez-vous reconnecter ou quitter?",
+	  "reconnectChoice": "Reconnecter",
+	  "leaveChoice": "Quitter"
+	}
   },
 
   "zh": {
@@ -633,7 +726,24 @@
 	  "password": "密码",
 	  "forgottenPassword": "忘记密码？",
 	  "noAccountSentence": "没有账户？",
-	  "signup": "注册"
+	  "signup": "注册",
+	  "invalidPassword": "密码无效，请重试",
+	  "noExistsUsername": "用户名不存在，请重试",
+	  "invalidUsername": "用户名无效，请重试",
+	  "noUsernameProvided": "未提供用户名",
+	  "noPasswordProvided": "未提供密码",
+	  "alreadyLog": "您已登录",
+	  "need2faVerification": "此账户已启用双重验证，登录前需要验证",
+	  "errorWhileLogin": "登录时发生错误",
+	  "userNotFound": "未找到用户",
+	  "loginSuccessfully": "登录成功",
+	  "accountCreated": "账户创建成功",
+	  "invalidEmail": "请输入有效的电子邮箱地址",
+	  "validEmail": "邮箱有效 ✓",
+	  "invalidPreviewPassword": "密码必须包含至少8个字符、1个数字、1个大写字母和1个特殊符号。",
+	  "validPreviewPassword": "密码有效 ✓",
+	  "passwordMatch": "密码匹配！",
+	  "passwordNotMatch": "密码不匹配"
 	},
 	"signupView": {
 	  "signupTitle": "注册",
@@ -642,17 +752,41 @@
 	  "password": "密码",
 	  "confirmPassword": "确认密码",
 	  "existingAccountSentence": "已有账户？",
-	  "login": "登录"
+	  "login": "登录",
+	  "errorWhileSignup": "在其他服务中创建用户时发生错误",
+	  "noUsernameProvided": "未提供用户名",
+	  "noPasswordProvided": "未提供密码",
+	  "invalidCharInUsername": "用户名中包含无效字符",
+	  "noEmailProvided": "未提供电子邮箱地址",
+	  "accountHasAlreadyEmail": "此邮箱已注册账户",
+	  "invalidEmail": "邮箱地址无效",
+	  "tooLongUsername": "用户名过长",
+	  "usernameAlreadyExists": "用户名已存在",
+	  "passwordDidNotMatch": "密码不匹配",
+	  "passwordMustContainOneNumericChar": "密码必须包含至少一个数字",
+	  "passwordMustContainOneUppercase": "密码必须包含至少一个大写字母",
+	  "passwordMustContainOneLetter": "密码必须包含至少一个小写字母",
+	  "tooShortPassword": "密码必须包含至少8个字符",
+	  "tooCommonPassword": "此密码过于常见，请选择另一个",
+	  "tooCloseToUserInfosPassword": "您的密码与用户名或电子邮箱地址太相似"
 	},
 	"changePasswordView": {
 	  "changePasswordTitle": "更改密码",
 	  "currentPassword": "当前密码",
 	  "newPassword": "新密码",
-	  "confirmPassword": "确认密码"
+	  "confirmPassword": "确认密码",
+	  "currentPasswordIsRequired": "请输入当前密码",
+	  "newPasswordIsRequired": "请输入新密码",
+	  "confirmPasswordIsRequired": "请输入确认密码",
+	  "incorrectCurrentPassword": "当前密码不正确",
+	  "samePassword": "新密码与当前密码相同",
+	  "passwordDoNotMatch": "密码不匹配",
+	  "passwordSuccessfullyChanged": "密码已成功更改"
 	},
 	"twoFactorAppView": {
 	  "title": "启用应用双重验证",
 	  "paragraph": "要启用双重验证，请使用您的智能手机扫描下面的二维码，或在您的身份验证应用程序中输入密钥。例如，使用 Google Authenticator 或 Authy。",
+	  "invalidCode": "2FA 验证码无效",
 	  "twoFactorSuccess": "应用双重验证已成功启用",
 	  "key": "密钥"
 	},
@@ -700,7 +834,10 @@
 	  "change": "更改",
 	  "save": "保存",
 	  "verify": "验证",
-	  "cancel": "取消"
+	  "cancel": "取消",
+	  "ready": "准备",
+	  "invite": "邀请",
+	  "leave": "离开"
 	},
 	"navBarComponent": {
 	  "home": "主页"
@@ -723,7 +860,13 @@
 	  "unranked": "非排名",
 	  "scoreToWin": "胜利分数",
 	  "paddleSpeed": "球拍速度",
-	  "ballSpeed": "球速"
+	  "ballSpeed": "球速",
+	  "cantInviteYourself": "您不能邀请自己",
+	  "unknownUser": "未知玩家",
+	  "lobbyAlreadyExist": "大厅已存在",
+	  "waitingSentence": "正在等待游戏启动",
+	  "invitedUserAlreadySearchGame": "该用户已在搜索游戏",
+	  "invitedUserAlreadyInGame": "该用户已在游戏中"
 	},
 	"gameTopBar": {
 	  "back": "返回"
@@ -738,9 +881,9 @@
 	  "nextRank": "下一级排名"
 	},
 	"profileComponent": {
-	  "imageLink": "使用图片链接",
-	  "importImage": "导入图片",
-	  "image42": "42图片",
+	  "imageLink": "使用头像链接",
+	  "importImage": "导入头像",
+	  "image42": "42头像",
 	  "username": "用户名",
 	  "email": "电子邮件",
 	  "twoFactorTitle": "双重验证",
@@ -748,7 +891,30 @@
 	  "twoFactorByEmail": "邮件双重验证",
 	  "twoFactorByAuthenticator": "应用双重验证",
 	  "changePasswordTitle": "更改密码",
-	  "changePasswordInformation": "定期更改您的密码以确保账户安全。"
+	  "changePasswordInformation": "定期更改您的密码以确保账户安全。",
+	  "imagegoogle": "Google 头像",
+	  "imagegithub": "Github 头像",
+	  "usernameAlreadyExists": "该用户名已存在",
+	  "usernameLenError": "用户名必须少于12个字符",
+	  "usernameFormatError": "用户名只能包含字母、数字、_ 和 -",
+	  "emailAlreadyExists": "该邮箱已与账户关联",
+	  "invalidEmailFormat": "该邮箱格式无效",
+	  "invalidImageFormat": "无效的头像格式，支持的格式有: (png, jpg, jpeg, gif, svg, webp)",
+	  "usernameSuccessfullyChanged": "用户名更改成功",
+	  "emailSuccessfullyChanged": "邮箱更改成功",
+	  "profileImageSuccessfullyChanged": "头像更改成功",
+	  "invalidImageFile": "无效的图片文件",
+	  "invalidImageLink": "无效的图片链接",
+	  "usernameFormatWarning": "用户名不能为空",
+	  "invalidUsernameFormat": "用户名: 字母、数字、_ 和 -",
+	  "aliasFormatWarning": "昵称不能为空",
+	  "invalidAliasFormat": "昵称: 字母、数字、_ 和 -",
+	  "emailCannotBeEmpty": "邮箱地址不能为空",
+	  "invalidEmail": "无效的邮箱地址",
+	  "tournamentAlias": "锦标赛昵称",
+	  "aliasChanged": "昵称更改成功",
+	  "aliasError": "更改别名时发生错误",
+	  "aliasAlreadyExists": "此别名已存在"
 	},
 	"profileNavBarComponent": {
 	  "personalInformation": "个人信息",
@@ -756,36 +922,158 @@
 	  "statistics": "统计"
 	},
 	"contactMenuComponent": {
-		"searchContactPlaceHolder": "搜索联系人",
-		"contactsTitle": "联系人",
-		"pendingContactsTitle": "联系人请求",
-		"noContacts": "未找到联系人...",
-		"noContactsRequest": "没有联系人请求..."
+	  "searchContactPlaceHolder": "搜索联系人",
+	  "contactsTitle": "联系人",
+	  "pendingContactsTitle": "联系人请求",
+	  "noContacts": "未找到联系人...",
+	  "noContactsRequest": "没有联系人请求..."
 	},
 	"contactComponent": {
-		"onlineStatus": "在线",
-		"awayStatus": "离开",
-		"offlineStatus": "离线",
-		"inGameStatus": "游戏中",
-		"sendMessageAction": "发送消息",
-		"inviteToPlayAction": "邀请游戏",
-		"removeContactsAction": "移除联系人",
-		"seeProfileAction": "查看资料"
+	  "onlineStatus": "在线",
+	  "awayStatus": "离开",
+	  "offlineStatus": "离线",
+	  "inGameStatus": "游戏中",
+	  "sendMessageAction": "发送消息",
+	  "inviteToPlayAction": "邀请游戏",
+	  "removeContactsAction": "移除联系人",
+	  "seeProfileAction": "查看资料"
 	},
 	"popUpComponent": {
-		"pasteImageLink": "粘贴图片链接",
-		"addNewContact": "添加新联系人",
-		"searchContactPlaceHolder": "搜索联系人",
-		"noContacts": "未找到联系人...",
-		"add": "添加"
+	  "pasteImageLink": "粘贴图片链接",
+	  "addNewContact": "添加新联系人",
+	  "searchContactPlaceHolder": "搜索联系人",
+	  "noContacts": "未找到联系人...",
+	  "add": "添加"
 	},
 	"notificationsComponent": {
 	  "acceptedNotificationSuffix": "已接受您的好友请求",
-	  "pendingNotificationPrefix": "您有来自的好友请求"
+	  "pendingNotificationPrefix": "您有来自的好友请求",
+	  "privateMatchInvitationSuffix": "邀请您加入私人游戏",
+	  "lobbyNotFound": "游戏邀请失败。大厅不再可用"
 	},
 	"accountInfosComponent": {
 	  "profile": "资料",
 	  "logout": "退出登录"
+	},
+	"matchHistoryComponent" : {
+	  "matchHistory": "比赛记录",
+	  "ranked": "排名赛",
+	  "unranked": "正常比赛",
+	  "tournament": "锦标赛",
+	  "unloggedSentence": "请先登入或设立帐户",
+	  "private_match": "私人比赛"
+	},
+	"statistics": {
+	  "gamesPlayed": "游戏场次",
+	  "gamesWin": "胜场数",
+	  "gamesLose": "败场数",
+	  "winLoseRatio": "胜负比"
+	},
+	"friendshipButton": {
+	  "add": "添加联系人",
+	  "cancel": "取消请求",
+	  "remove": "移除联系人",
+	  "accept": "接受邀请",
+	  "decline": "拒绝邀请"
+	},
+	"gameOutro": {
+	  "win": "胜利",
+	  "lose": "败北"
+	},
+	"sendMessageButton": "发送信息",
+	"logoutView": {
+	  "logoutSentence": "您真的要登出?",
+	  "yes": "登出",
+	  "cancel": "取消"
+	},
+	"oauthUsernameView": {
+	  "title": "用户名已被取用, 请选择新的用户名",
+	  "usernameFormatError": "用户名只可以包括字母, 数字 “_” 或者 “-”",
+	  "username": "用户名"
+	},
+	"chatComponent": {
+	  "contacted": "对话",
+	  "contact": "联络人",
+	  "noRecentMessage": "没有对话记录",
+	  "tournamentBot": "锦标赛机器人",
+	  "noContacts": "没有联络人",
+	  "playInvite": "游戏邀请",
+	  "yesterday": "昨天",
+	  "block": "封锁",
+	  "unblock": "解封",
+	  "searchContacts": "搜寻联络",
+	  "finals": "决赛",
+	  "semi_finals": "准决赛",
+	  "quarter_finals": "八强",
+	  "eighth_finals": "十六强",
+	  "tournamentBotSentencePrefix": ": 面对 ",
+	  "tournamentBotSentenceSuffix": "的比赛即将开始!\n\t\t\t预备好的话请按 “准备” 按钮! 祝你好运!"
+	},
+	"oauthRedirect": {
+	  "redirect": "正在转到...",
+	  "loginProcessing": "正在登录..."
+	},
+	"oauthUtils": {
+	  "successfullyLogin": "登录成功",
+	  "playInvite": "邀请游戏"
+	},
+	"localGame": {
+	  "playerOne": "玩家 1",
+	  "playerTwo": "玩家 2",
+	  "playerOneWon": "玩家 1 胜出",
+	  "playerTwoWon": "玩家 2 胜出"
+	},
+	"matchmakingResearch": {
+	  "searching": "搜索中",
+	  "joining": "加入中",
+	  "unranked": "非排名",
+	  "ranked": "排名",
+	  "game": "游戏"
+	},
+	"tournament": {
+	  "lost": "败北",
+	  "win": "胜利",
+	  "youFinished": "您止步在",
+	  "Eighth-finals": "十六强",
+	  "Quarter-finals": "八强",
+	  "Semi-finals": "准决赛",
+	  "Finals": "决赛",
+	  "betterLuck": "下次加油努力",
+	  "autoLeave": "自动离开前剩余",
+	  "second": "秒",
+	  "congrat": "恭喜",
+	  "youWon": "您胜出锦标赛",
+	  "waitingRoom": "等候室",
+	  "creator": "创室人",
+	  "joinedPlayers": "玩家",
+	  "stage": "回合",
+	  "opponent": "对手",
+	  "toBeDeter": "等候对手...",
+	  "matchStart": "比赛自动开始前剩余",
+	  "alreadyInGameResearch": "正在寻找游戏",
+	  "alreadyInGame": "正在比赛",
+	  "alreadyInPrivateLobby": "已在私人比赛等候室",
+	  "unknownUser": "不明用家",
+	  "alreadyInTournament": "已在锦标赛",
+	  "invalidTournamentName": "锦标赛名不正确",
+	  "invalidTournamentSize": "玩家数目不正确",
+	  "tournamentAlreadyExist": "锦标赛已经存在",
+	  "tournamentAlreadyOver": "锦标赛已经完结",
+	  "userAlreadyInTournament": "玩家已在锦标赛",
+	  "tournamentIsFull": "锦标赛人数已满",
+	  "tournamentNotFound": "找不到锦标赛",
+	  "notInTournament": "玩家不在这锦标赛",
+	  "matchNotFound": "找不到比赛",
+	  "playerNotInMatch": "玩家不在比赛",
+	  "bracketNotFound": "找不到锦标赛",
+	  "errorFindingMatchOrUser": "找不到比赛或者玩家",
+	  "invalidTournamentId": "锦标赛号码不正确"
+	},
+	"inactiveGamePopUp": {
+	  "gameInProgress": "你有一场进行中的比赛",
+	  "reconnectOrLeave": "请选择 “重新连接” 或者 “离开”",
+	  "reconnectChoice": "重新连接",
+	  "leaveChoice": "离开"
 	}
   }
 }

@@ -149,7 +149,6 @@ class MatchHistory extends HTMLElement {
         const date = new Date(matchInfos.date);
         let localDate = localStorage.getItem("userLanguage");
 
-        console.log('test ===================', opponent_name)
         if (!localDate)
             localDate = 'en';
 

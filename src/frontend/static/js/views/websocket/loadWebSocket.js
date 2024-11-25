@@ -33,9 +33,7 @@ async function loadContactsWebSocket() {
 	
     contactSocket = new WebSocket(`/ws/contacts/`);
 
-    contactSocket.onopen = function(event) {
-		console.log('Contact websocket started');
-	};
+    contactSocket.onopen = function(event) { };
 
     contactSocket.onmessage = function(event) {
         const data = JSON.parse(event.data);
@@ -57,12 +55,10 @@ async function loadContactsWebSocket() {
         }
     };
 
-    contactSocket.onclose = function(event) {
-		console.log('Contact socket closed');
-	};
+    contactSocket.onclose = function(event) { };
 
     contactSocket.onerror = function(event) {
-        console.log("Websocket error: ", event);
+        console.error(event);
     };
 }
 
@@ -71,9 +67,7 @@ async function loadContactsWebSocket() {
 function loadNotificationsWebSocket() {
 	notificationSocket = new WebSocket(`/ws/notifications/`);
 
-		notificationSocket.onopen = function(event) {
-		    console.log('Notifications websocket started');
-        };
+		notificationSocket.onopen = function(event) { };
 
 		notificationSocket.onmessage = function(event) {
 			const data = JSON.parse(event.data);
@@ -86,12 +80,10 @@ function loadNotificationsWebSocket() {
 				throwDeleteNotificationElementEvent(data.notification);
 		};
 
-		notificationSocket.onclose = function(event) {
-		    console.log('Notifications socket closed');
-        };
+		notificationSocket.onclose = function(event) { };
 
 		notificationSocket.onerror = function(event) {
-		    console.error("Websocket error: ", event);
+		    console.error(event);
 		};
 }
 
@@ -144,8 +136,6 @@ function loadChatWebSocket() {
 	chatSocket = new WebSocket('/ws/chat/');
 
 	chatSocket.onopen = async function (e) {
-		console.log("Chat websocket started");
-
 		chatroomsList = await fetchChatroomsList();
 		joinAllInvitedChatrooms(chatroomsList);
 	};
@@ -164,21 +154,16 @@ function loadChatWebSocket() {
 		}
 	};
 
-	chatSocket.onclose = function(e) {
-		console.log('Chat socket closed');
-	};
+	chatSocket.onclose = function(e) { };
 }
 
 export function loadTournamentWebSocket() {
 	if (tournamentSocket && tournamentSocket.readyState === WebSocket.OPEN) {
-		console.log('already connected to tournament Websocket');
 		return;
 	}
 	tournamentSocket = new WebSocket('/ws/tournament/');
 
-	tournamentSocket.onopen = function (e) {
-		console.log("Tournament websocket started");
-	};
+	tournamentSocket.onopen = function (e) { };
 
 	tournamentSocket.onmessage = async function(e) {
 		const data = JSON.parse(e.data)
@@ -205,7 +190,5 @@ export function loadTournamentWebSocket() {
 		}
 	};
 
-	tournamentSocket.onclose = function(e) {
-		console.log(e);
-	};
+	tournamentSocket.onclose = function(e) { };
 }
