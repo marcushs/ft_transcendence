@@ -26,7 +26,7 @@ class ChangePassword(View):
             response = self.change_password(User, request)
             return JsonResponse(response, status=200)
         except Exception as e:
-            return JsonResponse({'message': str(e)}, status=400)
+            return JsonResponse({'message': str(e)}, status=500)
 
 
     def check_password_errors(self, User, request):

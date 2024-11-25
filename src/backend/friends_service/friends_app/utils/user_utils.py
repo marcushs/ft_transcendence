@@ -43,16 +43,13 @@ class update_user(View):
         super().__init__
     
     def post(self, request):
-        try:
-            if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'message': 'User not found'}, status=400)
-            data = json.loads(request.body.decode('utf-8'))
-            if 'username' in data:
-                setattr(request.user, 'username', str(data['username']))
-            request.user.save()
-            return JsonResponse({'message': 'User updated successfully'}, status=200)
-        except Exception as e:
-            return JsonResponse({'message': str(e)}, status=400)
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'message': 'User not found'}, status=400)
+        data = json.loads(request.body.decode('utf-8'))
+        if 'username' in data:
+            setattr(request.user, 'username', str(data['username']))
+        request.user.save()
+        return JsonResponse({'message': 'User updated successfully'}, status=200)
     
     
 async def send_async_request(request_type, request, url, payload=None):

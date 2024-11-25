@@ -27,7 +27,7 @@ class manage_notification_view(View):
             return JsonResponse({"status": "success", 'message': notifications_dict}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 
     def get_notification_dict(self, notifications):
@@ -52,7 +52,7 @@ class manage_notification_view(View):
             return JsonResponse({"status": "success"}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
         
 
 
@@ -97,7 +97,7 @@ class manage_notification_view(View):
             return JsonResponse({"status": "success"}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 
     async def post(self, request):
@@ -120,7 +120,7 @@ class manage_notification_view(View):
             return JsonResponse({'status': 'error', 'message': 'unknown notification type'}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 
     async def check_post_data(self, data):

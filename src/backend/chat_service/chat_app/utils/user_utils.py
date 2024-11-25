@@ -57,4 +57,4 @@ class update_user(View):
             request.user.save()
             return JsonResponse({'message': 'User updated successfully'}, status=200)
         except Exception as e:
-            return JsonResponse({'message': str(e)}, status=400)
+            return JsonResponse({'message': str(e)}, status=500)

@@ -45,7 +45,7 @@ class signup_view(View):
                 return JsonResponse({'message': 'errorWhileSignup'}, status=400)
             return JsonResponse({'message': 'accountCreated', 'redirect_url': 'login'}, status=200)
         except Exception as e:
-            return JsonResponse({'message': str(e)}, status=400)
+            return JsonResponse({'message': str(e)}, status=500)
 
     def _send_request(self, data, user, csrf_token):
         try:

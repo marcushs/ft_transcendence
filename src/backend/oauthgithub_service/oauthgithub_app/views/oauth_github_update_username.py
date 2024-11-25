@@ -46,7 +46,7 @@ class oauthGithubUpdateUsernameView(View):
             return JsonResponse({"message": "Username already taken! Try another one.", "status": "Error", "url": '/oauth-username?oauth_provider=oauthgithub'}, status=409)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
          
     def check_new_username_taken(self, username):
         url = 'http://user:8000/api/user/check_username/'

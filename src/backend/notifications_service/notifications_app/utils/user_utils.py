@@ -60,7 +60,7 @@ class update_user(View):
             return JsonResponse({'message': 'User updated successfully'}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 async def send_request(request_type, request, url, payload=None):
         headers = {

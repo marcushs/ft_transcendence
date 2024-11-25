@@ -77,7 +77,7 @@ class MatchmakingQueueManager(View):
             self.start_matchmaking_by_type(str(data['type']), request) 
             return JsonResponse({'status': 'success', 'message': f"User successfully added to {data['type']} queue"}, status=200) 
         except Exception as e:
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 
     def is_valid_matchmaking_type(self, data):
@@ -123,7 +123,7 @@ class CheckUserInWaitingQueue(View):
             return JsonResponse({'waiting': False}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 # -------->API: remove user from waiting list <-------------- #
 
@@ -145,7 +145,7 @@ class RemoveUserFromWaitingQueue(View):
                 redis_instance.lrem('ranked_waiting_users', 0, str(request.user.id)) 
             return JsonResponse({'message': 'user removed from matchmaking research'}, status=200) 
         except Exception as e:
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
     
 # -------->API - internal: change in_game state <-------------- #
 
@@ -182,7 +182,7 @@ class CheckUserInGame(View):
             return JsonResponse({'is_in_game': False, 'user_id': str(request.user.id)}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
  #//---------------------------------------> matchmaking utils <--------------------------------------\\#
 

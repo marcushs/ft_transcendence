@@ -18,4 +18,4 @@ class MatchHistoryView(View):
             return JsonResponse(history[:5], safe=False, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)

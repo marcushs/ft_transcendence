@@ -44,4 +44,4 @@ class getChatroomsView(View):
 			return JsonResponse({'message': 'Successfully fetch all chatrooms', 'chatrooms': chatrooms_data, 'status': 'Success'}, status=200, safe=False)
 		except Exception as e:
 			print(f'Error: {str(e)}')
-			return JsonResponse({"message": str(e)}, status=400)
+			return JsonResponse({"message": str(e)}, status=500)

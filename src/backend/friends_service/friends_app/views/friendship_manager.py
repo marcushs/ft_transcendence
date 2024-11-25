@@ -32,7 +32,7 @@ class friendshipManager(View):
                 case _:
                     return JsonResponse({'message': 'Unknown friendship status request'}, status=400)
         except Exception as e:
-            return JsonResponse({'message': str(e)}, status=400)
+            return JsonResponse({'message': str(e)}, status=500)
   
     def init(self, request):
         data = json.loads(request.body.decode('utf-8'))

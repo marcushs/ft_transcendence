@@ -19,4 +19,4 @@ class getAliasById(View):
 			return JsonResponse({'message': 'unknownUser'}, status=400)
 		except Exception as e:
 			print(f'Error: {str(e)}')
-			return JsonResponse({"message": str(e)}, status=400)
+			return JsonResponse({"message": str(e)}, status=500)

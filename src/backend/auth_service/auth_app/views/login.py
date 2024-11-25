@@ -36,7 +36,7 @@ class login_view(View):
                 response = JsonResponse({'message': 'noExistsUsername'}, status=400)
             return response
         except Exception as e:
-            return JsonResponse({'message': str(e)}, status=400)
+            return JsonResponse({'message': str(e)}, status=500)
     
     def _oauth_login(self, request, data):
         if 'twofactor' in data:

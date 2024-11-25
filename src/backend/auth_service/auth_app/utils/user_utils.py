@@ -20,7 +20,7 @@ class update_user(View):
             request.user.save()
             return JsonResponse({'message': 'User updated successfully'}, status=200)
         except Exception as e:
-            return JsonResponse({'message': str(e)}, status=400)
+            return JsonResponse({'message': str(e)}, status=500)
 
 
 class add_oauth_user(View):
@@ -39,4 +39,4 @@ class add_oauth_user(View):
             user = User.objects.create_oauth_user(data)
             return JsonResponse({"message": 'user added with success', "status": "Success", "user_id": user.id}, status=200)
         except Exception as e:
-            return JsonResponse({'message': str(e)}, status=400)
+            return JsonResponse({'message': str(e)}, status=500)

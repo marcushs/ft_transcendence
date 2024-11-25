@@ -30,7 +30,7 @@ class blockUserView(View):
 				return JsonResponse({'message': 'Target User Not Found', 'status': 'Success'}, status=404)
 		except Exception as e:
 			print(f'Error: {str(e)}')
-			return JsonResponse({"message": str(e)}, status=400)
+			return JsonResponse({"message": str(e)}, status=500)
 		
 class unblockUserView(View):
 	def __init__(self):
@@ -53,7 +53,7 @@ class unblockUserView(View):
 				return JsonResponse({'message': 'Target User Not Found', 'status': 'Success'}, status=404)
 		except Exception as e:
 			print(f'Error: {str(e)}')
-			return JsonResponse({"message": str(e)}, status=400)
+			return JsonResponse({"message": str(e)}, status=500)
 		
 class isUserBlockedView(View):
 	def __init__(self):
@@ -75,6 +75,6 @@ class isUserBlockedView(View):
 				return JsonResponse({'message': 'Target User Not Found', 'status': 'Success'}, status=404)
 		except Exception as e:
 			print(f'Error: {str(e)}')
-			return JsonResponse({"message": str(e)}, status=400)
+			return JsonResponse({"message": str(e)}, status=500)
 
 

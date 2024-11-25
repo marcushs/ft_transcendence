@@ -42,7 +42,7 @@ class set_offline_user(View):
             return JsonResponse(status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
  
 class ping_status_user(View):
     def __init__(self):
@@ -65,7 +65,7 @@ class ping_status_user(View):
             return JsonResponse({'status': 'success', "message": 'pong'}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 
 class DeleteUser(View):
@@ -140,7 +140,7 @@ class update_user(View):
             return JsonResponse({'message': 'User updated successfully'}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 class check_username(View):
     def __init__(self):
@@ -157,7 +157,7 @@ class check_username(View):
             return JsonResponse({"message": "Username is free", "status": "Success"}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
  
 async def send_request(request_type, url, request=None, payload=None):
     if request:
@@ -222,7 +222,7 @@ class searchUsers(View):
                 return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
         
 
 class getClientUsername(View):
@@ -236,7 +236,7 @@ class getClientUsername(View):
             return JsonResponse({'status': 'success', 'username': request.user.username}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 
 class getUserId(View):
@@ -250,7 +250,7 @@ class getUserId(View):
             return JsonResponse({'status': 'success', 'id': request.user.id}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 @method_decorator(csrf_exempt, name='dispatch') 
 class getUserGameInfo(View):
@@ -271,7 +271,7 @@ class getUserGameInfo(View):
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 class getUserInfos(View):
     def __init__(self):
@@ -293,7 +293,7 @@ class getUserInfos(View):
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 class getUserInfoById(View):
     def __init__(self):
@@ -315,7 +315,7 @@ class getUserInfoById(View):
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 class getUsersInfo(View):
     def __init__(self):
@@ -343,7 +343,7 @@ class getUsersInfo(View):
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 
 class getUsernameById(View):
@@ -366,7 +366,7 @@ class getUsernameById(View):
             return JsonResponse({'status': 'error', 'message': 'No user id found'}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
 
 
 class getUserStatus(View):
@@ -382,4 +382,4 @@ class getUserStatus(View):
             return JsonResponse({'status': 'error', 'message': 'No users found'}, status=200)
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=500)
