@@ -34,7 +34,7 @@ def is_user_in_any_tournament(user):
 
 @database_sync_to_async
 def user_in_match(match, user):
-	return match.players.filter(id=user.id).exists() 
+	return match.players.filter(id=user.id).exists()  
 
 @database_sync_to_async
 def set_tournament_not_joinable(tournament):

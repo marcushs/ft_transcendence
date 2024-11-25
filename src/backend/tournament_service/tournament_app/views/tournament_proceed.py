@@ -1,4 +1,4 @@
-from ..models import Tournament, User, Bracket, TournamentMatchPlayer
+from ..models import Tournament, User, Bracket, TournamentMatchPlayer, TournamentMatch
 from ..utils.weboscket_utils import send_websocket_info
 from .tournament_leave import start_leave_countdown, exit_tournament
 from .match_countdown import start_match_countdown
@@ -50,7 +50,7 @@ async def match_in_next_round(user, last_match, tournament_bracket, tournament):
 	next_rounds = {
 		'eighth_finals': 'quarter_finals',
 		'quarter_finals': 'semi_finals' ,
-		'semi_finals': 'finals'
+		'semi_finals': 'finals' 
 	}
  
 	last_round_matches = round_mapping[last_round]
@@ -78,34 +78,55 @@ async def join_or_create_next_match(tournament_bracket, next_round, last_match_i
 			await sync_to_async(join_or_create_stage)(tournament_bracket, next_round, last_match_index, user, round_mapping, adjacent_match_index)
 
 
-def join_or_create_finals(tournament_bracket, next_round, last_match_index, user, round_mapping): 
-	with transaction.atomic():
-		final_match, created = round_mapping[next_round].get_or_create(
-			defaults={
-				'tournament': tournament_bracket.tournament,
-				'tournament_round': next_round,
-				'bracket_index': 0
-			} 
-		)
-  
-		player_count = TournamentMatchPlayer.objects.filter(match=final_match).count()
-		if player_count < 2:
-			TournamentMatchPlayer.objects.create(
-				match=final_match, 
-				player=user,
-				player_number=TournamentMatchPlayer.PlayerNumber.ONE if last_match_index % 2 == 0 else TournamentMatchPlayer.PlayerNumber.TWO
-			)
-			final_match.players.add(user)
-			async_to_sync(send_websocket_info)(player_id=str(user.id), payload={'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True})
-			if TournamentMatchPlayer.objects.filter(match=final_match).count() == 2:
-				player_ids = list(TournamentMatchPlayer.objects.filter(match_id=final_match.match_id).values_list('player_id', flat=True))
-				async_to_sync(send_websocket_info)(player_id=str(player_ids[0]), payload={'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True})
-				async_to_sync(send_websocket_info)(player_id=str(player_ids[1]), payload={'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True})
-				async_to_sync(start_match_countdown)(match_id=str(final_match.match_id), player_ids=player_ids)
-				return final_match
-		else:
-			# Handle the case where the match is already full
-			return None
+def join_or_create_finals(tournament_bracket, next_round, last_match_index, user, round_mapping):
+		with transaction.atomic():
+			try:
+				final_match = round_mapping[next_round].select_for_update().get(
+					tournament=tournament_bracket.tournament,
+					tournament_round=next_round,
+					bracket_index=0
+				)
+				created = False
+			except TournamentMatch.DoesNotExist:
+				final_match = round_mapping[next_round].create(
+					tournament=tournament_bracket.tournament,
+					tournament_round=next_round,
+					bracket_index=0 
+				) 
+				created = True
+			
+			if created:
+				round_mapping[next_round].add(final_match)
+
+			player_count = TournamentMatchPlayer.objects.filter(match=final_match).count()
+			
+			if player_count < 2:
+				player, player_created = TournamentMatchPlayer.objects.get_or_create(
+					match=final_match,
+					player=user,
+					defaults={
+						'player_number': TournamentMatchPlayer.PlayerNumber.ONE if last_match_index % 2 == 0 else TournamentMatchPlayer.PlayerNumber.TWO
+					}
+				)
+				
+				if player_created:
+					final_match.players.add(user)
+				
+				async_to_sync(send_websocket_info)(
+					player_id=str(user.id),
+					payload={'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True}
+				)
+				
+				if TournamentMatchPlayer.objects.filter(match=final_match).count() == 2:
+					player_ids = list(TournamentMatchPlayer.objects.filter(match_id=final_match.match_id).values_list('player_id', flat=True))
+					
+					async_to_sync(send_websocket_info)(player_id=str(player_ids[0]), payload={'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True})
+					async_to_sync(send_websocket_info)(player_id=str(player_ids[1]), payload={'type': 'load_match', 'match': final_match.to_dict_sync(), 'from_match': True})					
+					async_to_sync(start_match_countdown)(match_id=str(final_match.match_id), player_ids=player_ids)
+					
+					return final_match
+			else:
+				return None
 		return final_match
 
 
@@ -121,25 +142,40 @@ def join_or_create_stage(tournament_bracket, next_round, last_match_index, user,
 		next_match_index = next_match_index_map[matches_index_sum]
 
 		with transaction.atomic():
-			next_match, created = round_mapping[next_round].get_or_create(
-				bracket_index=next_match_index,
-				defaults={
-					'tournament': tournament_bracket.tournament,
-					'tournament_round': next_round,
-				}
-			)
-			
-			# Check if the match is not full before adding the player
+			try:
+				next_match = round_mapping[next_round].select_for_update().get(
+					tournament=tournament_bracket.tournament,
+					tournament_round=next_round,
+					bracket_index=next_match_index
+				)
+				created = False
+			except TournamentMatch.DoesNotExist:
+				next_match = round_mapping[next_round].create(
+					tournament=tournament_bracket.tournament,
+					tournament_round=next_round,
+					bracket_index=next_match_index
+				) 
+				created = True
+
+			if created:
+				round_mapping[next_round].add(next_match)
+
 			player_count = TournamentMatchPlayer.objects.filter(match=next_match).count()
 			if player_count < 2:
-				TournamentMatchPlayer.objects.create(
-						match=next_match,
-						player=user,
-						player_number=TournamentMatchPlayer.PlayerNumber.ONE if last_match_index % 2 == 0 else TournamentMatchPlayer.PlayerNumber.TWO
-					)
-				next_match.players.add(user)
+				player, player_created = TournamentMatchPlayer.objects.get_or_create(
+					match=next_match,
+					player=user,
+					defaults={
+						'player_number': TournamentMatchPlayer.PlayerNumber.ONE if last_match_index % 2 == 0 else TournamentMatchPlayer.PlayerNumber.TWO
+					}
+				)
+
+				if player_created:
+					next_match.players.add(user)
+
 				payload = {'type': 'load_match', 'match': next_match.to_dict_sync(), 'from_match': True}
 				async_to_sync(send_websocket_info)(player_id=str(user.id), payload=payload)
+
 				if TournamentMatchPlayer.objects.filter(match=next_match).count() == 2:
 					player_ids = list(TournamentMatchPlayer.objects.filter(match_id=next_match.match_id).values_list('player_id', flat=True))
 					payload = {'type': 'load_match', 'match': next_match.to_dict_sync(), 'from_match': True}

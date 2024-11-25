@@ -89,7 +89,7 @@ async def check_connections(data):
                 elif player_two_id in connections:
                     await send_timeout_result_to_tournament(data=data, winner_id=player_two_id, loser_id=player_one_id)
                 else:
-                    winner_id = random.choice(player_one_id, player_two_id)
+                    winner_id = random.choice([player_one_id, player_two_id])
                     loser_id = player_two_id if player_one_id == winner_id else player_one_id
                     await send_timeout_result_to_tournament(data=data, winner_id=winner_id, loser_id=loser_id)
             return False
