@@ -77,18 +77,11 @@ class login_view(View):
         try:
             send_request_with_token(request_type='POST', request=request, url='http://user:8000/api/user/update_user/', jwt_token=token, jwt_refresh_token=refresh_token, payload=payload)
             return response 
-        except Exception as e: 
+        except Exception as e:
             print(f'Error: {str(e)}')
             return JsonResponse({'message': 'errorWhileLogin'}, status=400)
 
     def _send_twofactor_request(self, data, csrf_token, request):   
-        try:
-            user = User.objects.get(username=str(data['username']))
-            send_request_without_token(request_type='POST', url='http://twofactor:8000/api/twofactor/twofactor_login/', payload=data, csrf_token=csrf_token)
-            return self._create_user_session(user=user, request=request)
-        except ObjectDoesNotExist as e:
-            return JsonResponse({'message': 'unknownUser'}, status=404)
-        except ExpectedException as e:
-            return JsonResponse({'message': str(e)}, status=400)
-        except Exception as e:
-            return JsonResponse({'message': 'unknownError'}, status=400)
+        user = User.objects.get(username=str(data['username']))
+        send_request_without_token(request_type='POST', url='http://twofactor:8000/api/twofactor/twofactor_login/', payload=data, csrf_token=csrf_token)
+        return self._create_user_session(user=user, request=request)

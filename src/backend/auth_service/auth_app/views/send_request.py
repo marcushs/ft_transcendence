@@ -17,17 +17,14 @@ def send_request_with_token(request_type, request, url, jwt_token=None, jwt_refr
         'jwt': jwt_token,
         'jwt_refresh': jwt_refresh_token,
         }
-    try:
-        if request_type == 'GET': 
-            response = requests.get(url=url, headers=headers, cookies=cookies)
-        else:
-            response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
-        if response.status_code == 200:
-            return response
-        else:
-            response.raise_for_status()
-    except Exception as e:
-        raise Exception(f"An error occurred: {e}")
+    if request_type == 'GET': 
+        response = requests.get(url=url, headers=headers, cookies=cookies)
+    else:
+        response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
+    if response.status_code == 200:
+        return response
+    else:
+        response.raise_for_status()
 
 
 def send_request_without_token(request_type, url, payload, csrf_token):
@@ -37,18 +34,13 @@ def send_request_without_token(request_type, url, payload, csrf_token):
         'X-CSRFToken': csrf_token
     }
     cookies = {'csrftoken': csrf_token} 
-    try:
-        if request_type == 'GET':
-            response = requests.get(url=url, headers=headers, cookies=cookies)
-        elif request_type == 'DELETE':
-            response = requests.delete(url=url, headers=headers, cookies=cookies, data=json.dumps(payload))
-        else:
-            response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
-        if response.status_code == 200:
-            return response
-        else:
-            response.raise_for_status()
-    except requests.exceptions.HTTPError as e: 
-        raise ExpectedException(str(e)) 
-    except Exception as e:
-        raise Exception(f"An error occurred: {e}") 
+    if request_type == 'GET':
+        response = requests.get(url=url, headers=headers, cookies=cookies)
+    elif request_type == 'DELETE':
+        response = requests.delete(url=url, headers=headers, cookies=cookies, data=json.dumps(payload))
+    else:
+        response = requests.post(url=url, headers=headers, cookies=cookies ,data=json.dumps(payload))
+    if response.status_code == 200:
+        return response
+    else:
+        response.raise_for_status()

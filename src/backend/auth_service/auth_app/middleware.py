@@ -4,6 +4,10 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.conf import settings
+from requests.exceptions import HTTPError, Timeout
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
+import httpx
+
 
 User = get_user_model()
  
@@ -51,3 +55,33 @@ class JWTAuthMiddleware(MiddlewareMixin):
         if hasattr(request, 'new_jwt_refresh'):
             response.set_cookie('jwt_refresh', request.new_jwt_refresh, httponly=True, max_age=settings.REFRESH_TOKEN_LIFETIME)
         return response
+
+
+# Middleware for jwt authentication
+class ExceptionMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        try:
+            response = self.get_response(request)
+            return response
+        except ValueError as e:
+            return JsonResponse({'message': str(e)}, status=400)
+        except ValidationError as e:
+            return JsonResponse({'message': str(e)}, status=400)
+        except TypeError as e:
+            return JsonResponse({'message': str(e)}, status=400)
+        except User.DoesNotExist as e:
+            return JsonResponse({'message': str(e)}, status=404)
+        except ObjectDoesNotExist as e:
+            return JsonResponse({f'message': str(e)}, status=404)
+        except Timeout as e:
+            return JsonResponse({f'message': str(e)}, status=408)
+        except httpx.HTTPStatusError as e:
+            return JsonResponse({f'message': str(e)}, status=502)
+        except HTTPError as e:
+            return JsonResponse({f'message': str(e)}, status=502)
+        except httpx.RequestError as e:
+            return JsonResponse({f'message': str(e)}, status=503)
+        
+        except ExpectedException as e:
+            return JsonResponse({'message': str(e)}, status=400)
+        
