@@ -32,13 +32,20 @@ class getUserTournamentState(View):
 						 			'state': 'waitingRoom',
 									'tournamentData': user_tournament.to_dict_sync(),
 									'matchData': None}, status=200)
-			
+
 			if user.status == 'match':
 				user_match = TournamentMatch.objects.get(players=user, isOver=False)
 				return JsonResponse({'isInTournament': True, 
 						 			'state': 'matchState',
 									'tournamentData': user_tournament.to_dict_sync(),
 									'matchData': user_match.to_dict_sync()}, status=200)
+			
+			if user.status == 'in_game':
+				user_match = TournamentMatch.objects.get(players=user, isOver=False)
+				return JsonResponse({'isInTournament': True, 
+					'state': 'inGame',
+					'tournamentData': user_tournament.to_dict_sync(),
+					'matchData': user_match.to_dict_sync()}, status=200)
 			
 			if user.status == 'lost_match':
 				lost_match = TournamentMatch.objects.filter(

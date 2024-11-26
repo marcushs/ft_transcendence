@@ -26,8 +26,10 @@ class tournamentMatchResultView(View):
             winner = User.objects.get(id=str(data['winner']['id']))
             loser = User.objects.get(id=str(data['loser']['id'])) 
 
+            winner.status = 'match'
+            winner.save()
             match.winner = winner
-            match.winner_score = data['winner']['score']
+            match.winner_score = data['winner']['score'] 
 
             loser.status = 'lost_match'
             loser.save()
