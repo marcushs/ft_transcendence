@@ -31,7 +31,7 @@ class MatchmakingResearchComponent extends HTMLElement {
                     </div>
                 </div>
                 <div class='cancel-matchmaking-research-icon'>
-                    <p>Cancel</p>
+                    <p>${getString('matchmakingResearch/cancel')}</p>
                 </div>
             </div>
         `

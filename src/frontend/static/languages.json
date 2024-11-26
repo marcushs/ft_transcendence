@@ -313,7 +313,8 @@
 	  "joining": "Joining",
 	  "unranked": "unranked",
 	  "ranked": "ranked",
-	  "game": "game"
+	  "game": "game",
+	  "cancel": "cancel"
 	},
 	"tournament": {
 	  "lost": "Defeat",
@@ -675,7 +676,8 @@
 	  "joining": "Connection à la",
 	  "unranked": "Partie non classée",
 	  "ranked": "Partie classée",
-	  "game": "Partie"
+	  "game": "Partie",
+	  "cancel": "Annuler"
 	},
 	"tournament": {
 	  "lost": "Défaite",
@@ -1036,7 +1038,8 @@
 	  "joining": "加入中",
 	  "unranked": "非排名",
 	  "ranked": "排名",
-	  "game": "游戏"
+	  "game": "游戏",
+	  "cancel": "取消"
 	},
 	"tournament": {
 	  "lost": "败北",
