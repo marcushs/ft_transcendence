@@ -42,7 +42,7 @@ class PongGameEngine:
         self.ball_radius = 16
         self.ball_speed = 25
         self.speed_limit = 55
-        self.ball_direction_x = random.choice([15, -15])
+        self.ball_direction_x = random.choice([25, -25])
         random_angle = random.choice([(0.01, 0.03), (-0.03, -0.01)])
         angle_rad = (math.pi * random.uniform(random_angle[0], random_angle[1]))
         self.ball_direction_y = self.ball_direction_x * math.sin(angle_rad)
