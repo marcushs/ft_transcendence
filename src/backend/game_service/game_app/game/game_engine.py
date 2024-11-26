@@ -40,8 +40,8 @@ class PongGameEngine:
         self.winner_id = None
         self.loser_id = None
         self.ball_radius = 16
-        self.ball_speed = 15
-        self.speed_limit = 45
+        self.ball_speed = 25
+        self.speed_limit = 55
         self.ball_direction_x = random.choice([15, -15])
         random_angle = random.choice([(0.01, 0.03), (-0.03, -0.01)])
         angle_rad = (math.pi * random.uniform(random_angle[0], random_angle[1]))
@@ -235,12 +235,12 @@ class PongGameEngine:
         if self.state['ball_position']['x'] - self.ball_radius < 15 or self.state['ball_position']['x'] + self.ball_radius > self.map['width'] - 15:
             if self.state['ball_position']['x'] - self.ball_radius < 15:
                 self.player_one_score += 1
-                direction = -15
+                direction = -25
             if self.state['ball_position']['x'] + self.ball_radius > self.map['width'] - 15:
                 self.player_two_score += 1
-                direction = 15
+                direction = 25
 
-            self.ball_speed = 15
+            self.ball_speed = 25
             self.ball_direction_y = 0
             
             random_angle = random.choice([(0.01, 0.03), (-0.03, -0.01)])

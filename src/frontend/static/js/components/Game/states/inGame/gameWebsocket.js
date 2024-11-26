@@ -51,8 +51,6 @@ export async function gameWebsocket(userId) {
 			'connections_time_out': (data) => {
 				handleGameConnectionTimeOut(data.message);
 			},
-			'error_log': (data) => console.error(data.message)
-			
 		}
 		if (data.type in actions)
 			actions[data.type](data);

@@ -57,10 +57,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 					raise Exception(f"unrecognized message type : {str(data['type'])}")
 		except Exception as e:
 			print(f'error: {str(e)}')
-			await self.send(text_data=json.dumps({
-				'type': 'error_log',
-				'message': f'websocket error: {str(e)}'
-			}))
 
 
 	def check_received_id(self, data):
@@ -142,15 +138,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 	# Sender for inform client game info has changed
 	async def game_update_info(self, event):
-		await self.send(text_data=json.dumps({
-			'type': event['event'],
-			'message': event['message']
-		}
-	))
-  
-  
-	# Sender for websocket error message
-	async def error_log(self, event):
 		await self.send(text_data=json.dumps({
 			'type': event['event'],
 			'message': event['message']
