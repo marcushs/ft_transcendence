@@ -15,7 +15,6 @@ async def exit_tournament(tournament, user_id):
 	await send_websocket_info(player_id=str(user_id), payload={'type': 'redirect_to_tournament_home'})
 	await remove_user_from_tournament(tournament=tournament, user=user)
 	member_count = await get_members_count(tournament)
-	print(f'user: {str(user_id)} removed from tournament members ... remaining members: {member_count}')
 	if member_count == 0:
 		return await delete_tournament_when_empty(tournament)   
 	await stop_leave_countdown(user_id)
@@ -24,7 +23,6 @@ async def exit_tournament(tournament, user_id):
 async def tournament_lost_manager(data):
 	async with connections_lock:
 		if str(data['user_id']) in connections:
-			print(f'user: {str(data['user_id'])} active in connections list, starting leave_countdown')
 			await send_websocket_info(player_id=str(data['user_id']), payload={'type': data['type'], 'match': data['match']})
 			await start_leave_countdown(user_id=str(data['user_id']), tournament_id=data['match']['tournament_id'])
 		else:

@@ -17,7 +17,7 @@ class ChangePassword(View):
             User = get_user_model()
 
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'error': 'User not found'}, status=401)
+                return JsonResponse({'message': 'User not found'}, status=401)
 
             password_error = self.check_password_errors(User,  request)
             if password_error:

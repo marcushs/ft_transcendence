@@ -36,7 +36,7 @@ class ChangeUserInfosView(View):
             response = {}
     
             if isinstance(request.user, AnonymousUser):
-                return JsonResponse({'error': 'User not found'}, status=401) 
+                return JsonResponse({'message': 'User not found'}, status=401) 
 
             await self.check_update_error(User, request) 
             username = request.POST.get('username')

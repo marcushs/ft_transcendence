@@ -43,7 +43,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
 
     def process_response(self, request, response):
         if hasattr(request, 'jwt_failed'):
-            response = JsonResponse({'error': 'invalid session token'}, status=401)
+            response = JsonResponse({'message': 'invalid session token'}, status=401)
             response.delete_cookie('jwt')
             response.delete_cookie('jwt_refresh')
         if hasattr(request, 'new_jwt'):

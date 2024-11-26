@@ -24,7 +24,6 @@ def is_user_in_this_tournament(tournament, user):
 
 @database_sync_to_async
 def remove_user_from_tournament(tournament, user):
-	print(f'remove_user_from_tournament: Tounament: {tournament}')
 	user.status = 'not_in_tournament'
 	user.save()
 	tournament.members.remove(user)
@@ -47,7 +46,6 @@ def delete_tournament_when_empty(tournament):
     with tournament_delete_lock:
         if tournament.members.count() == 0:
             tournament.delete()
-    print('Tournament deleted !')
 
 def set_tournament_is_over(tournament):
 	with transaction.atomic():

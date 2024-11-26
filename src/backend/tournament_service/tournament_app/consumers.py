@@ -58,7 +58,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			if str(self.user.id) in connections:
 				del connections[str(self.user.id)]
 		if hasattr(self, 'group_name'):
-			await self.channel_layer.group_discard(self.group_name, self.channel_name)
+			await self.channel_layer.group_discard(self.group_name, self.channel_name) 
 
 	# Receive message from WebSocket
 	async def receive(self, text_data):  

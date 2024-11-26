@@ -62,7 +62,7 @@ def _send_twofactor_request(user, payload, csrf_token, request):
 			return response
 		return _create_user_session(user=user, request=request)
 	except ObjectDoesNotExist:
-		response = JsonResponse({'error': 'User not found'}, status=404)
+		response = JsonResponse({'message': 'User not found'}, status=404)
 		response.delete_cookie('github_access_token')
 		return response
 	except Exception:

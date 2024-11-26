@@ -18,7 +18,7 @@ class getUserTournamentState(View):
 			user = request.user
 
 			if isinstance(user, AnonymousUser):
-				return JsonResponse({'error': 'User not found'}, status=401)
+				return JsonResponse({'message': 'User not found'}, status=401)
 
 			if is_user_in_any_tournament(user) == False:
 				return JsonResponse({'isInTournament': False,
@@ -67,4 +67,5 @@ class getUserTournamentState(View):
 		except Bracket.DoesNotExist:
 			return JsonResponse({'message': 'bracketNotFound'}, status=404)
 		except Exception as e:
+			print('Error: ', str(e))
 			return JsonResponse({"message": str(e)}, status=500)

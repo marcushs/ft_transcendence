@@ -18,7 +18,7 @@ class getBracketView(View):
 			user = request.user
 
 			if isinstance(user, AnonymousUser):
-				return JsonResponse({'error': 'User not found'}, status=401)
+				return JsonResponse({'message': 'User not found'}, status=401)
 
 			active_tournament = Tournament.objects.filter(
 				members=user,
