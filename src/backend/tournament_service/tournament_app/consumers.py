@@ -50,14 +50,12 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				await self.accept()
 				async with connections_lock:
 					connections[str(self.user.id)] = self
-					print(f'user: {self.user.id} added to connections list...') 
 		except Exception as e:  
 			print(f'Error : {str(e)}')
 
 	async def disconnect(self, close_code):
 		async with connections_lock:
 			if str(self.user.id) in connections:
-				print(f'user: {self.user.id} deleted from connections list...')
 				del connections[str(self.user.id)]
 		if hasattr(self, 'group_name'):
 			await self.channel_layer.group_discard(self.group_name, self.channel_name)

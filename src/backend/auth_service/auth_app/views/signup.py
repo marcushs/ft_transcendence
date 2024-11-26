@@ -10,7 +10,7 @@ from django.views import View
 
 # --- UTILS --- #
 import json
-import re #regular expression
+import re #regular expression 
 
 User = get_user_model()
 
