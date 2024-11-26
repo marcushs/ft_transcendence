@@ -91,8 +91,8 @@ export default class BracketObj {
 						match_pair[0] = {name: match.players[0].alias, score: '0'};
 						match_pair[1] = null;
 					} else {
-						match_pair[0] = {name: match.players[0].alias, score: '0'};
-						match_pair[1] = null;
+						match_pair[1] = {name: match.players[0].alias, score: '0'};
+						match_pair[0] = null;
 					}
 					return match_pair;
 				}
@@ -125,8 +125,8 @@ export default class BracketObj {
 					match_pair[1] = {name: match.players[0].alias, score: '0'};
 					match_pair[0] = null;
 				} else {
-					match_pair[1] = {name: match.players[0].alias, score: '0'};
-					match_pair[0] = null;
+					match_pair[0] = {name: match.players[0].alias, score: '0'};
+					match_pair[1] = null;
 				}
 				return match_pair;
 			}
