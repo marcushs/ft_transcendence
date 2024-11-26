@@ -4,12 +4,12 @@ services:
   frontend:
     container_name: frontend
     build:
-      context: ./frontend
+      context: ./src/frontend
       dockerfile: Dockerfile
     image: frontend
     volumes:
-      - ./frontend/static:/var/www/static
-      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./src/frontend/static:/var/www/static
+      - ./src/frontend/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
       - "3000:443"
     depends_on:
@@ -36,10 +36,10 @@ services:
     container_name: user
     restart: always
     build:
-      context: ./backend/user_service
+      context: ./src/backend/user_service
       dockerfile: docker/Dockerfile
     image: user
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     command: >
       sh -c "
         python3 manage.py makemigrations &&
@@ -47,7 +47,7 @@ services:
         python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/user_service:/app 
+      - ./src/backend/user_service:/app 
     depends_on:
       user_db:
         condition: service_healthy
@@ -59,7 +59,7 @@ services:
     container_name: user_db
     image: postgres
     restart: always
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     environment:
       - POSTGRES_USER=${USER_DB_USER}
       - POSTGRES_DB=${USER_DB_NAME}
@@ -83,10 +83,10 @@ services:
     container_name: auth
     restart: always
     build:
-      context: ./backend/auth_service
+      context: ./src/backend/auth_service
       dockerfile: docker/Dockerfile
     image: auth
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     command: >
       sh -c "
         python3 manage.py makemigrations &&
@@ -94,7 +94,7 @@ services:
         python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/auth_service:/app
+      - ./src/backend/auth_service:/app
     depends_on:
       auth_db:
         condition: service_healthy
@@ -106,7 +106,7 @@ services:
     container_name: auth_db
     image: postgres
     restart: always
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     environment:
       - POSTGRES_USER=${AUTH_DB_USER}
       - POSTGRES_DB=${AUTH_DB_NAME}
@@ -130,10 +130,10 @@ services:
     container_name: twofactor
     restart: always
     build:
-      context: ./backend/twofactor_service
+      context: ./src/backend/twofactor_service
       dockerfile: docker/Dockerfile
     image: twofactor
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     command: >
       sh -c "
           python3 manage.py makemigrations &&
@@ -141,7 +141,7 @@ services:
           python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/twofactor_service:/app
+      - ./src/backend/twofactor_service:/app
     depends_on:
       twofactor_db:
         condition: service_healthy
@@ -153,7 +153,7 @@ services:
     container_name: twofactor_db
     image: postgres
     restart: always
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     environment:
       - POSTGRES_USER=${TWOFACTOR_DB_USER}
       - POSTGRES_DB=${TWOFACTOR_DB_NAME}
@@ -177,10 +177,10 @@ services:
     container_name: friends
     restart: always
     build:
-      context: ./backend/friends_service
+      context: ./src/backend/friends_service
       dockerfile: docker/Dockerfile
     image: friends
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     command: >
       sh -c "
         python3 manage.py makemigrations &&
@@ -188,7 +188,7 @@ services:
         python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/friends_service:/app
+      - ./src/backend/friends_service:/app
     depends_on:
       friends_db:
         condition: service_healthy
@@ -200,7 +200,7 @@ services:
     container_name: friends_db
     image: postgres
     restart: always
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     environment:
       - POSTGRES_USER=${FRIENDS_DB_USER}
       - POSTGRES_DB=${FRIENDS_DB_NAME}
@@ -224,10 +224,10 @@ services:
     container_name: notifications
     restart: always
     build:
-      context: ./backend/notifications_service
+      context: ./src/backend/notifications_service
       dockerfile: docker/Dockerfile
     image: notifications
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     command: >
       sh -c "
         python3 manage.py makemigrations &&
@@ -235,7 +235,7 @@ services:
         python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/notifications_service:/app
+      - ./src/backend/notifications_service:/app
     depends_on:
       notifications_db:
         condition: service_healthy
@@ -247,7 +247,7 @@ services:
     container_name: notifications_db
     image: postgres
     restart: always
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     environment:
       - POSTGRES_USER=${NOTIFICATIONS_DB_USER}
       - POSTGRES_DB=${NOTIFICATIONS_DB_NAME}
@@ -269,17 +269,17 @@ services:
     container_name: game
     restart: always
     build:
-      context: ./backend/game_service
+      context: ./src/backend/game_service
       dockerfile: docker/Dockerfile
     image: game
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     command: >
       sh -c "
         python3 manage.py migrate &&
         python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/game_service:/app
+      - ./src/backend/game_service:/app
     depends_on:
       redis:
         condition: service_healthy
@@ -292,10 +292,10 @@ services:
     container_name: matchmaking
     restart: always
     build:
-      context: ./backend/matchmaking_service
+      context: ./src/backend/matchmaking_service
       dockerfile: docker/Dockerfile
     image: matchmaking
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     command: >
       sh -c "
         python3 manage.py makemigrations &&
@@ -303,7 +303,7 @@ services:
         python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/matchmaking_service:/app
+      - ./src/backend/matchmaking_service:/app
     depends_on:
       matchmaking_db:
         condition: service_healthy
@@ -315,7 +315,7 @@ services:
     container_name: matchmaking_db
     image: postgres
     restart: always
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     environment:
       - POSTGRES_USER=${MATCHMAKING_DB_USER}
       - POSTGRES_DB=${MATCHMAKING_DB_NAME}
@@ -339,10 +339,10 @@ services:
     container_name: statistics
     restart: always
     build:
-      context: ./backend/statistics_service
+      context: ./src/backend/statistics_service
       dockerfile: docker/Dockerfile
     image: statistics
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     command: >
       sh -c "
         python3 manage.py makemigrations &&
@@ -350,7 +350,7 @@ services:
         python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/statistics_service:/app
+      - ./src/backend/statistics_service:/app
     depends_on:
       statistics_db:
         condition: service_healthy
@@ -362,7 +362,7 @@ services:
     container_name: statistics_db
     image: postgres
     restart: always
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     environment:
       - POSTGRES_USER=${STATISTICS_DB_USER}
       - POSTGRES_DB=${STATISTICS_DB_NAME}
@@ -385,11 +385,11 @@ services:
     container_name: oauth42
     restart: always
     build:
-      context: ./backend/oauth42_service
+      context: ./src/backend/oauth42_service
       dockerfile: docker/Dockerfile
     image: oauth42
     env_file:
-      - ./backend/.env
+      - ./src/backend/.env
     command: >
       sh -c "
           python3 manage.py makemigrations &&
@@ -397,7 +397,7 @@ services:
           python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/oauth42_service:/app
+      - ./src/backend/oauth42_service:/app
     depends_on:
       oauth42_db:
         condition: service_healthy
@@ -409,7 +409,7 @@ services:
     container_name: oauth42_db
     image: postgres
     restart: always
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     environment:
       - POSTGRES_USER=${OAUTH_42_DB_USER}
       - POSTGRES_DB=${OAUTH_42_DB_NAME}
@@ -432,11 +432,11 @@ services:
     container_name: oauthgoogle
     restart: always
     build:
-      context: ./backend/oauthgoogle_service
+      context: ./src/backend/oauthgoogle_service
       dockerfile: docker/Dockerfile
     image: oauthgoogle
     env_file:
-      - ./backend/.env
+      - ./src/backend/.env
     command: >
       sh -c "
           python3 manage.py makemigrations &&
@@ -444,7 +444,7 @@ services:
           python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/oauthgoogle_service:/app
+      - ./src/backend/oauthgoogle_service:/app
     depends_on:
       oauthgoogle_db:
         condition: service_healthy
@@ -456,7 +456,7 @@ services:
     container_name: oauthgoogle_db
     image: postgres
     restart: always
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     environment:
       - POSTGRES_USER=${OAUTH_GOOGLE_DB_USER}
       - POSTGRES_DB=${OAUTH_GOOGLE_DB_NAME}
@@ -479,11 +479,11 @@ services:
     container_name: oauthgithub
     restart: always
     build:
-      context: ./backend/oauthgithub_service
+      context: ./src/backend/oauthgithub_service
       dockerfile: docker/Dockerfile
     image: oauthgithub
     env_file:
-      - ./backend/.env
+      - ./src/backend/.env
     command: >
       sh -c "
           python3 manage.py makemigrations &&
@@ -491,7 +491,7 @@ services:
           python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/oauthgithub_service:/app
+      - ./src/backend/oauthgithub_service:/app
     depends_on:
       oauthgithub_db:
         condition: service_healthy
@@ -503,7 +503,7 @@ services:
     container_name: oauthgithub_db
     image: postgres
     restart: always
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     environment:
       - POSTGRES_USER=${OAUTH_GITHUB_DB_USER}
       - POSTGRES_DB=${OAUTH_GITHUB_DB_NAME}
@@ -526,11 +526,11 @@ services:
     container_name: chat
     restart: always
     build:
-      context: ./backend/chat_service
+      context: ./src/backend/chat_service
       dockerfile: docker/Dockerfile
     image: chat
     env_file:
-      - ./backend/.env
+      - ./src/backend/.env
     command: >
       sh -c "
           python3 manage.py makemigrations &&
@@ -539,7 +539,7 @@ services:
           daphne -v 2 chat_service.asgi:application
       "
     volumes:
-      - ./backend/chat_service:/app
+      - ./src/backend/chat_service:/app
     depends_on:
       - chat_redis
       - chat_db
@@ -551,7 +551,7 @@ services:
     container_name: chat_db
     image: postgres
     restart: always
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     environment:
       - POSTGRES_USER=${CHAT_DB_USER}
       - POSTGRES_DB=${CHAT_DB_NAME}
@@ -574,11 +574,11 @@ services:
     container_name: tournament
     restart: always
     build:
-      context: ./backend/tournament_service
+      context: ./src/backend/tournament_service
       dockerfile: docker/Dockerfile
     image: tournament
     env_file:
-      - ./backend/.env
+      - ./src/backend/.env
     command: >
       sh -c "
           python3 manage.py makemigrations &&
@@ -586,7 +586,7 @@ services:
           python3 manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend/tournament_service:/app
+      - ./src/backend/tournament_service:/app
     depends_on:
       - tournament_db
     networks:
@@ -597,7 +597,7 @@ services:
     container_name: tournament_db
     image: postgres
     restart: always
-    env_file: ./backend/.env
+    env_file: ./src/backend/.env
     environment:
       - POSTGRES_USER=${TOURNAMENT_DB_USER}
       - POSTGRES_DB=${TOURNAMENT_DB_NAME}

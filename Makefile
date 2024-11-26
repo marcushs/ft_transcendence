@@ -1,5 +1,5 @@
 NAME = ft_transcendence
-DOCKER_COMPOSE = docker compose -f ./src/docker-compose.yml
+DOCKER_COMPOSE = docker compose -f ./docker-compose.yml
 RM = sudo rm -rf
 ENV = --env-file ./src/backend/.env
 
