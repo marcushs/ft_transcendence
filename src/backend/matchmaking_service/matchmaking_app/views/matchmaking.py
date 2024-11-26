@@ -4,7 +4,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
-from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
 from django.http import JsonResponse 
 from django.views import View
 import queue
@@ -75,10 +75,12 @@ class MatchmakingQueueManager(View):
                 return JsonResponse({'status': 'error', 'message': 'User is already in matchmaking research'}, status=200)
             if is_player_in_private_lobby(request.user):
                 return JsonResponse({'status': 'error', 'message': 'User is already in private match lobby'}, status=200)
+            if is_already_in_tournament(request):
+                return JsonResponse({'status': 'error', 'message': 'User is already in tournament'}, status=200)
             self.start_matchmaking_by_type(str(data['type']), request) 
             return JsonResponse({'status': 'success', 'message': f"User successfully added to {data['type']} queue"}, status=200) 
         except Exception as e:
-            return JsonResponse({"message": str(e)}, status=500)
+            return JsonResponse({"message": str(e)}, status=500) 
 
 
     def is_valid_matchmaking_type(self, data):
@@ -123,7 +125,7 @@ class CheckUserInWaitingQueue(View):
                 return JsonResponse({'waiting': True, 'match_type': match_type}, status=200) 
             return JsonResponse({'waiting': False}, status=200)
         except Exception as e:
-            return JsonResponse({"message": str(e)}, status=500)
+            return JsonResponse({"message": str(e)}, status=500)  
 
 # -------->API: remove user from waiting list <-------------- #
 
@@ -201,6 +203,17 @@ def change_is_ingame_state(value: bool, user_instance=None, user_id=None):
         
     user.is_ingame = value 
     user.save()
+
+def is_already_in_tournament(request):
+    try:
+        print('TEEEESSSSTTTTTT')   
+        data_response = async_to_sync(send_request)('GET', url='http://tournament:8000/api/tournament/get_tournament_state/', request=request)
+        print(f'----> data reached: {data_response}') 
+        is_in_tournament = data_response.json().get('isInTournament', None)
+        print(f'----> data_response.json(): {data_response}') 
+        return is_in_tournament
+    except Exception as e:
+        return JsonResponse({"message": str(e)}, status=502)
 
 def is_already_in_waiting_list(target_id: str): 
     unranked_waiting_users = redis_instance.lrange('unranked_waiting_users', 0, -1)

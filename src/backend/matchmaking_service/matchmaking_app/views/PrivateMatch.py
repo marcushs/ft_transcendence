@@ -1,5 +1,5 @@
 from ..utils.websocket_utils import send_websocket_info, send_websocket_game_found
-from .matchmaking import change_is_ingame_state, is_already_in_waiting_list
+from .matchmaking import change_is_ingame_state, is_already_in_waiting_list, is_already_in_tournament
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.auth.models import AnonymousUser
 from .process_matchmaking import send_start_game
@@ -77,15 +77,13 @@ class PrivateMatchInit(View):
     def init(self, request, data):
         self.invited_user = self.get_invited_user(data)
         self.user = request.user
-        if is_player_in_private_lobby(self.user):
-            raise ValidationError('alreadyInLobby')
-        if is_player_in_private_lobby(self.invited_user):
-            raise ValidationError('contactAlreadyInLobby')
         if self.invited_user.id == self.user.id:
             raise ValidationError('cantInviteYourself')
+        if is_already_in_tournament(request):
+            raise ValidationError('userAlreadyInTournament')
         if is_player_in_private_lobby(self.user):
             raise LobbyAlreadyExistError('lobbyAlreadyExist')
-        self.is_already_playing()
+        self.is_already_playing(request)
 
 
     def get_invited_user(self, data):
@@ -95,7 +93,11 @@ class PrivateMatchInit(View):
         return invited_user
     
     
-    def is_already_playing(self):
+    def is_already_playing(self, request):
+        if is_player_in_private_lobby(self.user):
+            raise ValidationError('alreadyInLobby')
+        if is_player_in_private_lobby(self.invited_user):
+            raise ValidationError('contactAlreadyInLobby')
         is_waiting, match_type = is_already_in_waiting_list(str(self.user.id))
         if is_waiting:
             raise ValidationError('userAlreadySearchGame')
@@ -106,6 +108,8 @@ class PrivateMatchInit(View):
             raise ValidationError('userAlreadyInGame')
         if self.invited_user.is_ingame == True:
             raise ValidationError('invitedUserAlreadyInGame')
+        if is_already_in_tournament(request):
+            raise ValidationError('userAlreadyInTournament')
 
 #//---------------------------------------> private match cancel endpoint <--------------------------------------\\#
 
@@ -151,14 +155,17 @@ class PrivateMatchManager(View):
             if isinstance(request.user, AnonymousUser):  
                 return JsonResponse({'message': 'notConnected'}, status=401)
             data = json.loads(request.body.decode('utf-8'))
-            self.init(data=data, request=request)
+            is_ready = self.init(data=data, request=request)
+            if is_ready != 'ok':
+                self.handle_refused_invitation()
+                return JsonResponse({'message': is_ready}, status=400)
             return self.process_choice()
         except ValidationError as e: 
             return JsonResponse({'message': str(e)}, status=400)
         except ObjectDoesNotExist as e: 
             return JsonResponse({'message': str(e)}, status=404)
         except Exception as e: 
-            return JsonResponse({'message': str(e)}, status=500)
+            return JsonResponse({'message': str(e)}, status=502)
 
 
     def init(self, data, request):
@@ -166,8 +173,19 @@ class PrivateMatchManager(View):
         self.user = request.user
         self.sender_user = self.get_sender_username(data)
         self.lobby = self.get_lobby()
-        self.choice = str(data['choice']) 
-        
+        self.choice = str(data['choice'])
+        return self.is_already_playing(request)
+
+    def is_already_playing(self, request):
+        if is_player_in_private_lobby(request.user):
+            return 'alreadyInLobby'
+        is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
+        if is_waiting:
+            return 'userAlreadySearchGame'
+        if request.user.is_ingame == True:
+            return 'userAlreadyInGame'
+        if is_already_in_tournament(request):
+            return 'userAlreadyInTournament'
     
     def check_data(self, data):
         if 'sender_username' not in data:
@@ -240,7 +258,7 @@ class StartPrivateMatch(View):
         self.lobby = self.get_lobby()
         self.opponent = self.lobby.sender if self.lobby.receiver == self.user else self.lobby.receiver
 
-
+    
     def get_lobby(self):
         lobby = PrivateMatchLobby.objects.filter(Q(sender=self.user) | Q(receiver=self.user)).first()
         

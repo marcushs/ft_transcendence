@@ -15,7 +15,7 @@ class JWTAuthMiddleware(MiddlewareMixin):
     
     async def __call__(self, request):  
         response = await self.process_request(request)
-        response = await self.process_response(request, response)
+        response = await self.process_response(request, response) 
         return response
     
     async def process_request(self, request):

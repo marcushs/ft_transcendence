@@ -51,6 +51,8 @@ class UnrankedComponent extends HTMLElement {
 		this.replacePlayBtnByCancel();
 		if (await sendMatchSearchRequest('unranked'))
 			disableButtonsInGameResearch();
+		else
+			this.replaceCancelBtnByPlay();
 		const genericBtn = document.querySelector('#genericBtn');
 		genericBtn.className = "generic-btn-disabled";
 	}
@@ -70,6 +72,11 @@ class UnrankedComponent extends HTMLElement {
 	replacePlayBtnByCancel() {
 		this.cancelButton.style.display = 'flex';
 		this.playButton.style.display = 'none';
+	}
+
+	replaceCancelBtnByPlay() {
+		this.cancelButton.style.display = 'none';
+		this.playButton.style.display = 'flex';
 	}
 
 }
