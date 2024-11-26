@@ -60,7 +60,6 @@ class SearchBarComponent extends HTMLDivElement {
         usersList.forEach(user => {
             const li = document.createElement('li');
             const p = document.createElement('p');
-            // a.href = `/users/${encodeURIComponent(user.username)}`
             p.textContent = user.username;
             li.appendChild(p);
             li.addEventListener('click', () => throwRedirectionEvent(`/users/${encodeURIComponent(user.username)}`) );

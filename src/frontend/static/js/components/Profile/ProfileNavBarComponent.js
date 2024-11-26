@@ -1,4 +1,5 @@
 import {getString} from "../../utils/languageManagement.js";
+import {sendRequest} from "../../utils/sendRequest.js";
 
 class ProfileNavBarComponent extends HTMLElement {
 
@@ -6,7 +7,14 @@ class ProfileNavBarComponent extends HTMLElement {
 		super();
 
 		this.currentState = 'personalInformation';
-		this.initializeComponent();
+	}
+
+
+	async connectedCallback() {
+		await this.initializeComponent();
+		this.setCurrentState();
+		this.querySelector(`li[${this.currentState}]`).className = 'activated-li';
+		this.attachEventListener();
 	}
 
 
@@ -18,27 +26,41 @@ class ProfileNavBarComponent extends HTMLElement {
 	}
 
 
-	initializeComponent() {
-		this.innerHTML = `
-		    <ul>
-                <li state-redirect personalInformation>
-                    <p>${getString('profileNavBarComponent/personalInformation')}</p>
-                </li>
-                <li state-redirect security>
-                    <p>${getString('profileNavBarComponent/security')}</p>
-                </li>
-                <li state-redirect statistics>
-                    <p>${getString('profileNavBarComponent/statistics')}</p>
-                </li>
-            </ul>
-		`;
-	}
+	async initializeComponent() {
+		try {
+			const oauthInfos = await sendRequest("GET", "/api/auth/auth_type/", null);
+			const isOauthLog = oauthInfos.oauth_log;
 
-
-	connectedCallback() {
-		this.setCurrentState();
-		this.querySelector(`li[${this.currentState}]`).className = 'activated-li';
-		this.attachEventListener();
+			console.log(isOauthLog)
+			if (isOauthLog) {
+				this.innerHTML = `
+				    <ul>
+		                <li state-redirect personalInformation>
+		                    <p>${getString('profileNavBarComponent/personalInformation')}</p>
+		                </li>
+		                <li state-redirect statistics>
+		                    <p>${getString('profileNavBarComponent/statistics')}</p>
+		                </li>
+		            </ul>
+				`;
+			} else {
+				this.innerHTML = `
+				    <ul>
+		                <li state-redirect personalInformation>
+		                    <p>${getString('profileNavBarComponent/personalInformation')}</p>
+		                </li>
+		                <li state-redirect security>
+		                    <p>${getString('profileNavBarComponent/security')}</p>
+		                </li>
+		                <li state-redirect statistics>
+		                    <p>${getString('profileNavBarComponent/statistics')}</p>
+		                </li>
+		            </ul>
+				`;
+			}
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 
