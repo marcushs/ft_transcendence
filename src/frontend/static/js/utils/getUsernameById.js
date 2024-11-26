@@ -8,7 +8,6 @@ export default async function getUsernameById(id) {
 
 		return data.username;
 	} catch (error) {
-		console.error(error);
 		return null;
 	}
 }

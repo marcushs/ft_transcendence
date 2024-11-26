@@ -57,7 +57,7 @@ async function enableTwoFactorRequest() {
 	try {
 		await sendRequest('POST', url, { method: 'email' });
 	} catch (error) {
-		console.error(error);
+		console.error(error.message);
 	}
 }
 

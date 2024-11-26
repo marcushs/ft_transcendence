@@ -25,6 +25,7 @@ class ChatComponent extends HTMLElement {
 				<div class="ping"></div>
 			</div>
 			<div class="chat-main-menu ">
+				<p id="chatErrorFeedback"></p>
 				<i id="chat-close-btn" class="fa-solid fa-xmark" aria-hidden="true"></i>
 				<div class="chat-lobby ">
 					<div id="chat-search-bar-div"></div>

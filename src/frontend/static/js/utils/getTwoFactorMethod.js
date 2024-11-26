@@ -9,6 +9,6 @@ export async function getTwoFactorMethod() {
 
 		return data.method;
 	} catch (error) {
-		console.error(error);
+		console.error(error.message);
 	}
 }

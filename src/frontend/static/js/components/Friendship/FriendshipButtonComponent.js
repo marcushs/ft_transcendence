@@ -62,7 +62,7 @@ class FriendshipButtonComponent extends HTMLElement {
                 this.setAttribute('button-status', data.friendship_status);
             }
         } catch (error) {
-            console.error(error);
+            console.error(error.message);
         }
     }
 

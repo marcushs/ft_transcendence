@@ -47,11 +47,11 @@ function attachEvent() {
     yesBtn.addEventListener('click', async () => {
         try {
 
-            const data = await sendRequest('POST', '/api/auth/logout/', null);
+            await sendRequest('POST', '/api/auth/logout/', null);
 			closeAllWebsocket();
             throwRedirectionEvent('/');
         } catch (error) {
-            console.error(error);
+            console.error(error.message);
         }
     });
 }

@@ -46,7 +46,7 @@ class JoinComponent extends HTMLElement {
 
 			this.tournamentsList = res.tournaments_list;
 		} catch (error) {
-			console.error(error);
+			console.error(error.message);
 		}
 	}
 

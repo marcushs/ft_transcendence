@@ -72,7 +72,7 @@ export default class ChatContactComponent extends HTMLElement {
 	
 			return res.lastMessage[0].fields;
 		} catch (error) {
-			console.error(error);
+			console.error(error.message);
 		}
 	}
 
@@ -138,7 +138,7 @@ export default class ChatContactComponent extends HTMLElement {
 			
 			return res.user_status;
 		} catch (error) {
-			console.error('Error trying to get user status: ', error.message);
+			console.error(error.message);
 			return null;
 		}
 	}

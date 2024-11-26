@@ -38,7 +38,7 @@ ACCESS_TOKEN_LIFETIME = 120
 REFRESH_TOKEN_LIFETIME = 86400
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', env('SERVER_IP'), 'tournament'] 
 

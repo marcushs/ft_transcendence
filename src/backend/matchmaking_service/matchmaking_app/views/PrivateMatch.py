@@ -25,18 +25,38 @@ def is_player_in_private_lobby(player):
         return True
     return False
 
+
+def get_private_lobby(player):
+    lobby = PrivateMatchLobby.objects.get(Q(sender=player) | Q(receiver=player))
+    if lobby:
+        return lobby
+    return None
+
 #//---------------------------------------> is in private match endpoint <--------------------------------------\\#
 
 class CheckUserInPrivateLobby(View): 
     def __init__(self):
         super()
 
-    async def get(self, request):
-        if isinstance(request.user, AnonymousUser):  
-            return JsonResponse({'message': 'No connected user'}, status=401)
-        if await sync_to_async(is_player_in_private_lobby)(request.user):
-            return JsonResponse({'in_private_lobby': True}, status=200)
-        return JsonResponse({'in_private_lobby': False}, status=200)
+    def get(self, request):
+        try:
+            if isinstance(request.user, AnonymousUser):  
+                return JsonResponse({'message': 'No connected user'}, status=401)
+            lobby = get_private_lobby(request.user)
+            if lobby is None: 
+                return JsonResponse({'in_private_lobby': False}, status=200) 
+            return JsonResponse({
+                'in_private_lobby': True,
+                'sender_id': str(lobby.sender.id), 
+                'opponent_id': str(lobby.receiver.id),
+                'opponent_state': str(lobby.receiver_state),
+                'user_id': str(request.user.id)
+                }, status=200)
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'in_private_lobby': False}, status=200) 
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=500)
+            
         
 
 

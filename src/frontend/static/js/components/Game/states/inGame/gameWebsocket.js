@@ -123,7 +123,7 @@ async function attemptReconnect(userId, gameState, count = 0, maxRetries = 12, r
 				return true;
 			}
 		} catch (error)  {
-			console.error(error);
+			console.error(error.message);
 		}
 		count++;
 		reconnectTimeout = setTimeout(() => attemptReconnect(userId, gameState, count, maxRetries, reconnectionInterval));

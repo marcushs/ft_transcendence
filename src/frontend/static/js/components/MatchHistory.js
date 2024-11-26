@@ -22,7 +22,7 @@ class MatchHistory extends HTMLElement {
                 this.userId = await getUserId();
                 await this.fillHistoryList();
             } catch (error) {
-                console.error(error)
+                console.error(error.message)
             }
         } else {
             this.displayUnloggedUser();
@@ -204,7 +204,7 @@ class MatchHistory extends HTMLElement {
 
             return data.alias;
         } catch (error) {
-            console.error(error);
+            console.error(error.message);
             return null;
         }
     }

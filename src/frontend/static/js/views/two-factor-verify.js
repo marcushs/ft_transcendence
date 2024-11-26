@@ -83,7 +83,7 @@ async function sendTwoFactorCode(userCredentials) {
 		}
 		await sendRequest('POST', '/api/twofactor/get_2fa_code/', payload );
 	} catch (error) {
-		console.error(error);
+		console.error(error.message);
 	}
 }
 

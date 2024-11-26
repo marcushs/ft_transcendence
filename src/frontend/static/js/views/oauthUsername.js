@@ -102,7 +102,7 @@ async function postNewUsername() {
 		if (data.status !== "Error")
 			throwRedirectionEvent('/')
 	} catch (error) {
-		console.error(error);
+		console.error(error.message);
 		throwRedirectionEvent('/login')
 	}
 }

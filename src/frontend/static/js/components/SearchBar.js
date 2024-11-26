@@ -50,7 +50,7 @@ class SearchBarComponent extends HTMLDivElement {
                 return null
             }
         } catch (error) {
-            console.error(error);
+            console.error(error.message);
             return null;
         }
     }

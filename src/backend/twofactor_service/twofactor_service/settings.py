@@ -53,7 +53,7 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 # /-----><-----\
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', env('SERVER_IP'), 'twofactor']
 

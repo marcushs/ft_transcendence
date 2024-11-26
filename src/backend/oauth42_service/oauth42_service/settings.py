@@ -38,7 +38,7 @@ REFRESH_TOKEN_LIFETIME = 86400
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', env('SERVER_IP'), 'oauth42']
 

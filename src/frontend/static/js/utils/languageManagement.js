@@ -58,7 +58,7 @@ export async function setUserLanguageInDb(language) {
 	try {
 		await sendRequest('POST', url, {'language': language});
 	} catch (error) {
-		console.error(error);
+		console.error(error.message);
 	}
 }
 
@@ -70,6 +70,6 @@ async function getUserLanguageFromDb() {
 
 		return data['language'];
 	} catch (error) {
-		console.error(error);
+		console.error(error.message);
 	}
 }

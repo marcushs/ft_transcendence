@@ -59,7 +59,7 @@ export async function redirectToOauth(oauthProvider) {
 
 		window.location.replace(data.url);
 	} catch (error) {
-		console.error(error);
+		console.error(error.message);
 	}
 }
 
@@ -69,7 +69,7 @@ async function handleOauthCallback(oauthProvider, code, state) {
 		const data = await res.json();
 		return data;
 	} catch (error) {
-		console.error(error);
+		console.error(error.message);
 		return null;
 	}
 }
@@ -80,7 +80,7 @@ async function accessResource(oauthProvider) {
 		const data = await res.json();
 		return data;
 	} catch (error) {
-		console.error(error);
+		console.error(error.message);
 		return null;
 	}
 }

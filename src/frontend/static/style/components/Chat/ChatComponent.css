@@ -15,6 +15,15 @@ chat-component {
 	width: fit-content;
 }
 
+#chatErrorFeedback {
+	color: var(--error-color);
+	position: absolute;
+	top: 1rem;
+	z-index: 100;
+	left: 5px;
+	font-size: 1.8rem;
+}
+
 chat-component .chat-icon {
 	width: 3rem;
 	cursor: pointer;

@@ -34,6 +34,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 		const isSearchingGame = localStorage.getItem("isSearchingPrivateMatch") || localStorage.getItem("isReadyToPlay")
 			|| localStorage.getItem("isInGuestState") || localStorage.getItem("isSearchingGame") || localStorage.getItem("tournamentData");
 		this.innerHTML = `
+			<p id="feedbackError"></p>
 			<i id="chatroom-back-btn" class="fa-solid fa-arrow-left"></i>
 			<div class="chatroom-profile-picture" style="background: no-repeat center/100% url('${profileImage}')">
 				<div class="chat-status-circle ${status}"></div>
@@ -121,7 +122,13 @@ export default class ChatRoomTopBar extends HTMLElement {
 				this.throwWaitingStateEvent(this.userData.username)
 			}, 50);
 		} catch (error) {
-			console.error(error)
+			const feedbackError = document.querySelector('#chatErrorFeedback');
+			
+			if (error.toString().slice(7, error.toString().length) === "lobbyAlreadyExist")
+				feedbackError.innerHTML = getString(`gameComponent/${error.toString().slice(7, error.toString().length)}`);
+			else if (error.toString().at(7) === "[")
+				feedbackError.innerHTML = getString(`errorFeedback/${error.toString().slice(9, error.toString().length - 2)}`);			
+			console.error(error.message)
 		}
 	}
 

@@ -24,7 +24,7 @@ export async function sendMatchSearchRequest(match_type) {
     } catch (error) {
         if (matchmakingSocket && matchmakingSocket.readyState === WebSocket.OPEN)
             matchmakingSocket.close();
-        console.error(error);
+        console.error(error.message);
         return false;
     }
 }
@@ -52,7 +52,7 @@ export async function checkMatchmakingSearch() {
             return;
         closeMatchmakingResearch();
     } catch (error) {
-        console.error('error with matchmaking check: ', error.message);
+        console.error(error.message);
     }
 }
 

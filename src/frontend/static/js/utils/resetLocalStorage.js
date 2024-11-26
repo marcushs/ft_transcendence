@@ -1,4 +1,5 @@
 import checkAuthentication from "./checkAuthentication.js";
+import getUsernameById from "./getUsernameById.js";
 import {sendRequest} from "./sendRequest.js";
 
 export async function resetLocalStorage() {
@@ -40,12 +41,28 @@ async function resetPrivateMatch() {
 	const isReadyToPlay = localStorage.getItem("isReadyToPlay");
 
 	try {
+		
 		const data = await sendRequest("GET", "/api/matchmaking/check_private_match/", null);
-
+		
 		if ((isSearchingPrivateMatch || isInGuestState || isReadyToPlay) && !data.in_private_lobby) {
 			localStorage.removeItem('isSearchingPrivateMatch');
 			localStorage.removeItem('IsInGuestState');
 			localStorage.removeItem('isReadyToPlay');
+		} else if (data.in_private_lobby) {
+			if (data.opponent_id === data.user_id && data.opponent_state === "ready" && !isInGuestState) {
+				const username = await getUsernameById(data.user_id);
+
+				localStorage.setItem('isInGuestState', username);
+			} else if (data.opponent_id !== data.user_id && data.opponent_state === "waiting" && !isSearchingPrivateMatch) {
+				const username = await getUsernameById(data.opponent_id);
+
+				localStorage.setItem('isSearchingPrivateMatch', username);
+			} else if (data.opponent_id !== data.user_id && data.opponent_state === "ready" && !isReadyToPlay) {
+				const username = await getUsernameById(data.opponent_id);
+
+				localStorage.setItem('isSearchingPrivateMatch', username);
+				localStorage.setItem('isReadyToPlay', true);
+			}
 		}
 	} catch (e) {
 		localStorage.removeItem('isSearchingPrivateMatch');

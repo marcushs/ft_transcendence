@@ -365,6 +365,15 @@
 	  "reconnectOrLeave": "reconnect or leave?",
 	  "reconnectChoice": "Reconnect",
 	  "leaveChoice": "Leave"
+	},
+	"errorFeedback": {
+		"contactAlreadyInLobby": "The contact is already in lobby",
+		"alreadyInLobby": "You are already in lobby",
+		"userAlreadySearchGame": "You are already searching for a game",
+		"userAlreadyInGame": "You are already in game",
+		"invitedUserAlreadySearchGame": "The invited user is already searching for a game",
+		"invitedUserAlreadyInGame": "The invited user is already in game",
+		"userAlreadyInTournament": "You are already in tournament"
 	}
   },
 
@@ -732,6 +741,15 @@
 	  "reconnectOrLeave": "voulez-vous reconnecter ou quitter?",
 	  "reconnectChoice": "Reconnecter",
 	  "leaveChoice": "Quitter"
+	},
+	"errorFeedback": {
+		"contactAlreadyInLobby": "Le contact est déjà dans le lobby",
+		"alreadyInLobby": "Vous êtes déjà dans le lobby",
+		"userAlreadySearchGame": "Vous êtes déjà à la recherche d'un jeu",
+		"userAlreadyInGame": "Vous êtes déjà dans le jeu",
+		"invitedUserAlreadySearchGame": "L'utilisateur invité est déjà à la recherche d'un jeu",
+		"invitedUserAlreadyInGame": "L'utilisateur invité est déjà dans le jeu",
+		"userAlreadyInTournament": "Vous êtes déjà dans le tournoi"
 	}
   },
 
@@ -1098,6 +1116,15 @@
 	  "reconnectOrLeave": "请选择 “重新连接” 或者 “离开”",
 	  "reconnectChoice": "重新连接",
 	  "leaveChoice": "离开"
+	},
+	"errorFeedback": {
+		"contactAlreadyInLobby": "联系人已在大厅",
+		"alreadyInLobby": "您已在大厅",
+		"userAlreadySearchGame": "已经在找游戏？",
+		"userAlreadyInGame": "你已经进入游戏",
+		"invitedUserAlreadySearchGame": "客人用户已经在寻找游戏",
+		"invitedUserAlreadyInGame": "访客用户已进入游戏",
+		"userAlreadyInTournament": "你已经参加了比赛"
 	}
   }
 }

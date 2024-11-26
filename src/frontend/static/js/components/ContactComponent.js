@@ -216,7 +216,7 @@ class ContactComponent extends HTMLElement {
             contactActionContainer.style.display = 'none';
         } catch (error) {
             contactActionContainer.style.display = 'none';
-            console.error(error)
+            console.error(error.message)
         }
     }
  
@@ -228,7 +228,7 @@ class ContactComponent extends HTMLElement {
         try {
             await sendRequest('POST', '/api/friends/manage_friendship/', payload);
         } catch (error) {
-            console.error('catch: ', error);
+            console.error(error.message);
         }
     }
 

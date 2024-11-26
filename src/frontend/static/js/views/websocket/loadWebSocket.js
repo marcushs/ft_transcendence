@@ -186,7 +186,7 @@ export function loadTournamentWebSocket() {
 		if (handler) {
 			await handler(data);
 		} else {
-			console.error('Unknown message type:', data.type);
+			console.error('Unknown message type: ', data.type);
 		}
 	};
 

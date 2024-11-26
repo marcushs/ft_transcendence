@@ -77,7 +77,7 @@ class TournamentLostElement extends HTMLElement {
 				this.bracketObj = BracketObj.create(res.bracket, res.bracket.tournament_size);
 				this.redirectToBracket();
 			} catch (error) {
-				console.error(error)
+				console.error(error.message)
 			}
 		})
 		

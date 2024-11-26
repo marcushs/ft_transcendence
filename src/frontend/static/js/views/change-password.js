@@ -120,6 +120,6 @@ async function postNewPassword(formData) {
 			throwRedirectionEvent('/change-password');
 		}
 	} catch (error) {
-		console.error(error);
+		console.error(error.message);
 	}
 }

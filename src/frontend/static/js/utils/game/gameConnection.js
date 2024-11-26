@@ -48,10 +48,10 @@ export async function surrenderHandler() {
             game_id: gameState.gameId,
             player_id: gameState.userId
         };
-        const response = await sendRequest('POST', '/api/game/surrend_game/', payload);
+        await sendRequest('POST', '/api/game/surrend_game/', payload);
 		localStorage.removeItem('inGameComponentState');
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
     }
 }
 

@@ -14,7 +14,7 @@ User = get_user_model()
 class JWTAuthMiddleware(MiddlewareMixin):
     
     async def __call__(self, request):  
-        response = await self.process_request(request)
+        response = await self.process_request(request) 
         response = await self.process_response(request, response) 
         return response
     

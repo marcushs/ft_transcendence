@@ -8,7 +8,7 @@ export default async function getUserData() {
 
 		return data.user;
 	} catch (error) {
-		console.error(error);
+		console.error(error.message);
 		return null;
 	}
 }
