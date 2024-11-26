@@ -27,7 +27,7 @@ class DeleteUser(View):
             return JsonResponse({'message': str(e)}, status=500)
         
         
-class add_new_user(View):
+class add_new_user(View): 
     def __init__(self):
         super().__init__
     
@@ -38,16 +38,26 @@ class add_new_user(View):
                 raise ValidationError('requestMissingData')
             if User.objects.filter(username=str(data['username'])).exists():
                 raise ValidationError('usernameAlreadyTaken')
+            alias = self.create_alias(data)        
             if data['logged_in_with_oauth'] and data['logged_in_with_oauth'] is True:
                 User.objects.create_oauth_user(data)
             else:
-                User.objects.create_user(username=str(data['username']), user_id=str(data['user_id']), alias=str(data['username']))
+                User.objects.create_user(username=str(data['username']), user_id=str(data['user_id']), alias=alias)
             return JsonResponse({"message": 'user added with success', "status": "Success"}, status=200)
         except ValidationError as e:
-            return JsonResponse({"message": str(e)}, status=400)
+            return JsonResponse({"message": str(e)}, status=400) 
         except Exception as e:
             return JsonResponse({"message": str(e)}, status=500)
-            
+        
+    def create_alias(self, data):
+        if not User.objects.filter(alias=str(data['username'])).exists():
+            return str(data['username'])
+        alias = 'p1'
+        i = 2
+        while User.objects.filter(alias=alias).exists():
+            alias = 'p' + str(i)
+            i += 1
+        return alias
     
 class update_user(View):
     def __init__(self):

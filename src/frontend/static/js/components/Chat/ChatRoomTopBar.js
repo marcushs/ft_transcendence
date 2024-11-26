@@ -2,6 +2,7 @@ import getProfileImage from "../../utils/getProfileImage.js";
 import { sendRequest } from "../../utils/sendRequest.js";
 import {getString} from "../../utils/languageManagement.js";
 import {throwRedirectionEvent} from "../../utils/throwRedirectionEvent.js";
+import getUsernameById from "../../utils/getUsernameById.js";
 
 export default class ChatRoomTopBar extends HTMLElement {
 	static get observedAttributes() {
@@ -102,8 +103,9 @@ export default class ChatRoomTopBar extends HTMLElement {
 		try {
 			if (localStorage.getItem("isSearchingGame"))
 				return;
+			const username = await getUsernameById(this.userData.id);
 			const data = await sendRequest("POST", "/api/matchmaking/init_private_match/", {
-				invitedUsername: this.userData.username,
+				invitedUsername: username,
 			});
 
 			this.querySelector('button').className = "play-invitation-button-disabled";
