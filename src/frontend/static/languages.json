@@ -194,7 +194,11 @@
 	  "tournamentAlias": "Tournament alias",
 	  "aliasChanged": "Alias successfully changed",
 	  "aliasError": "Error while changing alias",
-	  "aliasAlreadyExists": "This alias already exists"
+	  "aliasAlreadyExists": "This alias already exists",
+	  "aliasNotProvided": "No alias provided",
+	  "aliasAlreadyYours": "This alias is already yours",
+	  "aliasLenError": "Alias must be less than 12 characters",
+	  "aliasFormatError": "Alias must container only letters, numbers, _ , -"
 	},
 	"profileNavBarComponent": {
 	  "personalInformation": "Personal information",
@@ -555,7 +559,11 @@
 	  "tournamentAlias": "Alias de tournois",
 	  "aliasChanged": "L'alias a été modifié avec succès",
 	  "aliasError": "Erreur lors du changement d'alias",
-	  "aliasAlreadyExists": "Cet alias existe déjà"
+	  "aliasAlreadyExists": "Cet alias existe déjà",
+	  "aliasNotProvided": "Aucun alias fourni",
+	  "aliasAlreadyYours": "Cet alias est déjà le vôtre",
+	  "aliasLenError": "L'alias doit comporter 12 caractères au moins",
+	  "aliasFormatError": "L'alias ne doit contenir que des lettres, chiffres, _, -"
 	},
 	"profileNavBarComponent": {
 	  "personalInformation": "Informations personnelles",
@@ -914,7 +922,11 @@
 	  "tournamentAlias": "锦标赛昵称",
 	  "aliasChanged": "昵称更改成功",
 	  "aliasError": "更改别名时发生错误",
-	  "aliasAlreadyExists": "此别名已存在"
+	  "aliasAlreadyExists": "此别名已存在",
+	  "aliasNotProvided": "未提供别名",
+	  "aliasAlreadyYours": "此别名已是您的",
+	  "aliasLenError": "别名必须少于12个字符",
+	  "aliasFormatError": "别名只能包含字母、数字、_ 和 -"
 	},
 	"profileNavBarComponent": {
 	  "personalInformation": "个人信息",

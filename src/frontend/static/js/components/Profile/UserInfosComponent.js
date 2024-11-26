@@ -500,6 +500,10 @@ async function postNewUserInfos(newUserInfos) {
 
 	try {
 		const data = await sendRequest('POST', url, newUserInfos, true);
+		const userUpdateResponse = JSON.parse(localStorage.getItem('userUpdateResponse'));
+
+		if (userUpdateResponse && userUpdateResponse.hasOwnProperty("alias_message"))
+			data.alias_message = userUpdateResponse.alias_message;
 
 		localStorage.setItem('userUpdateResponse', JSON.stringify(data));
 		throwRedirectionEvent('/profile');
@@ -517,7 +521,7 @@ async function postNewAlias(newAlias) {
 		localStorage.setItem('userUpdateResponse', JSON.stringify(data));
 		return true;
 	} catch (error) {
-		document.querySelector('.error-feedback').innerHTML = getString(`profileComponent/${error.toString().slice(7, error.toString().length)}`);
+		document.querySelector('.error-feedback').innerHTML = getString(`profileComponent/${error.toString().slice(9, error.toString().length - 2)}`);
 		return false;
 	}
 }
