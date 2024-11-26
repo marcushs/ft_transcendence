@@ -67,7 +67,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		data = json.loads(text_data)
 		message_type = data['type']
 		try:
-			await self.check_player_availability()
+			if data['type'] != 'leave_tournament' or data['type'] != 'user_ready_for_match':
+				await self.check_player_availability()
 		except Exception as e:
 			return await self.send_error_message(message_type, str(e))
 	
@@ -78,7 +79,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await self.handle_join_tournament(data=data)
 		elif message_type == 'leave_tournament':
 			await self.handle_leave_tournament(data=data)
-		elif message_type == 'user_ready_for_match': 
+		elif message_type == 'user_ready_for_match':
 			await self.handle_user_ready(data=data)
 
 

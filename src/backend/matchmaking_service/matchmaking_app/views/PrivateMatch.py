@@ -157,6 +157,7 @@ class PrivateMatchManager(View):
             data = json.loads(request.body.decode('utf-8'))
             is_ready = self.init(data=data, request=request)
             if is_ready != 'ok':
+                print('RETURN: ', is_ready) 
                 self.handle_refused_invitation()
                 return JsonResponse({'message': is_ready}, status=400)
             return self.process_choice()
@@ -177,15 +178,14 @@ class PrivateMatchManager(View):
         return self.is_already_playing(request)
 
     def is_already_playing(self, request):
-        if is_player_in_private_lobby(request.user):
-            return 'alreadyInLobby'
         is_waiting, match_type = is_already_in_waiting_list(str(request.user.id))
         if is_waiting:
             return 'userAlreadySearchGame'
         if request.user.is_ingame == True:
             return 'userAlreadyInGame'
-        if is_already_in_tournament(request):
+        if is_already_in_tournament(request): 
             return 'userAlreadyInTournament'
+        return 'ok'
     
     def check_data(self, data):
         if 'sender_username' not in data:

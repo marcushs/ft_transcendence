@@ -32,7 +32,6 @@ export async function sendMatchSearchRequest(match_type) {
 async function requestMatchmakingResearch(payload) {
     try {
         const response = await sendRequest('POST', '/api/matchmaking/matchmaking/', payload);
-        console.log('MATCHMAKING response: ', response); 
         
         return response;
     } catch (error) {

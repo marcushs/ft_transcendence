@@ -122,17 +122,23 @@ class PrivateMatchInvitationNotificationComponent extends HTMLElement {
 			const errorStr = error.toString();
 
 			if (errorStr.slice(7, errorStr.length) === "lobbyNotFound" && action === "accepted") {
-				this.displayErrorMessage();
+				this.displayErrorMessage(`notificationsComponent/lobbyNotFound`);
+			} else if (errorStr.slice(7, errorStr.length) === "userAlreadyInTournament" && action === "accepted") {
+				this.displayErrorMessage(`tournament/youAreInTournament`);
+			} else if (errorStr.slice(7, errorStr.length) === "userAlreadySearchGame" && action === "accepted") {
+				this.displayErrorMessage(`gameComponent/yourAlreadySearchingGame`);
+			} else if (errorStr.slice(7, errorStr.length) === "userAlreadyInGame" && action === "accepted") {
+				this.displayErrorMessage(`gameComponent/yourAlreadyInGame`);
 			} else {
 				this.remove();
 			}
 		}
 	}
 
-	displayErrorMessage() {
+	displayErrorMessage(message) {
 		const p = this.querySelector('p');
 
-		p.innerHTML = getString("notificationsComponent/lobbyNotFound");
+		p.innerHTML = getString(message);
 		p.classList.add("error-sentence");
 		this.querySelector('.fa-check').remove();
 		this.querySelector('.fa-xmark').remove();

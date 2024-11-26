@@ -206,12 +206,9 @@ def change_is_ingame_state(value: bool, user_instance=None, user_id=None):
 
 def is_already_in_tournament(request):
     try:
-        print('TEEEESSSSTTTTTT')   
         data_response = async_to_sync(send_request)('GET', url='http://tournament:8000/api/tournament/get_tournament_state/', request=request)
-        print(f'----> data reached: {data_response}') 
         is_in_tournament = data_response.json().get('isInTournament', None)
-        print(f'----> data_response.json(): {data_response}') 
-        return is_in_tournament
+        return is_in_tournament 
     except Exception as e:
         return JsonResponse({"message": str(e)}, status=502)
 

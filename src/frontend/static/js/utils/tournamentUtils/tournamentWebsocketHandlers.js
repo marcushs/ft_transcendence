@@ -82,7 +82,7 @@ export function handleRedirectToTournamentHome() {
     redirectToTournamentHome();
 }
 
-export function handleLeaveTournament(data) {
+export function handleLeaveTournament(data) {    
     updateTournamentInfo(data.tournament);
 }
 

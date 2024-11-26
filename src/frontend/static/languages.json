@@ -146,7 +146,9 @@
 	  "unranked": "Unranked",
 	  "scoreToWin": "Score to win",
 	  "paddleSpeed": "Paddle speed",
-	  "ballSpeed": "Ball speed"
+	  "ballSpeed": "Ball speed",
+	  "yourAlreadySearchingGame": "You cannot join this game because you are already looking for a game.",
+	  "yourAlreadyInGame": "You cannot join this game because you're already in game"
 	},
 	"gameTopBar": {
 	  "back": "Back"
@@ -350,7 +352,8 @@
 	  "playerNotInMatch": "Player not in match",
 	  "bracketNotFound": "Bracket not found",
 	  "errorFindingMatchOrUser": "Error in finding last match or user",
-	  "invalidTournamentId": "Invalid tournament Id"
+	  "invalidTournamentId": "Invalid tournament Id",
+	  "youAreInTournament": "You can't join this game because you're already in a tournament."
 	},
 	"inactiveGamePopUp": {
 	  "gameInProgress": "You have a game in progress",
@@ -507,7 +510,9 @@
 	  "scoreToWin": "Score pour gagner",
 	  "paddleSpeed": "Vitesse de la palette",
 	  "ballSpeed": "Vitesse de la balle",
-	  "create": "Créer"
+	  "create": "Créer",
+	  "yourAlreadySearchingGame": "Vous ne pouvez pas rejoindre cette partie parce que vous êtes déjà en recherche de jeu.",
+	  "yourAlreadyInGame": "Vous ne pouvez pas rejoindre cette partie car vous êtes déjà en partie"
 	},
 	"gameTopBar": {
 	  "back": "Retour"
@@ -709,7 +714,8 @@
 	  "playerNotInMatch": "Jouer n'est pas dans cette partie",
 	  "bracketNotFound": "Bracket non trouvé",
 	  "errorFindingMatchOrUser": "Partie ou utilisateur non trouvé",
-	  "invalidTournamentId": "ID du tournoi invalide"
+	  "invalidTournamentId": "ID du tournoi invalide",
+	  "youAreInTournament": "Vous ne pouvez pas participer à ce jeu parce que vous êtes déjà dans un tournoi."
 	},
 	"inactiveGamePopUp": {
 	  "gameInProgress": "Vous avez une partie en cours",
@@ -866,7 +872,9 @@
 	  "lobbyAlreadyExist": "大厅已存在",
 	  "waitingSentence": "正在等待游戏启动",
 	  "invitedUserAlreadySearchGame": "该用户已在搜索游戏",
-	  "invitedUserAlreadyInGame": "该用户已在游戏中"
+	  "invitedUserAlreadyInGame": "该用户已在游戏中",
+	  "yourAlreadySearchingGame": "你不能加入这个游戏，因为你已经在找游戏了。",
+	  "yourAlreadyInGame": "您不能加入这个游戏，因为您已经在"
 	},
 	"gameTopBar": {
 	  "back": "返回"
@@ -1067,7 +1075,8 @@
 	  "playerNotInMatch": "玩家不在比赛",
 	  "bracketNotFound": "找不到锦标赛",
 	  "errorFindingMatchOrUser": "找不到比赛或者玩家",
-	  "invalidTournamentId": "锦标赛号码不正确"
+	  "invalidTournamentId": "锦标赛号码不正确",
+	  "youAreInTournament": "您不能参加这场比赛，因为您已经参加了一场锦标赛。"
 	},
 	"inactiveGamePopUp": {
 	  "gameInProgress": "你有一场进行中的比赛",

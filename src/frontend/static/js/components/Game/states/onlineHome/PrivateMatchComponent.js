@@ -300,8 +300,13 @@ class PrivateMatchComponent extends HTMLElement {
 	}
 
 	cancelPrivateMatchLobby() {
-		document.querySelector('#rankedGenericBtn').className = "generic-btn";
-		document.querySelector('#unrankedGenericBtn').className = "generic-btn";
+		const rankedGeneric = document.querySelector('#rankedGenericBtn');
+		const unrankedGeneric = document.querySelector('#unrankedGenericBtn');
+
+		if (rankedGeneric)
+			rankedGeneric.className = "generic-btn";
+		if (unrankedGeneric)
+			unrankedGeneric.className = "generic-btn";
 	}
 }
 
