@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.http import Http404
 from django.db.models import Count, Q
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.exceptions import MultipleObjectsReturned
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -142,12 +143,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
         created = False
 
         try:
-          chatroom = ChatGroup.objects.filter(
-				is_private=True,
-				members=author
-			).filter(
-				members=target_user
-			).get()
+            chatroom = ChatGroup.objects.filter(
+					members__in=[author, target_user]
+				).annotate(
+					num_members=Count('members')
+				).filter(
+					num_members=2
+				).get()
+        except MultipleObjectsReturned:
+            chatroom = ChatGroup.objects.filter(
+					members__in=[author, target_user]
+				).annotate(
+					num_members=Count('members')
+				).filter(
+					num_members=2
+				).first()
         except ChatGroup.DoesNotExist:
             chatroom = ChatGroup.objects.create()
             chatroom.members.add(author, target_user)
@@ -171,12 +181,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def find_matching_room(self, target_user_id):
         try:
             chatroom = ChatGroup.objects.filter(
-                is_private=True,
-                members=target_user_id
-            ).filter(
-                members=self.user
-            ).get()
+					members__in=[self.user, target_user_id]
+				).annotate(
+					num_members=Count('members')
+				).filter(
+					num_members=2
+				).get()
             return chatroom
+        except MultipleObjectsReturned:
+            chatroom = ChatGroup.objects.filter(
+					members__in=[self.user, target_user_id]
+				).annotate(
+					num_members=Count('members')
+				).filter(
+					num_members=2
+				).first()
+            return
         except ChatGroup.DoesNotExist:
             return None
         
