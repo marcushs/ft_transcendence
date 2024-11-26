@@ -28,7 +28,6 @@ export default () => {
 
 		btn.addEventListener("click", postNewUsername);
 		document.getElementById('username-form').addEventListener('submit', event => event.preventDefault());
-		document.addEventListener('keydown', (event) => {if (event.key === 'Enter') postNewUsername()});
 
 		rotatingGradient('.oauth-username-container-background', '#FF16C6', '#00D0FF');
 		rotatingGradient('.oauth-username-container', '#FF16C6', '#00D0FF');
