@@ -25,7 +25,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         for group in self.groups:
-            async_to_sync(self.channel_layer.group_discard)(
+            await self.channel_layer.group_discard(
                 group,
                 self.channel_name
             )
