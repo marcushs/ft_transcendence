@@ -64,5 +64,7 @@ class getUserTournamentState(View):
 			return JsonResponse({'message': 'tournamentNotFound'}, status=404)
 		except TournamentMatch.DoesNotExist:
 			return JsonResponse({'message': 'tournamentMatchNotFound'}, status=404)
+		except Bracket.DoesNotExist:
+			return JsonResponse({'message': 'bracketNotFound'}, status=404)
 		except Exception as e:
 			return JsonResponse({"message": str(e)}, status=500)

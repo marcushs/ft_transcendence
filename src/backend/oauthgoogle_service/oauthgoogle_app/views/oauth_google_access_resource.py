@@ -24,7 +24,7 @@ class oauthGoogleAccessResourceView(View):
     def __init__(self):
         super().__init__
     
-    def get(self, request):
+    def get(self, request): 
         try:
             token = request.COOKIES.get('google_access_token') 
             resource_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
@@ -52,7 +52,7 @@ class oauthGoogleAccessResourceView(View):
                 return response
         except Exception as e:
             print(f'Error: {str(e)}')
-            return JsonResponse({"message": str(e)}, status=502)
+            return JsonResponse({"message": str(e)}, status=502) 
         
     def create_or_login_user(self, request, data):
         self.csrf_token = request.headers.get('X-CSRFToken')
@@ -96,7 +96,7 @@ class oauthGoogleAccessResourceView(View):
                                             email=self.email,
                                             first_name=self.first_name,
                                             last_name=self.last_name,
-                                            profile_image_link=self.profile_image_link)
+                                            )
             self.id = str(user.id)
             self.payload['user_id'] = self.id
             response = self.send_create_user_request_to_endpoints()
@@ -136,7 +136,6 @@ class oauthGoogleAccessResourceView(View):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'logged_in_with_oauth': True,
-            'profile_image_link': self.profile_image_link,
         }
 
     def check_new_username_taken(self, username):

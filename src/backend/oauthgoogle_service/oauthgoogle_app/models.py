@@ -8,14 +8,14 @@ def user_directory_path(instance, filename):
     return f'profile_images/{instance.id}/{filename}'
 
 class UserManager(BaseUserManager):
-    def create_user(self, id, email, username, first_name, last_name, profile_image_link):
+    def create_user(self, id, email, username, first_name, last_name):
         email = self.normalize_email(email)
         user = self.model(id=id,
                           email=email, 
                           username=username, 
                           first_name=first_name, 
                           last_name=last_name, 
-                          profile_image_link=profile_image_link)
+                          )
         user.save(using=self._db)
         return user
 

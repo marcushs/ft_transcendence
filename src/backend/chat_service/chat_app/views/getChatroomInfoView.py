@@ -21,7 +21,6 @@ class getChatroomInfoView(View):
 			chatroom = get_object_or_404(ChatGroup, group_id=str(chatroom_id))
 			members_list = list(chatroom.members.all())
 			members = []
-
 			for member in members_list:
 				try:
 					response = send_request_with_token(request_type='GET', request=request, url=f'http://user:8000/api/user/get_user_by_id/?q={member.id}')

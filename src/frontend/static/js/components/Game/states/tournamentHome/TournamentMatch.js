@@ -133,7 +133,7 @@ class TournamentMatchElement extends HTMLElement {
 		const opponentSpan = this.querySelector("#opponent-span");
 		const matchCountdown = this.querySelector('.match-countdown');
 
-		if (opponentSpan.innerText === 'To Be Determined...') {
+		if (this.toBeDeter) {
 			matchCountdown.remove();
 			return;
 		}
@@ -160,7 +160,7 @@ class TournamentMatchElement extends HTMLElement {
 	setOpponentSpanActive() {
 		const opponentSpan = this.querySelector("#opponent-span");
 
-		if (opponentSpan.innerText === 'To Be Determined...') {
+		if (this.toBeDeter) {
 			opponentSpan.classList.add('active'); 
 		}
 	}
