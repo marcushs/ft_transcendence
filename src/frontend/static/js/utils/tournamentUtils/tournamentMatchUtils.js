@@ -36,7 +36,6 @@ export async function startTournamentMatchInstance() {
 
 export async function redirectToTournamentLostMatch(match) {
 	if (location.pathname !== '/') {
-		alert('wtf')
 		throwRedirectionEvent('/');
 		document.addEventListener('gameComponentLoaded', () => {
 			redirectLost(match);

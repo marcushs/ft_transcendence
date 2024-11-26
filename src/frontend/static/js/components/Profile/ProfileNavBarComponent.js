@@ -31,7 +31,6 @@ class ProfileNavBarComponent extends HTMLElement {
 			const oauthInfos = await sendRequest("GET", "/api/auth/auth_type/", null);
 			const isOauthLog = oauthInfos.oauth_log;
 
-			console.log(isOauthLog)
 			if (isOauthLog) {
 				this.innerHTML = `
 				    <ul>

@@ -31,8 +31,6 @@ async function resetTournamentData() {
 			localStorage.setItem('tournamentData', JSON.stringify(data));
 		if (data.state === 'inGame')
 			await startTournamentMatchInstance()
-		// if (!data.isInTournament && tournamentData)
-		// // if (tournamentData && tournamentData.)
 	} catch (e) {
 		localStorage.removeItem('tournamentData');
 	}
@@ -40,7 +38,7 @@ async function resetTournamentData() {
 
 async function resetPrivateMatch() {
 	const isSearchingPrivateMatch = localStorage.getItem("isSearchingPrivateMatch");
-	const isInGuestState = localStorage.getItem('IsInGuestState');
+	const isInGuestState = localStorage.getItem('isInGuestState');
 	const isReadyToPlay = localStorage.getItem("isReadyToPlay");
 
 	try {
@@ -49,9 +47,9 @@ async function resetPrivateMatch() {
 		
 		if ((isSearchingPrivateMatch || isInGuestState || isReadyToPlay) && !data.in_private_lobby) {
 			localStorage.removeItem('isSearchingPrivateMatch');
-			localStorage.removeItem('IsInGuestState');
+			localStorage.removeItem('isInGuestState');
 			localStorage.removeItem('isReadyToPlay');
-		} else if (data.in_private_lobby) {
+		} else if (data.in_private_lobby) {		
 			if (data.opponent_id === data.user_id && data.opponent_state === "ready" && !isInGuestState) {
 				const username = await getUsernameById(data.user_id);
 
@@ -69,7 +67,7 @@ async function resetPrivateMatch() {
 		}
 	} catch (e) {
 		localStorage.removeItem('isSearchingPrivateMatch');
-		localStorage.removeItem('IsInGuestState');
+		localStorage.removeItem('isInGuestState');
 		localStorage.removeItem('isReadyToPlay');
 	}
 }

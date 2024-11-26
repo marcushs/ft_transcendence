@@ -46,8 +46,12 @@ function attachEvent() {
 
     yesBtn.addEventListener('click', async () => {
         try {
-
             await sendRequest('POST', '/api/auth/logout/', null);
+			
+			localStorage.removeItem('tournamentData');
+			localStorage.removeItem('isSearchingPrivateMatch');
+			localStorage.removeItem('isInGuestState');
+			localStorage.removeItem('isReadyToPlay');
 			closeAllWebsocket();
             throwRedirectionEvent('/');
         } catch (error) {
