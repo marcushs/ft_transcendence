@@ -90,3 +90,12 @@ def set_player_ready(match_id, user):
 	except ObjectDoesNotExist:
 		return 'Match not found'
 
+@database_sync_to_async
+def set_players_in_game(player1_id, player2_id):
+	player1 = User.objects.get(id=player1_id)
+	player2 = User.objects.get(id=player2_id)
+	player1.status = 'in_game'
+	player2.status = 'in_game'
+	player1.save()
+	player2.save()
+

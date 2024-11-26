@@ -1,6 +1,7 @@
 import checkAuthentication from "./checkAuthentication.js";
 import getUsernameById from "./getUsernameById.js";
 import {sendRequest} from "./sendRequest.js";
+import { startTournamentMatchInstance } from "./tournamentUtils/tournamentMatchUtils.js";
 
 export async function resetLocalStorage() {
 	const isConnected = await checkAuthentication();
@@ -28,6 +29,8 @@ async function resetTournamentData() {
 			localStorage.setItem('tournamentData', JSON.stringify(data));
 		if (tournamentData && data.isInTournament && data.state !== tournamentData.state)
 			localStorage.setItem('tournamentData', JSON.stringify(data));
+		if (data.state === 'inGame')
+			await startTournamentMatchInstance()
 		// if (!data.isInTournament && tournamentData)
 		// // if (tournamentData && tournamentData.)
 	} catch (e) {
