@@ -12,6 +12,7 @@ class FriendsMenuComponent extends HTMLElement {
 
     async initComponent() {
         this.innerHTML = `
+            <p id="errorContactsFeedback"></p>
             <div class='bottom-nav-contacts'>
                 <img src='../../assets/contact.svg' alt='contact-icon'>
             </div>
