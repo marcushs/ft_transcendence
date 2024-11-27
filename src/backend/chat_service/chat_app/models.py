@@ -61,13 +61,14 @@ class ChatGroup(models.Model):
     is_private = models.BooleanField(default=True)
 
 class GroupMessage(models.Model):
-	group = models.ForeignKey(ChatGroup, related_name='chat_messages', on_delete=models.CASCADE)
-	author = models.ForeignKey(User, on_delete=models.CASCADE)
-	body = models.CharField(max_length=300)
-	created = models.DateTimeField(default=timezone.now)
-    
-	class Meta:
-		ordering = ['-created']
+    group = models.ForeignKey(ChatGroup, related_name='chat_messages', on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.CharField(max_length=300)
+    created = models.DateTimeField(default=timezone.now)
+    blocked = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created']
 
 class Block(models.Model):
     blocker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blocking')

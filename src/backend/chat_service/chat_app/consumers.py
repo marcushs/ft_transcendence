@@ -6,7 +6,7 @@ from django.http import Http404
 from django.db.models import Count, Q
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import MultipleObjectsReturned
-from asgiref.sync import async_to_sync
+from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import *
@@ -23,6 +23,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.groups = set()
             await self.channel_layer.group_add('chatgroup_updates', self.channel_name)
             self.groups.add('chatgroup_updates')
+            await self.join_all_old_rooms()
 
     async def disconnect(self, close_code):
         for group in self.groups:
@@ -50,7 +51,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
                                                          'target_user': str(target_user.id)})
                     await self.join_room(str(chatroom.group_id))
 
-                saved_message = await self.save_message(chatroom=chatroom, author=self.user, message=message_body)
+                if len(message_body) > 300: 
+                    return await self.send(text_data=json.dumps({'type': 'chat_error', 'message': 'messageTooLong'}))
+                if await sync_to_async(target_user.is_blocking)(self.user):
+                    saved_message = await self.save_message(chatroom=chatroom, author=self.user, message=message_body, blocked=True)
+                else: 
+                    saved_message = await self.save_message(chatroom=chatroom, author=self.user, message=message_body, blocked=False)
                 await self.channel_layer.group_send(str(chatroom.group_id),
                                                     {'type': 'chat.message',
                                                      'chatroom': str(chatroom.group_id),
@@ -84,6 +90,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': "remove_room",
                     'chatroom': str(chatroom.group_id),
                 })
+
+    async def join_all_old_rooms(self):
+        chatrooms = await self.get_all_chatrooms()
+        for chatroom in chatrooms:
+            await self.join_room(str(chatroom.group_id))
 
     async def join_room(self, chatroom):
         self.groups.add(chatroom)
@@ -166,8 +177,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         return chatroom, created
     
     @database_sync_to_async
-    def save_message(self, chatroom, author, message):
-        return GroupMessage.objects.create(group=chatroom, author=author, body=message, created=timezone.localtime(timezone.now()))
+    def save_message(self, chatroom, author, message, blocked):
+        return GroupMessage.objects.create(group=chatroom, author=author, body=message, blocked=blocked, created=timezone.localtime(timezone.now()))
 
     @database_sync_to_async
     def get_recent_messages(self, chatroom_id):
@@ -203,3 +214,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def is_user_blocked(self, user_id):
         return self.user.is_blocking(user_id)
+    
+    @database_sync_to_async
+    def get_all_chatrooms(self):
+        return list(ChatGroup.objects.filter(members=self.user))
+    
