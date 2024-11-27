@@ -12,6 +12,16 @@ contact-menu-component {
     right: 0;
 }
 
+#errorContactsFeedback {
+    position: absolute;
+    color: var(--error-color);
+    font-size: 1.8rem;
+    right: 0.3rem;
+    bottom: 54rem;
+    width: 30rem;
+    z-index: 10;
+}
+
 .contact-menu {
     position: absolute;
     height: 48rem;

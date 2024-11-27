@@ -215,6 +215,10 @@ class ContactComponent extends HTMLElement {
             }, 50);
             contactActionContainer.style.display = 'none';
         } catch (error) {
+            document.querySelector('#errorContactsFeedback').innerHTML = getString(`errorFeedback/${error.message.toString().slice(2, error.message.toString().length - 2)}`);
+            setTimeout(() => {
+                document.querySelector('#errorContactsFeedback').innerHTML = '';
+            }, 2000);
             contactActionContainer.style.display = 'none';
             console.error(error.message)
         }
