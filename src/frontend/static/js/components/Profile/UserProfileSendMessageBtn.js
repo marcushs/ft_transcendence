@@ -13,7 +13,7 @@ export default class UserProfileSendMessageBtn extends HTMLElement {
 	render() {
 		this.innerHTML = `
 			<p id="sendMsgBtnP">${getString("sendMessageButton")}</p>
-			<i class="fa-regular fa-paper-plane"></i>
+			<i id="sendMsgBtnP" class="fa-regular fa-paper-plane"></i>
 		`;
 	}
 
@@ -24,13 +24,10 @@ export default class UserProfileSendMessageBtn extends HTMLElement {
 		this.addEventListener('mouseleave', () => {
 			this.classList.remove('hover');
 		})
-		this.addEventListener('mousedown', async () => {
-			this.style.transform = 'scale(0.98)';
-			await sendMessageCallback(this.userData)
+		this.addEventListener('click', async () => {
+			await sendMessageCallback(this.userData);
 		})
-		this.addEventListener('mouseup', () => {
-			this.style.transform = 'scale(1)';
-		})
+
 	}
 }
 
