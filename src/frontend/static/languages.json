@@ -293,7 +293,8 @@
 	  "quarter_finals": "Quarter final",
 	  "eighth_finals": "Round of sixteen",
 	  "tournamentBotSentencePrefix": ": The match against ",
-	  "tournamentBotSentenceSuffix": "will start soon!\n\t\t\tClick the \"Ready\" button when ready! GLHF!"
+	  "tournamentBotSentenceSuffix": "will start soon!\n\t\t\tClick the \"Ready\" button when ready! GLHF!",
+	  "messageTooLong": "Message too long"
 	},
 	"oauthRedirect": {
 	  "redirect": "redirect...",
@@ -671,7 +672,8 @@
 	  "quarter_finals": "Quarts de final",
 	  "eighth_finals": "Huitièmes de finale",
 	  "tournamentBotSentencePrefix": ": Le match contre ",
-	  "tournamentBotSentenceSuffix": "va bientôt commencer !\n\t\t\tCliquez sur le bouton « Prêt » lorsque vous êtes prêt ! GLHF !"
+	  "tournamentBotSentenceSuffix": "va bientôt commencer !\n\t\t\tCliquez sur le bouton « Prêt » lorsque vous êtes prêt ! GLHF !",
+	  "messageTooLong": "Le message est trop long"
 	},
 	"oauthRedirect": {
 	  "redirect": "redirection...",
@@ -1047,7 +1049,8 @@
 	  "quarter_finals": "八强",
 	  "eighth_finals": "十六强",
 	  "tournamentBotSentencePrefix": ": 面对 ",
-	  "tournamentBotSentenceSuffix": "的比赛即将开始!\n\t\t\t预备好的话请按 “准备” 按钮! 祝你好运!"
+	  "tournamentBotSentenceSuffix": "的比赛即将开始!\n\t\t\t预备好的话请按 “准备” 按钮! 祝你好运!",
+	  "messageTooLong": "讯息过长"
 	},
 	"oauthRedirect": {
 	  "redirect": "正在转到...",

@@ -51,6 +51,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                                                          'target_user': str(target_user.id)})
                     await self.join_room(str(chatroom.group_id))
 
+                if len(message_body) > 300: 
+                    return await self.send(text_data=json.dumps({'type': 'chat_error', 'message': 'messageTooLong'}))
                 saved_message = await self.save_message(chatroom=chatroom, author=self.user, message=message_body)
                 await self.channel_layer.group_send(str(chatroom.group_id),
                                                     {'type': 'chat.message',

@@ -2,6 +2,7 @@ import { chatSocket } from '../../views/websocket/loadWebSocket.js';
 import { sendRequest } from '../sendRequest.js';
 import { getUserId } from './joinRoomUtils.js';
 import ChatMessageComponent from "../../components/Chat/ChatMessageComponent.js";
+import { getString  } from '../languageManagement.js';
 
 export function sendPrivateMessage() {
 	const targetUserData = JSON.parse(document.querySelector('chatroom-top-bar').getAttribute('data-user'));
@@ -75,6 +76,10 @@ export async function isSentOrReceivedMessage(authorId) {
 }
 
 function isMessageValid(message) {
+	if (message.length > 300) {
+		putMessageErrorFeedback('messageTooLong');
+		return false;
+	}
 	return (message === '' || message.length > 300) ? false : true;
 }
 
@@ -165,4 +170,16 @@ export function checkAllRecentMessagesRead() {
 	})
 
 	return true;
+}
+
+export function putMessageErrorFeedback(message) {
+	const feedback = document.getElementById('chatErrorFeedback');
+
+	if (!feedback) return ;
+
+	feedback.innerText = '';
+    feedback.innerText = getString(`chatComponent/${message}`);
+    setTimeout(() => {
+        feedback.innerText = '';
+    }, 1500);
 }

@@ -1,7 +1,7 @@
 
 import {removeContactFromList, addNewContactToList, UpdateContactInList} from './updateContactWebsocket.js'
 import { receiveChatgroupUpdate, fetchChatroomsList, joinAllInvitedChatrooms, addNewContactToContactedList, removeChatContactFromDOM} from '../../utils/chatUtils/joinRoomUtils.js';
-import { updateCurrentChatroomId, messageReceptionDOMUpdate } from '../../utils/chatUtils/sendPrivateMessage.js';
+import { updateCurrentChatroomId, messageReceptionDOMUpdate , putMessageErrorFeedback} from '../../utils/chatUtils/sendPrivateMessage.js';
 import { UpdateChatContactWebsocket } from './updateChatContactWebsocket.js';
 import { UpdateChatroomTopBarWebsocket } from './updateChatroomTopBarWebsocket.js';
 import * as tournamentHandlers from '../../utils/tournamentUtils/tournamentWebsocketHandlers.js';
@@ -151,6 +151,8 @@ function loadChatWebSocket() {
 			await addNewContactToContactedList(data.chatroom);
 		} else if (data.type === 'remove_room') {
 			removeChatContactFromDOM(data.chatroom);
+		} else if (data.type === 'chat_error') {
+			putMessageErrorFeedback(data.message);
 		}
 	};
 
