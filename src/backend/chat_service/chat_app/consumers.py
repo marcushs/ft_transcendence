@@ -23,6 +23,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.groups = set()
             await self.channel_layer.group_add('chatgroup_updates', self.channel_name)
             self.groups.add('chatgroup_updates')
+            await self.join_all_old_rooms()
 
     async def disconnect(self, close_code):
         for group in self.groups:
@@ -84,6 +85,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': "remove_room",
                     'chatroom': str(chatroom.group_id),
                 })
+
+    async def join_all_old_rooms(self):
+        chatrooms = await self.get_all_chatrooms()
+        for chatroom in chatrooms:
+            await self.join_room(str(chatroom.group_id))
 
     async def join_room(self, chatroom):
         self.groups.add(chatroom)
@@ -203,3 +209,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def is_user_blocked(self, user_id):
         return self.user.is_blocking(user_id)
+    
+    @database_sync_to_async
+    def get_all_chatrooms(self):
+        return list(ChatGroup.objects.filter(members=self.user))
