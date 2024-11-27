@@ -176,7 +176,6 @@ class PrivateMatchManager(View):
             data = json.loads(request.body.decode('utf-8'))
             is_ready = self.init(data=data, request=request)
             if is_ready != 'ok':
-                print('RETURN: ', is_ready) 
                 self.handle_refused_invitation()
                 return JsonResponse({'message': is_ready}, status=400)
             return self.process_choice()

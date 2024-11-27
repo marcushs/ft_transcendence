@@ -33,7 +33,6 @@ async def match_in_next_round(user, last_match, tournament_bracket, tournament):
 		await sync_to_async(user.save)()
 		async with connections_lock: 
 			if str(str(user.id)) in connections:
-				print(f'user: {str(user.id)} active in connections list, starting leave_countdown')
 				await start_leave_countdown(user_id=str(user.id), tournament_id=str(tournament.tournament_id))
 				return await send_websocket_info(player_id=str(user.id), payload={'type': 'redirect_to_winner_page', 'tournament_bracket': tournament_bracket_dict})
 			else:
