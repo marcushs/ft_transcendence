@@ -7,7 +7,7 @@ export default class ChatRoomBottomBar extends HTMLElement {
 	render() {
 		this.innerHTML = `
 			<div class="chatroom-message-box">
-				<p id="chatErrorFeedback">hi</p>
+				<p id="chatErrorFeedback"></p>
 				<input class="chatroom-message-input" type="text" maxlength="300">
 			</div>
 			<button class="send-message-btn" type="submit"><i class="fa-regular fa-paper-plane"></i></button>

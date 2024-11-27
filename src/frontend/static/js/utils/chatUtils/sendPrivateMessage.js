@@ -2,7 +2,7 @@ import { chatSocket } from '../../views/websocket/loadWebSocket.js';
 import { sendRequest } from '../sendRequest.js';
 import { getUserId } from './joinRoomUtils.js';
 import ChatMessageComponent from "../../components/Chat/ChatMessageComponent.js";
-import { getString  } from '../languageManagement.js';
+import { getString } from '../languageManagement.js';
 
 export function sendPrivateMessage() {
 	const targetUserData = JSON.parse(document.querySelector('chatroom-top-bar').getAttribute('data-user'));

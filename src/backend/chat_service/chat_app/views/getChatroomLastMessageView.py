@@ -18,7 +18,7 @@ class getChatroomLastMessageView(View):
 			chatroom_id = request.GET.get('chatroomId')
 
 			chatroom = get_object_or_404(ChatGroup, group_id=str(chatroom_id))
-			last_message = GroupMessage.objects.filter(group=chatroom).order_by('-created')[:1]
+			last_message = GroupMessage.objects.filter(group=chatroom, blocked=False).order_by('-created')[:1]
 			serialized_message = serialize('json', last_message)
 			return_message = json.loads(serialized_message)
 

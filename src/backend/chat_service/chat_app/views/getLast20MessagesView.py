@@ -38,7 +38,7 @@ class getLast20MessagesView(View):
 			blocks = Block.objects.filter(blocker=user)
 			blocked_users = {str(block.blocked.id): block.created_at for block in blocks}
 
-			recent_messages = GroupMessage.objects.filter(group=chatroom).order_by('-created')
+			recent_messages = GroupMessage.objects.filter(group=chatroom, blocked=False).order_by('-created')
 
 			filtered_messages = []
 			for message in recent_messages:
