@@ -14,10 +14,18 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 class oauth42RedirectView(View):
     def get(self, request):
         try:
-            state = str(request.GET.get('state'))
-            code = request.GET.get('code')
+            state = str(request.GET.get('state', None))
+            code = request.GET.get('code', None)
+            if code is None or state is None:
+                return JsonResponse({'message': 'No code or state parameter provided', 
+                                    'status': 'Error'}, 
+                                    status=400)
             
             cookie_state = request.COOKIES.get('oauth42_state')
+            if cookie_state is None:
+                return JsonResponse({'message': 'No state parameter provided', 
+                                    'status': 'Error'}, 
+                                    status=400)
 
             if state != cookie_state:
                 return JsonResponse({'message': 'Invalid state parameter', 

@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 # --- UTILS --- #
 import json
 import environ
+import re
 import os
 import requests
 from ..utils.send_post_request import send_post_request
@@ -32,6 +33,9 @@ class oauth42UpdateUsernameView(View):
             if 'newUsername' not in data:
                 raise ValidationError('requestMissingData')
             new_username = str(data['newUsername'])
+            
+            if self.is_valid_username(new_username) == False:
+                return JsonResponse({"message": "Invalid username", "status": "Error", "url": '/oauth-username?oauth_provider=oauth42'}, status=400)
             id = request.COOKIES.get('id')
             self.csrf_token = request.headers.get('X-CSRFToken') 
             response = self.check_new_username_taken(new_username)
@@ -87,3 +91,11 @@ class oauth42UpdateUsernameView(View):
             'logged_in_with_oauth': True,
             'profile_image_link': user.profile_image_link,
         }
+        
+    def is_valid_username(self, username):
+        regexUsernameCheck = r'^[a-zA-Z0-9_-]+$'
+
+        if not re.match(regexUsernameCheck, username):
+            return False
+        return True
+

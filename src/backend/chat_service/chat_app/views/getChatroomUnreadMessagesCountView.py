@@ -19,7 +19,10 @@ class getChatroomUnreadMessagesCountView(View):
 
 	def get(self, request):
 		try:
-			chatroom_id = request.GET.get('chatroomId')
+			chatroom_id = request.GET.get('chatroomId', None)
+			if chatroom_id is None:
+				return JsonResponse({'message': 'No chatroom id provided', 'status': 'Error'}, status=400)
+
 			user = request.user
 
 			get_object_or_404(ChatGroup, group_id=str(chatroom_id))

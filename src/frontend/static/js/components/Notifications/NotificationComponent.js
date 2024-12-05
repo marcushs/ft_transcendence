@@ -361,16 +361,20 @@ class NotificationComponent extends HTMLElement {
 
 
 	async changeIsReadStatus() {
-		let uuids = this.unreadNotifications.map((notification) => notification.uuid);
-
-		uuids = uuids.map((uuid) => uuid.replace('notif-', ''));
-		
-		this.notifications.forEach(notification => { if (!notification.is_read) notification.is_read = true });
-		
-		for (const notification of this.unreadNotifications) {
-			await sendRequest('PUT', '/api/notifications/manage_notifications/', { uuids: uuids, type: 'set_as_read' });
+		try {
+			let uuids = this.unreadNotifications.map((notification) => notification.uuid);
+	
+			uuids = uuids.map((uuid) => uuid.replace('notif-', ''));
+			
+			this.notifications.forEach(notification => { if (!notification.is_read) notification.is_read = true });
+			
+			for (const notification of this.unreadNotifications) {
+				await sendRequest('PUT', '/api/notifications/manage_notifications/', { uuids: uuids, type: 'set_as_read' });
+			}
+			this.unreadNotifications = [];
+		} catch {
+			return ;
 		}
-		this.unreadNotifications = [];
 	}
 
 

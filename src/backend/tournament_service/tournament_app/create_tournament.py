@@ -3,12 +3,13 @@ from django.contrib.auth.models import AnonymousUser
 from .models import *
 from .db_utils import is_user_in_any_tournament
 import math
+import re
 
 @database_sync_to_async
 def createTournamentInDB(data, user):
 	creator = user
-	tournament_name = data['tournament_name']
-	tournament_size = data['tournament_size']
+	tournament_name = str(data['tournament_name'])
+	tournament_size = str(data['tournament_size'])
 
 	if isinstance(creator, AnonymousUser): 
 		return None, 'unknownUser'
@@ -29,12 +30,15 @@ def createTournamentInDB(data, user):
 	creator.status = 'joined_tournament'
 	creator.save()
 	return new_tournament, 'Tournament created successfully' 
-	
 
 def is_valid_size(size):
 	return size in {4, 8, 16} 
 
 def is_valid_name(name):
+	regexUsernameCheck = r'^[a-zA-Z0-9_-]+$'
+
+	if not re.match(regexUsernameCheck, name):
+		return False
 	if name == '' or len(name) > 30:
 		return False
 	return True

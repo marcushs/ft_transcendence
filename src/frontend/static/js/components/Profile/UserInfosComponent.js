@@ -89,27 +89,31 @@ class UserInfosComponent extends HTMLElement {
 
 
 	async connectedCallback() {
-		const oauthInfos = await sendRequest("GET", "/api/auth/auth_type/", null);
-		this.isOauthLog = oauthInfos.oauth_log;
-
-		if (this.isOauthLog) {
-			this.oauthType = oauthInfos.oauth_type;
-			this.initializeComponentOauth(oauthInfos.oauth_type);
-		} else {
-			this.initializeComponent();
+		try {
+			const oauthInfos = await sendRequest("GET", "/api/auth/auth_type/", null);
+			this.isOauthLog = oauthInfos.oauth_log;
+	
+			if (this.isOauthLog) {
+				this.oauthType = oauthInfos.oauth_type;
+				this.initializeComponentOauth(oauthInfos.oauth_type);
+			} else {
+				this.initializeComponent();
+			}
+	
+			this.usernameInput = this.querySelector('input[name="username"]');
+			this.aliasInput = this.querySelector('input[name="alias"]');
+			if (!this.isOauthLog)
+				this.emailInput = this.querySelector('input[name="email"]');
+			this.profileImageInput = this.querySelector('input[name="profile-image"]');
+			this.newUploadedImage = null;
+			this.newProfileImageLink = null;
+			this.setChangeProfileImageSize();
+			this.attachEventsListener();
+			this.generateUserInfos();
+			this.displayFeedbackFromLocalStorage();
+		} catch {
+			return ;
 		}
-
-		this.usernameInput = this.querySelector('input[name="username"]');
-		this.aliasInput = this.querySelector('input[name="alias"]');
-		if (!this.isOauthLog)
-			this.emailInput = this.querySelector('input[name="email"]');
-		this.profileImageInput = this.querySelector('input[name="profile-image"]');
-		this.newUploadedImage = null;
-		this.newProfileImageLink = null;
-		this.setChangeProfileImageSize();
-		this.attachEventsListener();
-		this.generateUserInfos();
-		this.displayFeedbackFromLocalStorage();
 	}
 
 	setChangeProfileImageSize() {
@@ -156,16 +160,20 @@ class UserInfosComponent extends HTMLElement {
 
 
 	async generateUserInfos() {
-		const userImage = this.querySelector('.user-info > img');
-		const userData = await getUserData();
-		const alias = await sendRequest("GET", "/api/tournament/alias/", null);
-
-		this.usernameInput.value = userData.username;
-		this.initailAlias = alias.alias;
-		this.aliasInput.value = alias.alias;
-		if (!this.isOauthLog)
-			this.emailInput.value = userData.email;
-		userImage.src = getProfileImage(userData);
+		try {
+			const userImage = this.querySelector('.user-info > img');
+			const userData = await getUserData();
+			const alias = await sendRequest("GET", "/api/tournament/alias/", null);
+	
+			this.usernameInput.value = userData.username;
+			this.initailAlias = alias.alias;
+			this.aliasInput.value = alias.alias;
+			if (!this.isOauthLog)
+				this.emailInput.value = userData.email;
+			userImage.src = getProfileImage(userData);
+		} catch {
+			return ;
+		}
 	}
 
 
@@ -249,23 +257,27 @@ class UserInfosComponent extends HTMLElement {
 
 
 	async handleOauthProfileSet(userData) {
-		const userId = await getUserId();
-		let img = await sendRequest("GET", `/api/${this.oauthType}/get_image/?user_id=${userId}`, null);
-		if (img)
-			img = img.message.profile_picture;
-		const isValidImageUrl = await this.isValidImageUrl(img);
-
-		if (isValidImageUrl) {
-			this.querySelector('.user-info-image > img').src = img;
-			this.updateImageFeedback(isValidImageUrl);
-			this.newUploadedImage = null;
-			this.newProfileImageLink = img;
-			this.hasProfilePictureChanged = true;
+		try {
+			const userId = await getUserId();
+			let img = await sendRequest("GET", `/api/${this.oauthType}/get_image/?user_id=${userId}`, null);
+			if (img)
+				img = img.message.profile_picture;
+			const isValidImageUrl = await this.isValidImageUrl(img);
+	
+			if (isValidImageUrl) {
+				this.querySelector('.user-info-image > img').src = img;
+				this.updateImageFeedback(isValidImageUrl);
+				this.newUploadedImage = null;
+				this.newProfileImageLink = img;
+				this.hasProfilePictureChanged = true;
+			}
+			else {
+				this.updateImageFeedback(isValidImageUrl, getString("profileComponent/invalidImageLink"));
+			}
+			this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), (this.isOauthLog) ? true : this.isValidEmail(this.emailInput.value), this.isValidUsername(this.aliasInput.value));
+		} catch {
+			return ;
 		}
-		else {
-			this.updateImageFeedback(isValidImageUrl, getString("profileComponent/invalidImageLink"));
-		}
-		this.updateSaveButtonState(userData, this.isValidUsername(this.usernameInput.value), (this.isOauthLog) ? true : this.isValidEmail(this.emailInput.value), this.isValidUsername(this.aliasInput.value));
 	}
 
 

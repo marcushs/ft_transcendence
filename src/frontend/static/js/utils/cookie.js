@@ -1,5 +1,3 @@
-import { sendRequest } from "./sendRequest.js";
-
 export function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -19,7 +17,7 @@ export function getCookie(name) {
 export async function generateCsrfToken() {
     if (!getCookie('csrftoken')) {
         try {
-            const data = await sendRequest('GET', '/api/user/csrf/', null)
+            const data = await ('GET', '/api/user/csrf/', null)
         } catch (error) {
             console.error(error.message);
         }

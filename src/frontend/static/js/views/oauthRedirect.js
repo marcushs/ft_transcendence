@@ -1,5 +1,6 @@
 import { oauthRedirectCallback } from "../utils/oauthUtils.js";
 import {getString} from "../utils/languageManagement.js";
+import { throwRedirectionEvent } from "../utils/throwRedirectionEvent.js";
 
 export default () => {
 	const oauthProvider = parseOAuthProvider();
@@ -18,6 +19,7 @@ export default () => {
 function parseOAuthProvider() {
 	const urlParams = new URLSearchParams(window.location.search);
 	const state = urlParams.get('state');
+	if (!state) return throwRedirectionEvent('/login');
 	const oauthProvider = state.slice(0, state.indexOf('-'));
 
 	return oauthProvider;

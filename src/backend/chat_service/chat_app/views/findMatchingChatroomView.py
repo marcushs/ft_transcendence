@@ -15,7 +15,9 @@ class findMatchingChatroomView(View):
 	def get(self, request):
 		try:
 			author = request.user.id
-			target_user = request.GET.get('targetUserId')
+			target_user = request.GET.get('targetUserId', None)
+			if target_user is None:
+				return JsonResponse({'message': 'No target user id provided', 'status': 'error'}, status=400)
 
 			if isinstance(author, AnonymousUser):
 				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=401)

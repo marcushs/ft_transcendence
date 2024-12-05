@@ -13,7 +13,9 @@ class getAliasById(View):
 		try:
 			if isinstance(request.user, AnonymousUser): 
 				return JsonResponse({'message': 'unknownUser'}, status=401)
-			player_id = str(request.GET.get('player_id'))
+			player_id = str(request.GET.get('player_id', None))
+			if player_id is None:
+				return JsonResponse({'message': 'No player id provided'}, status=400)
 			player = User.objects.get(id=player_id)
 			return JsonResponse({'alias': player.alias}, status=200)
 		except ObjectDoesNotExist:

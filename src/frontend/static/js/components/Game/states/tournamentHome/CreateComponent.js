@@ -17,7 +17,6 @@ class CreateComponent extends HTMLElement {
 						<div class="buttons-container">
 							<button-component id="4-players-tournament" label="4" class="player-number-inactive"></button-component>
 							<button-component id="8-players-tournament" label="8" class="player-number-active"></button-component>
-							<button-component id="16-players-tournament" label="16" class="player-number-inactive"></button-component>
 						</div>
 					</div>
 				</div>

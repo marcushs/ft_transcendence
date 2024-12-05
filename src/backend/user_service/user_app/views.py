@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 from .utils.csrf_utils import generate_csrf_token
 from django.contrib.auth.models import AnonymousUser
+from django.views import View
+
 
 def index(request):
     csrf_token = request.COOKIES.get('csrftoken')
@@ -12,7 +14,11 @@ def index(request):
         response = JsonResponse({"message": 'csrf token already generated'})
     return response
  
-def get_information_view(request):
-    if isinstance(request.user, AnonymousUser):
-        return JsonResponse({'status':'error', 'message': 'not logged'}, status=200)
-    return JsonResponse({'status':'success', 'user': request.user.to_dict()}, status=200)
+class get_information_view(View):
+    def __init__(self):
+        super().__init__   
+
+    async def get(self, request):
+        if isinstance(request.user, AnonymousUser):
+            return JsonResponse({'status':'error', 'message': 'not logged'}, status=200)
+        return JsonResponse({'status':'success', 'user': request.user.to_dict()}, status=200)

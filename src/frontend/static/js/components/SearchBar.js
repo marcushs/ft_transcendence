@@ -13,7 +13,7 @@ class SearchBarComponent extends HTMLDivElement {
 
         this.innerHTML = `
             <div class="search-bar">
-                <form action="#" autocomplete="off">
+                <form autocomplete="off">
                     <img src="../../assets/search-bar-icon.svg" alt="search-bar-icon" class="search-bar-icon">
                     <div class="search-bar-input-container">
                         <input type="text" placeholder="${getString('searchBarComponent/search')} " id="searchBarInput"/>
@@ -23,6 +23,7 @@ class SearchBarComponent extends HTMLDivElement {
              </div>
         `;
 
+        this.addEventListener('submit', (event) => event.preventDefault());
         this.classList.add('component');
         this.searchInput = this.querySelector('#searchBarInput');
         this.searchResults = this.querySelector('#searchResults');

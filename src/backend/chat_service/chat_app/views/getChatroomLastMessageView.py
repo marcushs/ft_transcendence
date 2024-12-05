@@ -15,7 +15,9 @@ class getChatroomLastMessageView(View):
 
 	def get(self, request):
 		try:
-			chatroom_id = request.GET.get('chatroomId')
+			chatroom_id = request.GET.get('chatroomId', None)
+			if chatroom_id is None:
+				return JsonResponse({'message': 'No chatroom id provided', 'status': 'Error'}, status=400)
 
 			chatroom = get_object_or_404(ChatGroup, group_id=str(chatroom_id))
 			last_message = GroupMessage.objects.filter(group=chatroom, blocked=False).order_by('-created')[:1]

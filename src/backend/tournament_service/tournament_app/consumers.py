@@ -63,7 +63,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	# Receive message from WebSocket
 	async def receive(self, text_data):  
 		data = json.loads(text_data)
-		message_type = data['type']
+		message_type = str(data['type'])
 		try:
 			if data['type'] != 'leave_tournament' or data['type'] != 'user_ready_for_match':
 				await self.check_player_availability()

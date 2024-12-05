@@ -294,7 +294,8 @@
 	  "eighth_finals": "Round of sixteen",
 	  "tournamentBotSentencePrefix": ": The match against ",
 	  "tournamentBotSentenceSuffix": "will start soon!\n\t\t\tClick the \"Ready\" button when ready! GLHF!",
-	  "messageTooLong": "Message too long"
+	  "messageTooLong": "Message too long",
+	  "invalidMessage": "Invalid message"
 	},
 	"oauthRedirect": {
 	  "redirect": "redirect...",
@@ -673,7 +674,8 @@
 	  "eighth_finals": "Huitièmes de finale",
 	  "tournamentBotSentencePrefix": ": Le match contre ",
 	  "tournamentBotSentenceSuffix": "va bientôt commencer !\n\t\t\tCliquez sur le bouton « Prêt » lorsque vous êtes prêt ! GLHF !",
-	  "messageTooLong": "Le message est trop long"
+	  "messageTooLong": "Le message est trop long",
+	  "invalidMessage": "Le message est invalide"
 	},
 	"oauthRedirect": {
 	  "redirect": "redirection...",
@@ -1050,7 +1052,8 @@
 	  "eighth_finals": "十六强",
 	  "tournamentBotSentencePrefix": ": 面对 ",
 	  "tournamentBotSentenceSuffix": "的比赛即将开始!\n\t\t\t预备好的话请按 “准备” 按钮! 祝你好运!",
-	  "messageTooLong": "讯息过长"
+	  "messageTooLong": "讯息过长",
+	  "invalidMessage": "无效讯息"
 	},
 	"oauthRedirect": {
 	  "redirect": "正在转到...",

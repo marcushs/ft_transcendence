@@ -1,9 +1,9 @@
 # from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
 from django.middleware.csrf import get_token
 from django.http import JsonResponse
 
-
-# @csrf_exempt
+@require_GET
 def generate_csrf_token(request):
     if request.COOKIES.get('csrftoken') is None:
         csrf_token = get_token(request)

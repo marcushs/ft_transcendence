@@ -15,8 +15,9 @@ class getChatroomInfoView(View):
 
 	def get(self, request):
 		try:
-			chatroom_id = request.GET.get('chatroom_id')
-
+			chatroom_id = request.GET.get('chatroom_id', None)
+			if chatroom_id is None:
+				raise ValidationError('No chatroom id provided')
 
 			chatroom = get_object_or_404(ChatGroup, group_id=str(chatroom_id))
 			members_list = list(chatroom.members.all())

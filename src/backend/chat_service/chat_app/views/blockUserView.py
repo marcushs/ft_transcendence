@@ -15,8 +15,9 @@ class blockUserView(View):
 	def get(self, request):
 		try:
 			user = request.user
-			blocked_user_id = request.GET.get('blockedUserId')
-
+			blocked_user_id = request.GET.get('blockedUserId', None)
+			if blocked_user_id is None:
+				return JsonResponse({'message': 'No blocked user id provided', 'status': 'error'}, status=400)
 			if isinstance(user, AnonymousUser):
 				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=401)
 			try:
@@ -38,7 +39,9 @@ class unblockUserView(View):
 	def get(self, request):
 		try:
 			user = request.user
-			blocked_user_id = request.GET.get('blockedUserId')
+			blocked_user_id = request.GET.get('blockedUserId', None)
+			if blocked_user_id is None:
+				return JsonResponse({'message': 'No blocked user id provided', 'status': 'error'}, status=400)
 
 			if isinstance(user, AnonymousUser):
 				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=401)
@@ -61,7 +64,9 @@ class isUserBlockedView(View):
 	def get(self, request):
 		try:
 			user = request.user
-			target_user_id = request.GET.get('targetUserId')
+			target_user_id = request.GET.get('targetUserId', None)
+			if target_user_id is None:
+				return JsonResponse({'message': 'No target user id provided', 'status': 'error'}, status=400)
 
 			if isinstance(user, AnonymousUser):
 				return JsonResponse({'message': 'No user found', 'status': 'error'}, status=401)

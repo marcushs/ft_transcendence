@@ -17,6 +17,7 @@ export async function oauthRedirectCallback() {
 	const urlParams = new URLSearchParams(window.location.search);
 	const code = urlParams.get('code');
 	const state = urlParams.get('state');
+	if (!code || !state) return throwRedirectionEvent('/login');
 	const oauthProvider = state.slice(0, state.indexOf("-"));
 	const status_text = document.getElementById('status');
 

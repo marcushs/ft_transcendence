@@ -118,19 +118,23 @@ class PrivateMatchInvitationNotificationComponent extends HTMLElement {
 				}, 50);
 			}
 		} catch (error) {
-			await sendRequest('DELETE', '/api/notifications/manage_notifications/', { uuid: this.notificationObj.uuid.replace('notif-', '') });
-			const errorStr = error.toString();
-
-			if (errorStr.slice(7, errorStr.length) === "lobbyNotFound" && action === "accepted") {
-				this.displayErrorMessage(`notificationsComponent/lobbyNotFound`);
-			} else if (errorStr.slice(7, errorStr.length) === "userAlreadyInTournament" && action === "accepted") {
-				this.displayErrorMessage(`tournament/youAreInTournament`);
-			} else if (errorStr.slice(7, errorStr.length) === "userAlreadySearchGame" && action === "accepted") {
-				this.displayErrorMessage(`gameComponent/yourAlreadySearchingGame`);
-			} else if (errorStr.slice(7, errorStr.length) === "userAlreadyInGame" && action === "accepted") {
-				this.displayErrorMessage(`gameComponent/yourAlreadyInGame`);
-			} else {
-				this.remove();
+			try {
+				await sendRequest('DELETE', '/api/notifications/manage_notifications/', { uuid: this.notificationObj.uuid.replace('notif-', '') });
+				const errorStr = error.toString();
+	
+				if (errorStr.slice(7, errorStr.length) === "lobbyNotFound" && action === "accepted") {
+					this.displayErrorMessage(`notificationsComponent/lobbyNotFound`);
+				} else if (errorStr.slice(7, errorStr.length) === "userAlreadyInTournament" && action === "accepted") {
+					this.displayErrorMessage(`tournament/youAreInTournament`);
+				} else if (errorStr.slice(7, errorStr.length) === "userAlreadySearchGame" && action === "accepted") {
+					this.displayErrorMessage(`gameComponent/yourAlreadySearchingGame`);
+				} else if (errorStr.slice(7, errorStr.length) === "userAlreadyInGame" && action === "accepted") {
+					this.displayErrorMessage(`gameComponent/yourAlreadyInGame`);
+				} else {
+					this.remove();
+				}
+			} catch {
+				return ;
 			}
 		}
 	}

@@ -43,15 +43,19 @@ class RankedComponent extends HTMLElement {
 
 
 	async fillRankComponentContent(){
-		const rankedComponentContentElement = this.querySelector('.ranked-component-content');
-		const rankedData = await sendRequest("GET", `/api/statistics/get_user_statistics/?q=${await getUserId()}`, null);
-
-		rankedComponentContentElement.innerHTML += `
-			<h4>${getString('gameComponent/ranked')}</h4>
-			${this.createRankContainer(rankedData.user_statistics.rank, rankedData.user_statistics.rank_points)}
-			<button-component id="rankedGenericBtn" label="${getString('buttonComponent/play')}" class="generic-btn"></button-component>
-			<button-component label="${getString('buttonComponent/cancel')}" class="generic-btn-cancel" style="display: none"></button-component>
-		`
+		try {
+			const rankedComponentContentElement = this.querySelector('.ranked-component-content');
+			const rankedData = await sendRequest("GET", `/api/statistics/get_user_statistics/?q=${await getUserId()}`, null);
+	
+			rankedComponentContentElement.innerHTML += `
+				<h4>${getString('gameComponent/ranked')}</h4>
+				${this.createRankContainer(rankedData.user_statistics.rank, rankedData.user_statistics.rank_points)}
+				<button-component id="rankedGenericBtn" label="${getString('buttonComponent/play')}" class="generic-btn"></button-component>
+				<button-component label="${getString('buttonComponent/cancel')}" class="generic-btn-cancel" style="display: none"></button-component>
+			`;
+		} catch {
+			return ;
+		}
 	}
 
 

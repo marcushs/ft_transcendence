@@ -34,22 +34,25 @@ class SecurityComponent extends HTMLElement {
 
 
 	async connectedCallback() {
-		const oauthInfos = await sendRequest("GET", "/api/auth/auth_type/", null);
-		// this.initializeComponent();
-
-		this.innerHTML += `
-			<div class="change-password-container" style="${!oauthInfos.oauth_log ? '' : 'display: none;'}">
-				<div class="title">
-					<p>${getString('profileComponent/changePasswordTitle')}</p>
+		try {
+			const oauthInfos = await sendRequest("GET", "/api/auth/auth_type/", null);
+	
+			this.innerHTML += `
+				<div class="change-password-container" style="${!oauthInfos.oauth_log ? '' : 'display: none;'}">
+					<div class="title">
+						<p>${getString('profileComponent/changePasswordTitle')}</p>
+					</div>
+					<p class="information-sentence">${getString('profileComponent/changePasswordInformation')}</p>
+					<button-component label="change" class="generic-btn"></button-component>
 				</div>
-				<p class="information-sentence">${getString('profileComponent/changePasswordInformation')}</p>
-				<button-component label="change" class="generic-btn"></button-component>
-			</div>
-			<span class="feedbackInformation" id="passwordFeedback"></span>
-		`;
-
-		this.displayFeedbackFromLocalStorage();
-		this.attachEventsListener();
+				<span class="feedbackInformation" id="passwordFeedback"></span>
+			`;
+	
+			this.displayFeedbackFromLocalStorage();
+			this.attachEventsListener();
+		} catch {
+			return ;
+		}
 	}
 
 

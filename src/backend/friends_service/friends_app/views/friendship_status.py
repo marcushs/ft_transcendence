@@ -13,6 +13,9 @@ class GetFriendShipStatus(View):
         try:
             if isinstance(request.user, AnonymousUser):
                 return JsonResponse({'status': 'error', 'message': 'unregistered'}, status=200)
+            self.target_username = request.GET.get('q', None)
+            if self.target_username is None:
+                return JsonResponse({'status': 'error', 'message': 'No target username provided'}, status=400)
             self.init(request=request)
             response = self.check_data(user=request.user)
             if response['status'] != 200:
@@ -24,7 +27,6 @@ class GetFriendShipStatus(View):
     def  init(self, request):
         self.is_self = True
         self.User = get_user_model()
-        self.target_username = request.GET.get('q', '')
         self.friend_list = FriendList.objects.filter(user=request.user).first()
     
     def check_data(self, user):

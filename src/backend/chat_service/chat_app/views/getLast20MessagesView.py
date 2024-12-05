@@ -18,7 +18,9 @@ class getLast20MessagesView(View):
 
 	def get(self, request):
 		try:
-			chatroom_id = request.GET.get('chatroomId')
+			chatroom_id = request.GET.get('chatroomId', None)
+			if chatroom_id is None:
+				return JsonResponse({'message': 'chatroomId is required', 'status': 'Error'}, status=400)
 			user = request.user
 
 			if not chatroom_id:

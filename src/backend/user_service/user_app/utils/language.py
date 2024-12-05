@@ -12,6 +12,8 @@ class language_view(View):
     def get(self, request):
         try:
             username = request.GET.get('username', None)
+            if username is None:
+                return JsonResponse({'status': 'error', 'message': 'UnknownUser'}, status=200)
             if username:
                 language = self.get_user_language(str(username))
                 return JsonResponse({'status': 'success', 'language': language}, status=200)

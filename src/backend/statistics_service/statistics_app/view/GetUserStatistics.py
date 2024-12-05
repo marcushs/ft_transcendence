@@ -41,8 +41,8 @@ class GetUserStatistics(View):
 
 
     def check_data(self, request):
-        user_id = request.GET.get('q', '')
-        if not user_id:
+        user_id = request.GET.get('q', None)
+        if user_id is None:
             raise ValidationError('No user id provided')
         self.user = User.objects.get(id=str(user_id))
         if not self.user:

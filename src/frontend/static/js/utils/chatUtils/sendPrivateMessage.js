@@ -25,11 +25,15 @@ export function sendPrivateMessage() {
 }
 
 async function findMatchingChatroom(userId) {
-	let res = await sendRequest('GET', `/api/chat/find_matching_chatroom/?targetUserId=${userId}`, null, false);
-
-	if (!res.chatroom_id) return null;
-
-	return res.chatroom_id;
+	try {
+		const res = await sendRequest('GET', `/api/chat/find_matching_chatroom/?targetUserId=${userId}`, null, false);
+	
+		if (!res.chatroom_id) return null;
+	
+		return res.chatroom_id;
+	} catch {
+		return ;
+	}
 }
 
 export async function updateCurrentChatroomId(userId) {

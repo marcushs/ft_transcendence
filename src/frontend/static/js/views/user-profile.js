@@ -34,7 +34,14 @@ export default () => {
         rotatingGradient('.users-profile-content', '#1c0015', '#001519');
 
         const targetUsername = location.pathname.split('/')[2];
-        let userInfos = await sendRequest('GET', `/api/user/get_user/?q=${targetUsername}`, null);
+        let userInfos;
+
+        try {
+            userInfos = await sendRequest('GET', `/api/user/get_user/?q=${targetUsername}`, null);
+        } catch(e) {
+            console.error(e.message);
+            return ;
+        }
 
         if (userInfos.status === "error") {
             fillNoUserFound();
@@ -64,46 +71,50 @@ function fillNoUserFound() {
 
 
 async function fillUserStats(userInfos) {
-    const userStatsElements = document.querySelector('.user-stats');
-    let statistics = await sendRequest('GET', `/api/statistics/get_user_statistics/?q=${userInfos.id}`, null);
-
-    statistics = statistics.user_statistics;
-
-    userStatsElements.innerHTML = `
-        <div class="rank-infos">
-            ${createRankContainer(statistics.rank, statistics.rank_points)}
-        </div>
-        <div class="game-infos">
-            <div class="first-section">
-                <div class="info">
-                    <p>${getString("statistics/gamesPlayed")}</p>
-                    <div class="number-container">
-                        <p>${statistics.total_game_played}</p>
+    try {
+        const userStatsElements = document.querySelector('.user-stats');
+        let statistics = await sendRequest('GET', `/api/statistics/get_user_statistics/?q=${userInfos.id}`, null);
+    
+        statistics = statistics.user_statistics;
+    
+        userStatsElements.innerHTML = `
+            <div class="rank-infos">
+                ${createRankContainer(statistics.rank, statistics.rank_points)}
+            </div>
+            <div class="game-infos">
+                <div class="first-section">
+                    <div class="info">
+                        <p>${getString("statistics/gamesPlayed")}</p>
+                        <div class="number-container">
+                            <p>${statistics.total_game_played}</p>
+                        </div>
+                    </div>
+                    <div class="info">
+                        <p>${getString("statistics/gamesWin")}</p>
+                        <div class="number-container">
+                            <p>${statistics.total_win}</p>
+                        </div>
                     </div>
                 </div>
-                <div class="info">
-                    <p>${getString("statistics/gamesWin")}</p>
-                    <div class="number-container">
-                        <p>${statistics.total_win}</p>
+                <div class="second-section">
+                    <div class="info">
+                        <p>${getString("statistics/winLoseRatio")}</p>
+                        <div class="number-container">
+                            <p>${statistics.win_loose_ratio}</p>
+                        </div>
+                    </div>
+                    <div class="info">
+                        <p>${getString("statistics/gamesLose")}</p>
+                        <div class="number-container">
+                            <p>${statistics.total_loose}</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="second-section">
-                <div class="info">
-                    <p>${getString("statistics/winLoseRatio")}</p>
-                    <div class="number-container">
-                        <p>${statistics.win_loose_ratio}</p>
-                    </div>
-                </div>
-                <div class="info">
-                    <p>${getString("statistics/gamesLose")}</p>
-                    <div class="number-container">
-                        <p>${statistics.total_loose}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+        `;
+    } catch {
+        return ;
+    }
 }
 
 

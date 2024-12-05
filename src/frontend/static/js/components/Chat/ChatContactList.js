@@ -90,6 +90,8 @@ class ChatContactList extends HTMLElement {
 		if (contactedListUl)
 			contactedListUl.innerHTML = '';
 
+		if (!contactsData) return;
+		
 		contactsData.forEach(contact => {
 			const listElem = document.createElement('li');
 			const contactComp = new ChatContactComponent(contact, contact.id, "contact");
@@ -140,6 +142,8 @@ class ChatContactList extends HTMLElement {
 				return null;
 			}
 		} catch (error) {
+			console.error(error.message);
+			
 			return null;
 		}
 	}

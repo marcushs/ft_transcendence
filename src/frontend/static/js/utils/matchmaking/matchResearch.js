@@ -57,51 +57,63 @@ export async function checkMatchmakingSearch() {
 }
 
 async function isWaitingMatch() {
-    const researchData = await sendRequest('GET', '/api/matchmaking/is_waiting/', null)
-    if (researchData.waiting) {
-        const userId = await getUserId();
-        await matchmakingWebsocket(userId);
-        if (checkPath()) {
-            throwMatchmakingResearchEvent();
-        } else {
-            if (document.querySelector('matchmaking-research-component'))
-                document.removeChild('matchmaking-research-component'); 
+    try {
+        const researchData = await sendRequest('GET', '/api/matchmaking/is_waiting/', null)
+        if (researchData.waiting) {
+            const userId = await getUserId();
+            await matchmakingWebsocket(userId);
+            if (checkPath()) {
+                throwMatchmakingResearchEvent();
+            } else {
+                if (document.querySelector('matchmaking-research-component'))
+                    document.removeChild('matchmaking-research-component'); 
+            }
+            return true;
         }
-        return true;
+        return false;
+    } catch {
+        return false;
     }
-    return false;
 }
 
 async function isConnectingGame() {
-    const matchmakingResponse = await sendRequest('GET', '/api/matchmaking/user_is_in_game/', null);
-    if (matchmakingResponse.is_in_game) {
-        await gameWebsocket(matchmakingResponse.user_id);
-        if (isGameStarted())
+    try {
+        const matchmakingResponse = await sendRequest('GET', '/api/matchmaking/user_is_in_game/', null);
+        if (matchmakingResponse.is_in_game) {
+            await gameWebsocket(matchmakingResponse.user_id);
+            if (isGameStarted())
+                return true;
+            if (checkPath()) {
+                throwMatchmakingResearchEvent();
+                const researchComponent = document.querySelector('matchmaking-research-component');
+                researchComponent.setFoundGameRender();
+            } else {
+                if (document.querySelector('matchmaking-research-component'))
+                    document.removeChild('matchmaking-research-component'); 
+            }
             return true;
-        if (checkPath()) {
-            throwMatchmakingResearchEvent();
-            const researchComponent = document.querySelector('matchmaking-research-component');
-            researchComponent.setFoundGameRender();
-        } else {
-            if (document.querySelector('matchmaking-research-component'))
-                document.removeChild('matchmaking-research-component'); 
         }
-        return true;
+        return false;
+    } catch {
+        return false;
     }
-    return false;
 }
 
 async function isGameStarted() {
-    const gameResponse =  await sendRequest('GET', '/api/game/user_game_data/', null);
-    if (gameResponse.status === 'error')
+    try {
+        const gameResponse =  await sendRequest('GET', '/api/game/user_game_data/', null);
+        if (gameResponse.status === 'error')
+            return false;
+        const isGameRendered = document.querySelector('in-game-component')
+        if (!isGameRendered) {
+            const gameData = JSON.parse(gameResponse.game_data)
+            startGame(gameData.game_id, gameData.game_state, gameData.map_dimension)
+            return true;
+        }
         return false;
-    const isGameRendered = document.querySelector('in-game-component')
-    if (!isGameRendered) {
-        const gameData = JSON.parse(gameResponse.game_data)
-        startGame(gameData.game_id, gameData.game_state, gameData.map_dimension)
-        return true;
+    } catch {
+        return false;
     }
-    return false;
 }
 
 function closeMatchmakingResearch() {

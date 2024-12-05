@@ -6,12 +6,14 @@ from django.http import Http404
 from django.db.models import Count, Q
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import MultipleObjectsReturned
+from django.utils.html import escape
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import *
 from django.utils import timezone
 from datetime import timedelta
+import re
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -35,11 +37,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Receive message from WebSocket
     async def receive(self, text_data):
         data = json.loads(text_data)
-        message_type = data['type']
+        message_type = str(data['type'])
 
         if message_type == 'chat_message':
             try:
-                message_body = data['message']
+                message_body = escape(data['message'])
                 target_user = await aget_object_or_404(User, id=data['target_user'])
                 if target_user == self.user:
                     return 
@@ -53,7 +55,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                 if len(message_body) > 300: 
                     return await self.send(text_data=json.dumps({'type': 'chat_error', 'message': 'messageTooLong'}))
-                if await sync_to_async(target_user.is_blocking)(self.user):
+                if await sync_to_async(target_user.is_blocking)(self.user): 
                     saved_message = await self.save_message(chatroom=chatroom, author=self.user, message=message_body, blocked=True)
                 else: 
                     saved_message = await self.save_message(chatroom=chatroom, author=self.user, message=message_body, blocked=False)
@@ -130,6 +132,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'type': 'remove_room',
             'chatroom': chatroom
         }))
+        
+    async def is_valid_message(self, message):
+        regexMessageCheck = r'^[a-zA-Z0-9_!?.,;:\'\")(=-]+$'
+
+        if not re.match(regexMessageCheck, message):
+            return False
+        return True
 
     def format_datetime(self, timestamp):
         now = timezone.localtime(timezone.now())    

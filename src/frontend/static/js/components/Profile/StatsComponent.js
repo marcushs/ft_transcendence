@@ -25,41 +25,45 @@ class StatsComponent extends HTMLElement {
 	}
 
 	async connectedCallback() {
-		let statistics = await sendRequest('GET', `/api/statistics/get_user_statistics/?q=${await getUserId()}`, null);
-
-		statistics = statistics.user_statistics;
-
-		this.innerHTML = `
-			<div class="rank-infos">
-				${this.createRankContainer(statistics.rank, statistics.rank_points)}
-			</div>
-			<div class="game-infos">
-				<div class="info">
-					<p>${getString("statistics/gamesPlayed")}</p>
-					<div class="number-container">
-						<p>${statistics.total_game_played}</p>
+		try {
+			let statistics = await sendRequest('GET', `/api/statistics/get_user_statistics/?q=${await getUserId()}`, null);
+	
+			statistics = statistics.user_statistics;
+	
+			this.innerHTML = `
+				<div class="rank-infos">
+					${this.createRankContainer(statistics.rank, statistics.rank_points)}
+				</div>
+				<div class="game-infos">
+					<div class="info">
+						<p>${getString("statistics/gamesPlayed")}</p>
+						<div class="number-container">
+							<p>${statistics.total_game_played}</p>
+						</div>
+					</div>
+					<div class="info">
+						<p>${getString("statistics/gamesWin")}</p>
+						<div class="number-container">
+							<p>${statistics.total_win}</p>
+						</div>
+					</div>
+					<div class="info">
+						<p>${getString("statistics/gamesLose")}</p>
+						<div class="number-container">
+							<p>${statistics.total_loose}</p>
+						</div>
+					</div>
+					<div class="info">
+						<p>${getString("statistics/winLoseRatio")}</p>
+						<div class="number-container">
+							<p>${statistics.win_loose_ratio}</p>
+						</div>
 					</div>
 				</div>
-				<div class="info">
-					<p>${getString("statistics/gamesWin")}</p>
-					<div class="number-container">
-						<p>${statistics.total_win}</p>
-					</div>
-				</div>
-				<div class="info">
-					<p>${getString("statistics/gamesLose")}</p>
-					<div class="number-container">
-						<p>${statistics.total_loose}</p>
-					</div>
-				</div>
-				<div class="info">
-					<p>${getString("statistics/winLoseRatio")}</p>
-					<div class="number-container">
-						<p>${statistics.win_loose_ratio}</p>
-					</div>
-				</div>
-			</div>
-		`;
+			`;
+		} catch {
+			return ;
+		}
 	}
 
 

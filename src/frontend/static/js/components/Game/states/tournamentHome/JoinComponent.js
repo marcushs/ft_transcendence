@@ -1,6 +1,5 @@
 import {getString, getUserLanguage} from "../../../../utils/languageManagement.js";
 import { sendRequest } from "../../../../utils/sendRequest.js";
-import { throwRedirectionEvent } from "../../../../utils/throwRedirectionEvent.js";
 import { TournamentComponent } from "./TournamentComponent.js";
 
 class JoinComponent extends HTMLElement {

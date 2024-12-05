@@ -152,6 +152,8 @@ class check_username(View):
     def get(self, request):
         try:
             username = request.GET.get('username')
+            if not username:
+                return JsonResponse({"message": "No username provided", "status": "Error"}, status=400)
             if User.objects.filter(username=str(username)).exists():
                 user = User.objects.get(username=str(username))
                 return JsonResponse({"message": "Username already taken! Try another one.", 
@@ -209,8 +211,8 @@ class searchUsers(View):
         
     def get(self, request):
         try:
-            search_input = request.GET.get('q', '')
-            if search_input == '':
+            search_input = request.GET.get('q', None)
+            if search_input is None:
                 return JsonResponse({'status': 'empty', 'message': 'No input provided'}, status=200)
             users = User.objects.filter(Q(username__startswith=str(search_input))) # Filter users who username contains the search input
             if users.exists():
@@ -260,7 +262,9 @@ class getUserGameInfo(View):
 
     def get(self, request):
         try:
-            username = request.GET.get('q', '')
+            username = request.GET.get('q', None)
+            if username is None:
+                return JsonResponse({'status': 'error', 'message': 'No username provided'}, status=400)
             user = User.objects.get(username=str(username))
             users_data = {
                 'username': user.username,
@@ -279,7 +283,9 @@ class getUserInfos(View):
     
     def get(self, request):
         try:
-            username = request.GET.get('q', '')
+            username = request.GET.get('q', None)
+            if username is None:
+                return JsonResponse({'status': 'error', 'message': 'No username provided'}, status=400)
             users = User.objects.get(username=str(username))
             users_data = {
                 'id': str(users.id),
@@ -300,7 +306,9 @@ class getUserInfoById(View):
 
     def get(self, request):
         try:
-            id = request.GET.get('q', '')
+            id = request.GET.get('q', None)
+            if id  is None:
+                return JsonResponse({'status': 'error', 'message': 'No id provided'}, status=400)
             user = User.objects.get(id=str(id))
             user_data = {
                 'id': str(user.id),
@@ -323,7 +331,9 @@ class getUsersInfo(View):
         try:
             if isinstance(request.user, AnonymousUser):
                 return JsonResponse({'message': 'User not found'}, status=401)
-            users_target = json.loads(request.GET.get('q', ''))
+            users_target = json.loads(request.GET.get('q', None))
+            if users_target is None:
+                return JsonResponse({'status': 'error', 'message': 'No users provided'}, status=400)
             users_list = []
             for user in users_target:
                 username = user.get('username')
@@ -352,9 +362,9 @@ class getUsernameById(View):
             if isinstance(request.user, AnonymousUser):
                 return JsonResponse({'message': 'User not found'}, status=401)
 
-            target_id = request.GET.get('q', '')
+            target_id = request.GET.get('q', None)
 
-            if not target_id:
+            if target_id is None:
                 return JsonResponse({'status': 'error', 'message': 'No id provided'}, status=200)
 
             user = User.objects.get(id=str(target_id))
@@ -371,7 +381,9 @@ class getUserStatus(View):
 
     def get(self, request):
         try:
-            user_id = request.GET.get('userId')
+            user_id = request.GET.get('userId', None)
+            if not user_id:
+                return JsonResponse({'status': 'error', 'message': 'No id provided'}, status=200)
             user = User.objects.get(id=str(user_id))
             return JsonResponse({'status': 'success', 'user_status': user.status}, safe=False, status=200)
         except ObjectDoesNotExist as e:

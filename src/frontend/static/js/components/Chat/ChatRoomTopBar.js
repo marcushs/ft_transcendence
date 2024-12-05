@@ -135,7 +135,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 	async isTargetUserBlocked() {
 		try {
 			if (this.userData.id === 'tournament_bot') return;
-			let res = await sendRequest('GET', `/api/chat/is_user_blocked/?targetUserId=${this.userData.id}`, null, false);
+			const res = await sendRequest('GET', `/api/chat/is_user_blocked/?targetUserId=${this.userData.id}`, null, false);
 
 			if (res.message === "True") return true;
 			return false;
@@ -146,7 +146,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 
 	async blockUser() {
 		try {
-			let res = await sendRequest('GET', `/api/chat/block_user/?blockedUserId=${this.userData.id}`, null, false);
+			await sendRequest('GET', `/api/chat/block_user/?blockedUserId=${this.userData.id}`, null, false);
 
 		} catch (error) {
 			console.error(error.message);
@@ -155,7 +155,7 @@ export default class ChatRoomTopBar extends HTMLElement {
 
 	async unblockUser() {
 		try {
-			let res = await sendRequest('GET', `/api/chat/unblock_user/?blockedUserId=${this.userData.id}`, null, false);
+			await sendRequest('GET', `/api/chat/unblock_user/?blockedUserId=${this.userData.id}`, null, false);
 
 		} catch (error) {
 			console.error(error.message);

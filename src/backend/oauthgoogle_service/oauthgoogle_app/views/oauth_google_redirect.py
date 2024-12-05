@@ -16,8 +16,15 @@ class oauthGoogleRedirectView(View):
         try:
             state = str(request.GET.get('state'))
             code = request.GET.get('code')
-            
+            if state is None or code is None:
+                return JsonResponse({'message': 'No code or state parameter provided', 
+                                    'status': 'Error'}, 
+                                    status=400)
             cookie_state = request.COOKIES.get('oauthgoogle_state')
+            if cookie_state is None:    
+                return JsonResponse({'message': 'No state parameter provided', 
+                                    'status': 'Error'}, 
+                                    status=400)
 
             if state != cookie_state:
                 return JsonResponse({'message': 'Invalid state parameter', 

@@ -131,7 +131,9 @@ class getUser(View):
 
     def get(self, request):
         try:
-            username = request.GET.get('q', '')
+            username = request.GET.get('q', None)
+            if username is None:
+                return JsonResponse({'status': 'error', 'message': 'No username provided'}, status=200)
             user = User.objects.get(username=str(username)) 
             users_data = {
                 'username': user.username,
